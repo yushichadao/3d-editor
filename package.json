@@ -1,0 +1,10 @@
+{
+  "name": "ffdf-3d-scene-editor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "3D/2D 场景编辑器 - 画笔/橡皮/对象变换",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  }
+}
