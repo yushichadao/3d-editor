@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -2176,11 +2176,18 @@ function snapshot() {
       snap.opacity = o.data.opacity ?? 1;
       snap.brushType = o.data.type;
       snap.pattern = o.data.pattern;
-      // 保存3D画笔的curvePoints数据（用于TubeGeometry重建）
+      // 保存3D画笔所有TubeGeometry子段的curvePoints（支持擦除后多段重建）
       if (o.mesh.isGroup) {
-        const tubeChild = o.mesh.children.find(c => c.geometry && c.geometry.type === 'TubeGeometry');
-        if (tubeChild && tubeChild.userData && tubeChild.userData.brushCurvePoints) {
-          snap.curvePoints = tubeChild.userData.brushCurvePoints.map(p => [p.x, p.y, p.z]);
+        const tubeChildren = o.mesh.children.filter(c => c.geometry && c.geometry.type === 'TubeGeometry' && c.userData.brushCurvePoints);
+        if (tubeChildren.length > 0) {
+          snap.tubeSegments = tubeChildren.map(c => ({
+            curvePoints: c.userData.brushCurvePoints.map(p => [p.x, p.y, p.z]),
+            brushRadius: c.userData.brushRadius
+          }));
+        }
+        // 兼容旧格式：保存第一个管段的curvePoints
+        if (tubeChildren.length === 1) {
+          snap.curvePoints = tubeChildren[0].userData.brushCurvePoints.map(p => [p.x, p.y, p.z]);
         }
       }
       // 保存子网格结构（含几何体参数，确保精确重建）
@@ -2282,8 +2289,47 @@ function restore(snap) {
       const mat = createBrushMaterialForSnapshot(s);
       const r = (s.thickness || 0.5) / 2;
       
-      // 如果有curvePoints数据（3D画笔的新格式），使用CatmullRomCurve3+TubeGeometry重建
-      if (s.curvePoints && s.curvePoints.length >= 2) {
+      // 优先使用tubeSegments（支持擦除后多段重建），其次curvePoints（单段兼容）
+      if (s.tubeSegments && s.tubeSegments.length > 0) {
+        // 多段重建：为每个管段创建TubeGeometry
+        for (const seg of s.tubeSegments) {
+          const points = seg.curvePoints.map(p => new THREE.Vector3(p[0], p[1], p[2]));
+          const segR = seg.brushRadius || r;
+          let curve;
+          if (points.length === 2) {
+            curve = new THREE.LineCurve3(points[0].clone(), points[1].clone());
+          } else {
+            curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.5);
+          }
+          const curveLength = curve.getLength();
+          const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (segR * 0.2))));
+          const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false);
+          const tubeMesh = new THREE.Mesh(tubeGeo, mat.clone());
+          // curvePoints是世界坐标，mesh position补偿group偏移
+          tubeMesh.position.set(-s.pos[0], -s.pos[1], -s.pos[2]);
+          tubeMesh.castShadow = true;
+          tubeMesh.userData.brushCurve = curve;
+          tubeMesh.userData.brushCurvePoints = points;
+          tubeMesh.userData.brushRadius = segR;
+          group.add(tubeMesh);
+        }
+        // 也重建非TubeGeometry子部件（如擦除后的单点球）
+        if (s.children) {
+          s.children.forEach(ch => {
+            if (ch.geoType === 'TubeGeometry') return; // 跳过管段（已处理）
+            if (ch.geoType === 'SphereGeometry') {
+              const sphereRadius = (ch.geoParams && ch.geoParams.radius !== undefined) ? ch.geoParams.radius : r;
+              const geo = new THREE.SphereGeometry(sphereRadius, 32, 24);
+              const mesh = new THREE.Mesh(geo, mat.clone());
+              mesh.position.set(ch.pos[0], ch.pos[1], ch.pos[2]);
+              if (ch.quat) mesh.quaternion.set(ch.quat[0], ch.quat[1], ch.quat[2], ch.quat[3]);
+              mesh.castShadow = true;
+              group.add(mesh);
+            }
+          });
+        }
+      } else if (s.curvePoints && s.curvePoints.length >= 2) {
+        // 兼容旧格式：单段curvePoints
         const points = s.curvePoints.map(p => new THREE.Vector3(p[0], p[1], p[2]));
         let curve;
         if (points.length === 2) {
@@ -2295,21 +2341,12 @@ function restore(snap) {
         const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
         const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false);
         const tubeMesh = new THREE.Mesh(tubeGeo, mat);
+        tubeMesh.position.set(-s.pos[0], -s.pos[1], -s.pos[2]);
         tubeMesh.castShadow = true;
         tubeMesh.userData.brushCurve = curve;
         tubeMesh.userData.brushCurvePoints = points;
         tubeMesh.userData.brushRadius = r;
         group.add(tubeMesh);
-        // 起点半球（胶囊端帽）
-        const startSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
-        startSphere.position.copy(points[0]);
-        startSphere.castShadow = true;
-        group.add(startSphere);
-        // 终点半球（胶囊端帽）
-        const endSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
-        endSphere.position.copy(points[points.length - 1]);
-        endSphere.castShadow = true;
-        group.add(endSphere);
       } else if (s.children && s.children.length > 0) {
         // 旧格式：使用子部件重建（兼容）
         s.children.forEach(ch => {
@@ -4306,19 +4343,18 @@ function addBrushPoint3D(groundPoint) {
 function endBrushStroke(cancel) {
   if (!brush.drawing) return;
   brush.drawing = false;
-  
+
   const pts = brush.currentPoints;
   const is2D = state.tool === 'brush2d';
-  
+
   // 清理临时预览mesh
   if (brush.previewMesh) {
     scene.remove(brush.previewMesh);
     if (brush.previewMesh.geometry) brush.previewMesh.geometry.dispose();
-    // 不释放material，让最终mesh使用同一material
     brush.previewMesh = null;
   }
-  
-  // 取消模式：直接丢弃当前笔画（从场景中移除并释放资源）
+
+  // 取消模式：直接丢弃当前笔画
   if (cancel) {
     brush.currentMeshes.forEach(m => {
       scene.remove(m);
@@ -4334,29 +4370,24 @@ function endBrushStroke(cancel) {
     hideBrushRefPlane();
     return;
   }
-  
-  if (is2D) {
-    // 2D画笔：保持2D平面图形，不合并为3D管道
-    // currentMeshes中已经是2D平面笔触，直接使用
-  } else {
-    // 3D画笔：使用CatmullRomCurve3生成平滑曲线，再用TubeGeometry创建管道
+
+  if (!is2D) {
+    // 3D画笔：使用单个TubeGeometry，不添加独立球体
     const r = brush.thickness / 2;
     const mat = createBrushMaterial();
-    
-    // 移除之前添加到scene的临时网格（如果有）
+
+    // 移除之前添加到scene的临时网格
     brush.currentMeshes.forEach(m => scene.remove(m));
     brush.currentMeshes = [];
-    
+
     if (pts.length === 0) {
-      // 没有点，直接返回
       brush.currentPoints = [];
       state.brushLockedPlane = null;
       hideBrushRefPlane();
       return;
     } else if (pts.length === 1) {
-      // 单点：创建一个较小的球体（半径略小于管半径，避免球头感）
-      const sphereRadius = r * 0.8;
-      const sphere = new THREE.Mesh(new THREE.SphereGeometry(sphereRadius, 32, 24), mat);
+      // 单点：创建一个球体
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
       sphere.position.copy(pts[0]);
       sphere.castShadow = true;
       brush.currentMeshes.push(sphere);
@@ -4364,43 +4395,27 @@ function endBrushStroke(cancel) {
       // 多点：使用CatmullRomCurve3创建平滑曲线
       let curve;
       if (pts.length === 2) {
-        // 两点：使用LineCurve3
         curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
       } else {
-        // 多点：使用CatmullRomCurve3
         curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
       }
-      
-      // 计算曲线长度，决定 tubularSegments 数量
+
       const curveLength = curve.getLength();
       const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
-      
-      // 创建TubeGeometry（closed=false，端点由半球封顶形成胶囊状）
+      // closed=true 使管道两端闭合，形成胶囊状端面，无需独立球体
       const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false);
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
       tubeMesh.castShadow = true;
-      
+
       // 存储曲线引用用于擦除功能
       tubeMesh.userData.brushCurve = curve;
       tubeMesh.userData.brushCurvePoints = pts.map(p => p.clone());
       tubeMesh.userData.brushRadius = r;
-      
+
       brush.currentMeshes.push(tubeMesh);
-
-      // 起点半球
-      const startSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
-      startSphere.position.copy(pts[0]);
-      startSphere.castShadow = true;
-      brush.currentMeshes.push(startSphere);
-
-      // 终点半球
-      const endSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
-      endSphere.position.copy(pts[pts.length - 1]);
-      endSphere.castShadow = true;
-      brush.currentMeshes.push(endSphere);
     }
   }
-  
+
   if (brush.currentMeshes.length > 0) {
     // 计算画笔笔迹的包围盒中心
     let minX = Infinity, minY = Infinity, minZ = Infinity;
@@ -4418,25 +4433,23 @@ function endBrushStroke(cancel) {
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
     const centerZ = (minZ + maxZ) / 2;
-    
+
     const group = new THREE.Group();
     group.position.set(centerX, centerY, centerZ);
     brush.currentMeshes.forEach(m => {
-      // 将子部件位置调整为相对于group中心的坐标
       m.position.x -= centerX;
       m.position.y -= centerY;
       m.position.z -= centerZ;
       scene.remove(m);
       group.add(m);
     });
-    
-    // 为2D笔迹分配唯一的renderOrder，确保后创建的笔迹显示在上层
+
+    // 为2D笔迹分配唯一的renderOrder
     if (is2D) {
       const order = getNextRenderOrder();
       group.children.forEach(child => {
         if (child.isMesh) {
           child.renderOrder = order;
-          // 确保材质depthWrite为false，防止z-fighting
           if (child.material) {
             child.material.depthWrite = false;
             child.material.depthTest = true;
@@ -4444,7 +4457,7 @@ function endBrushStroke(cancel) {
         }
       });
     }
-    
+
     scene.add(group);
     const color = brush.color;
     const entry = {
@@ -4459,20 +4472,19 @@ function endBrushStroke(cancel) {
         isBrush: true
       }
     };
-    
+
     // 对于3D画笔，存储曲线点用于局部擦除
     if (!is2D && pts.length >= 2) {
       entry.data.curvePoints = pts.map(p => [p.x, p.y, p.z]);
       entry.data.brushRadius = brush.thickness / 2;
     }
-    
+
     state.objects.push(entry);
     updateSelBoxes();
     pushHistory();
   }
   brush.currentPoints = [];
   brush.currentMeshes = [];
-  // 清除锁定的参考平面
   state.brushLockedPlane = null;
   hideBrushRefPlane();
 }
@@ -4556,44 +4568,48 @@ function createBrushCursor(size) {
     brushCursorRing.geometry.dispose();
     brushCursorRing.material.dispose();
   }
-  // 圆圈
-  const ringGeo = new THREE.RingGeometry(size * 0.95, size, 48);
+  // 外圈（白色高对比度）
+  const ringGeo = new THREE.RingGeometry(size * 0.9, size, 48);
   const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x6ee7ff, transparent: true, opacity: 0.8,
-    side: THREE.DoubleSide, depthWrite: false
+    color: 0xffffff, transparent: true, opacity: 1.0,
+    side: THREE.DoubleSide, depthWrite: false, depthTest: false
   });
   brushCursorRing = new THREE.Mesh(ringGeo, ringMat);
   brushCursorRing.rotation.x = -Math.PI / 2;
   brushCursorRing.visible = false;
+  brushCursorRing.renderOrder = 999;
   scene.add(brushCursorRing);
-  
+
   // 内部实心圆（半透明）
-  const fillGeo = new THREE.CircleGeometry(size * 0.92, 48);
+  const fillGeo = new THREE.CircleGeometry(size * 0.85, 48);
   const fillMat = new THREE.MeshBasicMaterial({
-    color: 0x6ee7ff, transparent: true, opacity: 0.15,
-    side: THREE.DoubleSide, depthWrite: false
+    color: 0xffffff, transparent: true, opacity: 0.2,
+    side: THREE.DoubleSide, depthWrite: false, depthTest: false
   });
   const fill = new THREE.Mesh(fillGeo, fillMat);
   fill.rotation.x = -Math.PI / 2;
   fill.position.y = 0.003;
+  fill.renderOrder = 999;
   brushCursorRing.add(fill);
-  
-  // 十字线 - 水平
-  const crossLen = size * 2.5;
-  const crossThick = 0.015;
+
+  // 十字线 - 水平（白色，更粗）
+  const crossLen = size * 3;
+  const crossThick = Math.max(0.03, size * 0.08);
   const hGeo = new THREE.PlaneGeometry(crossLen, crossThick);
-  const hMat = new THREE.MeshBasicMaterial({ color: 0x6ee7ff, depthWrite: false, transparent: true, opacity: 0.9 });
+  const hMat = new THREE.MeshBasicMaterial({ color: 0xffffff, depthWrite: false, depthTest: false, transparent: true, opacity: 1.0 });
   brushCursorCrossH = new THREE.Mesh(hGeo, hMat);
   brushCursorCrossH.rotation.x = -Math.PI / 2;
   brushCursorCrossH.visible = false;
+  brushCursorCrossH.renderOrder = 999;
   scene.add(brushCursorCrossH);
-  
+
   // 十字线 - 垂直
   const vGeo = new THREE.PlaneGeometry(crossThick, crossLen);
-  const vMat = new THREE.MeshBasicMaterial({ color: 0x6ee7ff, depthWrite: false, transparent: true, opacity: 0.9 });
+  const vMat = new THREE.MeshBasicMaterial({ color: 0xffffff, depthWrite: false, depthTest: false, transparent: true, opacity: 1.0 });
   brushCursorCrossV = new THREE.Mesh(vGeo, vMat);
   brushCursorCrossV.rotation.x = -Math.PI / 2;
   brushCursorCrossV.visible = false;
+  brushCursorCrossV.renderOrder = 999;
   scene.add(brushCursorCrossV);
 }
 
@@ -4888,7 +4904,7 @@ function _eraseAtSingle(groundPoint) {
     const toDelete = [];
     const toKeep = [];
     o.mesh.updateMatrixWorld(true);
-    const children = [...o.mesh.children]; // 转换为数组以便安全迭代
+    const children = [...o.mesh.children];
     for (const child of children) {
       if (!child.isMesh) continue;
       const childWorldPos = new THREE.Vector3();
@@ -4898,19 +4914,14 @@ function _eraseAtSingle(groundPoint) {
       let hit = false;
       // === 2D画笔（data.type === 'brush2d'）子部件判定 ===
       if (o.data.type === 'brush2d') {
-        // XZ平面擦除：只用 x,z 坐标
         const gx = groundPoint.x, gz = groundPoint.z;
-        // 2D画笔收紧阈值：只使用橡皮擦的30%而非全量
         const tightR = Math.max(radius * 0.3, 0.05);
         if (geo.type === 'CircleGeometry') {
-          // 圆形子单元：XZ平面 圆-圆 相交
           const r = (params && params.radius !== undefined) ? params.radius : 0.1;
           const dx = gx - childWorldPos.x, dz = gz - childWorldPos.z;
           hit = (dx * dx + dz * dz) < (tightR + r) * (tightR + r);
         } else if (geo.type === 'BufferGeometry' && geo.attributes && geo.attributes.position) {
-          // BufferGeometry连接段：XZ平面 圆-矩形 相交
           const posAttr = geo.attributes.position;
-          // 取6个顶点的世界坐标（去重→4角）
           const pts = [];
           const seen = new Set();
           const tmp = new THREE.Vector3();
@@ -4921,11 +4932,9 @@ function _eraseAtSingle(groundPoint) {
             if (!seen.has(key)) { seen.add(key); pts.push([tmp.x, tmp.z]); }
           }
           if (pts.length >= 3) {
-            // 补全到4个点（如果有重复导致不够）
             while (pts.length < 4) pts.push(pts[0]);
             hit = _circleRectIntersectXZ(gx, gz, tightR, pts);
           } else {
-            // 退化情况：用boundingSphere兜底
             if (!geo.boundingSphere) geo.computeBoundingSphere();
             if (geo.boundingSphere) {
               const dx = gx - childWorldPos.x, dz = gz - childWorldPos.z;
@@ -4933,175 +4942,143 @@ function _eraseAtSingle(groundPoint) {
             }
           }
         } else {
-          // 其他未知2D子部件：boundingSphere兜底
           if (!geo.boundingSphere) geo.computeBoundingSphere();
           const childR = geo.boundingSphere ? geo.boundingSphere.radius : 0.1;
           const dx = gx - childWorldPos.x, dz = gz - childWorldPos.z;
           hit = (dx * dx + dz * dz) < (tightR + childR) * (tightR + childR);
         }
-      } else if (geo.type === 'SphereGeometry') {
-        // === 3D画笔端点球：不独立擦除，始终保留 ===
-        // 端点球是管道的视觉封顶，跟随管道处理（管道删除时一并清理）
-        toKeep.push(child);
-        continue;
       } else if (geo.type === 'TubeGeometry') {
-        // === 3D画笔TubeGeometry处理：使用曲线检测和局部擦除 ===
+        // === 3D画笔TubeGeometry：碰到哪擦哪 ===
         const brushCurve = child.userData.brushCurve;
         const brushRadius = child.userData.brushRadius || 0.1;
         let processed = false;
 
         if (brushCurve) {
-          // 使用高密度采样提高精度
+          // 高密度采样曲线
           const SAMPLES = 200;
-          let minDist = Infinity;
-          let hitT = 0;
+          // 标记每个采样点是否在擦除范围内
+          const erasedRanges = []; // [{start, end}] 被擦除的t区间
+          let inErase = false;
+          let rangeStart = 0;
+
           for (let i = 0; i <= SAMPLES; i++) {
             const t = i / SAMPLES;
             const curvePoint = brushCurve.getPointAt(t);
             curvePoint.applyMatrix4(child.matrixWorld);
             const dist = groundPoint.distanceTo(curvePoint);
-            if (dist < minDist) {
-              minDist = dist;
-              hitT = t;
+            const isErased = dist < brushRadius + Math.max(radius * 0.3, 0.05);
+
+            if (isErased && !inErase) {
+              rangeStart = t;
+              inErase = true;
+            } else if (!isErased && inErase) {
+              erasedRanges.push({ start: rangeStart, end: t });
+              inErase = false;
             }
           }
+          if (inErase) {
+            erasedRanges.push({ start: rangeStart, end: 1 });
+          }
 
-          // 命中判定：擦除点到管壁表面的距离
-          const hitThreshold = brushRadius + Math.max(radius * 0.3, 0.05);
-
-          if (minDist < hitThreshold) {
-            const curvePoints = child.userData.brushCurvePoints;
-            const margin = 0.05;
-
-            if (hitT < margin || hitT > 1 - margin || !curvePoints || curvePoints.length < 3) {
-              // 接近端点：缩短曲线而非删除（移除端点附近的一段点）
-              if (curvePoints && curvePoints.length > 3) {
-                let newPoints;
-                if (hitT < margin) {
-                  // 起点端：截掉前几个点
-                  const cutCount = Math.max(1, Math.floor(curvePoints.length * margin * 1.5));
-                  newPoints = curvePoints.slice(cutCount);
-                } else {
-                  // 终点端：截掉后几个点
-                  const cutCount = Math.max(1, Math.floor(curvePoints.length * margin * 1.5));
-                  newPoints = curvePoints.slice(0, curvePoints.length - cutCount);
-                }
-                if (newPoints.length >= 2) {
-                  // 重建缩短后的管段
-                  const newCurve = newPoints.length === 2
-                    ? new THREE.LineCurve3(newPoints[0].clone(), newPoints[1].clone())
-                    : new THREE.CatmullRomCurve3(newPoints.map(p => p.clone()), false, 'centripetal', 0.5);
-                  const newLen = newCurve.getLength();
-                  const newSegs = Math.max(16, Math.min(100, Math.floor(newLen / (brushRadius * 0.5))));
-                  const newGeo = new THREE.TubeGeometry(newCurve, newSegs, brushRadius, 16, false);
-                  const newMesh = new THREE.Mesh(newGeo, child.material.clone());
-                  newMesh.position.copy(child.position);
-                  newMesh.quaternion.copy(child.quaternion);
-                  newMesh.scale.copy(child.scale);
-                  newMesh.userData.brushCurve = newCurve;
-                  newMesh.userData.brushCurvePoints = newPoints.map(p => p.clone());
-                  newMesh.userData.brushRadius = brushRadius;
-                  newMesh.castShadow = true;
-                  // 移除原管段，添加缩短后的管段
-                  child.geometry.dispose();
-                  if (child.material) child.material.dispose();
-                  o.mesh.remove(child);
-                  o.mesh.add(newMesh);
-                  toKeep.push(newMesh);
-                  processed = true;
-                } else {
-                  toDelete.push(child);
-                  processed = true;
-                }
-              } else {
-                toDelete.push(child);
-                processed = true;
+          if (erasedRanges.length === 0) {
+            // 没有被擦除的部分
+            toKeep.push(child);
+            processed = true;
+          } else {
+            // 计算保留的区间（未被擦除的部分）
+            const keepRanges = [];
+            let prevEnd = 0;
+            for (const r of erasedRanges) {
+              if (r.start > prevEnd + 0.001) {
+                keepRanges.push({ start: prevEnd, end: r.start });
               }
+              prevEnd = r.end;
+            }
+            if (prevEnd < 1 - 0.001) {
+              keepRanges.push({ start: prevEnd, end: 1 });
+            }
+
+            if (keepRanges.length === 0) {
+              // 整条曲线都被擦除
+              toDelete.push(child);
+              processed = true;
             } else {
-              // 分割曲线：删除原TubeGeometry，创建两段+各自端点球
-              const splitIndex = Math.floor(hitT * (curvePoints.length - 1));
-              if (splitIndex > 1 && splitIndex < curvePoints.length - 2) {
-                // 前半段
-                const frontPoints = curvePoints.slice(0, splitIndex + 1);
-                const frontCurve = new THREE.CatmullRomCurve3(frontPoints.map(p => p.clone()), false, 'centripetal', 0.5);
-                const frontLen = frontCurve.getLength();
-                const frontSegs = Math.max(16, Math.min(100, Math.floor(frontLen / (brushRadius * 0.5))));
-                const frontGeo = new THREE.TubeGeometry(frontCurve, frontSegs, brushRadius, 16, false);
-                const frontMesh = new THREE.Mesh(frontGeo, child.material.clone());
-                frontMesh.position.copy(child.position);
-                frontMesh.quaternion.copy(child.quaternion);
-                frontMesh.scale.copy(child.scale);
-                frontMesh.userData.brushCurve = frontCurve;
-                frontMesh.userData.brushCurvePoints = frontPoints.map(p => p.clone());
-                frontMesh.userData.brushRadius = brushRadius;
-                frontMesh.castShadow = true;
-
-                // 前半段终点球
-                const frontCap = new THREE.Mesh(new THREE.SphereGeometry(brushRadius, 32, 24), child.material.clone());
-                frontCap.position.copy(frontPoints[frontPoints.length - 1]);
-                frontCap.castShadow = true;
-
-                // 后半段
-                const backPoints = curvePoints.slice(splitIndex);
-                const backCurve = new THREE.CatmullRomCurve3(backPoints.map(p => p.clone()), false, 'centripetal', 0.5);
-                const backLen = backCurve.getLength();
-                const backSegs = Math.max(16, Math.min(100, Math.floor(backLen / (brushRadius * 0.5))));
-                const backGeo = new THREE.TubeGeometry(backCurve, backSegs, brushRadius, 16, false);
-                const backMesh = new THREE.Mesh(backGeo, child.material.clone());
-                backMesh.position.copy(child.position);
-                backMesh.quaternion.copy(child.quaternion);
-                backMesh.scale.copy(child.scale);
-                backMesh.userData.brushCurve = backCurve;
-                backMesh.userData.brushCurvePoints = backPoints.map(p => p.clone());
-                backMesh.userData.brushRadius = brushRadius;
-                backMesh.castShadow = true;
-
-                // 后半段起点球
-                const backCap = new THREE.Mesh(new THREE.SphereGeometry(brushRadius, 32, 24), child.material.clone());
-                backCap.position.copy(backPoints[0]);
-                backCap.castShadow = true;
-
-                // 移除原TubeGeometry，添加两段+端点球
+              // 从curvePoints中提取保留区间的点
+              const curvePoints = child.userData.brushCurvePoints;
+              if (curvePoints && curvePoints.length >= 2) {
+                // 移除原TubeGeometry
                 child.geometry.dispose();
                 if (child.material) child.material.dispose();
                 o.mesh.remove(child);
-                o.mesh.add(frontMesh);
-                o.mesh.add(frontCap);
-                o.mesh.add(backMesh);
-                o.mesh.add(backCap);
-                toKeep.push(frontMesh, frontCap, backMesh, backCap);
+
+                // 为每个保留区间创建新的TubeGeometry
+                for (const kr of keepRanges) {
+                  const startIdx = Math.floor(kr.start * (curvePoints.length - 1));
+                  const endIdx = Math.ceil(kr.end * (curvePoints.length - 1));
+                  const segPoints = curvePoints.slice(startIdx, endIdx + 1).map(p => p.clone());
+
+                  if (segPoints.length >= 2) {
+                    let segCurve;
+                    if (segPoints.length === 2) {
+                      segCurve = new THREE.LineCurve3(segPoints[0], segPoints[1]);
+                    } else {
+                      segCurve = new THREE.CatmullRomCurve3(segPoints, false, 'centripetal', 0.5);
+                    }
+                    const segLen = segCurve.getLength();
+                    const segSegs = Math.max(16, Math.min(200, Math.floor(segLen / (brushRadius * 0.5))));
+                    const segGeo = new THREE.TubeGeometry(segCurve, segSegs, brushRadius, 16, false);
+                    const segMesh = new THREE.Mesh(segGeo, child.material ? child.material.clone() : createBrushMaterial());
+                    segMesh.position.copy(child.position);
+                    segMesh.quaternion.copy(child.quaternion);
+                    segMesh.scale.copy(child.scale);
+                    segMesh.userData.brushCurve = segCurve;
+                    segMesh.userData.brushCurvePoints = segPoints;
+                    segMesh.userData.brushRadius = brushRadius;
+                    segMesh.castShadow = true;
+                    o.mesh.add(segMesh);
+                    toKeep.push(segMesh);
+                  } else if (segPoints.length === 1) {
+                    // 只剩一个点，创建球体
+                    const sphereMesh = new THREE.Mesh(
+                      new THREE.SphereGeometry(brushRadius, 32, 24),
+                      child.material ? child.material.clone() : createBrushMaterial()
+                    );
+                    sphereMesh.position.copy(child.position).add(segPoints[0]);
+                    sphereMesh.quaternion.copy(child.quaternion);
+                    sphereMesh.scale.copy(child.scale);
+                    sphereMesh.castShadow = true;
+                    o.mesh.add(sphereMesh);
+                    toKeep.push(sphereMesh);
+                  }
+                }
                 processed = true;
               } else {
-                // 无法分割，只有当管段很短时才删除
-                const tubeLen = brushCurve.getLength();
-                if (tubeLen < radius * 2) {
+                // 没有curvePoints，无法分割，使用旧逻辑
+                if (erasedRanges.length > 0 && (erasedRanges[0].end - erasedRanges[0].start) > 0.5) {
                   toDelete.push(child);
-                  processed = true;
                 } else {
                   toKeep.push(child);
-                  processed = true;
                 }
+                processed = true;
               }
             }
-          } else {
-            // 不在擦除范围内
-            toKeep.push(child);
-            processed = true;
           }
         }
 
-        // 如果已处理，跳过后面的push逻辑
         if (processed) continue;
 
-        // 兜底：使用boundingSphere（收紧判定）
+        // 兜底
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         const childR = geo.boundingSphere ? geo.boundingSphere.radius : brushRadius;
         hit = groundPoint.distanceTo(childWorldPos) < brushRadius + Math.max(radius * 0.3, 0.05);
         if (hit) toDelete.push(child);
         else toKeep.push(child);
         continue;
+      } else if (geo.type === 'SphereGeometry') {
+        // 3D画笔单点球：碰到才擦
+        const r = (params && params.radius !== undefined) ? params.radius : 0.1;
+        hit = groundPoint.distanceTo(childWorldPos) < r + Math.max(radius * 0.3, 0.05);
       } else if (geo.type === 'CylinderGeometry') {
-        // 圆柱连接段：提取两端点（基于圆柱局部0,±h/2，考虑父矩阵world变换）
         const h = (params && params.height !== undefined) ? params.height : 0.1;
         const localA = new THREE.Vector3(0, -h / 2, 0);
         const localB = new THREE.Vector3(0,  h / 2, 0);
@@ -5110,7 +5087,6 @@ function _eraseAtSingle(groundPoint) {
         const cylR = Math.max((params && params.radiusTop) || 0, (params && params.radiusBottom) || 0);
         hit = _sphereCylinderIntersect(groundPoint, radius, worldA, worldB, cylR);
       } else {
-        // 其他：boundingSphere 兜底
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         const childR = geo.boundingSphere ? geo.boundingSphere.radius : 0.1;
         hit = groundPoint.distanceTo(childWorldPos) < radius + childR;
@@ -5118,10 +5094,7 @@ function _eraseAtSingle(groundPoint) {
       if (hit) toDelete.push(child);
       else toKeep.push(child);
     }
-    // 清理孤儿端点球：如果所有非球mesh都被删除，也删除剩余的球
-    const nonSphereKept = toKeep.filter(c => c.geometry && c.geometry.type !== 'SphereGeometry');
-    if (nonSphereKept.length === 0 && toDelete.length > 0) {
-      // 没有管段存活，删除整个对象（包括所有球）
+    if (toKeep.length === 0 && toDelete.length > 0) {
       scene.remove(o.mesh);
       disposeObject(o);
       const idx = state.objects.indexOf(o);
