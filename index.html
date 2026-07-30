@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -1139,9 +1139,58 @@ const SHAPES_3D = {
   octa:     () => seatOnGround(new THREE.OctahedronGeometry(0.85, 0)),
   dodeca:   () => seatOnGround(new THREE.DodecahedronGeometry(0.82, 0)),
   capsule:  () => seatOnGround(new THREE.CapsuleGeometry(0.45, 0.9, 8, 18)),
-  // 新增参数化 3D 图形
-  pyramid:  () => seatOnGround(new THREE.ConeGeometry(0.85, 1.4, 4)),
-  prism:    () => seatOnGround(new THREE.CylinderGeometry(0.75, 0.75, 1.4, 6)),
+  pyramid:  () => {
+    // 正四棱锥：底面正方形，侧面4个三角形
+    const geo = new THREE.BufferGeometry();
+    const h = 1.4, hw = 0.6;
+    const vertices = new Float32Array([
+      // 底面 (y=0)
+      -hw, 0, -hw,  hw, 0, -hw,  hw, 0, hw, -hw, 0, hw,
+      // 顶点 (y=h)
+      0, h, 0
+    ]);
+    const indices = [
+      // 底面
+      0, 2, 1, 0, 3, 2,
+      // 侧面
+      0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4
+    ];
+    geo.setIndex(indices);
+    geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geo.computeVertexNormals();
+    geo.computeBoundingBox();
+    return seatOnGround(geo);
+  },
+  prism:    () => {
+    // 正三棱柱
+    const geo = new THREE.BufferGeometry();
+    const h = 1.4, r = 0.55;
+    const vertices = [];
+    const indices = [];
+    // 底面三角形顶点
+    const top = [];
+    const bot = [];
+    for (let i = 0; i < 3; i++) {
+      const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
+      top.push(new THREE.Vector3(Math.cos(a) * r, h / 2, Math.sin(a) * r));
+      bot.push(new THREE.Vector3(Math.cos(a) * r, -h / 2, Math.sin(a) * r));
+    }
+    top.forEach(v => vertices.push(v.x, v.y, v.z));
+    bot.forEach(v => vertices.push(v.x, v.y, v.z));
+    // 底面
+    indices.push(0, 2, 1);
+    // 顶面
+    indices.push(3, 4, 5);
+    // 侧面
+    indices.push(0, 1, 4, 0, 4, 3);
+    indices.push(1, 2, 5, 1, 5, 4);
+    indices.push(2, 0, 3, 2, 3, 5);
+    geo.setIndex(indices);
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
+    geo.computeVertexNormals();
+    geo.computeBoundingBox();
+    return seatOnGround(geo);
+  },
   tube:     () => seatOnGround(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
     new THREE.Vector3(-0.8,0,0),new THREE.Vector3(-0.4,0.8,0),new THREE.Vector3(0.4,0.8,0),new THREE.Vector3(0.8,0,0)
   ]), 40, 0.15, 8, false)),
@@ -1149,7 +1198,11 @@ const SHAPES_3D = {
     new THREE.Vector2(0.4,0),new THREE.Vector2(0.5,0.3),new THREE.Vector2(0.3,0.7),new THREE.Vector2(0.5,1.1),new THREE.Vector2(0.4,1.5)
   ], 24)),
   tetra:    () => seatOnGround(new THREE.TetrahedronGeometry(1, 0)),
-  ring3d:   () => seatOnGround(new THREE.RingGeometry(0.35, 0.75, 32))
+  // 新增3D图形
+  barrel:   () => seatOnGround(new THREE.CylinderGeometry(0.5, 0.55, 1.2, 32)),
+  dome:     () => seatOnGround(new THREE.SphereGeometry(0.75, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2)),
+  helix:    () => seatOnGround(new THREE.TorusGeometry(0.5, 0.15, 16, 48, Math.PI * 1.5)),
+  octaPrism: () => seatOnGround(new THREE.CylinderGeometry(0.7, 0.7, 1.2, 8))
 };
 
 // 2D：使用 ShapeGeometry，旋转至 XZ 平面（地面），中心对齐
@@ -1216,6 +1269,49 @@ function makeDiamond() {
   s.moveTo(0,0.9); s.lineTo(-0.7,0); s.lineTo(0,-0.9); s.lineTo(0.7,0); s.closePath();
   return s;
 }
+function makeRightTri() {
+  const s = new THREE.Shape();
+  s.moveTo(-0.85,-0.7); s.lineTo(0.85,-0.7); s.lineTo(-0.85,0.7); s.closePath();
+  return s;
+}
+function makeArrow() {
+  const s = new THREE.Shape();
+  s.moveTo(-0.8,-0.35); s.lineTo(0.2,-0.35); s.lineTo(0.2,-0.6); s.lineTo(0.9,0); s.lineTo(0.2,0.6); s.lineTo(0.2,0.35); s.lineTo(-0.8,0.35); s.closePath();
+  return s;
+}
+function makeCrescent() {
+  const s = new THREE.Shape();
+  s.absarc(0, 0, 0.9, 0, Math.PI * 2, false);
+  const hole = new THREE.Path();
+  hole.absarc(0.25, 0, 0.75, 0, Math.PI * 2, true);
+  s.holes.push(hole);
+  return s;
+}
+function makeSemicircle() {
+  const s = new THREE.Shape();
+  s.absarc(0, 0, 0.85, Math.PI, 0, false);
+  s.closePath();
+  return s;
+}
+function makeRing2D() {
+  const s = new THREE.Shape();
+  s.absarc(0, 0, 0.75, 0, Math.PI * 2, false);
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, 0.35, 0, Math.PI * 2, true);
+  s.holes.push(hole);
+  return s;
+}
+function makeCross() {
+  const s = new THREE.Shape();
+  const t = 0.25;
+  s.moveTo(-t,-0.9); s.lineTo(t,-0.9); s.lineTo(t,-t); s.lineTo(0.9,-t); s.lineTo(0.9,t); s.lineTo(t,t); s.lineTo(t,0.9); s.lineTo(-t,0.9); s.lineTo(-t,t); s.lineTo(-0.9,t); s.lineTo(-0.9,-t); s.lineTo(-t,-t); s.closePath();
+  return s;
+}
+function makeLightning() {
+  const s = new THREE.Shape();
+  s.moveTo(0.3,-0.9); s.lineTo(-0.4,0.1); s.lineTo(0.1,0.1); s.lineTo(-0.3,0.9); s.lineTo(0.5,-0.1); s.lineTo(0,-0.1); s.closePath();
+  return s;
+}
 const SHAPES_2D = {
   square2:  () => shape2D(makeSquare()),
   circle2:  () => shape2D(makeCircle()),
@@ -1228,7 +1324,14 @@ const SHAPES_2D = {
   ellipse:  () => shape2D(makeEllipse()),
   parallelogram: () => shape2D(makeParallelogram()),
   trapezoid: () => shape2D(makeTrapezoid()),
-  diamond:  () => shape2D(makeDiamond())
+  diamond:  () => shape2D(makeDiamond()),
+  rightTri: () => shape2D(makeRightTri()),
+  arrow:    () => shape2D(makeArrow()),
+  crescent: () => shape2D(makeCrescent()),
+  semicircle: () => shape2D(makeSemicircle()),
+  ring2d:   () => shape2D(makeRing2D()),
+  cross:    () => shape2D(makeCross()),
+  lightning:() => shape2D(makeLightning())
 };
 
 const ICONS = {
@@ -1248,18 +1351,29 @@ const ICONS = {
   star:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>',
   hexagon:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7L12 2z"/></svg>',
   heart:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5 6 5c2 0 3.5 1 6 3 2.5-2 4-3 6-3 3.5 0 5 4 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>',
-  pyramid:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3L3 19h18L12 3z"/></svg>',
-  prism:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12,3 21,8 21,16 12,21 3,16 3,8"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/></svg>',
+  pyramid:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3L4 20h16L12 3z"/><rect x="5" y="15" width="14" height="5" opacity="0.3"/></svg>',
+  prism:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 3v18"/><path d="M4 7.5L12 12l8-4.5"/><path d="M12 12v9"/></svg>',
   tube:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12c0-4 3-6 8-6s8 2 8 6-3 6-8 6-8-2-8-6z"/><ellipse cx="12" cy="12" rx="4" ry="6"/></svg>',
   lathe:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2c-3 2-5 5-5 10s2 8 5 10c3-2 5-5 5-10s-2-8-5-10z"/><line x1="4" y1="12" x2="20" y2="12"/></svg>',
   tetra:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L3 20h18L12 2z"/><path d="M12 2L7 12l5 8 5-8-5-10z"/></svg>',
-  ring3d:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>',
+  barrel:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="4" rx="6" ry="2"/><path d="M6 4v16M18 4v16"/><ellipse cx="12" cy="20" rx="6" ry="2"/></svg>',
+  dome:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12c0 4.4 3.6 8 8 8s8-3.6 8-8"/><path d="M4 12h16"/></svg>',
+  helix:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6c0-2 3-4 6-4s6 2 6 4v12c0 2-3 4-6 4s-6-2-6-4"/></svg>',
+  octaPrism:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12,2 20,7 20,17 12,22 4,17 4,7"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="17" x2="20" y2="17"/></svg>',
+  // 2D shapes
   pentagon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l9 7v10l-9 6-9-6V9l9-7z"/></svg>',
   octagon:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/></svg>',
   ellipse:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="6"/></svg>',
   parallelogram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18h10l6-12H10z"/></svg>',
   trapezoid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18h16l-4-12H8z"/></svg>',
-  diamond:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L2 12l10 10 10-10z"/></svg>'
+  diamond:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L2 12l10 10 10-10z"/></svg>',
+  rightTri: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20L20 20L4 4z"/></svg>',
+  arrow:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h14M13 7l5 5-5 5"/></svg>',
+  crescent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 4a8 8 0 100 16 6 6 0 010-16z"/></svg>',
+  semicircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 20h18a9 9 0 00-18 0z"/></svg>',
+  ring2d:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>',
+  cross:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
+  lightning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L5 14h6l-2 8 8-12h-6z"/></svg>'
 };
 
 const COLORS = [0x6ee7ff, 0xc084fc, 0xfb7185, 0xf472b6, 0x34d399, 0xfbbf24, 0x60a5fa, 0xf87171, 0xa78bfa, 0xffffff, 0x222831, 0x94a3b8];
@@ -1797,8 +1911,9 @@ function refreshProps() {
   // 文本对象：可以上色，无花纹
   // 图形对象：可以上色+花纹+贴图
   // 画笔对象：可以上色+花纹，无贴图
-  const canColor = !isImage; // 图片不能上色
-  const canPattern = isShape || isBrush; // 只有图形/画笔有花纹
+  const hasTex = primary.data.image; // 是否有贴图
+  const canColor = !isImage && !hasTex; // 图片对象或有贴图的图形不能上色
+  const canPattern = (isShape || isBrush) && !hasTex; // 有贴图时禁用花纹
   const canTexture = isShape; // 只有图形有贴图
 
   // 多选时仍显示属性面板（以第一个对象为主），同时显示多选提示
@@ -2520,9 +2635,10 @@ function updateShapeButtonStates() {
 }
 function labelOf(t) {
   return ({box:'立方体',sphere:'球体',cylinder:'圆柱',cone:'圆锥',torus:'圆环',knot:'纽结',icosa:'二十面体',octa:'八面体',dodeca:'十二面体',capsule:'胶囊',
-    pyramid:'四棱锥',prism:'棱柱',tube:'管道',lathe:'回转体',tetra:'四面体',ring3d:'圆环面',
+    pyramid:'四棱锥',prism:'三棱柱',tube:'管道',lathe:'回转体',tetra:'四面体',barrel:'桶状体',dome:'半球',helix:'螺旋环',octaPrism:'八棱柱',
     square2:'方形',circle2:'圆形',triangle:'三角形',star:'星形',hexagon:'六边形',heart:'心形',
-    pentagon:'五边形',octagon:'八边形',ellipse:'椭圆',parallelogram:'平行四边形',trapezoid:'梯形',diamond:'菱形'})[t] || t;
+    pentagon:'五边形',octagon:'八边形',ellipse:'椭圆',parallelogram:'平行四边形',trapezoid:'梯形',diamond:'菱形',
+    rightTri:'直角三角形',arrow:'箭头',crescent:'月牙',semicircle:'半圆',ring2d:'圆环',cross:'十字',lightning:'闪电'})[t] || t;
 }
 
 // ============ 构建 UI ============
@@ -3121,18 +3237,40 @@ document.getElementById('brush-thick').addEventListener('input', e => {
 document.getElementById('eraser-size').addEventListener('input', e => {
   state.eraserSize = parseFloat(e.target.value);
   document.getElementById('v-eraser-size').textContent = state.eraserSize.toFixed(2);
+  // 强制重建橡皮擦光标以显示新大小
+  if (state.tool === 'eraser') {
+    if (eraserHoverMesh) {
+      scene.remove(eraserHoverMesh);
+      eraserHoverMesh.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+      eraserHoverMesh = null;
+    }
+  }
 });
 // 橡皮擦模式切换
 document.getElementById('eraser-mode-object').addEventListener('click', () => {
   state.eraserMode = 'object';
   document.getElementById('eraser-mode-object').classList.add('active');
   document.getElementById('eraser-mode-local').classList.remove('active');
+  // 重置光标以正确显示模式差异
+  if (eraserHoverMesh) {
+    scene.remove(eraserHoverMesh);
+    eraserHoverMesh.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+    eraserHoverMesh = null;
+  }
+  clearEraserHighlight();
   toast('橡皮擦模式：删除对象');
 });
 document.getElementById('eraser-mode-local').addEventListener('click', () => {
   state.eraserMode = 'local';
   document.getElementById('eraser-mode-local').classList.add('active');
   document.getElementById('eraser-mode-object').classList.remove('active');
+  // 重置光标以正确显示模式差异
+  if (eraserHoverMesh) {
+    scene.remove(eraserHoverMesh);
+    eraserHoverMesh.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+    eraserHoverMesh = null;
+  }
+  clearEraserHighlight();
   toast('橡皮擦模式：局部擦除');
 });
 document.getElementById('brush-opacity').addEventListener('input', e => {
@@ -3240,6 +3378,8 @@ function applyAppearance(o) {
           mesh.material.map = tex;
           mesh.material.color.set(0xffffff);
           mesh.material.needsUpdate = true;
+          // 如果对象之前被选中，重新应用选中效果
+          if (wasSelected) applySelectionVisual(o, true);
         });
       }
       return;
@@ -3248,9 +3388,18 @@ function applyAppearance(o) {
     if (o.data.isBrush) {
       // 画笔：直接设置颜色
       if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
-      const c = o.data.color === NO_COLOR ? 0xcccccc : o.data.color;
-      mesh.material.color.set(c);
-      mesh.material.opacity = o.data.opacity ?? 1;
+      if (o.data.color === NO_COLOR) {
+        // 无颜色：半透明效果
+        mesh.material.color.set(0xcccccc);
+        mesh.material.transparent = true;
+        mesh.material.opacity = 0.15;
+        mesh.material.depthWrite = false;
+      } else {
+        mesh.material.color.set(o.data.color);
+        mesh.material.opacity = o.data.opacity ?? 1;
+        mesh.material.transparent = (o.data.opacity ?? 1) < 1;
+        mesh.material.depthWrite = !mesh.material.transparent;
+      }
       mesh.material.needsUpdate = true;
       return;
     }
@@ -3259,24 +3408,25 @@ function applyAppearance(o) {
     const hasTex = !!o.data.image;
     const hasPat = o.data.pattern && o.data.pattern !== '纯色';
     const isNoColor = o.data.color === NO_COLOR;
-    const effectiveColor = isNoColor ? 0xcccccc : o.data.color;
     
     // 设置基础材质参数（确保3D光照下颜色正确显示）
     mesh.material.needsUpdate = true;
     
     if (hasTex) {
-      // 贴图模式：颜色作为 tint 叠加
+      // 贴图模式：只显示贴图，不做颜色 tint 叠加
       if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
-      mesh.material.color.set(effectiveColor);
+      mesh.material.color.set(0xffffff); // 白色保持贴图原色
       imageTexture(o.data.image).then(({ tex }) => {
         mesh.material.map = tex;
-        mesh.material.color.set(effectiveColor);
+        mesh.material.color.set(0xffffff);
         mesh.material.needsUpdate = true;
+        // 如果对象之前被选中，重新应用选中效果
+        if (wasSelected) applySelectionVisual(o, true);
       });
     } else if (hasPat) {
       // 花纹模式：重新生成花纹纹理（基于当前颜色）
       if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
-      // 对于深色/无颜色，生成更明显的花纹
+      const effectiveColor = isNoColor ? 0xcccccc : o.data.color;
       const patColor = isNoColor ? 0xcccccc : effectiveColor;
       mesh.material.map = patternTexture(o.data.pattern, patColor);
       mesh.material.color.set(0xffffff); // 白色避免与花纹颜色叠加
@@ -3284,7 +3434,18 @@ function applyAppearance(o) {
     } else {
       // 纯色模式
       if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
-      mesh.material.color.set(effectiveColor);
+      if (isNoColor) {
+        // 无颜色：透明效果，仍可点击
+        mesh.material.color.set(0xcccccc);
+        mesh.material.transparent = true;
+        mesh.material.opacity = 0.15;
+        mesh.material.depthWrite = false;
+      } else {
+        mesh.material.color.set(o.data.color);
+        mesh.material.transparent = false;
+        mesh.material.opacity = 1;
+        mesh.material.depthWrite = true;
+      }
       mesh.material.needsUpdate = true;
     }
   };
@@ -3295,10 +3456,18 @@ function applyAppearance(o) {
     applyToMesh(m);
   }
   
-  // 如果之前被选中，重新应用选中效果
-  if (wasSelected) {
+  // 如果之前被选中，重新应用选中效果（适用于同步操作）
+  // 注意：对于异步贴图加载，会在 then 回调中重新应用
+  if (wasSelected && !hasAsyncTexture(o)) {
     applySelectionVisual(o, true);
   }
+}
+
+// 辅助函数：判断是否有异步贴图需要加载
+function hasAsyncTexture(o) {
+  if (o.data.kind === 'image' && o.data.image) return true;
+  if ((o.data.kind === '3d' || o.data.kind === '2d') && o.data.image) return true;
+  return false;
 }
 
 // 重建文本几何与纹理（字号/字体/方向/内容变化时调用）
@@ -3631,6 +3800,7 @@ document.getElementById('file-img').addEventListener('change', (e) => {
       applyAppearance(o);
     });
     pushHistory(); toast('已应用图片贴图');
+    refreshProps(); // 立即更新属性面板
   };
   r.readAsDataURL(f); e.target.value = '';
 });
@@ -3643,6 +3813,7 @@ document.getElementById('clear-tex').addEventListener('click', () => {
     applyAppearance(o);
   });
   pushHistory(); toast('已清除贴图');
+  refreshProps(); // 立即更新属性面板
 });
 // 编辑文本（仅主选中文本）
 document.getElementById('edit-text').addEventListener('click', async () => {
@@ -4194,15 +4365,24 @@ function hideEraserRing() {
 
 function updateEraserRing(groundPoint, normal) {
   const size = state.eraserSize;
+  // 检查是否需要重建光标（大小变化时）
   if (!eraserHoverMesh) {
     createEraserRing(size);
   } else {
-    const ringChild = eraserHoverMesh.children[0];
-    if (ringChild && ringChild.geometry && ringChild.geometry.parameters) {
-      const currentOuter = ringChild.geometry.parameters.outerRadius;
-      if (Math.abs(currentOuter - size) > 0.02) {
-        createEraserRing(size);
+    // 可靠地检测大小变化：检查外圈几何体参数
+    let needsRebuild = false;
+    eraserHoverMesh.children.forEach(child => {
+      if (child.geometry && child.geometry.parameters && child.geometry.parameters.outerRadius !== undefined) {
+        if (Math.abs(child.geometry.parameters.outerRadius - size) > 0.05) {
+          needsRebuild = true;
+        }
       }
+    });
+    if (needsRebuild) {
+      scene.remove(eraserHoverMesh);
+      eraserHoverMesh.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+      eraserHoverMesh = null;
+      createEraserRing(size);
     }
   }
   eraserHoverMesh.position.copy(groundPoint);
@@ -4218,11 +4398,16 @@ function updateEraserRing(groundPoint, normal) {
     eraserHoverMesh.quaternion.identity();
   }
   
-  // 检测悬浮对象并高亮
-  const hovered = findObjectsInRadius(groundPoint, size);
-  if (hovered.length > 0) {
-    setEraserHighlight(hovered[0]);
+  // 只有"删除对象"模式才高亮；"局部擦除"模式不高亮，直接删除
+  if (state.eraserMode === 'object') {
+    const hovered = findObjectsInRadius(groundPoint, size);
+    if (hovered.length > 0) {
+      setEraserHighlight(hovered[0]);
+    } else {
+      clearEraserHighlight();
+    }
   } else {
+    // 局部擦除模式：不高亮对象
     clearEraserHighlight();
   }
 }
@@ -4461,11 +4646,69 @@ let _eraserDirty = false;
 function eraseAt(groundPoint) {
   const radius = state.eraserSize;
   
-  // 检查是否有非画笔对象（图形/文字/图片）在擦除范围内
+  // 收集擦除范围内的所有非画笔对象
   const nonBrushObjects = findObjectsInRadius(groundPoint, radius).filter(o => !o.data.isBrush);
-  if (nonBrushObjects.length > 0) {
-    // 非画笔对象：直接删除整个对象（与删除对象模式相同）
-    const o = nonBrushObjects[0];
+  
+  if (state.eraserMode === 'local') {
+    // 局部擦除模式：
+    // 1. 非画笔对象（图形/文字/图片）在范围内→直接删除
+    // 2. 画笔痕迹→部分擦除
+    let nonBrushDeleted = false;
+    nonBrushObjects.forEach(o => {
+      scene.remove(o.mesh);
+      const idx = state.objects.indexOf(o);
+      if (idx >= 0) state.objects.splice(idx, 1);
+      const sIdx = state.selectedList.indexOf(o);
+      if (sIdx >= 0) state.selectedList.splice(sIdx, 1);
+      if (o._eraserOrigMaterials) {
+        o._eraserOrigMaterials.forEach(m => m.dispose());
+        o._eraserOrigMaterials = null;
+      }
+      if (o._selectionOrigMaterials) {
+        o._selectionOrigMaterials.forEach(m => m.dispose());
+        o._selectionOrigMaterials = null;
+      }
+      disposeObject(o);
+      nonBrushDeleted = true;
+    });
+    
+    // 2. 画笔痕迹部分擦除（路径插值）
+    let brushDeleted = false;
+    const gp = groundPoint;
+    if (_lastErasePoint) {
+      const segLen = gp.distanceTo(_lastErasePoint);
+      const step = Math.max(0.02, radius / 3);
+      const steps = Math.ceil(segLen / step);
+      for (let i = 0; i <= steps; i++) {
+        const t = steps === 0 ? 1 : (i / steps);
+        const px = _lastErasePoint.x + (gp.x - _lastErasePoint.x) * t;
+        const py = _lastErasePoint.y + (gp.y - _lastErasePoint.y) * t;
+        const pz = _lastErasePoint.z + (gp.z - _lastErasePoint.z) * t;
+        const pt = new THREE.Vector3(px, py, pz);
+        if (_eraseAtSingle(pt)) brushDeleted = true;
+      }
+    } else {
+      if (_eraseAtSingle(gp)) brushDeleted = true;
+    }
+    _lastErasePoint = gp.clone();
+    
+    if (nonBrushDeleted || brushDeleted) {
+      clearEraserHighlight();
+      if (state.pointerDown) {
+        _eraserDirty = true;  // 拖拽中：延迟保存
+      } else {
+        updateSelBoxes();
+        refreshProps();
+        pushHistory();
+      }
+    }
+    return;
+  }
+  
+  // 删除对象模式：删除范围内最近的一个对象
+  const nearest = findObjectsInRadius(groundPoint, radius);
+  if (nearest.length > 0) {
+    const o = nearest[0];
     scene.remove(o.mesh);
     const idx = state.objects.indexOf(o);
     if (idx >= 0) state.objects.splice(idx, 1);
@@ -4484,61 +4727,8 @@ function eraseAt(groundPoint) {
     updateSelBoxes();
     refreshProps();
     pushHistory();
-    _lastErasePoint = groundPoint.clone();
-    return;
   }
-  
-  // 对象删除模式：直接处理（不做插值），每次删除立即记录历史
-  if (state.eraserMode !== 'local') {
-    const nearest = findObjectsInRadius(groundPoint, radius);
-    if (nearest.length > 0) {
-      const o = nearest[0];
-      scene.remove(o.mesh);
-      const idx = state.objects.indexOf(o);
-      if (idx >= 0) state.objects.splice(idx, 1);
-      const sIdx = state.selectedList.indexOf(o);
-      if (sIdx >= 0) state.selectedList.splice(sIdx, 1);
-      if (o._eraserOrigMaterials) {
-        o._eraserOrigMaterials.forEach(m => m.dispose());
-        o._eraserOrigMaterials = null;
-      }
-      if (o._selectionOrigMaterials) {
-        o._selectionOrigMaterials.forEach(m => m.dispose());
-        o._selectionOrigMaterials = null;
-      }
-      disposeObject(o);
-      clearEraserHighlight();
-      updateSelBoxes();
-      refreshProps();
-      pushHistory();
-    }
-    _lastErasePoint = groundPoint.clone();
-    return;
-  }
-  // 局部擦除模式（仅画笔笔迹）：路径插值，确保长按所经之处必擦除
-  let anyDeleted = false;
-  const gp = groundPoint;
-  if (_lastErasePoint) {
-    const segLen = gp.distanceTo(_lastErasePoint);
-    // 按橡皮擦半径1/3做步长插值，保证快速移动也无残留
-    const step = Math.max(0.02, radius / 3);
-    const steps = Math.ceil(segLen / step);
-    for (let i = 0; i <= steps; i++) {
-      const t = steps === 0 ? 1 : (i / steps);
-      const px = _lastErasePoint.x + (gp.x - _lastErasePoint.x) * t;
-      const py = _lastErasePoint.y + (gp.y - _lastErasePoint.y) * t;
-      const pz = _lastErasePoint.z + (gp.z - _lastErasePoint.z) * t;
-      const pt = new THREE.Vector3(px, py, pz);
-      if (_eraseAtSingle(pt)) anyDeleted = true;
-    }
-  } else {
-    if (_eraseAtSingle(gp)) anyDeleted = true;
-  }
-  _lastErasePoint = gp.clone();
-  if (anyDeleted) {
-    clearEraserHighlight();
-    _eraserDirty = true;  // 标记脏，pointerup时统一pushHistory和UI更新
-  }
+  _lastErasePoint = groundPoint.clone();
 }
 
 // ============ 图形参数面板 ============
@@ -4579,7 +4769,7 @@ const SHAPE_PARAMS = {
     ]
   },
   prism: {
-    label: '棱柱',
+    label: '三棱柱',
     fields: [
       { key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.05 },
       { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 },
@@ -4600,18 +4790,11 @@ const SHAPE_PARAMS = {
       { key: 'tube', label: '管半径', min: 0.02, max: 2, step: 0.02 }
     ]
   },
-  torusKnot: {
-    label: '环结',
+  knot: {
+    label: '纽结',
     fields: [
       { key: 'radius', label: '半径', min: 0.1, max: 3, step: 0.05 },
       { key: 'tube', label: '管粗', min: 0.02, max: 1, step: 0.02 }
-    ]
-  },
-  ring3d: {
-    label: '圆环面',
-    fields: [
-      { key: 'innerRadius', label: '内半径', min: 0.05, max: 3, step: 0.05 },
-      { key: 'outerRadius', label: '外半径', min: 0.1, max: 5, step: 0.05 }
     ]
   },
   tube: {
@@ -4702,6 +4885,67 @@ const SHAPE_PARAMS = {
       { key: 'width', label: '宽', min: 0.2, max: 10, step: 0.1 },
       { key: 'height', label: '高', min: 0.2, max: 10, step: 0.1 }
     ]
+  },
+  // 新增3D图形
+  barrel: {
+    label: '桶状体',
+    fields: [
+      { key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
+    ]
+  },
+  dome: {
+    label: '半球',
+    fields: [{ key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.1 }]
+  },
+  helix: {
+    label: '螺旋环',
+    fields: [
+      { key: 'radius', label: '主半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'tube', label: '管半径', min: 0.02, max: 1, step: 0.02 }
+    ]
+  },
+  octaPrism: {
+    label: '八棱柱',
+    fields: [
+      { key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
+    ]
+  },
+  // 新增2D图形
+  rightTri: {
+    label: '直角三角形',
+    fields: [
+      { key: 'base', label: '底边长', min: 0.3, max: 10, step: 0.1 },
+      { key: 'height', label: '高', min: 0.3, max: 10, step: 0.1 }
+    ]
+  },
+  arrow: {
+    label: '箭头',
+    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+  },
+  crescent: {
+    label: '月牙',
+    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+  },
+  semicircle: {
+    label: '半圆',
+    fields: [{ key: 'radius', label: '半径', min: 0.2, max: 5, step: 0.1 }]
+  },
+  ring2d: {
+    label: '圆环',
+    fields: [
+      { key: 'innerRadius', label: '内半径', min: 0.05, max: 3, step: 0.05 },
+      { key: 'outerRadius', label: '外半径', min: 0.1, max: 5, step: 0.05 }
+    ]
+  },
+  cross: {
+    label: '十字',
+    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+  },
+  lightning: {
+    label: '闪电',
+    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
   }
 };
 
@@ -4897,13 +5141,16 @@ function getShapeDefaults(type) {
     case 'capsule': defs.radius = 0.45; defs.length = 0.9; break;
     case 'torus': defs.radius = 0.6; defs.tube = 0.22; break;
     case 'knot': defs.radius = 0.55; defs.tube = 0.18; break;
-    case 'ring3d': defs.innerRadius = 0.35; defs.outerRadius = 0.75; break;
     case 'tube': defs.radius = 0.15; break;
     case 'lathe': defs.segments = 24; break;
     case 'tetra': defs.radius = 1; break;
     case 'octa': defs.radius = 0.85; break;
     case 'dodeca': defs.radius = 0.82; break;
     case 'icosa': defs.radius = 0.85; break;
+    case 'barrel': defs.radius = 0.55; defs.height = 1.2; break;
+    case 'dome': defs.radius = 0.75; break;
+    case 'helix': defs.radius = 0.5; defs.tube = 0.15; break;
+    case 'octaPrism': defs.radius = 0.7; defs.height = 1.2; break;
     case 'square2': defs.width = defs.height = 1.4; break;
     case 'circle2': defs.radius = 0.9; break;
     case 'ellipse': defs.radiusX = 0.9; defs.radiusY = 0.65; break;
@@ -4916,6 +5163,13 @@ function getShapeDefaults(type) {
     case 'parallelogram': defs.width = 1.4; defs.height = 1.4; defs.skew = 0; break;
     case 'trapezoid': defs.bottomWidth = 1.7; defs.topWidth = 1.1; defs.height = 1.4; break;
     case 'diamond': defs.width = 1.6; defs.height = 1.8; break;
+    case 'rightTri': defs.base = 1.8; defs.height = 1.8; break;
+    case 'arrow': defs.scale = 1; break;
+    case 'crescent': defs.scale = 1; break;
+    case 'semicircle': defs.radius = 0.9; break;
+    case 'ring2d': defs.innerRadius = 0.35; defs.outerRadius = 0.75; break;
+    case 'cross': defs.scale = 1; break;
+    case 'lightning': defs.scale = 1; break;
   }
   return defs;
 }
@@ -4969,18 +5223,45 @@ function buildParametricGeo3D(type, data) {
       return new THREE.CylinderGeometry(data.radiusBottom || 0.6, data.radiusTop || 0.6, data.height || 1.4, 40);
     case 'cone':
       return new THREE.ConeGeometry(data.radius || 0.75, data.height || 1.5, 40);
-    case 'pyramid':
-      return new THREE.ConeGeometry(data.radius || 0.85, data.height || 1.4, data.radialSegments || 4);
-    case 'prism':
-      return new THREE.CylinderGeometry(data.radius || 0.75, data.radius || 0.75, data.height || 1.4, data.radialSegments || 6);
+    case 'pyramid': {
+      const geo = new THREE.BufferGeometry();
+      const h = data.height || 1.4, hw = (data.radius || 0.85) * 0.75;
+      const vertices = new Float32Array([
+        -hw, 0, -hw,  hw, 0, -hw,  hw, 0, hw, -hw, 0, hw,
+        0, h, 0
+      ]);
+      const indices = [0,2,1, 0,3,2, 0,1,4, 1,2,4, 2,3,4, 3,0,4];
+      geo.setIndex(indices);
+      geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      geo.computeVertexNormals();
+      return geo;
+    }
+    case 'prism': {
+      const geo = new THREE.BufferGeometry();
+      const h = data.height || 1.4, r = data.radius || 0.75;
+      const vertices = [];
+      const indices = [];
+      for (let i = 0; i < 3; i++) {
+        const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
+        vertices.push(Math.cos(a) * r, h / 2, Math.sin(a) * r);
+        vertices.push(Math.cos(a) * r, -h / 2, Math.sin(a) * r);
+      }
+      indices.push(0, 4, 2, 2, 4, 1, 1, 4, 0);
+      indices.push(3, 5, 1, 1, 5, 4, 4, 5, 0);
+      indices.push(0, 1, 3, 1, 5, 3);
+      indices.push(1, 2, 5, 2, 3, 5);
+      indices.push(2, 0, 3, 2, 3, 5);
+      geo.setIndex(indices);
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
+      geo.computeVertexNormals();
+      return geo;
+    }
     case 'capsule':
       return new THREE.CapsuleGeometry(data.radius || 0.45, data.length || 0.9, 8, 18);
     case 'torus':
       return new THREE.TorusGeometry(data.radius || 0.6, data.tube || 0.22, 20, 56);
     case 'knot':
       return new THREE.TorusKnotGeometry(data.radius || 0.55, data.tube || 0.18, 110, 18);
-    case 'ring3d':
-      return new THREE.RingGeometry(data.innerRadius || 0.35, data.outerRadius || 0.75, 32);
     case 'tetra':
       return new THREE.TetrahedronGeometry(data.radius || 1, 0);
     case 'octa':
@@ -5004,6 +5285,14 @@ function buildParametricGeo3D(type, data) {
       ];
       return new THREE.LatheGeometry(points, data.segments || 24);
     }
+    case 'barrel':
+      return new THREE.CylinderGeometry((data.radius || 0.55) * 0.9, data.radius || 0.55, data.height || 1.2, 32);
+    case 'dome':
+      return new THREE.SphereGeometry(data.radius || 0.75, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    case 'helix':
+      return new THREE.TorusGeometry(data.radius || 0.5, data.tube || 0.15, 16, 48, Math.PI * 1.5);
+    case 'octaPrism':
+      return new THREE.CylinderGeometry(data.radius || 0.7, data.radius || 0.7, data.height || 1.2, 8);
     default:
       return new THREE.BoxGeometry(1,1,1);
   }
@@ -5085,6 +5374,71 @@ function buildParametricGeo2D(type, data) {
     }
     case 'diamond': {
       s.moveTo(0,h/2); s.lineTo(-w/2,0); s.lineTo(0,-h/2); s.lineTo(w/2,0); s.closePath();
+      break;
+    }
+    case 'rightTri': {
+      const b = data.base || 1.8;
+      const ht = data.height || 1.8;
+      s.moveTo(-b/2, -ht/2); s.lineTo(b/2, -ht/2); s.lineTo(-b/2, ht/2); s.closePath();
+      break;
+    }
+    case 'arrow': {
+      const sc = data.scale || 1;
+      s.moveTo(-0.5*sc, -0.2*sc);
+      s.lineTo(0.1*sc, -0.2*sc);
+      s.lineTo(0.1*sc, -0.5*sc);
+      s.lineTo(0.7*sc, 0);
+      s.lineTo(0.1*sc, 0.5*sc);
+      s.lineTo(0.1*sc, 0.2*sc);
+      s.lineTo(-0.5*sc, 0.2*sc);
+      s.closePath();
+      break;
+    }
+    case 'crescent': {
+      const sc = data.scale || 1;
+      const path = new THREE.Path();
+      path.absarc(0, 0, 0.7*sc, -0.4*Math.PI, 0.4*Math.PI, false);
+      path.absarc(0.25*sc, 0, 0.55*sc, 0.4*Math.PI, -0.4*Math.PI, true);
+      s.holes.push(path);
+      s.moveTo(Math.cos(-0.4*Math.PI)*0.7*sc, Math.sin(-0.4*Math.PI)*0.7*sc);
+      s.absarc(0, 0, 0.7*sc, -0.4*Math.PI, 0.4*Math.PI, false);
+      break;
+    }
+    case 'semicircle': {
+      const r = data.radius || 0.9;
+      s.moveTo(-r, 0);
+      s.absarc(0, 0, r, Math.PI, 0, false);
+      s.closePath();
+      break;
+    }
+    case 'ring2d': {
+      const ir = data.innerRadius || 0.35;
+      const or2 = data.outerRadius || 0.75;
+      s.absarc(0, 0, or2, 0, Math.PI * 2, false);
+      const hole = new THREE.Path();
+      hole.absarc(0, 0, ir, 0, Math.PI * 2, true);
+      s.holes.push(hole);
+      break;
+    }
+    case 'cross': {
+      const sc = data.scale || 1;
+      const arm = 0.2*sc;
+      const len = 0.9*sc;
+      s.moveTo(-arm, -len/2); s.lineTo(arm, -len/2); s.lineTo(arm, -arm); s.lineTo(len/2, -arm);
+      s.lineTo(len/2, arm); s.lineTo(arm, arm); s.lineTo(arm, len/2); s.lineTo(-arm, len/2);
+      s.lineTo(-arm, arm); s.lineTo(-len/2, arm); s.lineTo(-len/2, -arm); s.lineTo(-arm, -arm);
+      s.closePath();
+      break;
+    }
+    case 'lightning': {
+      const sc = data.scale || 1;
+      s.moveTo(-0.15*sc, 0.7*sc);
+      s.lineTo(0.25*sc, 0.1*sc);
+      s.lineTo(0.05*sc, 0.1*sc);
+      s.lineTo(0.2*sc, -0.7*sc);
+      s.lineTo(-0.25*sc, -0.05*sc);
+      s.lineTo(-0.05*sc, -0.05*sc);
+      s.closePath();
       break;
     }
   }
