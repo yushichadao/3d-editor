@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -578,7 +578,14 @@
     <h3>画笔属性</h3>
     <div class="ctrl-row">
       <div class="ctrl-label"><span>画笔颜色</span></div>
-      <div class="color-row" id="brush-color-row"></div>
+      <div class="color-row" id="brush-color-row" style="pointer-events:auto;"></div>
+    </div>
+    <div class="ctrl-row">
+      <div class="ctrl-label"><span>自定义</span></div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="color" id="brush-custom-color" value="#6ee7ff" style="width:36px;height:28px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
+        <span id="brush-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">6ee7ff</span>
+      </div>
     </div>
     <div class="ctrl-row">
       <div class="ctrl-label"><span>画笔粗细</span><span id="v-brush-thick">0.5</span></div>
@@ -666,17 +673,13 @@
         <input type="number" id="picker-b" min="0" max="255" value="255" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px;">
       </div>
     </div>
-    <!-- 预览 + 放大镜 -->
+    <!-- 预览 + 吸取 -->
     <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px;">
       <div>
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">预览</div>
         <div id="picker-preview" style="width:50px; height:50px; border-radius:8px; border:2px solid var(--border); background:#6ee7ff;"></div>
       </div>
-      <div style="flex:1;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">放大镜</div>
-        <canvas id="picker-magnifier" width="120" height="120" style="width:100px; height:100px; border-radius:8px; border:2px solid var(--border); display:block; background:#1a1a2e;"></canvas>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:4px;">
+      <div style="display:flex; flex-direction:column; gap:4px; margin-left:auto;">
         <button class="top-btn" id="picker-eyedropper" style="font-size:11px; padding:4px 8px;" title="使用屏幕取色器">
           <span>吸取</span>
         </button>
@@ -2454,7 +2457,6 @@ let pickerState = { h: 185, s: 57, v: 100, r: 110, g: 231, b: 255 };
 const pickerModal = document.getElementById('color-picker-modal');
 const svCanvas = document.getElementById('picker-sv-canvas');
 const hueCanvas = document.getElementById('picker-hue-canvas');
-const magCanvas = document.getElementById('picker-magnifier');
 const pickerPreview = document.getElementById('picker-preview');
 const pickerHex = document.getElementById('picker-hex');
 const pickerR = document.getElementById('picker-r');
@@ -2619,43 +2621,6 @@ COLORS.forEach(c => {
   pickerPresetRow.appendChild(dot);
 });
 
-// 放大镜：鼠标在three-canvas上移动时采样像素
-let magActive = false;
-magCanvas.addEventListener('pointerenter', () => { magActive = true; });
-magCanvas.addEventListener('pointerleave', () => { magActive = false; });
-// 全局鼠标移动时更新放大镜
-document.addEventListener('pointermove', (e) => {
-  if (!pickerModal.classList.contains('show')) return;
-  const canvas3d = document.getElementById('three-canvas');
-  const rect = canvas3d.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  if (mx < 0 || my < 0 || mx >= rect.width || my >= rect.height) return;
-  const ctx = magCanvas.getContext('2d');
-  ctx.imageSmoothingEnabled = false;
-  ctx.clearRect(0, 0, magCanvas.width, magCanvas.height);
-  // 从 WebGL canvas 采样
-  try {
-    const glCtx = canvas3d.getContext('webgl2') || canvas3d.getContext('webgl');
-    if (glCtx) {
-      // 使用 drawImage 从 canvas 截取区域
-      const sx = Math.max(0, Math.min(rect.width - 11, mx - 5));
-      const sy = Math.max(0, Math.min(rect.height - 11, my - 5));
-      ctx.drawImage(canvas3d, sx, sy, 11, 11, 0, 0, magCanvas.width, magCanvas.height);
-    }
-  } catch(err) { /* 忽略采样错误 */ }
-});
-// 点击放大镜选取颜色
-magCanvas.addEventListener('click', () => {
-  const ctx = magCanvas.getContext('2d');
-  const px = ctx.getImageData(magCanvas.width/2, magCanvas.height/2, 1, 1).data;
-  if (px[3] > 0) {
-    const [h,s,v] = rgbToHsv(px[0], px[1], px[2]);
-    pickerState.h = h; pickerState.s = s; pickerState.v = v;
-    updatePickerDisplay();
-  }
-});
-
 // EyeDropper API（屏幕取色器）
 document.getElementById('picker-eyedropper').addEventListener('click', async () => {
   if (window.EyeDropper) {
@@ -2670,7 +2635,7 @@ document.getElementById('picker-eyedropper').addEventListener('click', async () 
       }
     } catch(err) { /* 用户取消 */ }
   } else {
-    toast('当前浏览器不支持屏幕取色，请使用放大镜选取');
+    toast('当前浏览器不支持屏幕取色，请手动输入颜色值');
   }
 });
 
@@ -2741,17 +2706,35 @@ document.getElementById('brush-gap').addEventListener('input', e => {
 
 // 画笔颜色选择 - 在画笔属性面板中独立显示
 const brushColorRow = document.getElementById('brush-color-row');
+const brushCustomColor = document.getElementById('brush-custom-color');
+const brushCustomHex = document.getElementById('brush-custom-hex');
+function setBrushColor(numColor) {
+  brush.color = numColor;
+  const hex = '#' + numColor.toString(16).padStart(6,'0');
+  brushCustomColor.value = hex;
+  brushCustomHex.textContent = hex.substring(1);
+  document.querySelectorAll('#brush-color-row .color-dot').forEach(d => {
+    d.classList.toggle('active', parseInt(d.dataset.c) === numColor);
+  });
+}
 COLORS.forEach(c => {
   const dot = document.createElement('div');
   dot.className = 'color-dot'; dot.dataset.c = c;
   dot.style.background = '#' + c.toString(16).padStart(6,'0');
   if (c === brush.color) dot.classList.add('active');
-  dot.addEventListener('click', () => {
-    brush.color = c;
-    document.querySelectorAll('#brush-color-row .color-dot').forEach(d => d.classList.toggle('active', parseInt(d.dataset.c) === c));
+  dot.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setBrushColor(c);
   });
   brushColorRow.appendChild(dot);
 });
+// 自定义颜色拾取
+brushCustomColor.addEventListener('input', (e) => {
+  const hex = e.target.value;
+  const rgb = hexToRgb(hex);
+  if (rgb) setBrushColor((rgb[0]<<16)|(rgb[1]<<8)|rgb[2]);
+});
+brushCustomColor.addEventListener('click', (e) => e.stopPropagation());
 
 // 画笔纹路选择（已移除纹路栏，保留代码兼容性）
 const brushPatRow = document.getElementById('brush-pattern-row');
