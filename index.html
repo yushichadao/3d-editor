@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -477,6 +477,13 @@
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-x" min="-180" max="180" step="0.01" value="0" style="flex:1;">
           <input type="number" id="input-rx" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>侧向旋转</span></div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input type="range" id="r-z" min="-180" max="180" step="0.01" value="0" style="flex:1;">
+          <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
       <div class="ctrl-row">
@@ -1076,30 +1083,50 @@ transformCtrl.addEventListener('objectChange', () => {
     const maxR = Math.max(rx, ry, rz);
     s.set(scaleInitial.x * maxR, scaleInitial.y * maxR, scaleInitial.z * maxR);
   }
-  // 多选代理变换：将delta应用到所有选中对象
+  // 多选代理变换：使用矩阵变换正确处理3D旋转和缩放
   if (transformCtrl.object === multiTransformProxy && _multiDragStart) {
-    const dPos = new THREE.Vector3().subVectors(multiTransformProxy.position, _multiDragStart.pos);
-    const dRotY = multiTransformProxy.rotation.y - _multiDragStart.rot.y;
-    const dScale = multiTransformProxy.scale.x / _multiDragStart.scale.x;
+    // 计算代理的初始世界变换矩阵的逆
+    const proxyStartMatrix = new THREE.Matrix4().compose(
+      _multiDragStart.pos,
+      new THREE.Quaternion().setFromEuler(_multiDragStart.rot),
+      _multiDragStart.scale
+    );
+    const proxyStartInverse = proxyStartMatrix.clone().invert();
+    
+    // 计算代理当前的世界变换矩阵
+    const proxyCurrentMatrix = new THREE.Matrix4().compose(
+      multiTransformProxy.position,
+      multiTransformProxy.quaternion.clone(),
+      multiTransformProxy.scale
+    );
+    
+    // 计算变换delta矩阵：proxyCurrent * proxyStartInverse
+    const deltaMatrix = proxyCurrentMatrix.clone().multiply(proxyStartInverse);
+    
     _multiObjStart.forEach(item => {
       const m = item.obj.mesh;
-      // 平移
-      m.position.copy(item.pos).add(dPos);
-      // 旋转：围绕集体中心旋转
-      const offset = new THREE.Vector3().subVectors(item.pos, _multiDragStart.pos);
-      const cos = Math.cos(dRotY), sin = Math.sin(dRotY);
-      const rotX = offset.x * cos - offset.z * sin;
-      const rotZ = offset.x * sin + offset.z * cos;
-      m.position.x = _multiDragStart.pos.x + rotX + dPos.x;
-      m.position.z = _multiDragStart.pos.z + rotZ + dPos.z;
-      m.rotation.y = item.rot.y + dRotY;
-      // 等比缩放：围绕集体中心缩放
-      if (dScale !== 1) {
-        const sox = (item.pos.x - _multiDragStart.pos.x) * dScale;
-        const soz = (item.pos.z - _multiDragStart.pos.z) * dScale;
-        m.position.x = _multiDragStart.pos.x + sox + dPos.x;
-        m.position.z = _multiDragStart.pos.z + soz + dPos.z;
-        m.scale.setScalar(item.scale.x * dScale);
+      // 计算对象初始世界变换
+      const objStartMatrix = new THREE.Matrix4().compose(
+        item.pos,
+        new THREE.Quaternion().setFromEuler(item.rot),
+        item.scale
+      );
+      // 应用delta矩阵
+      const newWorldMatrix = deltaMatrix.clone().multiply(objStartMatrix);
+      // 分解新的世界变换为位置、旋转和缩放
+      const newPos = new THREE.Vector3();
+      const newQuat = new THREE.Quaternion();
+      const newScale = new THREE.Vector3();
+      newWorldMatrix.decompose(newPos, newQuat, newScale);
+      
+      // 应用新变换
+      m.position.copy(newPos);
+      m.quaternion.copy(newQuat);
+      m.scale.copy(newScale);
+      
+      // 更新对象数据
+      if (item.obj.data) {
+        item.obj.data.opacity = item.obj.data.opacity; // 保持不变
       }
     });
   }
@@ -2038,7 +2065,7 @@ function syncProps(obj) {
   const rx = Math.round(m.position.x * 100) / 100;
   const rz = Math.round(m.position.z * 100) / 100;
   let ry;
-  let rotY, rotX;
+  let rotY, rotX, rotZ;
   
   if (obj.data.kind === 'image') {
     // 图片现在支持3D空间移动，显示实际Y坐标
@@ -2049,6 +2076,9 @@ function syncProps(obj) {
     rotY = (m.rotation.y * 180 / Math.PI) % 360;
     if (rotY > 180) rotY -= 360; if (rotY < -180) rotY += 360;
     rotY = Math.round(rotY * 100) / 100;
+    rotZ = (m.rotation.z * 180 / Math.PI) % 360;
+    if (rotZ > 180) rotZ -= 360; if (rotZ < -180) rotZ += 360;
+    rotZ = Math.round(rotZ * 100) / 100;
   } else {
     const halfH = obj.data.halfH || 0;
     const baseY = m.position.y - halfH * m.scale.y;
@@ -2059,6 +2089,9 @@ function syncProps(obj) {
     rotX = (m.rotation.x * 180 / Math.PI) % 360;
     if (rotX > 180) rotX -= 360; if (rotX < -180) rotX += 360;
     rotX = Math.round(rotX * 100) / 100;
+    rotZ = (m.rotation.z * 180 / Math.PI) % 360;
+    if (rotZ > 180) rotZ -= 360; if (rotZ < -180) rotZ += 360;
+    rotZ = Math.round(rotZ * 100) / 100;
   }
   
   const sc = Math.round(m.scale.x * 100) / 100;
@@ -2073,6 +2106,8 @@ function syncProps(obj) {
   document.getElementById('input-ry').value = rotY;
   document.getElementById('r-x').value = rotX;
   document.getElementById('input-rx').value = rotX;
+  document.getElementById('r-z').value = rotZ;
+  document.getElementById('input-rz').value = rotZ;
   document.getElementById('s-c').value = sc;
   document.getElementById('input-sc').value = sc;
   document.getElementById('p-opacity').value = opacity;
@@ -3698,7 +3733,7 @@ function bindTransform(id, valId, applyFn, fmt) {
         applyFn(o.mesh, startVals[i] + delta);
       });
     }
-    val.textContent = fmt(v);
+    if (val) val.textContent = fmt(v);
     updateSelBoxes();
   });
   sl.addEventListener('pointerdown', () => {
@@ -3712,6 +3747,7 @@ function bindTransform(id, valId, applyFn, fmt) {
       }
       if (id === 'r-y') return m.rotation.y * 180 / Math.PI;
       if (id === 'r-x') return m.rotation.x * 180 / Math.PI;
+      if (id === 'r-z') return m.rotation.z * 180 / Math.PI;
       if (id === 's-c') return m.scale.x;
       if (id === 'p-opacity') return o.data?.opacity ?? (m.material ? m.material.opacity : 1.0);
       return 0;
@@ -3724,6 +3760,7 @@ bindTransform('p-z','v-pz',(m,v)=>m.position.z=v, v=>v.toFixed(1));
 bindTransform('p-y','v-py',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o){ m.position.y = v + (o.data.halfH||0)*m.scale.y; } else { m.position.y=v; } }, v=>v.toFixed(1));
 bindTransform('r-y','v-ry',(m,v)=>m.rotation.y=v*Math.PI/180, v=>Math.round(v)+'°');
 bindTransform('r-x','v-rx',(m,v)=>m.rotation.x=v*Math.PI/180, v=>Math.round(v)+'°');
+bindTransform('r-z','v-rz',(m,v)=>m.rotation.z=v*Math.PI/180, v=>Math.round(v)+'°');
 bindTransform('s-c','v-sc',(m,v)=>m.scale.setScalar(v), v=>v.toFixed(2));
 // 透明度辅助函数：统一设置对象透明度，处理Group和选中状态
 function applyOpacityToObject(obj, v) {
@@ -3883,6 +3920,7 @@ bindNumberInput('input-pz','p-z',(m,v)=>m.position.z=v);
 bindNumberInput('input-py','p-y',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.position.y = v; } else if(o){ m.position.y = v + (o.data.halfH||0)*m.scale.y; } else { m.position.y=v; } });
 bindNumberInput('input-ry','r-y',(m,v)=>m.rotation.y=v*Math.PI/180);
 bindNumberInput('input-rx','r-x',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.rotation.x = v*Math.PI/180; } else { m.rotation.x=v*Math.PI/180; } });
+bindNumberInput('input-rz','r-z',(m,v)=>m.rotation.z=v*Math.PI/180);
 bindNumberInput('input-sc','s-c',(m,v)=>m.scale.setScalar(v));
 bindNumberInput('input-opacity','p-opacity',(m,v)=>{
   const o = state.selectedList.find(s=>s.mesh===m);
@@ -4212,8 +4250,8 @@ function addBrushPoint3D(groundPoint) {
       curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
     }
     const curveLength = curve.getLength();
-    const tubularSegments = Math.max(16, Math.min(120, Math.floor(curveLength / (r * 0.5))));
-    const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 12, false);
+    const tubularSegments = Math.max(32, Math.min(200, Math.floor(curveLength / (r * 0.3))));
+    const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 20, false);
     
     // 更新或替换临时预览mesh
     if (brush.previewMesh) {
@@ -4228,11 +4266,29 @@ function addBrushPoint3D(groundPoint) {
         if (oldMesh.geometry) oldMesh.geometry.dispose();
         scene.remove(oldMesh);
       }, 0);
+    } else {
+      // 第一次创建预览mesh
+      const mat = createBrushMaterial();
+      const newMesh = new THREE.Mesh(tubeGeo, mat);
+      newMesh.castShadow = true;
+      newMesh.userData.isPreview = true;
+      brush.previewMesh = newMesh;
+      scene.add(newMesh);
     }
   } else if (pts.length === 1) {
-    // 单点时更新预览球位置
+    // 单点时创建或更新预览球
+    const r = brush.thickness / 2;
     if (brush.previewMesh) {
       brush.previewMesh.position.copy(pts[0]);
+    } else {
+      const mat = createBrushMaterial();
+      const sphereRadius = r * 0.8;
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(sphereRadius, 32, 24), mat);
+      sphere.position.copy(pts[0]);
+      sphere.castShadow = true;
+      sphere.userData.isPreview = true;
+      brush.previewMesh = sphere;
+      scene.add(sphere);
     }
   }
 }
@@ -4288,8 +4344,9 @@ function endBrushStroke(cancel) {
       hideBrushRefPlane();
       return;
     } else if (pts.length === 1) {
-      // 单点：创建一个球体
-      const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
+      // 单点：创建一个较小的球体（半径略小于管半径，避免球头感）
+      const sphereRadius = r * 0.8;
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(sphereRadius, 32, 24), mat);
       sphere.position.copy(pts[0]);
       sphere.castShadow = true;
       brush.currentMeshes.push(sphere);
@@ -4297,7 +4354,7 @@ function endBrushStroke(cancel) {
       // 多点：使用CatmullRomCurve3创建平滑曲线
       let curve;
       if (pts.length === 2) {
-        // 两点：使用LineCurve
+        // 两点：使用LineCurve3
         curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
       } else {
         // 多点：使用CatmullRomCurve3
@@ -4306,10 +4363,10 @@ function endBrushStroke(cancel) {
       
       // 计算曲线长度，决定 tubularSegments 数量
       const curveLength = curve.getLength();
-      const tubularSegments = Math.max(32, Math.min(200, Math.floor(curveLength / (r * 0.5))));
+      const tubularSegments = Math.max(64, Math.min(300, Math.floor(curveLength / (r * 0.3))));
       
-      // 创建TubeGeometry
-      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 16, false);
+      // 创建TubeGeometry（closed=false，端点开放形成平面圆截面，不是球头）
+      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false);
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
       tubeMesh.castShadow = true;
       
