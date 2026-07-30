@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -1701,12 +1701,12 @@ function createObject(spec) {
     const { tex, w, h } = textTexture(spec.text, tOpts);
     const geo = new THREE.PlaneGeometry(w/100, h/100);
     const opacity = spec.opacity ?? 1;
-    const mat = new THREE.MeshBasicMaterial({ 
-      map: tex, 
-      transparent: true, 
+    const mat = new THREE.MeshBasicMaterial({
+      map: tex,
+      transparent: true,
       side: THREE.DoubleSide,
       opacity: opacity,
-      depthWrite: false
+      depthWrite: opacity >= 1
     });
     mesh = new THREE.Mesh(geo, mat);
     // 中心对齐
@@ -1727,7 +1727,7 @@ function createObject(spec) {
       color: 0xffffff, roughness: 0.7, side: THREE.DoubleSide,
       transparent: opacity < 1,
       opacity: opacity,
-      depthWrite: false
+      depthWrite: opacity >= 1
     });
     if (tex) mat.map = tex;
     mesh = new THREE.Mesh(geo, mat);
@@ -1741,14 +1741,14 @@ function createObject(spec) {
     // 处理 NO_COLOR (-1) 情况
     const effectiveColor = (color === NO_COLOR || color === undefined) ? 0xcccccc : color;
     const opacity = spec.opacity ?? 1;
-    const mat = new THREE.MeshStandardMaterial({ 
-      color: effectiveColor, 
-      roughness: 0.45, 
-      metalness: 0.18, 
+    const mat = new THREE.MeshStandardMaterial({
+      color: effectiveColor,
+      roughness: 0.45,
+      metalness: 0.18,
       side: THREE.DoubleSide,
       transparent: opacity < 1,
       opacity: opacity,
-      depthWrite: false
+      depthWrite: opacity >= 1
     });
     if (spec.pattern && spec.pattern !== '纯色') {
       mat.map = patternTexture(spec.pattern, effectiveColor);
@@ -1796,9 +1796,9 @@ function createObject(spec) {
   // 为文本和图片对象分配renderOrder，参与显示优先级管理
   if (data.kind === 'text' || data.kind === 'image') {
     mesh.renderOrder = getNextRenderOrder();
-    // 确保材质depthWrite为false，防止z-fighting
+    // depthWrite根据opacity动态设置：不透明时写入深度（正确遮挡），半透明时不写入
     if (mesh.material) {
-      mesh.material.depthWrite = false;
+      mesh.material.depthWrite = (mesh.material.opacity ?? 1) >= 1;
       mesh.material.depthTest = true;
     }
   }
@@ -2292,14 +2292,24 @@ function restore(snap) {
           curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.5);
         }
         const curveLength = curve.getLength();
-        const tubularSegments = Math.max(32, Math.min(200, Math.floor(curveLength / (r * 0.5))));
-        const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 16, false);
+        const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
+        const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false);
         const tubeMesh = new THREE.Mesh(tubeGeo, mat);
         tubeMesh.castShadow = true;
         tubeMesh.userData.brushCurve = curve;
         tubeMesh.userData.brushCurvePoints = points;
         tubeMesh.userData.brushRadius = r;
         group.add(tubeMesh);
+        // 起点半球（胶囊端帽）
+        const startSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
+        startSphere.position.copy(points[0]);
+        startSphere.castShadow = true;
+        group.add(startSphere);
+        // 终点半球（胶囊端帽）
+        const endSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
+        endSphere.position.copy(points[points.length - 1]);
+        endSphere.castShadow = true;
+        group.add(endSphere);
       } else if (s.children && s.children.length > 0) {
         // 旧格式：使用子部件重建（兼容）
         s.children.forEach(ch => {
@@ -3507,8 +3517,8 @@ function applyAppearance(o) {
       // 文本对象：应用透明度
       const opacity = o.data.opacity ?? 1;
       mesh.material.opacity = opacity;
-      mesh.material.transparent = opacity < 1;
-      mesh.material.depthWrite = false;
+      mesh.material.transparent = true; // 文本始终需要透明（canvas纹理有透明区域）
+      mesh.material.depthWrite = opacity >= 1; // 不透明时写入深度
       mesh.material.needsUpdate = true;
       return;
     }
@@ -3518,7 +3528,7 @@ function applyAppearance(o) {
       const opacity = o.data.opacity ?? 1;
       mesh.material.opacity = opacity;
       mesh.material.transparent = opacity < 1;
-      mesh.material.depthWrite = false;
+      mesh.material.depthWrite = opacity >= 1;
       if (o.data.image) {
         imageTexture(o.data.image).then(({ tex }) => {
           if (mesh.material.map) mesh.material.map.dispose();
@@ -3526,7 +3536,7 @@ function applyAppearance(o) {
           mesh.material.color.set(0xffffff);
           mesh.material.opacity = opacity;
           mesh.material.transparent = opacity < 1;
-          mesh.material.depthWrite = false;
+          mesh.material.depthWrite = opacity >= 1;
           mesh.material.needsUpdate = true;
           // 如果对象之前被选中，重新应用选中效果
           if (wasSelected) applySelectionVisual(o, true);
@@ -3549,21 +3559,21 @@ function applyAppearance(o) {
         mesh.material.color.set(0xffffff);
         mesh.material.opacity = opacity;
         mesh.material.transparent = opacity < 1;
-        mesh.material.depthWrite = false;
+        mesh.material.depthWrite = opacity >= 1;
       } else if (isNoColor) {
         // 无颜色：半透明效果
         if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
         mesh.material.color.set(0xcccccc);
         mesh.material.transparent = true;
         mesh.material.opacity = Math.min(opacity, 0.15);
-        mesh.material.depthWrite = false;
+        mesh.material.depthWrite = opacity >= 1;
       } else {
         // 纯色模式
         if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
         mesh.material.color.set(o.data.color);
         mesh.material.opacity = opacity;
         mesh.material.transparent = opacity < 1;
-        mesh.material.depthWrite = false;
+        mesh.material.depthWrite = opacity >= 1;
       }
       mesh.material.needsUpdate = true;
       return;
@@ -3584,13 +3594,13 @@ function applyAppearance(o) {
       mesh.material.color.set(0xffffff); // 白色保持贴图原色
       mesh.material.opacity = opacity;
       mesh.material.transparent = opacity < 1;
-      mesh.material.depthWrite = false;
+      mesh.material.depthWrite = opacity >= 1;
       imageTexture(o.data.image).then(({ tex }) => {
         mesh.material.map = tex;
         mesh.material.color.set(0xffffff);
         mesh.material.opacity = opacity;
         mesh.material.transparent = opacity < 1;
-        mesh.material.depthWrite = false;
+        mesh.material.depthWrite = opacity >= 1;
         mesh.material.needsUpdate = true;
         // 如果对象之前被选中，重新应用选中效果
         if (wasSelected) applySelectionVisual(o, true);
@@ -3604,7 +3614,7 @@ function applyAppearance(o) {
       mesh.material.color.set(0xffffff); // 白色避免与花纹颜色叠加
       mesh.material.opacity = opacity;
       mesh.material.transparent = opacity < 1;
-      mesh.material.depthWrite = false;
+      mesh.material.depthWrite = opacity >= 1;
       mesh.material.needsUpdate = true;
     } else {
       // 纯色模式
@@ -3614,12 +3624,12 @@ function applyAppearance(o) {
         mesh.material.color.set(0xcccccc);
         mesh.material.transparent = true;
         mesh.material.opacity = Math.min(opacity, 0.15);
-        mesh.material.depthWrite = false;
+        mesh.material.depthWrite = opacity >= 1;
       } else {
         mesh.material.color.set(o.data.color);
         mesh.material.transparent = opacity < 1;
         mesh.material.opacity = opacity;
-        mesh.material.depthWrite = false;
+        mesh.material.depthWrite = opacity >= 1;
       }
       mesh.material.needsUpdate = true;
     }
@@ -3772,13 +3782,13 @@ function applyOpacityToObject(obj, v) {
       mesh.material.forEach(mat => {
         mat.opacity = v;
         mat.transparent = v < 1.0;
-        mat.depthWrite = false;
+        mat.depthWrite = v >= 1.0;
         mat.needsUpdate = true;
       });
     } else if (mesh.material) {
       mesh.material.opacity = v;
       mesh.material.transparent = v < 1.0;
-      mesh.material.depthWrite = false;
+      mesh.material.depthWrite = v >= 1.0;
       mesh.material.needsUpdate = true;
     }
   };
@@ -3802,7 +3812,7 @@ function applyOpacityToObject(obj, v) {
         const origMat = obj._selectionOrigMaterials[i];
         origMat.opacity = v;
         origMat.transparent = v < 1.0;
-        origMat.depthWrite = false;
+        origMat.depthWrite = v >= 1.0;
       }
     });
   }
@@ -4175,7 +4185,7 @@ function createBrushMaterial() {
     opacity: brush.opacity,
     roughness: 0.6,
     metalness: 0.1,
-    depthWrite: false,  // 强制false，防止同平面重叠时z-fighting
+    depthWrite: brush.opacity >= 1,
     depthTest: true,   // 保留true，确保3D对象能遮挡2D笔迹
     side: THREE.DoubleSide
   });
@@ -4195,7 +4205,7 @@ function createBrushMaterialForSnapshot(s) {
     opacity: s.opacity || 1,
     roughness: 0.6,
     metalness: 0.1,
-    depthWrite: false,
+    depthWrite: (s.opacity || 1) >= 1,
     depthTest: true,
     side: THREE.DoubleSide
   });
@@ -4233,7 +4243,7 @@ function startBrushStroke(groundPoint) {
 function addBrushPoint3D(groundPoint) {
   const pts = brush.currentPoints;
   const last = pts[pts.length - 1];
-  const minDist = brush.thickness * 0.1;
+  const minDist = brush.thickness * 0.05;
   if (last && last.distanceTo(groundPoint) < minDist) return;
   
   if (pts.length >= 500) return;
@@ -4250,7 +4260,7 @@ function addBrushPoint3D(groundPoint) {
       curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
     }
     const curveLength = curve.getLength();
-    const tubularSegments = Math.max(32, Math.min(200, Math.floor(curveLength / (r * 0.3))));
+    const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
     const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 20, false);
     
     // 更新或替换临时预览mesh
@@ -4363,9 +4373,9 @@ function endBrushStroke(cancel) {
       
       // 计算曲线长度，决定 tubularSegments 数量
       const curveLength = curve.getLength();
-      const tubularSegments = Math.max(64, Math.min(300, Math.floor(curveLength / (r * 0.3))));
+      const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
       
-      // 创建TubeGeometry（closed=false，端点开放形成平面圆截面，不是球头）
+      // 创建TubeGeometry（closed=false，端点由半球封顶形成胶囊状）
       const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false);
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
       tubeMesh.castShadow = true;
@@ -4376,6 +4386,18 @@ function endBrushStroke(cancel) {
       tubeMesh.userData.brushRadius = r;
       
       brush.currentMeshes.push(tubeMesh);
+
+      // 起点半球
+      const startSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
+      startSphere.position.copy(pts[0]);
+      startSphere.castShadow = true;
+      brush.currentMeshes.push(startSphere);
+
+      // 终点半球
+      const endSphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
+      endSphere.position.copy(pts[pts.length - 1]);
+      endSphere.castShadow = true;
+      brush.currentMeshes.push(endSphere);
     }
   }
   
@@ -4989,9 +5011,15 @@ function _eraseAtSingle(groundPoint) {
                   toKeep.push(frontMesh, backMesh);
                   processed = true;
                 } else {
-                  // 无法分割，删除
-                  toDelete.push(child);
-                  processed = true;
+                  // 无法分割，只有当擦除范围覆盖大部分曲线时才删除
+                  const tubeLen = brushCurve.getLength();
+                  if (tubeLen < radius * 2) {
+                    toDelete.push(child);
+                    processed = true;
+                  } else {
+                    toKeep.push(child);
+                    processed = true;
+                  }
                 }
               }
             } else {
@@ -6346,7 +6374,7 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     // 如果在变换模式下，同步更新TransformControls
     if (transformCtrl.object) {
-      transformCtrl.update();
+      try { if (transformCtrl.update) transformCtrl.update(); } catch(e) {}
     }
     const p = getPrimary(); if (p) syncProps(p);
     updateSelBoxes();
