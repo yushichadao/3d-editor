@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -141,6 +141,8 @@
   .color-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all .15s; }
   .color-dot:hover { transform: scale(1.15); }
   .color-dot.active { border-color: white; transform: scale(1.15); }
+  .no-color-dot { background-color: #f5f5f5; }
+  .no-color-dot.active { border-color: var(--accent, #6ee7ff); }
 
   .pat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
   .pat-btn {
@@ -222,8 +224,6 @@
     color: var(--text); cursor: pointer; transition: all .18s;
   }
   .view-btn:hover { background: rgba(110,231,255,0.1); border-color: var(--accent); }
-  .sep { width:1px; height:22px; background: rgba(255,255,255,0.12); margin: 0 2px; }
-  .status { font-size: 11.5px; color: var(--text-dim); padding: 0 10px; max-width: 220px; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   /* 声明 */
   .declaration {
@@ -339,7 +339,6 @@
     .declaration { bottom: 64px; left: 8px; right: 8px; max-width:none; font-size:10px; padding:8px 10px; }
     .bottombar { bottom: 10px; padding: 5px; gap:4px; }
     .view-btn { height: 28px; padding: 0 9px; font-size: 11px; }
-    .status { display:none; }
   }
   @media (max-width: 460px) {
     .top-btn { padding: 0 7px; }
@@ -501,10 +500,17 @@
   <div class="panel-section" id="sec-color" style="display:none;">
     <h3>颜色</h3>
     <div class="color-row" id="color-row"></div>
-    <button class="tool-btn" id="open-color-picker" style="margin-top:8px; width:100%; justify-content:center;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-      <span>自定义颜色</span>
-    </button>
+    <div class="ctrl-row" style="margin-top:8px;">
+      <div class="ctrl-label"><span>自定义颜色</span></div>
+      <div style="display:flex; align-items:center; gap:8px; flex:1;">
+        <input type="color" id="obj-custom-color" value="#6ee7ff" style="width:36px;height:28px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
+        <span id="obj-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">6ee7ff</span>
+        <button class="tool-btn" id="open-color-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+          <span>选取器</span>
+        </button>
+      </div>
+    </div>
   </div>
   <div class="panel-section" id="sec-pat" style="display:none;">
     <h3>花纹</h3>
@@ -518,7 +524,7 @@
     </button>
     <button class="tool-btn" id="clear-tex" style="margin-top:6px;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-      <span>清除贴图/花纹</span>
+      <span>清除花纹/贴图</span>
     </button>
     <button class="tool-btn" id="edit-text" style="margin-top:6px; display:none;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
@@ -581,10 +587,14 @@
       <div class="color-row" id="brush-color-row" style="pointer-events:auto;"></div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>自定义</span></div>
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div class="ctrl-label"><span>自定义颜色</span></div>
+      <div style="display:flex; align-items:center; gap:8px; flex:1;">
         <input type="color" id="brush-custom-color" value="#6ee7ff" style="width:36px;height:28px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
         <span id="brush-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">6ee7ff</span>
+        <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+          <span>选取器</span>
+        </button>
       </div>
     </div>
     <div class="ctrl-row">
@@ -629,8 +639,6 @@
   <button class="view-btn" data-view="top">顶视</button>
   <button class="view-btn" data-view="front">前视</button>
   <button class="view-btn" data-view="side">侧视</button>
-  <div class="sep"></div>
-  <span class="status" id="status">就绪 · 右键拖拽旋转视角 · 滚轮缩放</span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -769,7 +777,8 @@ controls.dampingFactor = 0.12;
 controls.autoRotate = false;
 controls.minDistance = 3;
 controls.maxDistance = 500;
-controls.maxPolarAngle = Math.PI;   // 允许从地面以下视角观察
+controls.minPolarAngle = 0;
+controls.maxPolarAngle = Math.PI - 0.001;   // 避免万向节锁，允许完整360°视角
 controls.target.set(0, 0.5, 0);
 controls.mouseButtons = {
   LEFT: null,
@@ -976,6 +985,46 @@ transformCtrl.setSpace('world');
 let transformActive = false;
 let scaleInitial = new THREE.Vector3();
 let scaleLockActive = false;
+
+// ====== 多对象变换代理 ======
+// 创建一个不可见的代理对象，作为多选时TransformControls的附着点
+const multiTransformProxy = new THREE.Object3D();
+multiTransformProxy.visible = false;
+scene.add(multiTransformProxy);
+// 记录拖拽开始时代理的初始变换，用于计算delta
+let _multiDragStart = null;
+// 记录拖拽开始时各选中对象的初始世界变换
+let _multiObjStart = [];
+
+function getSelectionCenter() {
+  if (state.selectedList.length === 0) return null;
+  const box = new THREE.Box3();
+  state.selectedList.forEach(o => {
+    const b = new THREE.Box3().setFromObject(o.mesh);
+    box.union(b);
+  });
+  return box.getCenter(new THREE.Vector3());
+}
+
+function attachMultiTransform() {
+  if (state.selectedList.length === 0) {
+    transformCtrl.detach();
+    return;
+  }
+  if (state.selectedList.length === 1) {
+    transformCtrl.attach(state.selectedList[0].mesh);
+    return;
+  }
+  // 多选：使用代理
+  const center = getSelectionCenter();
+  if (!center) { transformCtrl.detach(); return; }
+  multiTransformProxy.position.copy(center);
+  multiTransformProxy.rotation.set(0, 0, 0);
+  multiTransformProxy.scale.set(1, 1, 1);
+  multiTransformProxy.visible = false; // 代理本身不可见
+  transformCtrl.attach(multiTransformProxy);
+}
+
 transformCtrl.addEventListener('dragging-changed', (e) => {
   controls.enabled = !e.value;
   transformActive = e.value;
@@ -995,14 +1044,30 @@ transformCtrl.addEventListener('dragging-changed', (e) => {
       scaleInitial.copy(transformCtrl.object.scale);
       scaleLockActive = document.getElementById('lock-ratio').checked && transformCtrl.getMode() === 'scale';
     }
+    // 多选拖拽开始：记录代理和各对象的初始状态
+    if (transformCtrl.object === multiTransformProxy) {
+      _multiDragStart = {
+        pos: multiTransformProxy.position.clone(),
+        rot: multiTransformProxy.rotation.clone(),
+        scale: multiTransformProxy.scale.clone()
+      };
+      _multiObjStart = state.selectedList.map(o => ({
+        obj: o,
+        pos: o.mesh.position.clone(),
+        rot: o.mesh.rotation.clone(),
+        scale: o.mesh.scale.clone()
+      }));
+    }
   } else {
     // 拖拽结束时记录历史（用于撤销/重做）
     const p = getPrimary();
     if (p) pushHistory();
+    _multiDragStart = null;
+    _multiObjStart = [];
   }
 });
 transformCtrl.addEventListener('objectChange', () => {
-  if (transformCtrl.object && scaleLockActive) {
+  if (transformCtrl.object && scaleLockActive && transformCtrl.object !== multiTransformProxy) {
     const s = transformCtrl.object.scale;
     // 找出与初始值偏离最大的轴，将其比例应用到所有轴
     const rx = s.x / scaleInitial.x;
@@ -1010,6 +1075,33 @@ transformCtrl.addEventListener('objectChange', () => {
     const rz = s.z / scaleInitial.z;
     const maxR = Math.max(rx, ry, rz);
     s.set(scaleInitial.x * maxR, scaleInitial.y * maxR, scaleInitial.z * maxR);
+  }
+  // 多选代理变换：将delta应用到所有选中对象
+  if (transformCtrl.object === multiTransformProxy && _multiDragStart) {
+    const dPos = new THREE.Vector3().subVectors(multiTransformProxy.position, _multiDragStart.pos);
+    const dRotY = multiTransformProxy.rotation.y - _multiDragStart.rot.y;
+    const dScale = multiTransformProxy.scale.x / _multiDragStart.scale.x;
+    _multiObjStart.forEach(item => {
+      const m = item.obj.mesh;
+      // 平移
+      m.position.copy(item.pos).add(dPos);
+      // 旋转：围绕集体中心旋转
+      const offset = new THREE.Vector3().subVectors(item.pos, _multiDragStart.pos);
+      const cos = Math.cos(dRotY), sin = Math.sin(dRotY);
+      const rotX = offset.x * cos - offset.z * sin;
+      const rotZ = offset.x * sin + offset.z * cos;
+      m.position.x = _multiDragStart.pos.x + rotX + dPos.x;
+      m.position.z = _multiDragStart.pos.z + rotZ + dPos.z;
+      m.rotation.y = item.rot.y + dRotY;
+      // 等比缩放：围绕集体中心缩放
+      if (dScale !== 1) {
+        const sox = (item.pos.x - _multiDragStart.pos.x) * dScale;
+        const soz = (item.pos.z - _multiDragStart.pos.z) * dScale;
+        m.position.x = _multiDragStart.pos.x + sox + dPos.x;
+        m.position.z = _multiDragStart.pos.z + soz + dPos.z;
+        m.scale.setScalar(item.scale.x * dScale);
+      }
+    });
   }
   const p = getPrimary();
   if (p) { syncProps(p); updateSelBoxes(); }
@@ -1171,6 +1263,7 @@ const ICONS = {
 };
 
 const COLORS = [0x6ee7ff, 0xc084fc, 0xfb7185, 0xf472b6, 0x34d399, 0xfbbf24, 0x60a5fa, 0xf87171, 0xa78bfa, 0xffffff, 0x222831, 0x94a3b8];
+const NO_COLOR = -1; // 无颜色标记
 
 const PATTERNS = ['纯色', '方格', '条纹', '圆点', '渐变', '砖墙', '斜纹', '波浪', '点阵', '交叉', '网格', '螺纹'];
 
@@ -1220,27 +1313,83 @@ const brush = {
 };
 
 // ============ 程序化纹理 ============
+function getLuminance(hex) {
+  const c = new THREE.Color(hex);
+  return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+}
+// 根据颜色亮度获取对比色（亮/暗）
+function getContrastShade(hex, target) {
+  const lum = getLuminance(hex);
+  const c = new THREE.Color(hex);
+  
+  // 极暗颜色特殊处理：避免产生异常颜色
+  if (lum < 0.05) {
+    if (target === 'dark') {
+      // 非常暗的颜色：直接返回纯黑或近黑
+      return '#000000';
+    } else {
+      // 非常暗的颜色：返回较亮的对比色以确保花纹可见
+      return '#666666';
+    }
+  }
+  
+  // 中等亮度颜色处理
+  if (lum < 0.15) {
+    if (target === 'dark') {
+      return mix(hex, '#000000', 0.6);
+    } else {
+      return mix(hex, '#ffffff', 0.5);
+    }
+  }
+  
+  if (target === 'dark') {
+    // 需要比原色更深的颜色
+    if (lum > 0.5) {
+      // 亮色：混合深色变深
+      return mix(hex, '#000000', 0.45);
+    } else {
+      // 中等亮度：稍微变深
+      return mix(hex, '#000000', 0.4);
+    }
+  } else {
+    // 需要比原色更浅的颜色
+    if (lum < 0.3) {
+      // 较暗：用白色混合更多
+      return mix(hex, '#ffffff', 0.45);
+    } else if (lum < 0.5) {
+      // 中等亮度：用白色混合
+      return mix(hex, '#ffffff', 0.35);
+    } else {
+      // 亮色：用深色混合变浅
+      return mix(hex, '#ffffff', 0.25);
+    }
+  }
+}
+
 function patternTexture(kind, baseColor) {
   const c = document.createElement('canvas'); c.width = c.height = 256;
   const ctx = c.getContext('2d');
   const col = '#' + baseColor.toString(16).padStart(6,'0');
   const dark = '#0c0e16';
+  // 根据颜色亮度计算对比色
+  const contrastDark = getContrastShade(col, 'dark');
+  const contrastLight = getContrastShade(col, 'light');
   ctx.fillStyle = col; ctx.fillRect(0,0,256,256);
   if (kind === '方格') {
-    ctx.fillStyle = mix(col, '#000000', 0.45);
+    ctx.fillStyle = contrastDark;
     for (let y=0;y<8;y++) for (let x=0;x<8;x++) if ((x+y)%2===0) ctx.fillRect(x*32,y*32,32,32);
   } else if (kind === '条纹') {
-    ctx.fillStyle = mix(col, '#ffffff', 0.35);
+    ctx.fillStyle = contrastLight;
     for (let i=0;i<256;i+=32) ctx.fillRect(i,0,16,256);
   } else if (kind === '圆点') {
-    ctx.fillStyle = mix(col, '#ffffff', 0.55);
+    ctx.fillStyle = contrastLight;
     for (let y=16;y<256;y+=32) for (let x=16;x<256;x+=32){ ctx.beginPath(); ctx.arc(x,y,7,0,Math.PI*2); ctx.fill(); }
   } else if (kind === '渐变') {
     const g = ctx.createLinearGradient(0,0,256,256);
-    g.addColorStop(0, col); g.addColorStop(1, mix(col, '#ffffff', 0.5));
+    g.addColorStop(0, col); g.addColorStop(1, contrastLight);
     ctx.fillStyle = g; ctx.fillRect(0,0,256,256);
   } else if (kind === '砖墙') {
-    ctx.fillStyle = mix(col, '#000000', 0.3); ctx.fillRect(0,0,256,256);
+    ctx.fillStyle = contrastDark; ctx.fillRect(0,0,256,256);
     ctx.fillStyle = col;
     const bw=64, bh=24, gap=4;
     for (let y=0, row=0; y<256; y+=bh+gap, row++){
@@ -1248,13 +1397,13 @@ function patternTexture(kind, baseColor) {
       for (let x=-bw; x<256; x+=bw+gap){ ctx.fillRect(x+off, y, bw, bh); }
     }
   } else if (kind === '斜纹') {
-    ctx.fillStyle = mix(col, '#ffffff', 0.4);
+    ctx.fillStyle = contrastLight;
     for (let i=-256;i<256;i+=16) {
       ctx.save(); ctx.translate(i, 0); ctx.rotate(Math.PI/4);
       ctx.fillRect(0, 0, 8, 400); ctx.restore();
     }
   } else if (kind === '波浪') {
-    ctx.fillStyle = mix(col, '#ffffff', 0.4);
+    ctx.fillStyle = contrastLight;
     for (let y=0;y<256;y+=16) {
       ctx.beginPath();
       ctx.moveTo(0, y);
@@ -1262,26 +1411,26 @@ function patternTexture(kind, baseColor) {
       ctx.lineTo(256, y+8); ctx.lineTo(0, y+8); ctx.closePath(); ctx.fill();
     }
   } else if (kind === '点阵') {
-    ctx.fillStyle = mix(col, '#000000', 0.4);
+    ctx.fillStyle = contrastDark;
     for (let y=8;y<256;y+=24) for (let x=8;x<256;x+=24){
       ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
     }
   } else if (kind === '交叉') {
-    ctx.strokeStyle = mix(col, '#ffffff', 0.5);
+    ctx.strokeStyle = contrastLight;
     ctx.lineWidth = 2;
     for (let i=0;i<256;i+=32) {
       ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,256); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(256,i); ctx.stroke();
     }
   } else if (kind === '网格') {
-    ctx.strokeStyle = mix(col, '#000000', 0.35);
+    ctx.strokeStyle = contrastDark;
     ctx.lineWidth = 1;
     for (let i=0;i<=256;i+=32) {
       ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,256); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(256,i); ctx.stroke();
     }
   } else if (kind === '螺纹') {
-    ctx.strokeStyle = mix(col, '#ffffff', 0.45);
+    ctx.strokeStyle = contrastLight;
     ctx.lineWidth = 2;
     ctx.beginPath();
     for (let t=0;t<Math.PI*8;t+=0.05) {
@@ -1343,16 +1492,31 @@ function textTexture(text, opts) {
 }
 
 // 图片 dataURL -> Texture（返回纹理和原始宽高比）
+// 贴图缓存（避免重复加载相同图片）
+const _textureCache = new Map(); // dataURL -> { tex, aspectRatio }
+
 function imageTexture(dataURL) {
+  if (_textureCache.has(dataURL)) {
+    const cached = _textureCache.get(dataURL);
+    cached.needsUpdate = true; // 标记需要更新（防止被 dispose）
+    return Promise.resolve({ tex: cached.tex, aspectRatio: cached.aspectRatio });
+  }
   return new Promise((resolve)=>{
     new THREE.TextureLoader().load(dataURL, (tex)=>{
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
-      // 获取原始图片的宽高比
       const aspectRatio = tex.image ? tex.image.width / tex.image.height : 1;
+      // 缓存贴图
+      _textureCache.set(dataURL, { tex, aspectRatio });
       resolve({ tex, aspectRatio });
     });
   });
+}
+
+// 清除贴图缓存（用于导入新场景时）
+function clearTextureCache() {
+  _textureCache.forEach(v => v.tex.dispose());
+  _textureCache.clear();
 }
 
 // ============ 创建对象 ============
@@ -1398,8 +1562,18 @@ function createObject(spec) {
   } else {
     const is3D = spec.kind === '3d';
     const geo = is3D ? SHAPES_3D[spec.shape]() : SHAPES_2D[spec.shape]();
-    const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.45, metalness: 0.18, side: THREE.DoubleSide });
-    if (spec.pattern && spec.pattern !== '纯色') mat.map = patternTexture(spec.pattern, color);
+    // 处理 NO_COLOR (-1) 情况
+    const effectiveColor = (color === NO_COLOR || color === undefined) ? 0xcccccc : color;
+    const mat = new THREE.MeshStandardMaterial({ 
+      color: effectiveColor, 
+      roughness: 0.45, 
+      metalness: 0.18, 
+      side: THREE.DoubleSide 
+    });
+    if (spec.pattern && spec.pattern !== '纯色') {
+      mat.map = patternTexture(spec.pattern, effectiveColor);
+      mat.color.set(0xffffff);
+    }
     if (spec._imgTex) { mat.map = spec._imgTex; mat.color.set(0xffffff); }
     mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true; mesh.receiveShadow = true;
@@ -1407,7 +1581,7 @@ function createObject(spec) {
       kind: spec.kind,
       type: spec.shape,
       shape: spec.shape,
-      color,
+      color: (color === undefined) ? state.defaultColor : color,
       pattern: spec.pattern || '纯色',
       image: spec.image || null
     };
@@ -1545,10 +1719,8 @@ function selectOnly(obj) {
   if (obj) {
     applySelectionVisual(obj, true);
     addSelBox(obj);
-    transformCtrl.attach(obj.mesh);
-  } else {
-    transformCtrl.detach();
   }
+  attachMultiTransform();
   refreshProps();
   updateShapeButtonStates();
 }
@@ -1562,11 +1734,7 @@ function toggleSelect(obj) {
     applySelectionVisual(obj, true);
   }
   rebuildSelBoxes();
-  if (state.selectedList.length === 1) {
-    transformCtrl.attach(state.selectedList[0].mesh);
-  } else {
-    transformCtrl.detach();
-  }
+  attachMultiTransform();
   refreshProps();
   updateShapeButtonStates();
 }
@@ -1583,7 +1751,7 @@ function selectAll() {
   state.selectedList = state.objects.slice();
   state.selectedList.forEach(o => applySelectionVisual(o, true));
   rebuildSelBoxes();
-  transformCtrl.detach();
+  attachMultiTransform();
   refreshProps();
   toast('已全选 ' + state.selectedList.length + ' 个对象');
   updateShapeButtonStates();
@@ -1606,8 +1774,7 @@ function selectWithinBox(x0, y0, x1, y1) {
   state.selectedList = hits;
   state.selectedList.forEach(o => applySelectionVisual(o, true));
   rebuildSelBoxes();
-  if (hits.length === 1) transformCtrl.attach(hits[0].mesh);
-  else transformCtrl.detach();
+  attachMultiTransform();
   refreshProps();
 }
 
@@ -1634,17 +1801,18 @@ function refreshProps() {
   const canPattern = isShape || isBrush; // 只有图形/画笔有花纹
   const canTexture = isShape; // 只有图形有贴图
 
-  // 多选提示
+  // 多选时仍显示属性面板（以第一个对象为主），同时显示多选提示
   if (sel.length > 1) {
     elMultiHint.style.display = '';
-    elMultiHint.textContent = '已选中 ' + sel.length + ' 个对象 · 颜色/贴图/变换将批量应用';
-    elProps.style.display = 'none';
-    elSecColor.style.display = 'none';
-    elSecPat.style.display = 'none';
-    elSecImg.style.display = 'none';
+    elMultiHint.textContent = '已选中 ' + sel.length + ' 个对象 · 变换将作为整体操作';
+    elProps.style.display = 'block';
+    elSecColor.style.display = canColor ? '' : 'none';
+    elSecPat.style.display = canPattern ? '' : 'none';
+    elSecImg.style.display = 'none'; // 多选时不显示贴图
     elSecText.style.display = 'none';
     elEditText.style.display = 'none';
     hideShapeParams();
+    syncProps(primary);
   } else {
     elMultiHint.style.display = 'none';
     elProps.style.display = 'block';
@@ -1656,7 +1824,9 @@ function refreshProps() {
     syncProps(primary);
     syncTextProps(primary);
     if (canColor) {
-      document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', parseInt(d.dataset.c) === primary.data.color));
+      updateColorSelectionUI();
+      // 更新花纹预览
+      updatePatternPreviews(primary.data.color === NO_COLOR ? 0xcccccc : primary.data.color);
     }
     if (canPattern) {
       document.querySelectorAll('.pat-btn').forEach(b => b.classList.toggle('active', b.dataset.p === primary.data.pattern));
@@ -1694,10 +1864,11 @@ function syncProps(obj) {
   let rotY, rotX;
   
   if (obj.data.kind === 'image') {
-    // 图片在XZ平面上，Y=0
-    ry = 0;
-    // 旋转Y需要加上初始的-90度（rotation.x）
-    rotX = 0; // 固定在XZ平面
+    // 图片现在支持3D空间移动，显示实际Y坐标
+    ry = Math.round(m.position.y * 100) / 100;
+    rotX = (m.rotation.x * 180 / Math.PI) % 360;
+    if (rotX > 180) rotX -= 360; if (rotX < -180) rotX += 360;
+    rotX = Math.round(rotX * 100) / 100;
     rotY = (m.rotation.y * 180 / Math.PI) % 360;
     if (rotY > 180) rotY -= 360; if (rotY < -180) rotY += 360;
     rotY = Math.round(rotY * 100) / 100;
@@ -1729,6 +1900,19 @@ function syncProps(obj) {
   document.getElementById('input-sc').value = sc;
   document.getElementById('p-opacity').value = opacity;
   document.getElementById('input-opacity').value = opacity;
+  // 同步自定义颜色控件
+  if (obj.data.color !== undefined) {
+    const objCC = document.getElementById('obj-custom-color');
+    const objCH = document.getElementById('obj-custom-hex');
+    if (obj.data.color === NO_COLOR) {
+      if (objCC) objCC.value = '#cccccc';
+      if (objCH) objCH.textContent = 'cccccc';
+    } else {
+      const hex = '#' + obj.data.color.toString(16).padStart(6, '0');
+      if (objCC) objCC.value = hex;
+      if (objCH) objCH.textContent = hex.substring(1);
+    }
+  }
 }
 function syncTextProps(obj) {
   if (obj.data.kind !== 'text') return;
@@ -1745,7 +1929,10 @@ function snapshot() {
     const halfH = o.data.halfH || 0;
     let baseY;
     if (o.data.kind === 'image') {
-      baseY = 0; // 图片在XZ平面上
+      baseY = o.mesh.position.y; // 图片现在支持3D移动
+    } else if (o.data.isBrush) {
+      // 画笔：group.position就是中心位置，直接使用
+      baseY = o.mesh.position.y;
     } else {
       baseY = o.mesh.position.y - halfH * o.mesh.scale.y;
     }
@@ -1772,6 +1959,39 @@ function snapshot() {
       snap.isBrush = true;
       snap.thickness = o.data.thickness;
       snap.opacity = o.data.opacity;
+      snap.brushType = o.data.type;
+      // 保存子网格结构（含几何体参数，确保精确重建）
+      if (o.mesh.isGroup) {
+        snap.children = o.mesh.children.map(child => {
+          const geoType = child.geometry ? (child.geometry.type || '') : '';
+          const childData = {
+            pos: [child.position.x, child.position.y, child.position.z],
+            geoType: geoType,
+            scale: [child.scale.x, child.scale.y, child.scale.z],
+            quat: [child.quaternion.x, child.quaternion.y, child.quaternion.z, child.quaternion.w]
+          };
+          // 保存几何体参数用于精确重建
+          if (child.geometry && child.geometry.parameters) {
+            childData.geoParams = {};
+            const p = child.geometry.parameters;
+            Object.keys(p).forEach(k => {
+              if (typeof p[k] !== 'object') {
+                childData.geoParams[k] = p[k];
+              }
+            });
+          }
+          // 对于2D画笔BufferGeometry，保存顶点数据
+          if (geoType === 'BufferGeometry' && child.geometry && child.geometry.attributes && child.geometry.attributes.position) {
+            const posAttr = child.geometry.attributes.position;
+            const vertices = [];
+            for (let i = 0; i < posAttr.count; i++) {
+              vertices.push(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i));
+            }
+            childData.vertices = vertices;
+          }
+          return childData;
+        });
+      }
     }
     // 形状参数数据
     if (o.data.kind === '3d' || o.data.kind === '2d') {
@@ -1835,21 +2055,60 @@ function restore(snap) {
   const promises = [];
   snap.forEach(s => {
     if (s.isBrush || s.kind === 'brush') {
-      // 画笔对象：重建简化版
       const group = new THREE.Group();
-      const mat = new THREE.MeshStandardMaterial({
-        color: s.color || 0x6ee7ff,
-        transparent: (s.opacity || 1) < 1,
-        opacity: s.opacity || 1,
-        roughness: 0.6
-      });
-      const r = (s.thickness || 0.5) / 2;
-      for (let i = 0; i < 8; i++) {
-        const sp = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), mat.clone());
-        sp.position.set(i * 0.3, 0, 0);
-        group.add(sp);
+      const mat = createBrushMaterialForSnapshot(s);
+      if (s.children && s.children.length > 0) {
+        s.children.forEach(ch => {
+          let geo;
+          const r = (s.thickness || 0.5) / 2;
+          const params = ch.geoParams || {};
+          
+          if (ch.geoType === 'CylinderGeometry') {
+            // 使用保存的参数重建圆柱
+            const radiusTop = params.radiusTop !== undefined ? params.radiusTop : r;
+            const radiusBottom = params.radiusBottom !== undefined ? params.radiusBottom : r;
+            const height = params.height !== undefined ? params.height : 1;
+            const radialSegments = params.radialSegments || 24;
+            geo = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, 1, false);
+          } else if (ch.geoType === 'SphereGeometry') {
+            // 使用保存的参数重建球体
+            const sphereRadius = params.radius !== undefined ? params.radius : r;
+            const widthSegments = params.widthSegments || 32;
+            const heightSegments = params.heightSegments || 24;
+            geo = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
+          } else if (ch.geoType === 'CircleGeometry') {
+            // 2D画笔的圆形子单元
+            const circleRadius = params.radius !== undefined ? params.radius : r;
+            const segments = params.segments || 32;
+            geo = new THREE.CircleGeometry(circleRadius, segments);
+          } else if (ch.geoType === 'BufferGeometry' && ch.vertices) {
+            // 2D画笔的连接段：使用保存的顶点数据重建
+            geo = new THREE.BufferGeometry();
+            const posArr = new Float32Array(ch.vertices);
+            geo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+            geo.computeVertexNormals();
+            geo.computeBoundingBox();
+          } else {
+            // 降级重建
+            geo = new THREE.SphereGeometry(r, 32, 24);
+          }
+          const mesh = new THREE.Mesh(geo, mat.clone());
+          mesh.position.set(ch.pos[0], ch.pos[1], ch.pos[2]);
+          if (ch.quat) mesh.quaternion.set(ch.quat[0], ch.quat[1], ch.quat[2], ch.quat[3]);
+          if (ch.scale) mesh.scale.set(ch.scale[0], ch.scale[1], ch.scale[2]);
+          mesh.castShadow = true;
+          group.add(mesh);
+        });
+      } else {
+        // 降级：简化重建
+        const r = (s.thickness || 0.5) / 2;
+        for (let i = 0; i < 8; i++) {
+          const sp = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat.clone());
+          sp.position.set(i * 0.3, 0, 0);
+          group.add(sp);
+        }
       }
-      group.position.set(s.pos[0], s.pos[1] + r, s.pos[2]);
+      group.position.set(s.pos[0], s.pos[1], s.pos[2]);
       group.scale.setScalar(s.scale || 1);
       scene.add(group);
       const entry = { mesh: group, data: { ...s, isBrush: true, kind: 'brush' } };
@@ -2152,6 +2411,9 @@ function showInlineTextInput(worldPos, defaultText = '') {
     wrap.appendChild(hint);
     document.body.appendChild(wrap);
 
+    // 记录当前活动的内联文本输入，以便外部取消
+    state.inlineTextInput = { wrap, input, settled: false, resolve: null };
+
     // 自动调整大小
     function autoResize() {
       input.style.height = 'auto';
@@ -2162,16 +2424,19 @@ function showInlineTextInput(worldPos, defaultText = '') {
 
     setTimeout(() => { input.focus(); input.select(); }, 50);
 
-    let settled = false;
     function cleanup(val) {
-      if (settled) return;
-      settled = true;
+      if (state.inlineTextInput && state.inlineTextInput.settled) return;
+      if (state.inlineTextInput) state.inlineTextInput.settled = true;
       wrap.remove();
       input.removeEventListener('keydown', onKey);
       input.removeEventListener('blur', onBlur);
       wrap.removeEventListener('mousedown', onWrapMouseDown);
       resolve(val);
+      if (state.inlineTextInput && state.inlineTextInput.wrap === wrap) {
+        state.inlineTextInput = null;
+      }
     }
+    state.inlineTextInput.resolve = cleanup;
     function onKey(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -2183,7 +2448,7 @@ function showInlineTextInput(worldPos, defaultText = '') {
     }
     function onBlur() {
       // 延迟处理 blur，避免点击输入框内部或选择文本时误触发关闭
-      setTimeout(() => { if (!settled && document.activeElement !== input) cleanup(input.value.trim()); }, 250);
+      setTimeout(() => { if (state.inlineTextInput && !state.inlineTextInput.settled && document.activeElement !== input) cleanup(input.value.trim()); }, 250);
     }
     // 阻止在 wrap 内的 mousedown 导致 input 失焦
     function onWrapMouseDown(e) {
@@ -2196,6 +2461,13 @@ function showInlineTextInput(worldPos, defaultText = '') {
     input.addEventListener('blur', onBlur);
     wrap.addEventListener('mousedown', onWrapMouseDown);
   });
+}
+
+// 取消内联文本输入（用于工具强制切换时销毁进行中的任务）
+function cancelInlineTextInput() {
+  if (state.inlineTextInput && !state.inlineTextInput.settled) {
+    state.inlineTextInput.resolve(null);
+  }
 }
 
 // ============ 工具切换 ============
@@ -2267,6 +2539,22 @@ function buildShapeGrid(containerId, shapes) {
     // 点击：放置对象到视图中央
     btn.addEventListener('click', (e) => {
       if (btn.classList.contains('dragging')) return;
+      // 若画笔/橡皮擦/文本/图片等工具正在激活，强制切换到选择/变换模式
+      // 进行中的任务（如未完成的文本输入）要被销毁
+      const nonShapeTools = ['brush3d','brush2d','eraser','text','image'];
+      if (state.tool && nonShapeTools.includes(state.tool)) {
+        if (state.tool === 'text') cancelInlineTextInput();
+        else if (state.tool === 'brush3d' || state.tool === 'brush2d') endBrushStroke(true);
+        setTool(null);
+        // 切换后直接创建对象到视图中央
+        const centerPoint = getViewportCenterOnGround();
+        if (centerPoint) {
+          placeObjectAt(key, centerPoint);
+          selectOnly(state.objects[state.objects.length - 1]);
+          setTransformMode('translate', true);
+          return; // 已处理，不再进入后续逻辑
+        }
+      }
       // 获取视图中心在地面的投影点
       const centerPoint = getViewportCenterOnGround();
       if (centerPoint) {
@@ -2280,6 +2568,13 @@ function buildShapeGrid(containerId, shapes) {
     btn.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
       e.preventDefault();
+      // 若画笔/橡皮擦/文本/图片等工具正在激活，强制切换到选择/变换模式
+      const nonShapeTools = ['brush3d','brush2d','eraser','text','image'];
+      if (state.tool && nonShapeTools.includes(state.tool)) {
+        if (state.tool === 'text') cancelInlineTextInput();
+        else if (state.tool === 'brush3d' || state.tool === 'brush2d') endBrushStroke(true);
+        setTool(null);
+      }
       btn.classList.add('dragging');
       const shapeKey = key;
       const is3D = !!SHAPES_3D[shapeKey];
@@ -2407,10 +2702,12 @@ buildShapeGrid('grid-2d', SHAPES_2D);
 
 // 颜色面板
 const colorRow = document.getElementById('color-row');
+// 添加预设颜色
 COLORS.forEach(c => {
   const dot = document.createElement('div');
   dot.className = 'color-dot'; dot.dataset.c = c;
   dot.style.background = '#' + c.toString(16).padStart(6,'0');
+  dot.title = '#' + c.toString(16).padStart(6,'0');
   dot.addEventListener('click', () => {
     if (state.selectedList.length === 0) return;
     state.defaultColor = c;
@@ -2419,34 +2716,118 @@ COLORS.forEach(c => {
       applyAppearance(o);
     });
     pushHistory();
-    document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', parseInt(d.dataset.c) === c));
+    updateColorSelectionUI();
+    updatePatternPreviews(c);
   });
   colorRow.appendChild(dot);
 });
+// 添加"无颜色"选项
+const noColorDot = document.createElement('div');
+noColorDot.className = 'color-dot no-color-dot';
+noColorDot.dataset.c = NO_COLOR;
+noColorDot.title = '无颜色';
+noColorDot.style.background = 'linear-gradient(135deg, #fff 25%, #ccc 25%, #ccc 50%, #fff 50%, #fff 75%, #ccc 75%)';
+noColorDot.style.backgroundSize = '8px 8px';
+noColorDot.style.position = 'relative';
+// 添加叉号
+noColorDot.innerHTML = '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#f44;pointer-events:none;">×</span>';
+noColorDot.addEventListener('click', () => {
+  if (state.selectedList.length === 0) return;
+  state.defaultColor = NO_COLOR;
+  state.selectedList.forEach(o => {
+    o.data.color = NO_COLOR;
+    applyAppearance(o);
+  });
+  pushHistory();
+  updateColorSelectionUI();
+  updatePatternPreviews(0xcccccc);
+});
+colorRow.appendChild(noColorDot);
+
+// 更新颜色选择UI状态
+function updateColorSelectionUI() {
+  const currentColor = state.defaultColor;
+  document.querySelectorAll('#color-row .color-dot').forEach(d => {
+    const c = parseInt(d.dataset.c);
+    d.classList.toggle('active', c === currentColor || (currentColor === NO_COLOR && c === NO_COLOR));
+  });
+  // 同步自定义颜色控件
+  if (currentColor === NO_COLOR) {
+    const objCC = document.getElementById('obj-custom-color');
+    const objCH = document.getElementById('obj-custom-hex');
+    if (objCC) objCC.value = '#cccccc';
+    if (objCH) objCH.textContent = 'cccccc';
+  } else {
+    const hex = '#' + currentColor.toString(16).padStart(6, '0');
+    const objCC = document.getElementById('obj-custom-color');
+    const objCH = document.getElementById('obj-custom-hex');
+    if (objCC) objCC.value = hex;
+    if (objCH) objCH.textContent = hex.substring(1);
+  }
+}
+
+// 缓存花纹按钮引用以便动态更新
+const patButtons = [];
+
+// 动态更新花纹预览
+function updatePatternPreviews(baseColor) {
+  const effectiveColor = baseColor === NO_COLOR ? 0xcccccc : baseColor;
+  const hexColor = '#' + effectiveColor.toString(16).padStart(6, '0');
+  patButtons.forEach(btn => {
+    const patternName = btn.dataset.p;
+    if (patternName === '纯色') {
+      // 纯色按钮：背景跟当前颜色同步
+      btn.style.background = hexColor;
+    } else {
+      const tex = patternTexture(patternName, effectiveColor);
+      btn.style.backgroundImage = `url(${tex.image.toDataURL()})`;
+      tex.dispose();
+    }
+  });
+}
 
 // 花纹面板
 const patGrid = document.getElementById('pat-grid');
 PATTERNS.forEach(p => {
   const btn = document.createElement('div');
   btn.className = 'pat-btn'; btn.dataset.p = p;
+  const currentColor = state.defaultColor !== NO_COLOR ? state.defaultColor : 0xcccccc;
   // 用图案作背景预览
-  const tex = patternTexture(p, 0x6ee7ff);
-  btn.style.backgroundImage = `url(${tex.image.toDataURL()})`;
-  tex.dispose();
+  if (p === '纯色') {
+    // 纯色按钮：背景跟当前颜色同步
+    btn.style.background = '#' + currentColor.toString(16).padStart(6, '0');
+  } else {
+    const tex = patternTexture(p, currentColor);
+    btn.style.backgroundImage = `url(${tex.image.toDataURL()})`;
+    tex.dispose();
+  }
+  patButtons.push(btn); // 缓存所有按钮引用（包括纯色）
   btn.innerHTML = `<span>${p}</span>`;
   btn.addEventListener('click', () => {
     if (state.selectedList.length === 0) return;
     let changed = false;
     state.selectedList.forEach(o => {
-      // 只有图形和画笔对象可以应用花纹
+      // 图形对象：花纹与贴图互斥
       const isShape = o.data.kind === '3d' || o.data.kind === '2d';
-      const isBrush = o.data.isBrush;
-      if (!isShape && !isBrush) return;
-      o.data.pattern = p; o.data.image = null;
+      if (!isShape) return;
+      if (p === '纯色') {
+        // 纯色 = 清除花纹和贴图
+        o.data.pattern = '纯色';
+        o.data.image = null;
+      } else {
+        // 选择花纹：清除贴图，设置花纹
+        o.data.pattern = p;
+        o.data.image = null;
+      }
       applyAppearance(o);
       changed = true;
     });
-    if (changed) pushHistory();
+    if (changed) {
+      pushHistory();
+      // 更新花纹预览（确保纯色按钮背景与颜色同步）
+      const currentColor = state.defaultColor !== NO_COLOR ? state.defaultColor : 0xcccccc;
+      updatePatternPreviews(currentColor);
+    }
     document.querySelectorAll('.pat-btn').forEach(b => b.classList.toggle('active', b.dataset.p === p));
   });
   patGrid.appendChild(btn);
@@ -2640,17 +3021,66 @@ document.getElementById('picker-eyedropper').addEventListener('click', async () 
 });
 
 // 打开/关闭颜色选取器
-function openColorPicker() {
-  // 初始化为当前选中对象的颜色
-  if (state.selectedList.length > 0) {
-    const c = state.selectedList[0].data.color;
-    const [h,s,v] = rgbToHsv((c>>16)&255, (c>>8)&255, c&255);
-    pickerState.h = h; pickerState.s = s; pickerState.v = v;
+let pickerTarget = 'object'; // 'object' or 'brush'
+function openColorPicker(target) {
+  pickerTarget = target || 'object';
+  // 初始化为当前选中对象的颜色或画笔颜色
+  let c;
+  if (pickerTarget === 'brush') {
+    c = brush.color;
+  } else if (state.selectedList.length > 0) {
+    c = state.selectedList[0].data.color;
+  } else {
+    c = state.defaultColor;
   }
+  const [h,s,v] = rgbToHsv((c>>16)&255, (c>>8)&255, c&255);
+  pickerState.h = h; pickerState.s = s; pickerState.v = v;
   updatePickerDisplay();
   pickerModal.classList.add('show');
 }
-document.getElementById('open-color-picker').addEventListener('click', openColorPicker);
+document.getElementById('open-color-picker').addEventListener('click', () => openColorPicker('object'));
+document.getElementById('brush-open-picker').addEventListener('click', () => openColorPicker('brush'));
+
+// 对象自定义颜色拾取（与画笔一致的控件）
+const objCustomColor = document.getElementById('obj-custom-color');
+const objCustomHex = document.getElementById('obj-custom-hex');
+// 节流保存：避免频繁调用pushHistory
+let _colorSaveTimer = null;
+function scheduleColorSave() {
+  if (_colorSaveTimer) return;
+  _colorSaveTimer = setTimeout(() => {
+    _colorSaveTimer = null;
+    if (state.selectedList.length) pushHistory();
+  }, 200); // 200ms 节流
+}
+
+objCustomColor.addEventListener('input', (e) => {
+  const hex = e.target.value;
+  const rgb = hexToRgb(hex);
+  if (rgb) {
+    const colorVal = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
+    state.defaultColor = colorVal;
+    state.selectedList.forEach(o => {
+      o.data.color = colorVal;
+      applyAppearance(o);
+    });
+    objCustomHex.textContent = hex.substring(1);
+    updateColorSelectionUI();
+    // 更新花纹预览
+    updatePatternPreviews(colorVal);
+    // 节流保存状态，确保点击外部后修改不会丢失
+    scheduleColorSave();
+  }
+});
+objCustomColor.addEventListener('blur', () => {
+  // 失焦时立即保存，确保状态不丢失
+  if (_colorSaveTimer) {
+    clearTimeout(_colorSaveTimer);
+    _colorSaveTimer = null;
+    if (state.selectedList.length) pushHistory();
+  }
+});
+objCustomColor.addEventListener('click', (e) => e.stopPropagation());
 
 document.getElementById('color-picker-cancel').addEventListener('click', () => {
   pickerModal.classList.remove('show');
@@ -2660,14 +3090,24 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
   const rgb = hexToRgb(hex);
   if (rgb) {
     const colorVal = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
-    state.defaultColor = colorVal;
-    state.selectedList.forEach(o => {
-      o.data.color = colorVal;
-      applyAppearance(o);
-    });
-    pushHistory();
-    document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', parseInt(d.dataset.c) === colorVal));
-    toast('已应用颜色 ' + hex);
+    if (pickerTarget === 'brush') {
+      setBrushColor(colorVal);
+      toast('画笔颜色已设置为 ' + hex);
+    } else {
+      state.defaultColor = colorVal;
+      state.selectedList.forEach(o => {
+        o.data.color = colorVal;
+        applyAppearance(o);
+      });
+      pushHistory();
+      // 同步对象自定义颜色控件
+      objCustomColor.value = hex;
+      objCustomHex.textContent = hex.substring(1);
+      updateColorSelectionUI();
+      // 更新花纹预览
+      updatePatternPreviews(colorVal);
+      toast('已应用颜色 ' + hex);
+    }
   }
   pickerModal.classList.remove('show');
 });
@@ -2710,9 +3150,14 @@ const brushCustomColor = document.getElementById('brush-custom-color');
 const brushCustomHex = document.getElementById('brush-custom-hex');
 function setBrushColor(numColor) {
   brush.color = numColor;
-  const hex = '#' + numColor.toString(16).padStart(6,'0');
-  brushCustomColor.value = hex;
-  brushCustomHex.textContent = hex.substring(1);
+  if (numColor === NO_COLOR) {
+    brushCustomColor.value = '#cccccc';
+    brushCustomHex.textContent = 'cccccc';
+  } else {
+    const hex = '#' + numColor.toString(16).padStart(6,'0');
+    brushCustomColor.value = hex;
+    brushCustomHex.textContent = hex.substring(1);
+  }
   document.querySelectorAll('#brush-color-row .color-dot').forEach(d => {
     d.classList.toggle('active', parseInt(d.dataset.c) === numColor);
   });
@@ -2728,6 +3173,19 @@ COLORS.forEach(c => {
   });
   brushColorRow.appendChild(dot);
 });
+// 添加"无颜色"选项到画笔颜色
+const brushNoColorDot = document.createElement('div');
+brushNoColorDot.className = 'color-dot no-color-dot';
+brushNoColorDot.dataset.c = NO_COLOR;
+brushNoColorDot.style.background = 'linear-gradient(135deg, #fff 25%, #ccc 25%, #ccc 50%, #fff 50%, #fff 75%, #ccc 75%)';
+brushNoColorDot.style.backgroundSize = '8px 8px';
+brushNoColorDot.style.position = 'relative';
+brushNoColorDot.innerHTML = '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#f44;pointer-events:none;">×</span>';
+brushNoColorDot.addEventListener('click', (e) => {
+  e.stopPropagation();
+  setBrushColor(NO_COLOR);
+});
+brushColorRow.appendChild(brushNoColorDot);
 // 自定义颜色拾取
 brushCustomColor.addEventListener('input', (e) => {
   const hex = e.target.value;
@@ -2759,32 +3217,87 @@ if (brushPatRow) {
 function applyAppearance(o) {
   const m = o.mesh;
   const isGroup = m.isGroup;
+  
+  // 检查对象是否处于选中状态
+  const wasSelected = o._selectionOrigMaterials !== null && o._selectionOrigMaterials !== undefined;
+  
+  // 如果被选中，先取消选中以避免材质引用问题
+  if (wasSelected) {
+    applySelectionVisual(o, false);
+  }
+  
   const applyToMesh = (mesh) => {
-    if (mesh.material && mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
     if (o.data.kind === 'text') {
       rebuildText(o);
-    } else if (o.data.kind === 'image') {
-      if (o.data.image) { imageTexture(o.data.image).then(({ tex })=>{ mesh.material.map = tex; mesh.material.needsUpdate = true; }); }
-    } else if (o.data.isBrush) {
-      mesh.material.color.set(o.data.color);
+      return;
+    }
+    
+    if (o.data.kind === 'image') {
+      // 图片对象：直接显示图片，颜色固定白色
+      if (o.data.image) {
+        imageTexture(o.data.image).then(({ tex }) => {
+          if (mesh.material.map) mesh.material.map.dispose();
+          mesh.material.map = tex;
+          mesh.material.color.set(0xffffff);
+          mesh.material.needsUpdate = true;
+        });
+      }
+      return;
+    }
+    
+    if (o.data.isBrush) {
+      // 画笔：直接设置颜色
+      if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
+      const c = o.data.color === NO_COLOR ? 0xcccccc : o.data.color;
+      mesh.material.color.set(c);
       mesh.material.opacity = o.data.opacity ?? 1;
       mesh.material.needsUpdate = true;
+      return;
+    }
+    
+    // 3D/2D 图形对象
+    const hasTex = !!o.data.image;
+    const hasPat = o.data.pattern && o.data.pattern !== '纯色';
+    const isNoColor = o.data.color === NO_COLOR;
+    const effectiveColor = isNoColor ? 0xcccccc : o.data.color;
+    
+    // 设置基础材质参数（确保3D光照下颜色正确显示）
+    mesh.material.needsUpdate = true;
+    
+    if (hasTex) {
+      // 贴图模式：颜色作为 tint 叠加
+      if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
+      mesh.material.color.set(effectiveColor);
+      imageTexture(o.data.image).then(({ tex }) => {
+        mesh.material.map = tex;
+        mesh.material.color.set(effectiveColor);
+        mesh.material.needsUpdate = true;
+      });
+    } else if (hasPat) {
+      // 花纹模式：重新生成花纹纹理（基于当前颜色）
+      if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
+      // 对于深色/无颜色，生成更明显的花纹
+      const patColor = isNoColor ? 0xcccccc : effectiveColor;
+      mesh.material.map = patternTexture(o.data.pattern, patColor);
+      mesh.material.color.set(0xffffff); // 白色避免与花纹颜色叠加
+      mesh.material.needsUpdate = true;
     } else {
-      mesh.material.color.set(o.data.color);
-      if (o.data.image) {
-        imageTexture(o.data.image).then(({ tex })=>{ mesh.material.map = tex; mesh.material.color.set(0xffffff); mesh.material.needsUpdate = true; });
-      } else if (o.data.pattern && o.data.pattern !== '纯色') {
-        mesh.material.map = patternTexture(o.data.pattern, o.data.color);
-        mesh.material.needsUpdate = true;
-      } else {
-        mesh.material.needsUpdate = true;
-      }
+      // 纯色模式
+      if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
+      mesh.material.color.set(effectiveColor);
+      mesh.material.needsUpdate = true;
     }
   };
+  
   if (isGroup) {
     m.children.forEach(applyToMesh);
   } else {
     applyToMesh(m);
+  }
+  
+  // 如果之前被选中，重新应用选中效果
+  if (wasSelected) {
+    applySelectionVisual(o, true);
   }
 }
 
@@ -2806,11 +3319,19 @@ function rebuildText(o) {
   // 更新原始材质的 map
   if (m.material.map) m.material.map.dispose();
   m.material.map = tex; m.material.needsUpdate = true;
-  // 重建几何（保持底边贴地）
+  // 重建几何（保持中心对齐，与 createObject 中的文本创建逻辑一致）
   m.geometry.dispose();
   const geo = new THREE.PlaneGeometry(w / 100, h / 100);
-  geo.computeBoundingBox(); geo.translate(0, -geo.boundingBox.min.y, 0);
+  geo.computeBoundingBox();
+  // 中心对齐：将几何体中心移到原点，与 createObject 保持一致
+  geo.translate(0, -(geo.boundingBox.min.y + geo.boundingBox.max.y) / 2, 0);
   m.geometry = geo;
+  // 重新计算半高并调整位置（保持对象中心不变）
+  geo.computeBoundingBox();
+  const halfH = (geo.boundingBox.max.y - geo.boundingBox.min.y) / 2;
+  o.data.halfH = halfH;
+  // 保持对象中心点不变
+  m.position.y = o.mesh.position.y;
   // 重新应用选中态
   if (wasSelected) applySelectionVisual(o, true);
 }
@@ -3011,9 +3532,9 @@ function bindNumberInput(inputId, sliderId, applyFn) {
 
 bindNumberInput('input-px','p-x',(m,v)=>m.position.x=v);
 bindNumberInput('input-pz','p-z',(m,v)=>m.position.z=v);
-bindNumberInput('input-py','p-y',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.position.y = 0; } else if(o){ m.position.y = v + (o.data.halfH||0)*m.scale.y; } else { m.position.y=v; } });
+bindNumberInput('input-py','p-y',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.position.y = v; } else if(o){ m.position.y = v + (o.data.halfH||0)*m.scale.y; } else { m.position.y=v; } });
 bindNumberInput('input-ry','r-y',(m,v)=>m.rotation.y=v*Math.PI/180);
-bindNumberInput('input-rx','r-x',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.rotation.x = -Math.PI/2; } else { m.rotation.x=v*Math.PI/180; } });
+bindNumberInput('input-rx','r-x',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.rotation.x = v*Math.PI/180; } else { m.rotation.x=v*Math.PI/180; } });
 bindNumberInput('input-sc','s-c',(m,v)=>m.scale.setScalar(v));
 bindNumberInput('input-opacity','p-opacity',(m,v)=>{
   const o = state.selectedList.find(s=>s.mesh===m);
@@ -3272,21 +3793,35 @@ let ghostPlaceScale = 1;
 
 // ============ 画笔绘制 ============
 function createBrushMaterial() {
+  const effectiveColor = brush.color === NO_COLOR ? 0xcccccc : brush.color;
   const mat = new THREE.MeshStandardMaterial({
-    color: brush.color,
+    color: effectiveColor,
     transparent: true,
     opacity: brush.opacity,
     roughness: 0.6,
     metalness: 0.1,
     depthWrite: brush.opacity >= 1,
-    // 使用AdditiveBlending避免重叠部分透明度叠加，保持原始透明度
-    blending: THREE.AdditiveBlending
+    side: THREE.DoubleSide
   });
   if (brush.pattern > 0) {
-    const tex = patternTexture(PATTERNS[brush.pattern], brush.color);
+    const tex = patternTexture(PATTERNS[brush.pattern], effectiveColor);
     mat.map = tex;
     mat.color.set(0xffffff);
   }
+  return mat;
+}
+
+function createBrushMaterialForSnapshot(s) {
+  const brushColor = (s.color !== undefined && s.color !== NO_COLOR) ? s.color : 0xcccccc;
+  const mat = new THREE.MeshStandardMaterial({
+    color: brushColor,
+    transparent: true,
+    opacity: s.opacity || 1,
+    roughness: 0.6,
+    metalness: 0.1,
+    depthWrite: (s.opacity || 1) >= 1,
+    side: THREE.DoubleSide
+  });
   return mat;
 }
 
@@ -3303,7 +3838,7 @@ function startBrushStroke(groundPoint) {
 function addBrushPoint3D(groundPoint) {
   const pts = brush.currentPoints;
   const last = pts[pts.length - 1];
-  const minDist = brush.thickness * 0.15;
+  const minDist = brush.thickness * 0.08;
   if (last && last.distanceTo(groundPoint) < minDist) return;
   
   // 限制最大点数防止无限笔画
@@ -3321,8 +3856,8 @@ function addBrushPoint3D(groundPoint) {
     const segDir = new THREE.Vector3().subVectors(b, a);
     const segLen = segDir.length();
     if (segLen > 0.0001) {
-      // 圆柱连接段
-      const cylGeo = new THREE.CylinderGeometry(r, r, segLen, 12, 1, false);
+      // 圆柱连接段，使用更高分辨率确保平滑
+      const cylGeo = new THREE.CylinderGeometry(r, r, segLen, 24, 1, false);
       const cyl = new THREE.Mesh(cylGeo, mat.clone());
       const midPoint = a.clone().add(b).multiplyScalar(0.5);
       cyl.position.copy(midPoint);
@@ -3336,9 +3871,9 @@ function addBrushPoint3D(groundPoint) {
     }
   }
   
-  // 端点球体（确保连接处无间隙）
+  // 端点球体，使用更高分辨率确保与圆柱无缝连接
   const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(r, 16, 12),
+    new THREE.SphereGeometry(r, 32, 24),
     mat.clone()
   );
   sphere.position.copy(groundPoint);
@@ -3347,12 +3882,29 @@ function addBrushPoint3D(groundPoint) {
   brush.currentMeshes.push(sphere);
 }
 
-function endBrushStroke() {
+function endBrushStroke(cancel) {
   if (!brush.drawing) return;
   brush.drawing = false;
   
   const pts = brush.currentPoints;
   const is2D = state.tool === 'brush2d';
+  
+  // 取消模式：直接丢弃当前笔画（从场景中移除并释放资源）
+  if (cancel) {
+    brush.currentMeshes.forEach(m => {
+      scene.remove(m);
+      if (m.geometry) m.geometry.dispose();
+      if (m.material) {
+        if (Array.isArray(m.material)) m.material.forEach(mat => mat.dispose());
+        else m.material.dispose();
+      }
+    });
+    brush.currentPoints = [];
+    brush.currentMeshes = [];
+    state.brushLockedPlane = null;
+    hideBrushRefPlane();
+    return;
+  }
   
   if (is2D) {
     // 2D画笔：保持2D平面图形，不合并为3D管道
@@ -3363,8 +3915,29 @@ function endBrushStroke() {
   }
   
   if (brush.currentMeshes.length > 0) {
-    const group = new THREE.Group();
+    // 计算画笔笔迹的包围盒中心
+    let minX = Infinity, minY = Infinity, minZ = Infinity;
+    let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
     brush.currentMeshes.forEach(m => {
+      const p = m.position;
+      minX = Math.min(minX, p.x - brush.thickness/2);
+      minY = Math.min(minY, p.y - brush.thickness/2);
+      minZ = Math.min(minZ, p.z - brush.thickness/2);
+      maxX = Math.max(maxX, p.x + brush.thickness/2);
+      maxY = Math.max(maxY, p.y + brush.thickness/2);
+      maxZ = Math.max(maxZ, p.z + brush.thickness/2);
+    });
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    const centerZ = (minZ + maxZ) / 2;
+    
+    const group = new THREE.Group();
+    group.position.set(centerX, centerY, centerZ);
+    brush.currentMeshes.forEach(m => {
+      // 将子部件位置调整为相对于group中心的坐标
+      m.position.x -= centerX;
+      m.position.y -= centerY;
+      m.position.z -= centerZ;
       scene.remove(m);
       group.add(m);
     });
@@ -3887,6 +4460,34 @@ function _eraseAtSingle(groundPoint) {
 let _eraserDirty = false;
 function eraseAt(groundPoint) {
   const radius = state.eraserSize;
+  
+  // 检查是否有非画笔对象（图形/文字/图片）在擦除范围内
+  const nonBrushObjects = findObjectsInRadius(groundPoint, radius).filter(o => !o.data.isBrush);
+  if (nonBrushObjects.length > 0) {
+    // 非画笔对象：直接删除整个对象（与删除对象模式相同）
+    const o = nonBrushObjects[0];
+    scene.remove(o.mesh);
+    const idx = state.objects.indexOf(o);
+    if (idx >= 0) state.objects.splice(idx, 1);
+    const sIdx = state.selectedList.indexOf(o);
+    if (sIdx >= 0) state.selectedList.splice(sIdx, 1);
+    if (o._eraserOrigMaterials) {
+      o._eraserOrigMaterials.forEach(m => m.dispose());
+      o._eraserOrigMaterials = null;
+    }
+    if (o._selectionOrigMaterials) {
+      o._selectionOrigMaterials.forEach(m => m.dispose());
+      o._selectionOrigMaterials = null;
+    }
+    disposeObject(o);
+    clearEraserHighlight();
+    updateSelBoxes();
+    refreshProps();
+    pushHistory();
+    _lastErasePoint = groundPoint.clone();
+    return;
+  }
+  
   // 对象删除模式：直接处理（不做插值），每次删除立即记录历史
   if (state.eraserMode !== 'local') {
     const nearest = findObjectsInRadius(groundPoint, radius);
@@ -3914,7 +4515,7 @@ function eraseAt(groundPoint) {
     _lastErasePoint = groundPoint.clone();
     return;
   }
-  // 局部擦除模式：路径插值，确保长按所经之处必擦除
+  // 局部擦除模式（仅画笔笔迹）：路径插值，确保长按所经之处必擦除
   let anyDeleted = false;
   const gp = groundPoint;
   if (_lastErasePoint) {
@@ -5010,7 +5611,7 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 1700);
 }
-function setStatus(s) { document.getElementById('status').textContent = s; }
+function setStatus(s) { /* status bar removed - text no longer displayed */ }
 
 // 文本输入弹窗（替代浏览器原生 prompt，更稳定且支持多行）
 function showTextPrompt(title, defaultVal = '') {
