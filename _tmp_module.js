@@ -1,781 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>立方·三维图形设计工坊</title>
-<style>
-  :root {
-    --bg-deep: #0c0e16;
-    --bg-panel: rgba(20, 22, 34, 0.82);
-    --bg-panel-solid: #14161f;
-    --accent: #6ee7ff;
-    --accent-2: #c084fc;
-    --accent-3: #fb7185;
-    --warn: #fbbf24;
-    --text: #e8e8f0;
-    --text-dim: #8b8ba0;
-    --border: rgba(110, 231, 255, 0.18);
-    --radius: 14px;
-    --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%; overflow: hidden;
-    background: var(--bg-deep); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    user-select: none;
-  }
 
-  /* 画布 */
-  #canvas-wrap { position: fixed; inset: 0; z-index: 1; }
-  #three-canvas { display: block; width: 100%; height: 100%; cursor: default; }
-  #three-canvas.tooling { cursor: none; }
-  #three-canvas.grabbing { cursor: grabbing; }
-
-  /* 顶部栏 */
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 50;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
-    background: linear-gradient(180deg, rgba(12,14,22,0.92), rgba(12,14,22,0.45));
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
-  }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: 1px; }
-  .brand .logo {
-    width: 26px; height: 26px; border-radius: 7px;
-    background: conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
-    animation: spin 9s linear infinite;
-  }
-  .brand .logo::after {
-    content:''; display:block; width:10px;height:10px;background:var(--bg-deep);
-    border-radius:3px; transform: translate(8px,8px);
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .top-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-  .top-btn {
-    height: 32px; padding: 0 12px; font-size: 12.5px;
-    color: var(--text); background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border); border-radius: 8px;
-    cursor: pointer; transition: all .18s; display:flex; align-items:center; gap:5px;
-    white-space: nowrap;
-  }
-  .top-btn:hover { background: rgba(110,231,255,0.12); border-color: var(--accent); }
-  .top-btn:disabled { opacity: .35; cursor: not-allowed; }
-  .top-btn:disabled:hover { background: rgba(255,255,255,0.05); border-color: var(--border); }
-  .top-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0a0a14; font-weight:600; border-color:transparent; }
-  .top-btn .ic { font-size: 14px; line-height: 1; }
-
-  /* 面板通用 */
-  .panel {
-    position: fixed; top: 66px; z-index: 30;
-    background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border); border-radius: var(--radius);
-    box-shadow: var(--shadow); overflow-y: auto;
-    max-height: calc(100vh - 84px);
-  }
-  .panel-left { left: 14px; width: 220px; transition: transform .25s ease; }
-  .panel-right { right: 14px; width: 250px; transition: transform .25s ease; }
-  .panel-left.collapsed { transform: translateX(calc(-100% - 18px)); }
-  .panel-right.collapsed { transform: translateX(calc(100% + 18px)); }
-  /* 桌面端收缩按钮 */
-  .panel-toggle {
-    position: fixed; top: 66px; z-index: 35;
-    width: 22px; height: 40px;
-    background: var(--bg-panel); border: 1px solid var(--border);
-    border-radius: var(--radius); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-dim); font-size: 12px;
-    transition: all .25s ease;
-  }
-  .panel-toggle:hover { color: var(--text); border-color: var(--accent); }
-  .panel-toggle.left { left: 240px; }
-  .panel-toggle.right { right: 280px; }
-  .panel-toggle.left.collapsed { left: 14px; }
-  .panel-toggle.right.collapsed { right: 14px; }
-  .panel h3 {
-    padding: 12px 14px 6px; font-size: 11px; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
-  }
-  .panel-section { padding: 4px 12px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .panel-section:last-child { border-bottom: none; }
-
-  /* 可折叠面板 */
-  .collapsible-header {
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; padding: 6px 0; user-select: none;
-  }
-  .collapsible-header h3 { padding: 0; margin: 0; flex: 1; }
-  .collapse-arrow {
-    width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
-    transition: transform .2s; color: var(--text-dim); font-size: 10px;
-  }
-  .collapsible.collapsed .collapse-arrow { transform: rotate(-90deg); }
-  .collapsible.collapsed .collapsible-body { display: none; }
-
-  .shape-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }
-  .shape-btn {
-    aspect-ratio: 1; background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;
-    cursor: grab; display:flex; align-items:center; justify-content:center;
-    color: var(--text-dim); transition: all .18s; padding: 0;
-  }
-  .shape-btn:hover { background: rgba(110,231,255,0.1); color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
-  .shape-btn:active { cursor: grabbing; }
-  .shape-btn.active { background: rgba(110,231,255,0.18); color: var(--accent); border-color: var(--accent); }
-  .shape-btn svg { width: 18px; height: 18px; }
-  .shape-btn.dragging { opacity: 0.5; }
-
-  .tool-btn {
-    width: 100%; display:flex; align-items:center; gap:10px;
-    padding: 10px 12px; font-size: 13px;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 8px; cursor: pointer; color: var(--text); transition: all .18s;
-  }
-  .tool-btn:hover { border-color: var(--accent); background: rgba(110,231,255,0.08); }
-  .tool-btn.active { border-color: var(--accent); background: rgba(110,231,255,0.16); }
-  .tool-btn svg { width: 18px; height: 18px; }
-
-  .transform-modes { display: flex; gap: 6px; }
-  .mode-btn {
-    flex: 1; padding: 8px 6px; border-radius: 8px; border: 1.5px solid var(--border);
-    background: var(--bg2); color: var(--text); cursor: pointer;
-    font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    transition: all .18s;
-  }
-  .mode-btn:hover { border-color: var(--accent); background: rgba(110,231,255,0.08); }
-  .mode-btn.active { border-color: var(--accent); background: rgba(110,231,255,0.16); }
-  .mode-btn span { font-size: 18px; }
-
-  .lock-ratio { display: flex; align-items: center; gap: 6px; margin-top: 10px; cursor: pointer; font-size: 13px; color: var(--text); user-select: none; }
-  .lock-ratio input { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
-
-  .shape-btn.disabled, .tool-btn.disabled { opacity: 0.35; pointer-events: none; filter: grayscale(0.6); }
-  .mode-btn.disabled, .lock-ratio.disabled { opacity: 0.35; pointer-events: none; filter: grayscale(0.6); }
-
-  .color-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .color-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all .15s; }
-  .color-dot:hover { transform: scale(1.15); }
-  .color-dot.active { border-color: white; transform: scale(1.15); }
-  .no-color-dot { background-color: #f5f5f5; }
-  .no-color-dot.active { border-color: var(--accent, #6ee7ff); }
-
-  .pat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-  .pat-btn {
-    aspect-ratio: 1; border-radius: 8px; cursor: pointer;
-    border: 2px solid transparent; transition: all .15s;
-    background-size: cover; background-position: center;
-    position: relative; overflow: hidden;
-  }
-  .pat-btn:hover { transform: scale(1.05); }
-  .pat-btn.active { border-color: var(--accent); }
-  .pat-btn span {
-    position:absolute; bottom:0; left:0; right:0;
-    font-size: 9px; text-align:center; background: rgba(0,0,0,0.55); color:#fff;
-    padding: 1px 0;
-  }
-
-  .ctrl-row { display:flex; flex-direction:column; gap:5px; margin-bottom: 10px; }
-  .ctrl-label { display:flex; justify-content:space-between; font-size: 11.5px; color: var(--text-dim); }
-  .ctrl-label span:last-child { color: var(--accent); font-variant-numeric: tabular-nums; }
-  input[type="range"] {
-    -webkit-appearance:none; appearance:none; width:100%; height:4px;
-    background: rgba(255,255,255,0.12); border-radius:2px; outline:none;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance:none; width:15px;height:15px;border-radius:50%;
-    background: var(--accent); cursor:pointer; border:2px solid #0c0e16;
-    box-shadow: 0 0 6px rgba(110,231,255,0.6);
-  }
-  input[type="range"]::-moz-range-thumb { width:15px;height:15px;border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid #0c0e16; }
-
-  .danger-btn {
-    width:100%; padding:9px; font-size:13px; cursor:pointer;
-    background: rgba(251,113,133,0.12); border:1px solid rgba(251,113,133,0.4);
-    color: var(--accent-3); border-radius:8px; transition: all .18s;
-  }
-  .danger-btn:hover { background: rgba(251,113,133,0.22); }
-
-  .empty-hint { font-size: 12px; color: var(--text-dim); padding: 10px 4px; line-height: 1.6; }
-
-  /* 拖框选区 */
-  #box-sel {
-    position: fixed; z-index: 20; display: none;
-    border: 1.5px dashed var(--accent);
-    background: rgba(110,231,255,0.12);
-    pointer-events: none;
-  }
-
-  /* 文本控件 */
-  .text-ctrl select {
-    width: 100%; height: 30px; padding: 0 8px; font-size: 12px;
-    background: rgba(255,255,255,0.05); color: var(--text);
-    border: 1px solid var(--border); border-radius: 6px; outline: none;
-  }
-  .text-ctrl select option { color: #000; background: #fff; }
-  .text-ctrl select:focus { border-color: var(--accent); }
-  .toggle-row2 { display: flex; gap: 6px; }
-  .toggle-btn {
-    flex: 1; height: 30px; font-size: 12px; cursor: pointer;
-    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-    border-radius: 6px; color: var(--text-dim); transition: all .15s;
-  }
-  .toggle-btn:hover { color: var(--text); }
-  .toggle-btn.active { background: rgba(110,231,255,0.18); color: var(--accent); border-color: var(--accent); }
-  .multi-hint { font-size: 11px; color: var(--accent-2); padding: 4px 2px; }
-  .kbd { font-size: 10px; color: var(--text-dim); line-height: 1.7; padding: 4px 2px; }
-  .kbd b { color: var(--accent); font-weight: 600; }
-
-  /* 底部状态条 */
-  .bottombar {
-    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 30;
-    display: flex; gap: 6px; padding: 6px;
-    background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border); border-radius: 40px; box-shadow: var(--shadow);
-    align-items: center;
-  }
-  .view-btn {
-    height: 32px; padding: 0 12px; font-size: 12px;
-    background: rgba(255,255,255,0.04); border:1px solid transparent; border-radius: 20px;
-    color: var(--text); cursor: pointer; transition: all .18s;
-  }
-  .view-btn:hover { background: rgba(110,231,255,0.1); border-color: var(--accent); }
-
-  /* 声明 */
-  .declaration {
-    position: fixed; bottom: 60px; left: 14px; z-index: 25;
-    max-width: 270px; padding: 10px 12px;
-    background: var(--bg-panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--border); border-radius: 12px;
-    font-size: 10.5px; color: var(--text-dim); line-height: 1.6;
-  }
-  .declaration strong { color: var(--accent); }
-
-  /* 提示 */
-  .toast {
-    position: fixed; top: 66px; left: 50%; transform: translateX(-50%) translateY(-16px);
-    padding: 9px 18px; z-index: 100;
-    background: var(--bg-panel-solid); border:1px solid var(--accent);
-    border-radius: 26px; color: var(--text); font-size: 12.5px;
-    opacity: 0; pointer-events: none; transition: all .28s;
-  }
-  .toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
-
-  /* 文本输入弹窗 */
-  .modal-mask {
-    position: fixed; inset: 0; z-index: 150; display: none;
-    align-items: center; justify-content: center;
-    background: rgba(8, 10, 18, 0.72); backdrop-filter: blur(6px);
-  }
-  .modal-mask.show { display: flex; }
-  .modal-box {
-    width: min(420px, 90vw); padding: 18px;
-    background: var(--bg-panel-solid); border: 1px solid var(--accent);
-    border-radius: 16px; box-shadow: var(--shadow);
-    animation: pop .22s ease-out;
-  }
-  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .modal-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
-  .modal-box textarea {
-    width: 100%; min-height: 72px; padding: 10px; resize: vertical;
-    background: rgba(255,255,255,0.05); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px; outline: none;
-    font-size: 14px; font-family: inherit; user-select: text;
-  }
-  .modal-box textarea:focus { border-color: var(--accent); }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-
-  /* 内联文本输入 */
-  .inline-text-wrap {
-    position: fixed; z-index: 160;
-    display: flex; flex-direction: column; align-items: flex-start;
-    transform: translate(-50%, -50%);
-    pointer-events: auto;
-  }
-  .inline-text-wrap .inline-text-arrow {
-    width: 2px; height: 28px; background: var(--accent);
-    margin-top: -4px; opacity: 0.7;
-  }
-  .inline-text-wrap .inline-text-input {
-    min-width: 140px; min-height: 44px;
-    padding: 8px 12px; font-size: 16px; line-height: 1.4;
-    background: rgba(12, 14, 22, 0.92); color: var(--text);
-    border: 1.5px solid var(--accent); border-radius: 10px; outline: none;
-    font-family: inherit; resize: both; overflow: hidden;
-    box-shadow: 0 0 18px rgba(110, 231, 255, 0.25);
-    backdrop-filter: blur(4px);
-    white-space: pre;
-  }
-  .inline-text-wrap .inline-text-input:focus { border-color: var(--accent-2); box-shadow: 0 0 22px rgba(110, 231, 255, 0.4); }
-  .inline-text-wrap .inline-text-hint {
-    font-size: 11px; color: var(--text-dim); margin-top: 6px;
-    white-space: nowrap;
-  }
-
-  /* 加载层 */
-  .loader {
-    position: fixed; inset:0; z-index: 200; display:flex; align-items:center; justify-content:center;
-    background: var(--bg-deep); transition: opacity .5s;
-  }
-  .loader.hidden { opacity:0; pointer-events:none; }
-  .loader-box { width:56px; height:56px; position: relative; }
-  .loader-box div { position:absolute; inset:0; border:2px solid transparent; border-radius:8px; animation: pulse 1.5s ease-in-out infinite; }
-  .loader-box div:nth-child(1){ border-color: var(--accent); }
-  .loader-box div:nth-child(2){ border-color: var(--accent-2); animation-delay:.25s; transform:rotate(30deg); }
-  .loader-box div:nth-child(3){ border-color: var(--accent-3); animation-delay:.5s; transform:rotate(60deg); }
-  @keyframes pulse { 0%,100%{ transform:scale(.8) rotate(0); opacity:.4;} 50%{ transform:scale(1.1) rotate(180deg); opacity:1;} }
-
-  .panel::-webkit-scrollbar { width:4px; }
-  .panel::-webkit-scrollbar-thumb { background: var(--accent); border-radius:2px; }
-  .panel::-webkit-scrollbar-track { background:transparent; }
-
-  /* 移动端 */
-  .mobile-toggle { display:none; position: fixed; top: 64px; z-index: 40;
-    width:38px; height:38px; background: var(--bg-panel); backdrop-filter: blur(18px);
-    border:1px solid var(--border); border-radius:10px; color: var(--accent);
-    cursor:pointer; font-size:17px; align-items:center; justify-content:center; }
-  .mobile-toggle.left { left: 14px; }
-  .mobile-toggle.right { right: 14px; }
-
-  @media (max-width: 820px) {
-    .topbar { height: 48px; padding: 0 10px; }
-    .brand { font-size: 13px; }
-    .brand .logo { width:22px; height:22px; }
-    .top-btn { height: 28px; padding: 0 9px; font-size: 11.5px; }
-    .top-btn .lbl { display:none; }
-    .mobile-toggle { display:flex; }
-    .panel-toggle { display: none; }
-    .panel-left, .panel-right {
-      top: 110px; width: calc(100vw - 28px); max-width: 280px;
-      max-height: calc(100vh - 200px);
-      transform: translateX(-130%); transition: transform .28s;
-    }
-    .panel-right { transform: translateX(130%); }
-    .panel-left.open { transform: translateX(0); }
-    .panel-right.open { transform: translateX(0); }
-    .declaration { bottom: 64px; left: 8px; right: 8px; max-width:none; font-size:10px; padding:8px 10px; }
-    .bottombar { bottom: 10px; padding: 5px; gap:4px; }
-    .view-btn { height: 28px; padding: 0 9px; font-size: 11px; }
-  }
-  @media (max-width: 460px) {
-    .top-btn { padding: 0 7px; }
-  }
-
-  /* 隐藏文件输入 */
-  .hidden-input { display:none; }
-</style>
-</head>
-<body>
-
-<div class="loader" id="loader"><div class="loader-box"><div></div><div></div><div></div></div></div>
-
-<!-- 画布 -->
-<div id="canvas-wrap"><canvas id="three-canvas"></canvas></div>
-<div id="box-sel"></div>
-
-<!-- 顶部栏 -->
-<header class="topbar">
-  <div class="brand"><div class="logo"></div><span>立方·三维设计工坊</span></div>
-  <div class="top-actions">
-    <button class="top-btn" id="btn-new" title="新建场景 Ctrl+N"><span class="ic">✨</span><span class="lbl">新建</span></button>
-    <button class="top-btn" id="btn-undo" title="撤销 Ctrl+Z"><span class="ic">↶</span><span class="lbl">撤销</span></button>
-    <button class="top-btn" id="btn-redo" title="重做 Ctrl+Y"><span class="ic">↷</span><span class="lbl">重做</span></button>
-    <button class="top-btn" id="btn-copy" title="复制 Ctrl+C"><span class="ic">⧉</span><span class="lbl">复制</span></button>
-    <button class="top-btn" id="btn-paste" title="粘贴 Ctrl+V"><span class="ic">📋</span><span class="lbl">粘贴</span></button>
-    <button class="top-btn" id="btn-dup" title="克隆 Ctrl+D"><span class="ic">⎘</span><span class="lbl">克隆</span></button>
-    <button class="top-btn" id="btn-import" title="导入场景 JSON"><span class="ic">📥</span><span class="lbl">导入</span></button>
-    <button class="top-btn" id="btn-export" title="导出场景 JSON"><span class="ic">📤</span><span class="lbl">导出</span></button>
-    <button class="top-btn" id="btn-shot" title="导出图像 PNG"><span class="ic">📷</span><span class="lbl">截图</span></button>
-    <button class="top-btn" id="btn-clear" title="清空场景"><span class="ic">🗑</span><span class="lbl">清空</span></button>
-    <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl">坐标轴</span></button>
-    <button class="top-btn" id="btn-grid" title="切换网格线显示"><span class="ic">🔲</span><span class="lbl">网格线</span></button>
-    <button class="top-btn primary" id="btn-fs" title="全屏"><span class="ic">⛶</span><span class="lbl">全屏</span></button>
-  </div>
-</header>
-
-<button class="mobile-toggle left" id="toggle-left">☰</button>
-<button class="mobile-toggle right" id="toggle-right">⚙</button>
-<button class="panel-toggle left" id="toggle-panel-left">‹</button>
-<button class="panel-toggle right" id="toggle-panel-right">›</button>
-
-<!-- 左侧：图形与工具 -->
-<aside class="panel panel-left" id="panel-left">
-  <div class="panel-section collapsible" id="sec-3d">
-    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>3D 图形</h3><span class="collapse-arrow">▼</span>
-    </div>
-    <div class="collapsible-body">
-      <div class="shape-grid" id="grid-3d"></div>
-    </div>
-  </div>
-  <div class="panel-section collapsible" id="sec-2d">
-    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>2D 图形</h3><span class="collapse-arrow">▼</span>
-    </div>
-    <div class="collapsible-body">
-      <div class="shape-grid" id="grid-2d"></div>
-    </div>
-  </div>
-  <div class="panel-section">
-    <h3>工具</h3>
-    <button class="tool-btn" id="tool-text">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
-      <span>添加文本</span>
-    </button>
-    <button class="tool-btn" id="tool-image" style="margin-top:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-      <span>添加图片</span>
-    </button>
-    <button class="tool-btn" id="tool-select" style="margin-top:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7 18 2-7 7-2z"/></svg>
-      <span>选择/变换</span>
-    </button>
-    <button class="tool-btn" id="tool-brush3d" style="margin-top:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-      <span>3D 画笔</span>
-    </button>
-    <button class="tool-btn" id="tool-brush2d" style="margin-top:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c0-3 3-5 9-5s9 2 9 5"/><path d="M12 3v18"/><path d="M3 12h18"/><circle cx="12" cy="12" r="3"/></svg>
-      <span>2D 画笔</span>
-    </button>
-    <button class="tool-btn" id="tool-eraser" style="margin-top:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16c-1-1-1-3 0-4L14 1l9 9-10 10"/><path d="M14 1l9 9"/></svg>
-      <span>橡皮擦</span>
-    </button>
-  </div>
-  <div class="panel-section">
-    <h3>变换模式</h3>
-    <div class="transform-modes">
-      <button class="mode-btn active" id="mode-translate" title="平移模式"><span>⇔</span>平移</button>
-      <button class="mode-btn" id="mode-rotate" title="旋转模式"><span>↻</span>旋转</button>
-      <button class="mode-btn" id="mode-scale" title="缩放模式"><span>⤢</span>缩放</button>
-    </div>
-    <label class="lock-ratio">
-      <input type="checkbox" id="lock-ratio" checked>
-      <span>等比缩放</span>
-    </label>
-  </div>
-</aside>
-
-<!-- 右侧：属性 -->
-<aside class="panel panel-right" id="panel-right">
-  <div class="panel-section">
-    <h3>属性</h3>
-    <div class="empty-hint" id="empty-hint">未选中对象。<br>从左侧选择图形，点击地面放置；或点击已有对象进行编辑。</div>
-    <div id="props" style="display:none;">
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>横坐标 X</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>纵坐标 Z</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>竖坐标 Y</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-y" min="-5" max="30" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-py" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>水平旋转</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="r-y" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-ry" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>垂直旋转</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="r-x" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-rx" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>侧向旋转</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="r-z" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>等比缩放</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="s-c" min="0.1" max="5" step="0.01" value="1" style="flex:1;">
-          <input type="number" id="input-sc" step="0.01" value="1" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <div class="ctrl-row" id="row-opacity">
-        <div class="ctrl-label"><span>透明度</span></div>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-opacity" min="0.1" max="1.0" step="0.01" value="1.0" style="flex:1;">
-          <input type="number" id="input-opacity" step="0.01" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
-        </div>
-      </div>
-      <!-- 图形参数区域（与属性合并显示） -->
-      <div id="shape-params-content"></div>
-    </div>
-  </div>
-  <div class="panel-section" id="sec-color" style="display:none;">
-    <h3>颜色</h3>
-    <div class="color-row" id="color-row"></div>
-    <div class="ctrl-row" style="margin-top:8px;">
-      <div class="ctrl-label"><span>自定义颜色</span></div>
-      <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <input type="color" id="obj-custom-color" value="#6ee7ff" style="width:36px;height:28px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
-        <span id="obj-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">6ee7ff</span>
-        <button class="tool-btn" id="open-color-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-          <span>选取器</span>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="panel-section" id="sec-pat" style="display:none;">
-    <h3>花纹</h3>
-    <div class="pat-grid" id="pat-grid"></div>
-  </div>
-  <div class="panel-section" id="sec-img" style="display:none;">
-    <h3>贴图</h3>
-    <button class="tool-btn" id="apply-image">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-      <span>上传图片贴图</span>
-    </button>
-    <button class="tool-btn" id="clear-tex" style="margin-top:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-      <span>清除花纹/贴图</span>
-    </button>
-    <button class="tool-btn" id="edit-text" style="margin-top:6px; display:none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
-      <span>编辑文本内容</span>
-    </button>
-  </div>
-  <div class="panel-section text-ctrl" id="sec-text" style="display:none;">
-    <h3>文本框</h3>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>字体</span><span></span></div>
-      <select id="t-font">
-        <option value='"Microsoft YaHei","PingFang SC",sans-serif'>雅黑</option>
-        <option value='SimSun,serif'>宋体</option>
-        <option value='KaiTi,serif'>楷体</option>
-        <option value='SimHei,sans-serif'>黑体</option>
-        <option value='FangSong,serif'>仿宋</option>
-        <option value='Arial,sans-serif'>Arial</option>
-        <option value='"Times New Roman",serif'>Times</option>
-        <option value='"Courier New",monospace'>Courier</option>
-      </select>
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>字号</span><span id="v-fs">80</span></div>
-      <input type="range" id="t-size" min="24" max="220" step="2" value="80">
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>粗细</span><span></span></div>
-      <div class="toggle-row2">
-        <button class="toggle-btn" data-bold="false">常规</button>
-        <button class="toggle-btn active" data-bold="true">粗体</button>
-      </div>
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>排列方向</span><span></span></div>
-      <div class="toggle-row2">
-        <button class="toggle-btn active" data-dir="h">横排</button>
-        <button class="toggle-btn" data-dir="v">竖排</button>
-      </div>
-    </div>
-  </div>
-  <div class="panel-section" id="sec-del" style="display:none;">
-    <div class="multi-hint" id="multi-hint" style="display:none;"></div>
-    <button class="danger-btn" id="del-btn">删除选中对象（Delete）</button>
-  </div>
-  <div class="panel-section" id="sec-kbd" style="display:none;">
-    <h3>键盘精细调节</h3>
-    <div class="kbd">
-      <b>←→</b> 横坐标X · <b>↑↓</b> 竖坐标Y · <b>PgUp/PgDn</b> 纵坐标Z<br>
-      <b>Shift+方向</b> 步进1 · <b>Q / E</b> 旋转5° · <b>+ / -</b> 缩放5%<br>
-      <b>Ctrl+C/V</b> 复制粘贴 · <b>Ctrl+D</b> 克隆<br>
-      <b>Ctrl+A</b> 全选 · <b>Shift+点选</b> 加选<br>
-      <b>Del</b> 删除 · <b>Esc</b> 取消
-    </div>
-  </div>
-  <!-- 画笔属性（仅画笔模式时显示） -->
-  <div class="panel-section" id="sec-brush" style="display:none;">
-    <h3>画笔属性</h3>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>画笔颜色</span></div>
-      <div class="color-row" id="brush-color-row" style="pointer-events:auto;"></div>
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>自定义颜色</span></div>
-      <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <input type="color" id="brush-custom-color" value="#6ee7ff" style="width:36px;height:28px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
-        <span id="brush-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">6ee7ff</span>
-        <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-          <span>选取器</span>
-        </button>
-      </div>
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>画笔粗细</span><span id="v-brush-thick">0.5</span></div>
-      <input type="range" id="brush-thick" min="0.05" max="3" step="0.05" value="0.5">
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>透明度</span><span id="v-brush-opacity">1.0</span></div>
-      <input type="range" id="brush-opacity" min="0.1" max="1" step="0.05" value="1.0">
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>最小间距</span><span id="v-brush-gap">0.15</span></div>
-      <input type="range" id="brush-gap" min="0.02" max="0.5" step="0.01" value="0.15">
-    </div>
-  </div>
-  <!-- 橡皮擦属性（仅橡皮擦模式时显示） -->
-  <div class="panel-section" id="sec-eraser" style="display:none;">
-    <h3>橡皮擦属性</h3>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>橡皮擦大小</span><span id="v-eraser-size">0.30</span></div>
-      <input type="range" id="eraser-size" min="0.05" max="3" step="0.05" value="0.30">
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span>橡皮擦模式</span></div>
-      <div class="toggle-row2" style="gap:4px;">
-        <button class="toggle-btn active" id="eraser-mode-object" data-mode="object">删除对象</button>
-        <button class="toggle-btn" id="eraser-mode-local" data-mode="local">局部擦除</button>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<!-- 声明 -->
-<div class="declaration">
-  <strong>声明</strong> · 本工具所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，
-  支持自由用于个人学习与创意设计。场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。
-</div>
-
-<!-- 底部状态 -->
-<div class="bottombar">
-  <button class="view-btn" data-view="persp">透视</button>
-  <button class="view-btn" data-view="top">顶视</button>
-  <button class="view-btn" data-view="front">前视</button>
-  <button class="view-btn" data-view="side">侧视</button>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- 颜色选取器弹窗 -->
-<div class="modal-mask" id="color-picker-modal">
-  <div class="modal-box" style="width:460px; max-width:90vw;">
-    <div class="modal-title">颜色选取器</div>
-    <!-- 预设颜色行 -->
-    <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">预设颜色</div>
-      <div class="color-row" id="picker-preset-row" style="max-height:60px; overflow-y:auto;"></div>
-    </div>
-    <!-- 色相-饱和度选择面板 -->
-    <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">色相 / 饱和度</div>
-      <canvas id="picker-sv-canvas" width="360" height="200" style="width:100%; border-radius:8px; cursor:crosshair; display:block;"></canvas>
-    </div>
-    <!-- 色相条 -->
-    <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">色相 (H)</div>
-      <canvas id="picker-hue-canvas" width="360" height="20" style="width:100%; border-radius:6px; cursor:pointer; display:block;"></canvas>
-    </div>
-    <!-- RGB/HEX输入 -->
-    <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
-      <div style="flex:1;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">色号 (HEX)</div>
-        <input type="text" id="picker-hex" value="#6ee7ff" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:monospace;">
-      </div>
-      <div style="width:60px;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">R</div>
-        <input type="number" id="picker-r" min="0" max="255" value="110" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px;">
-      </div>
-      <div style="width:60px;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">G</div>
-        <input type="number" id="picker-g" min="0" max="255" value="231" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px;">
-      </div>
-      <div style="width:60px;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">B</div>
-        <input type="number" id="picker-b" min="0" max="255" value="255" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px;">
-      </div>
-    </div>
-    <!-- 预览 + 吸取 -->
-    <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px;">
-      <div>
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">预览</div>
-        <div id="picker-preview" style="width:50px; height:50px; border-radius:8px; border:2px solid var(--border); background:#6ee7ff;"></div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:4px; margin-left:auto;">
-        <button class="top-btn" id="picker-eyedropper" style="font-size:11px; padding:4px 8px;" title="使用屏幕取色器">
-          <span>吸取</span>
-        </button>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="top-btn" id="color-picker-cancel">取消</button>
-      <button class="top-btn primary" id="color-picker-ok">确认使用</button>
-    </div>
-  </div>
-</div>
-
-<!-- 文本输入弹窗 -->
-<div class="modal-mask" id="text-modal">
-  <div class="modal-box">
-    <div class="modal-title" id="text-modal-title">输入文本</div>
-    <textarea id="text-modal-input" rows="3" placeholder="请输入文本内容..."></textarea>
-    <div class="modal-actions">
-      <button class="top-btn" id="text-modal-cancel">取消</button>
-      <button class="top-btn primary" id="text-modal-ok">确定</button>
-    </div>
-  </div>
-</div>
-
-<!-- 隐藏文件输入 -->
-<input type="file" id="file-img" class="hidden-input" accept="image/*">
-<input type="file" id="file-import" class="hidden-input" accept="application/json,.json">
-<input type="file" id="file-imgtool" class="hidden-input" accept="image/*">
-
-<script type="importmap">
-{
-  "imports": {
-    "three": "./three/three.module.js",
-    "three/addons/": "./three/examples/jsm/"
-  }
-}
-</script>
-
-<script>
-// 全局错误处理：确保即使模块加载失败也能显示错误信息
-window.addEventListener('error', function(e) {
-  console.error('Global error:', e.message);
-  const loader = document.getElementById('loader');
-  if (loader && !loader.classList.contains('hidden')) {
-    loader.classList.add('hidden');
-    setTimeout(() => alert('页面加载出错：' + e.message + '\n\n请刷新页面或检查网络连接。'), 100);
-  }
-});
-// 备用超时：3秒后强制隐藏 loader
-setTimeout(function() {
-  const loader = document.getElementById('loader');
-  if (loader && !loader.classList.contains('hidden')) {
-    loader.classList.add('hidden');
-    const status = document.getElementById('status');
-    if (status) status.textContent = '加载超时，请刷新页面';
-  }
-}, 3000);
-</script>
-
-<script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
@@ -796,20 +19,18 @@ scene.background = new THREE.Color(0xeef1f6);
 scene.fog = null;
 
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
-// 默认视角：斜上方3D透视，可自由360°旋转
-camera.position.set(10, 10, 12);
+camera.position.set(9, 8, 12);
 
 // 视角控制：右键旋转 / 中键平移 / 滚轮缩放。左键留给对象交互，杜绝乱晃。
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.12;
 controls.autoRotate = false;
-// 取消所有视角限制，允许360°自由旋转（Y为视觉上方向）
-controls.minDistance = 2;
+controls.minDistance = 3;
 controls.maxDistance = 500;
 controls.minPolarAngle = 0;
-controls.maxPolarAngle = Math.PI;
-controls.target.set(0, 0, 0);
+controls.maxPolarAngle = Math.PI - 0.001;   // 避免万向节锁，允许完整360°视角
+controls.target.set(0, 0.5, 0);
 controls.mouseButtons = {
   LEFT: null,
   MIDDLE: THREE.MOUSE.PAN,
@@ -838,7 +59,7 @@ fill.position.set(-6, 5, -6); scene.add(fill);
 const GROUND_SIZE = 30;
 const groundMat = new THREE.MeshStandardMaterial({ color: 0xb8c0d0, roughness: 0.9, metalness: 0.0, side: THREE.DoubleSide, transparent: true, opacity: 0.12, depthWrite: false });
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(GROUND_SIZE, GROUND_SIZE), groundMat);
-ground.rotation.x = -Math.PI / 2;
+ground.rotation.x = -Math.PI / 2; // XY 平面旋转至 XZ 平面
 ground.receiveShadow = true;
 ground.name = 'GROUND';
 scene.add(ground);
@@ -1102,7 +323,19 @@ transformCtrl.addEventListener('dragging-changed', (e) => {
       }));
     }
   } else {
-    // 拖拽结束时记录历史（用于撤销/重做）
+    // 拖拽结束时：
+    // 1) 对文本对象，把 mesh.scale 提交为 fontSize（重建纹理、scale 归 1），让字号随缩放变化
+    if (transformCtrl.object) {
+      const singleObj = state.objects.find(o => o.mesh === transformCtrl.object);
+      if (singleObj && singleObj.data && singleObj.data.kind === 'text') {
+        _commitTextScaleToFontSize(singleObj);
+      } else if (transformCtrl.object === multiTransformProxy && _multiObjStart && transformCtrl.getMode() === 'scale') {
+        _multiObjStart.forEach(item => {
+          if (item.obj.data && item.obj.data.kind === 'text') _commitTextScaleToFontSize(item.obj);
+        });
+      }
+    }
+    // 2) 记录历史（用于撤销/重做）
     const p = getPrimary();
     if (p) pushHistory();
     _multiDragStart = null;
@@ -1110,39 +343,14 @@ transformCtrl.addEventListener('dragging-changed', (e) => {
   }
 });
 transformCtrl.addEventListener('objectChange', () => {
-  // 单对象等比缩放锁定
   if (transformCtrl.object && scaleLockActive && transformCtrl.object !== multiTransformProxy) {
     const s = transformCtrl.object.scale;
+    // 找出与初始值偏离最大的轴，将其比例应用到所有轴
     const rx = s.x / scaleInitial.x;
     const ry = s.y / scaleInitial.y;
     const rz = s.z / scaleInitial.z;
-    // 使用对数偏差找出用户正在拖拽的轴，保证缩小/放大方向都正确
-    const ratios = [rx, ry, rz];
-    let uniformR = 1, maxDev = 0;
-    for (const r of ratios) {
-      const dev = Math.abs(Math.log(Math.max(r, 1e-6)));
-      if (dev > maxDev) { maxDev = dev; uniformR = r; }
-    }
-    s.set(scaleInitial.x * uniformR, scaleInitial.y * uniformR, scaleInitial.z * uniformR);
-  }
-  // 多对象代理等比缩放锁定：先对代理scale做等比化，再用delta矩阵分发到子对象
-  if (transformCtrl.object === multiTransformProxy && scaleLockActive && _multiDragStart) {
-    const ps = multiTransformProxy.scale;
-    const irx = ps.x / _multiDragStart.scale.x;
-    const iry = ps.y / _multiDragStart.scale.y;
-    const irz = ps.z / _multiDragStart.scale.z;
-    const irs = [irx, iry, irz];
-    let uR = 1, mD = 0;
-    for (const r of irs) {
-      const d = Math.abs(Math.log(Math.max(r, 1e-6)));
-      if (d > mD) { mD = d; uR = r; }
-    }
-    // 写回代理scale（等比化），后续delta矩阵会自动把等比结果分发到每个子对象
-    ps.set(
-      _multiDragStart.scale.x * uR,
-      _multiDragStart.scale.y * uR,
-      _multiDragStart.scale.z * uR
-    );
+    const maxR = Math.max(rx, ry, rz);
+    s.set(scaleInitial.x * maxR, scaleInitial.y * maxR, scaleInitial.z * maxR);
   }
   // 多选代理变换：使用矩阵变换正确处理3D旋转和缩放
   if (transformCtrl.object === multiTransformProxy && _multiDragStart) {
@@ -1524,26 +732,16 @@ function getNextRenderOrder() {
 }
 
 // 更新对象的renderOrder（用于选中时提升显示优先级）
-// 注意：仅对真正透明（opacity<1）的对象提升renderOrder，不透明对象靠深度缓冲正确遮挡
 function updateObjectRenderOrder(obj) {
   const newOrder = getNextRenderOrder();
   if (obj.mesh.isGroup) {
     obj.mesh.children.forEach(child => {
       if (child.isMesh) {
-        // 不透明对象不提升renderOrder，让深度缓冲处理遮挡
-        if (child.material && child.material.transparent) {
-          child.renderOrder = newOrder;
-        } else {
-          child.renderOrder = 0;
-        }
+        child.renderOrder = newOrder;
       }
     });
   } else {
-    if (obj.mesh.material && obj.mesh.material.transparent) {
-      obj.mesh.renderOrder = newOrder;
-    } else {
-      obj.mesh.renderOrder = 0;
-    }
+    obj.mesh.renderOrder = newOrder;
   }
 }
 
@@ -1688,6 +886,32 @@ function mix(hex1, hex2, t) {
   return '#' + m.getHexString();
 }
 
+// 提交文本对象 mesh.scale 到 fontSize：按当前缩放比例放大字号并重建纹理，将 scale 归 1。
+// 这样文字大小随缩放操作实时变化，而不是依赖几何缩放导致的模糊。
+function _commitTextScaleToFontSize(o) {
+  if (!o || !o.data || o.data.kind !== 'text') return;
+  const m = o.mesh;
+  const s = m.scale;
+  const cur = Math.max(0.01, s.x, s.y, s.z);
+  const base = o.data._baseFontSize ?? o.data.fontSize ?? 80;
+  const ratio = cur;
+  const newFont = Math.max(4, Math.min(4000, base * ratio));
+  if (Math.abs(newFont - (o.data.fontSize || base)) < 0.01 && Math.abs(ratio - 1) < 0.001) return;
+
+  const pos = m.position.clone();
+  const oldHalfH = o.data.halfH || 0;
+  const bottomOffsetY = pos.y - oldHalfH * cur;
+
+  o.data.fontSize = newFont;
+  rebuildText(o);
+
+  const newHalfH = o.data.halfH || 0;
+  m.scale.set(1, 1, 1);
+  m.position.set(pos.x, bottomOffsetY + newHalfH, pos.z);
+  m.updateMatrixWorld(true);
+}
+
+
 // 文本纹理（支持 字体/字号/粗细/横竖排）
 function textTexture(text, opts) {
   // NO_COLOR(-1) 转换为中性灰色 0xcccccc，避免 toString(16) 产生无效颜色导致显示黑色
@@ -1779,7 +1003,6 @@ function createObject(spec) {
       transparent: true,
       side: THREE.DoubleSide,
       opacity: opacity,
-      alphaTest: 0.01,        // 丢弃透明像素，防止透明背景区域遮挡后方对象
       depthWrite: opacity >= 1
     });
     mesh = new THREE.Mesh(geo, mat);
@@ -1789,7 +1012,7 @@ function createObject(spec) {
     geo.computeBoundingBox();
     data = { kind:'text', text: spec.text, color, w, h,
              font: tOpts.font, fontSize: tOpts.fontSize, bold: tOpts.bold, direction: tOpts.direction,
-             opacity: opacity };
+             opacity: opacity, _baseFontSize: tOpts.fontSize, _baseFontScale: 1 };
   } else if (spec.kind === 'image') {
     // 图片3D仿2D化：使用PlaneGeometry实现真正的2D平面效果，无厚度
     const tex = spec._tex || null;
@@ -1874,10 +1097,6 @@ function createObject(spec) {
     if (mesh.material) {
       mesh.material.depthWrite = (mesh.material.opacity ?? 1) >= 1;
       mesh.material.depthTest = true;
-      // 文本对象：确保alphaTest已设置（防止透明背景遮挡）
-      if (data.kind === 'text') {
-        mesh.material.alphaTest = 0.01;
-      }
     }
   }
 
@@ -1955,7 +1174,6 @@ function applySelectionVisual(obj, selected) {
           // 文本/图片：保持 map，仅降低 opacity 制造"选中"反馈
           hlMat.opacity = Math.max(0.5, (hlMat.opacity ?? 1) * 0.7);
           hlMat.transparent = true;
-          hlMat.depthWrite = false;
         } else {
           // 普通 3D/2D 对象：灰度效果
           if (hlMat.color) {
@@ -1971,9 +1189,6 @@ function applySelectionVisual(obj, selected) {
             hlMat.emissive = new THREE.Color(0x6ee7ff);
             hlMat.emissiveIntensity = 0.2;
           }
-          // 不透明对象保持不透明，靠深度缓冲正确遮挡
-          hlMat.transparent = m.material.transparent;
-          hlMat.depthWrite = m.material.depthWrite;
         }
         hlMat.needsUpdate = true;
         m.material = hlMat;
@@ -1985,12 +1200,6 @@ function applySelectionVisual(obj, selected) {
         if (obj._selectionOrigMaterials[i]) m.material = obj._selectionOrigMaterials[i];
       });
       obj._selectionOrigMaterials = null;
-    }
-    // 取消选中时重置renderOrder为0，恢复深度缓冲驱动的正确遮挡
-    if (obj.mesh.isGroup) {
-      obj.mesh.children.forEach(child => { child.renderOrder = 0; });
-    } else {
-      obj.mesh.renderOrder = 0;
     }
   }
 }
@@ -2187,7 +1396,9 @@ function syncProps(obj) {
     rotZ = Math.round(rotZ * 100) / 100;
   }
   
-  const sc = Math.round(m.scale.x * 100) / 100;
+  const sc = (obj.data.kind === 'text')
+    ? Math.round(((obj.data.fontSize || 80) / (obj.data._baseFontSize || 80)) * 100) / 100
+    : Math.round(m.scale.x * 100) / 100;
   const opacity = Math.round((obj.data.opacity ?? (m.material ? m.material.opacity : 1.0)) * 100) / 100;
   document.getElementById('p-x').value = rx;
   document.getElementById('input-px').value = rx;
@@ -2520,9 +1731,9 @@ function rebuildFromSnapshot(s, promises) {
           curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
         }
         const curveLength = curve.getLength();
-        // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
-        const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (segR * 0.05))));
-        const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 1);
+        const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (segR * 0.2))));
+        // normalType: 0 = TangentSpaceNormal，减少拐弯处法向突变导致的视觉缺陷
+        const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 0);
         const tubeMesh = new THREE.Mesh(tubeGeo, mat.clone());
         tubeMesh.position.copy(meshOffset);
         tubeMesh.castShadow = true;
@@ -2531,18 +1742,15 @@ function rebuildFromSnapshot(s, promises) {
         tubeMesh.userData.brushRadius = segR;
         group.add(tubeMesh);
 
-        // 使用曲线端点确保端帽与TubeGeometry无缝连接
         if (points.length >= 1) {
-          const startPt = curve.getPointAt(0);
           const startCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
-          startCap.position.copy(startPt).add(meshOffset);
+          startCap.position.copy(points[0]).add(meshOffset);
           startCap.castShadow = true;
           group.add(startCap);
         }
         if (points.length >= 2) {
-          const endPt = curve.getPointAt(1);
           const endCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
-          endCap.position.copy(endPt).add(meshOffset);
+          endCap.position.copy(points[points.length - 1]).add(meshOffset);
           endCap.castShadow = true;
           group.add(endCap);
         }
@@ -2572,9 +1780,9 @@ function rebuildFromSnapshot(s, promises) {
         curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
       }
       const curveLength = curve.getLength();
-      // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
-      const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (r * 0.05))));
-      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
+      const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
+      // normalType: 0 = TangentSpaceNormal，减少拐弯处法向突变导致的视觉缺陷
+      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 0);
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
       // 使用保存的children中的pos（= -原始center，不变），避免移动后位置错误
       let tubeChildPos2 = null;
@@ -2592,15 +1800,12 @@ function rebuildFromSnapshot(s, promises) {
       tubeMesh.userData.brushRadius = r;
       group.add(tubeMesh);
 
-      // 使用曲线端点确保端帽与TubeGeometry无缝连接
-      const startPt = curve.getPointAt(0);
       const startCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
-      startCap.position.copy(startPt).add(meshOffset2);
+      startCap.position.copy(points[0]).add(meshOffset2);
       startCap.castShadow = true;
       group.add(startCap);
-      const endPt = curve.getPointAt(1);
       const endCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
-      endCap.position.copy(endPt).add(meshOffset2);
+      endCap.position.copy(points[points.length - 1]).add(meshOffset2);
       endCap.castShadow = true;
       group.add(endCap);
     } else if (s.children && s.children.length > 0) {
@@ -3992,12 +3197,21 @@ function applyAppearance(o) {
   
   const applyToMesh = (mesh) => {
     if (o.data.kind === 'text') {
+      // 初始化文本的 baseFontSize / baseFontScale（兼容老数据、导入数据）
+      if (o.data._baseFontSize === undefined || o.data._baseFontSize === null) {
+        const curFont = o.data.fontSize || 80;
+        const curScale = Math.max(0.01, o.mesh.scale.x || 1);
+        const realFont = curFont * curScale;
+        o.data._baseFontSize = realFont;
+        o.data._baseFontScale = 1;
+        o.data.fontSize = realFont;
+        o.mesh.scale.set(1, 1, 1);
+      }
       rebuildText(o);
       // 文本对象：应用透明度
       const opacity = o.data.opacity ?? 1;
       mesh.material.opacity = opacity;
       mesh.material.transparent = true; // 文本始终需要透明（canvas纹理有透明区域）
-      mesh.material.alphaTest = 0.01;   // 丢弃透明像素，防止透明背景遮挡后方对象
       mesh.material.depthWrite = opacity >= 1; // 不透明时写入深度
       mesh.material.needsUpdate = true;
       return;
@@ -4046,7 +3260,7 @@ function applyAppearance(o) {
         mesh.material.color.set(0xcccccc);
         mesh.material.transparent = true;
         mesh.material.opacity = Math.min(opacity, 0.15);
-        mesh.material.depthWrite = false; // NO_COLOR始终透明，不写入深度
+        mesh.material.depthWrite = opacity >= 1;
       } else {
         // 纯色模式
         if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
@@ -4104,7 +3318,7 @@ function applyAppearance(o) {
         mesh.material.color.set(0xcccccc);
         mesh.material.transparent = true;
         mesh.material.opacity = Math.min(opacity, 0.15);
-        mesh.material.depthWrite = false; // 透明对象不写入深度
+        mesh.material.depthWrite = opacity >= 1;
       } else {
         mesh.material.color.set(o.data.color);
         mesh.material.transparent = opacity < 1;
@@ -4152,9 +3366,7 @@ function rebuildText(o) {
   if (wasSelected) applySelectionVisual(o, false);
   // 更新原始材质的 map
   if (m.material.map) m.material.map.dispose();
-  m.material.map = tex;
-  m.material.alphaTest = 0.01; // 确保透明背景不遮挡后方对象
-  m.material.needsUpdate = true;
+  m.material.map = tex; m.material.needsUpdate = true;
   // 重建几何（保持中心对齐，与 createObject 中的文本创建逻辑一致）
   m.geometry.dispose();
   const geo = new THREE.PlaneGeometry(w / 100, h / 100);
@@ -4233,8 +3445,44 @@ function bindTransform(id, valId, applyFn, fmt) {
   sl.addEventListener('input', () => {
     if (state.selectedList.length === 0) return;
     const v = parseFloat(sl.value);
-    if (state.selectedList.length === 1) {
+    if (id === 's-c') {
+      // 文本对象：缩放直接映射到 fontSize（保持 scale 为 1，重建纹理使字号随之变化）
+      const primary = state.selectedList[0];
+      const isText = primary && primary.data && primary.data.kind === 'text';
+      if (isText) {
+        const targetFont = Math.max(4, Math.min(4000, (primary.data._baseFontSize || 80) * v));
+        state.selectedList.forEach((o, i) => {
+          if (o.data && o.data.kind === 'text') {
+            const base = o.data._baseFontSize || 80;
+            const font = Math.max(4, Math.min(4000, base * v));
+            o.data.fontSize = font;
+            const pos = o.mesh.position.clone();
+            const oldHalfH = o.data.halfH || 0;
+            const bottomOffsetY = pos.y - oldHalfH * Math.max(0.01, o.mesh.scale.x || 1);
+            rebuildText(o);
+            const newHalfH = o.data.halfH || 0;
+            o.mesh.scale.set(1, 1, 1);
+            o.mesh.position.set(pos.x, bottomOffsetY + newHalfH, pos.z);
+            o.mesh.updateMatrixWorld(true);
+          } else {
+            o.mesh.scale.setScalar(v);
+          }
+        });
+        if (val) val.textContent = fmt(targetFont / (primary.data._baseFontSize || 80));
+      } else {
+        if (state.selectedList.length === 1) {
+          applyFn(state.selectedList[0].mesh, v);
+        } else {
+          const delta = v - startVals[0];
+          state.selectedList.forEach((o, i) => {
+            applyFn(o.mesh, startVals[i] + delta);
+          });
+        }
+        if (val) val.textContent = fmt(v);
+      }
+    } else if (state.selectedList.length === 1) {
       applyFn(state.selectedList[0].mesh, v);
+      if (val) val.textContent = fmt(v);
     } else {
       // 多选：以主选中变化量为增量
       const primary = state.selectedList[0];
@@ -4242,8 +3490,8 @@ function bindTransform(id, valId, applyFn, fmt) {
       state.selectedList.forEach((o, i) => {
         applyFn(o.mesh, startVals[i] + delta);
       });
+      if (val) val.textContent = fmt(v);
     }
-    if (val) val.textContent = fmt(v);
     updateSelBoxes();
   });
   sl.addEventListener('pointerdown', () => {
@@ -4258,7 +3506,12 @@ function bindTransform(id, valId, applyFn, fmt) {
       if (id === 'r-y') return m.rotation.y * 180 / Math.PI;
       if (id === 'r-x') return m.rotation.x * 180 / Math.PI;
       if (id === 'r-z') return m.rotation.z * 180 / Math.PI;
-      if (id === 's-c') return m.scale.x;
+      if (id === 's-c') {
+        if (o.data && o.data.kind === 'text') {
+          return (o.data.fontSize || 80) / (o.data._baseFontSize || 80);
+        }
+        return m.scale.x;
+      }
       if (id === 'p-opacity') return o.data?.opacity ?? (m.material ? m.material.opacity : 1.0);
       return 0;
     });
@@ -4289,8 +3542,6 @@ function applyOpacityToObject(obj, v) {
       mesh.material.opacity = v;
       mesh.material.transparent = v < 1.0;
       mesh.material.depthWrite = v >= 1.0;
-      // 文本对象保持alphaTest，防止透明背景遮挡
-      if (obj.data.kind === 'text') mesh.material.alphaTest = 0.01;
       mesh.material.needsUpdate = true;
     }
   };
@@ -4758,13 +4009,13 @@ function createBrushMaterial() {
   const effectiveColor = brush.color === NO_COLOR ? 0xcccccc : brush.color;
   const mat = new THREE.MeshStandardMaterial({
     color: effectiveColor,
-    transparent: brush.opacity < 1,
+    transparent: true,
     opacity: brush.opacity,
     roughness: 0.6,
     metalness: 0.1,
-    depthWrite: true,
-    depthTest: true,
-    side: THREE.FrontSide
+    depthWrite: brush.opacity >= 1,
+    depthTest: true,   // 保留true，确保3D对象能遮挡2D笔迹
+    side: THREE.DoubleSide
   });
   if (brush.pattern > 0) {
     const tex = patternTexture(PATTERNS[brush.pattern], effectiveColor);
@@ -4776,16 +4027,15 @@ function createBrushMaterial() {
 
 function createBrushMaterialForSnapshot(s) {
   const brushColor = (s.color !== undefined && s.color !== NO_COLOR) ? s.color : 0xcccccc;
-  const opacity = s.opacity || 1;
   const mat = new THREE.MeshStandardMaterial({
     color: brushColor,
-    transparent: opacity < 1,
-    opacity: opacity,
+    transparent: true,
+    opacity: s.opacity || 1,
     roughness: 0.6,
     metalness: 0.1,
-    depthWrite: true,
+    depthWrite: (s.opacity || 1) >= 1,
     depthTest: true,
-    side: THREE.FrontSide
+    side: THREE.DoubleSide
   });
   // 处理花纹
   if (s.pattern && s.pattern !== '纯色') {
@@ -4842,7 +4092,7 @@ function addBrushPoint3D(groundPoint) {
     const curveLength = curve.getLength();
     const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
     // normalType: 0 = TangentSpaceNormal，减少拐弯处法向突变导致的视觉缺陷
-    const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
+    const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 20, false, 0);
     
     // 更新或替换临时预览mesh
     if (brush.previewMesh) {
@@ -4890,7 +4140,6 @@ function endBrushStroke(cancel) {
 
   const pts = brush.currentPoints;
   const is2D = state.tool === 'brush2d';
-  let curvePoints; // 存储用于擦除/重建的点（细化后的点），在整个函数作用域中可用
 
   // 清理临时预览mesh
   if (brush.previewMesh) {
@@ -4941,39 +4190,34 @@ function endBrushStroke(cancel) {
       let curve;
       if (pts.length === 2) {
         curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
-        curvePoints = pts.map(p => p.clone());
       } else {
         // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
         const refinedPts = _refineCurvePoints(pts, r);
         curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
-        // 存储细化后的点，确保擦除/重建时与渲染一致
-        curvePoints = refinedPts.map(p => p.clone());
       }
 
       const curveLength = curve.getLength();
-      // 增加 tubularSegments 密度，确保笔迹连续平滑（每段至少4个分割）
-      const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (r * 0.05))));
-      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
+      const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
+      // normalType: 0 = TangentSpaceNormal，减少拐弯处法向突变导致的视觉缺陷
+      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 0);
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
       tubeMesh.castShadow = true;
 
-      // 存储曲线引用用于擦除功能（使用细化后的点）
+      // 存储曲线引用用于擦除功能
       tubeMesh.userData.brushCurve = curve;
-      tubeMesh.userData.brushCurvePoints = curvePoints;
+      tubeMesh.userData.brushCurvePoints = pts.map(p => p.clone());
       tubeMesh.userData.brushRadius = r;
 
       brush.currentMeshes.push(tubeMesh);
 
-      // 添加半球端帽形成胶囊形状（使用曲线端点确保无断裂）
-      const startPt = curve.getPointAt(0);
-      const endPt = curve.getPointAt(1);
+      // 添加半球端帽形成胶囊形状
       const startCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
-      startCap.position.copy(startPt);
+      startCap.position.copy(pts[0]);
       startCap.castShadow = true;
       brush.currentMeshes.push(startCap);
 
       const endCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
-      endCap.position.copy(endPt);
+      endCap.position.copy(pts[pts.length - 1]);
       endCap.castShadow = true;
       brush.currentMeshes.push(endCap);
     }
@@ -5057,10 +4301,9 @@ function endBrushStroke(cancel) {
       }
     };
 
-    // 对于3D画笔，存储细化后的曲线点用于擦除/重建（确保与渲染一致）
+    // 对于3D画笔，存储曲线点用于局部擦除
     if (!is2D && pts.length >= 2) {
-      // curvePoints是细化后的点，与TubeGeometry创建时使用的一致
-      entry.data.curvePoints = curvePoints.map(p => [p.x, p.y, p.z]);
+      entry.data.curvePoints = pts.map(p => [p.x, p.y, p.z]);
       entry.data.brushRadius = brush.thickness / 2;
     }
 
@@ -5375,24 +4618,10 @@ function setEraserHighlight(obj) {
     else meshes.push(obj.mesh);
     meshes.forEach(m => {
       obj._eraserOrigMaterials.push(m.material);
-      const origMat = m.material;
-      if (origMat && origMat.isMeshBasicMaterial) {
-        // MeshBasicMaterial（文本/图片对象）：
-        // 不支持emissive，改用 color 粉红色色调制造悬停高亮
-        // MeshBasicMaterial.color 会与 map 纹理相乘，产生明显色调变化
-        const hlMat = origMat.clone();
-        hlMat.color.setHex(0xff8899);
-        hlMat.opacity = Math.min(1, (origMat.opacity ?? 1) * 0.85);
-        hlMat.transparent = true;
-        hlMat.depthWrite = false;
-        hlMat.needsUpdate = true;
-        m.material = hlMat;
-      } else {
-        const hlMat = origMat.clone();
-        hlMat.emissive = new THREE.Color(0xff4466);
-        hlMat.emissiveIntensity = 0.4;
-        m.material = hlMat;
-      }
+      const hlMat = m.material.clone();
+      hlMat.emissive = new THREE.Color(0xff4466);
+      hlMat.emissiveIntensity = 0.4;
+      m.material = hlMat;
     });
   }
 }
@@ -5413,68 +4642,6 @@ function clearEraserHighlight() {
   eraserHighlightObj = null;
 }
 
-// 基于射线的对象检测：返回所有距射线距离 < radius 的对象（按距离排序）
-// 用于橡皮擦：避免表面吸附导致深度方向的对象无法被擦除
-function findObjectsNearRay(ray, radius) {
-  const results = [];
-  const ro = ray.origin;
-  const rd = ray.direction;
-  const radiusSq = radius * radius;
-  state.objects.forEach(o => {
-    const obj = o.mesh;
-    // 画笔对象跳过（由 _eraseAtSingle 处理）
-    if (obj.isGroup && o.data.isBrush) return;
-    if (obj.geometry) {
-      if (!obj.geometry.boundingSphere) obj.geometry.computeBoundingSphere();
-      const bsCenter = obj.geometry.boundingSphere.center;
-      const bsR = obj.geometry.boundingSphere.radius;
-      const worldCenter = bsCenter.clone().applyMatrix4(obj.matrixWorld);
-      const ox = worldCenter.x - ro.x;
-      const oy = worldCenter.y - ro.y;
-      const oz = worldCenter.z - ro.z;
-      const t = ox * rd.x + oy * rd.y + oz * rd.z;
-      if (t < 0) return; // 在相机后方
-      const px = ro.x + rd.x * t;
-      const py = ro.y + rd.y * t;
-      const pz = ro.z + rd.z * t;
-      const dx = worldCenter.x - px;
-      const dy = worldCenter.y - py;
-      const dz = worldCenter.z - pz;
-      const distSq = dx * dx + dy * dy + dz * dz;
-      const maxDist = radius + bsR;
-      if (distSq < maxDist * maxDist) {
-        results.push({ obj: o, dist: Math.sqrt(distSq) });
-      }
-      return;
-    }
-    // 兜底：用对象世界位置
-    const objWorldPos = new THREE.Vector3();
-    obj.getWorldPosition(objWorldPos);
-    let approxR = 1;
-    if (obj.geometry && obj.geometry.boundingSphere) {
-      approxR = obj.geometry.boundingSphere.radius;
-    }
-    const ox = objWorldPos.x - ro.x;
-    const oy = objWorldPos.y - ro.y;
-    const oz = objWorldPos.z - ro.z;
-    const t = ox * rd.x + oy * rd.y + oz * rd.z;
-    if (t < 0) return;
-    const px = ro.x + rd.x * t;
-    const py = ro.y + rd.y * t;
-    const pz = ro.z + rd.z * t;
-    const dx = objWorldPos.x - px;
-    const dy = objWorldPos.y - py;
-    const dz = objWorldPos.z - pz;
-    const distSq = dx * dx + dy * dy + dz * dz;
-    const maxDist = radius + approxR;
-    if (distSq < maxDist * maxDist) {
-      results.push({ obj: o, dist: Math.sqrt(distSq) });
-    }
-  });
-  results.sort((a, b) => a.dist - b.dist);
-  return results.map(r => r.obj);
-}
-
 function findObjectsInRadius(point, radius) {
   const results = [];
   const radiusSq = radius * radius;
@@ -5485,7 +4652,7 @@ function findObjectsInRadius(point, radius) {
     if (obj.isGroup && o.data.isBrush) {
       // 如果缓存失效，尝试重建整体包围盒（不跳过，确保橡皮擦能检测到画笔对象）
       if (!o._groupBounds || o._groupBoundsDirty) {
-        o.mesh.updateMatrixWorld(false);
+        o.mesh.updateMatrixWorld(true);
         let minX = Infinity, minY = Infinity, minZ = Infinity;
         let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
         let has = false;
@@ -5718,100 +4885,18 @@ function _refineCurvePoints(points, tubeRadius) {
   result.push(points[points.length - 1].clone());
   return result;
 }
-// 计算折线总长度（用于擦除中判断保留段是否过短）
-function _computeCurveLength(points) {
-  if (!points || points.length < 2) return 0;
-  let len = 0;
-  for (let i = 1; i < points.length; i++) {
-    len += points[i].distanceTo(points[i - 1]);
-  }
-  return len;
-}
-// 合并过短的TubeGeometry段，减少子mesh数量，防止指数增长
-function _mergeSmallSegments(o, targetCount) {
-  const children = [...o.mesh.children];
-  // 收集所有TubeGeometry子mesh及其曲线长度
-  const tubes = [];
-  for (const c of children) {
-    if (!c.isMesh || !c.geometry || c.geometry.type !== 'TubeGeometry') continue;
-    const curve = c.userData.brushCurve;
-    const pts = c.userData.brushCurvePoints;
-    const r = c.userData.brushRadius || 0.1;
-    if (!curve || !pts || pts.length < 2) continue;
-    tubes.push({ mesh: c, curve, points: pts, radius: r, len: curve.getLength() });
-  }
-  if (tubes.length <= targetCount) return;
-
-  // 按长度排序，最短的在前
-  tubes.sort((a, b) => a.len - b.len);
-  // 删除最短的段直到达到目标数量
-  const toRemove = tubes.length - targetCount;
-  for (let i = 0; i < toRemove; i++) {
-    const t = tubes[i];
-    o.mesh.remove(t.mesh);
-    if (t.mesh.geometry) t.mesh.geometry.dispose();
-    if (t.mesh.material) t.mesh.material.dispose();
-    // 删除关联的端帽
-    const p0 = t.points[0].clone().applyMatrix4(t.mesh.matrixWorld);
-    const pN = t.points[t.points.length - 1].clone().applyMatrix4(t.mesh.matrixWorld);
-    for (const c of [...o.mesh.children]) {
-      if (!c.isMesh || !c.geometry || c.geometry.type !== 'SphereGeometry') continue;
-      const wPos = new THREE.Vector3();
-      c.getWorldPosition(wPos);
-      if (wPos.distanceTo(p0) < t.radius * 1.5 || wPos.distanceTo(pN) < t.radius * 1.5) {
-        o.mesh.remove(c);
-        if (c.geometry) c.geometry.dispose();
-        if (c.material) c.material.dispose();
-      }
-    }
-  }
-  o._groupBoundsDirty = true;
-  o._tubeSampleCacheDirty = true;
-  o._capsMapDirty = true;
-  o._needsRecenter = true;
-}
 function _eraseAtSingle(groundPoint) {
   const radius = state.eraserSize;
   const effR = Math.max(radius, 0.05);
   const effRSq = effR * effR;
+  const brushRThreshold = 0;
   let anyDeleted = false;
   const brushObjects = state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
 
-  // 预计算射线胶囊：沿射线方向的胶囊状擦除区域
-  // 用于解决自交/复杂曲线的中间部分被前方曲面遮挡时无法擦除的问题
-  const ray = raycaster.ray;
-  const ro = ray.origin, rd = ray.direction;
-  const gv = groundPoint.clone().sub(ro);
-  const t_ground = gv.dot(rd);
-  const capHalfLen = effR * 3;
-  const start_t = Math.max(0, t_ground - capHalfLen);
-  const end_t = t_ground + capHalfLen;
-  const capStart = new THREE.Vector3().copy(rd).multiplyScalar(start_t).add(ro);
-  const capEndV = new THREE.Vector3().copy(rd).multiplyScalar(end_t).add(ro);
-  const capSeg = capEndV.clone().sub(capStart);
-  const capSegLenSq = capSeg.lengthSq();
-  function _distToCapSq(px, py, pz) {
-    const wx = px - capStart.x, wy = py - capStart.y, wz = pz - capStart.z;
-    let t = capSegLenSq > 1e-12 ? (wx * capSeg.x + wy * capSeg.y + wz * capSeg.z) / capSegLenSq : 0;
-    t = t < 0 ? 0 : (t > 1 ? 1 : t);
-    const cx = capStart.x + capSeg.x * t;
-    const cy = capStart.y + capSeg.y * t;
-    const cz = capStart.z + capSeg.z * t;
-    const dx = px - cx, dy = py - cy, dz = pz - cz;
-    return dx * dx + dy * dy + dz * dz;
-  }
-
   brushObjects.forEach(o => {
-    let childrenModified = false; // 跟踪子mesh是否被修改（删除或分裂）
-    // === 子mesh数超限时合并最小段，防止指数增长 ===
-    const MAX_CHILDREN = 80;
-    if (o.mesh.children.length > MAX_CHILDREN) {
-      _mergeSmallSegments(o, MAX_CHILDREN / 2);
-    }
-
     // === 预计算/复用整体包围盒（与 findObjectsInRadius 共享缓存） ===
     if (!o._groupBounds || o._groupBoundsDirty) {
-      o.mesh.updateMatrixWorld(false);
+      o.mesh.updateMatrixWorld(true);
       let minX = Infinity, minY = Infinity, minZ = Infinity;
       let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
       let has = false;
@@ -5834,63 +4919,31 @@ function _eraseAtSingle(groundPoint) {
       o._groupBounds = has ? { minX, minY, minZ, maxX, maxY, maxZ } : null;
       o._groupBoundsDirty = false;
     }
-    const isBrush2D = o.data.type === 'brush2d';
     const bounds = o._groupBounds;
     if (bounds) {
-      if (isBrush2D) {
-        // 2D画笔：使用点距判定（XZ平面）
-        const cx = Math.max(bounds.minX, Math.min(groundPoint.x, bounds.maxX));
-        const cz = Math.max(bounds.minZ, Math.min(groundPoint.z, bounds.maxZ));
-        const dx = groundPoint.x - cx, dz = groundPoint.z - cz;
-        if (dx * dx + dz * dz > (radius + 0.15) * (radius + 0.15)) return;
-      } else {
-        // 3D画笔：使用 groundPoint 到 AABB 的距离判定
-        // 这比射线距离更准确，特别是对于自交/复杂曲线
-        const ccx = (bounds.minX + bounds.maxX) * 0.5;
-        const ccy = (bounds.minY + bounds.maxY) * 0.5;
-        const ccz = (bounds.minZ + bounds.maxZ) * 0.5;
-        const halfDiag = Math.sqrt(
-          (bounds.maxX - bounds.minX) * (bounds.maxX - bounds.minX) +
-          (bounds.maxY - bounds.minY) * (bounds.maxY - bounds.minY) +
-          (bounds.maxZ - bounds.minZ) * (bounds.maxZ - bounds.minZ)
-        ) * 0.5;
-        const dx = groundPoint.x - ccx;
-        const dy = groundPoint.y - ccy;
-        const dz = groundPoint.z - ccz;
-        const maxDist = radius + halfDiag + 0.15;
-        if (dx * dx + dy * dy + dz * dz > maxDist * maxDist) return;
-      }
+      const cx = Math.max(bounds.minX, Math.min(groundPoint.x, bounds.maxX));
+      const cy = Math.max(bounds.minY, Math.min(groundPoint.y, bounds.maxY));
+      const cz = Math.max(bounds.minZ, Math.min(groundPoint.z, bounds.maxZ));
+      const dx = groundPoint.x - cx, dy = groundPoint.y - cy, dz = groundPoint.z - cz;
+      if (dx * dx + dy * dy + dz * dz > (radius + 0.15) * (radius + 0.15)) return;
     }
 
     const toDelete = [];
     const toKeep = [];
 
     // === 预计算 tube 采样数据：缓存每个 tube 的采样点世界坐标，避免每次 getPointAt+applyMatrix4 ===
-    if (!o._tubeSampleCache) {
-      o._tubeSampleCache = new Map();
-      // 新建缓存时强制标记dirty，保证首次擦除就能构建出全部 tube 的采样数据
-      o._tubeSampleCacheDirty = true;
-    }
-    // 缓存为空（新对象/刚初始化）或有脏标记时都执行构建/补齐，防止首次擦除tube不可擦
-    if (o._tubeSampleCacheDirty || o._tubeSampleCache.size === 0) {
-      // 增量更新：只移除已删除的子mesh缓存，保留有效的
-      const cache = o._tubeSampleCache;
-      const liveChildren = new Set(o.mesh.children);
-      // 移除已不存在的缓存项
-      for (const key of cache.keys()) {
-        if (!liveChildren.has(key)) cache.delete(key);
-      }
-      // 为新子mesh添加缓存
-      for (const child of o.mesh.children) {
+    if (!o._tubeSampleCache || o._tubeSampleCacheDirty) {
+      const cache = new Map();
+      const children = o.mesh.children;
+      for (const child of children) {
         if (!child.isMesh || !child.geometry || child.geometry.type !== 'TubeGeometry') continue;
-        if (cache.has(child)) continue; // 已缓存
         const curve = child.userData.brushCurve;
         const curvePoints = child.userData.brushCurvePoints;
         const brushRadius = child.userData.brushRadius || 0.1;
         if (!curve || !curvePoints || curvePoints.length < 2) continue;
         const curveLen = curve.getLength();
-        // 提高采样密度：每brushRadius长度至少6个采样点
-        const samples = Math.max(16, Math.min(100, Math.ceil(curveLen / (brushRadius * 0.3))));
+        // 为每个 tube 预计算足够密度的采样点
+        const samples = Math.max(16, Math.min(80, Math.ceil(curveLen / (brushRadius * 0.4))));
         const samplePts = new Array(samples + 1);
         for (let i = 0; i <= samples; i++) {
           const t = i / samples;
@@ -5900,6 +4953,7 @@ function _eraseAtSingle(groundPoint) {
         }
         cache.set(child, { samplePts, brushRadius, curveLen, curvePoints });
       }
+      o._tubeSampleCache = cache;
       o._tubeSampleCacheDirty = false;
     }
     const tubeCache = o._tubeSampleCache;
@@ -5908,24 +4962,16 @@ function _eraseAtSingle(groundPoint) {
     if (o._capsMapDirty === undefined) o._capsMapDirty = false;
     function getSphereCapsMap() {
       if (o._sphereCapsMap && !o._capsMapDirty) return o._sphereCapsMap;
-      // 增量更新：保留有效条目，只处理新增的tube
-      if (!o._sphereCapsMap) o._sphereCapsMap = new Map();
-      const map = o._sphereCapsMap;
-      const liveChildren = new Set(o.mesh.children);
-      // 移除已不存在的缓存项
-      for (const key of map.keys()) {
-        if (!liveChildren.has(key)) map.delete(key);
-      }
-      // 收集所有SphereGeometry
+      const map = new Map();
+      const children = o.mesh.children;
+      const tubes = [];
       const spheres = [];
-      for (const c of o.mesh.children) {
+      for (const c of children) {
         if (!c.isMesh || !c.geometry) continue;
-        if (c.geometry.type === 'SphereGeometry') spheres.push(c);
+        if (c.geometry.type === 'TubeGeometry') tubes.push(c);
+        else if (c.geometry.type === 'SphereGeometry') spheres.push(c);
       }
-      // 只为未缓存的tube建立映射
-      for (const tube of o.mesh.children) {
-        if (!tube.isMesh || !tube.geometry || tube.geometry.type !== 'TubeGeometry') continue;
-        if (map.has(tube)) continue; // 已缓存
+      for (const tube of tubes) {
         const pts = tube.userData.brushCurvePoints;
         if (!pts || pts.length < 2) continue;
         const brushR = tube.userData.brushRadius || 0.1;
@@ -5940,13 +4986,14 @@ function _eraseAtSingle(groundPoint) {
         }
         if (caps.length > 0) map.set(tube, caps);
       }
+      o._sphereCapsMap = map;
       o._capsMapDirty = false;
       return map;
     }
 
-    o.mesh.updateMatrixWorld(false); // false=不强制更新子节点，性能更好
-    // 使用副本遍历，避免分裂时o.mesh.remove/add修改原数组导致子对象被跳过
-    const children = o.mesh.children.slice();
+    o.mesh.updateMatrixWorld(true);
+    const children = [...o.mesh.children];
+    const isBrush2D = o.data.type === 'brush2d';
     const gx = groundPoint.x, gy = groundPoint.y, gz = groundPoint.z;
 
     for (const child of children) {
@@ -5965,8 +5012,7 @@ function _eraseAtSingle(groundPoint) {
           const wPos = new THREE.Vector3();
           child.getWorldPosition(wPos);
           const dx = gx - wPos.x, dz = gz - wPos.z;
-          // 仅当圆心在橡皮范围内时删除（避免擦除范围 = 橡皮半径 + 笔迹半径 过大）
-          hit = (dx * dx + dz * dz) <= tightRSq;
+          hit = (dx * dx + dz * dz) <= (tightR + r) * (tightR + r);
         } else if (geo.type === 'BufferGeometry' && geo.attributes && geo.attributes.position) {
           const posAttr = geo.attributes.position;
           const pts = [];
@@ -6006,64 +5052,34 @@ function _eraseAtSingle(groundPoint) {
           const wPos = new THREE.Vector3();
           child.getWorldPosition(wPos);
           const dx = gx - wPos.x, dz = gz - wPos.z;
-          // 仅当中心在橡皮范围内时删除
-          hit = (dx * dx + dz * dz) <= tightRSq;
+          hit = (dx * dx + dz * dz) <= (tightR + childR) * (tightR + childR);
         }
       } else if (geo.type === 'TubeGeometry') {
-        // === 3D画笔TubeGeometry：使用预计算缓存，缺失时即时构建（兜底，防止首次擦除tube不可擦） ===
-        let cacheEntry = tubeCache.get(child);
-        // 兜底：如果全局缓存缺失但本tube有完整userData（brushCurve+brushCurvePoints），则即时构建单条缓存
-        if (!cacheEntry) {
-          const curve = child.userData.brushCurve;
-          const curvePoints = child.userData.brushCurvePoints;
-          const brushR0 = child.userData.brushRadius || 0.1;
-          if (curve && curvePoints && curvePoints.length >= 2) {
-            child.updateMatrixWorld(false);
-            const curveLen0 = curve.getLength();
-            const samples0 = Math.max(16, Math.min(100, Math.ceil(curveLen0 / (brushR0 * 0.3))));
-            const sPts = new Array(samples0 + 1);
-            for (let i = 0; i <= samples0; i++) {
-              const t = i / samples0;
-              const pt = curve.getPointAt(t);
-              pt.applyMatrix4(child.matrixWorld);
-              sPts[i] = { t, x: pt.x, y: pt.y, z: pt.z };
-            }
-            cacheEntry = { samplePts: sPts, brushRadius: brushR0, curveLen: curveLen0, curvePoints };
-            tubeCache.set(child, cacheEntry);
-          }
-        }
+        // === 3D画笔TubeGeometry：使用预计算缓存 ===
+        const cacheEntry = tubeCache.get(child);
         if (!cacheEntry) {
           toKeep.push(child);
           continue;
         }
         const { samplePts, brushRadius: brushR, curvePoints } = cacheEntry;
 
-        // 先用 boundingSphere + 射线胶囊/groundPoint 距离双粗筛
+        // 先用整体包围盒粗筛
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         if (geo.boundingSphere) {
           const bsCenterLocal = geo.boundingSphere.center;
           const bsCenterWorld = bsCenterLocal.clone().applyMatrix4(child.matrixWorld);
           const bsR = geo.boundingSphere.radius;
           const dMax = brushR + effR + bsR;
-          const dMaxSq = dMax * dMax;
-          // 检测1：groundPoint 球距离
           const dx = gx - bsCenterWorld.x;
           const dy = gy - bsCenterWorld.y;
           const dz = gz - bsCenterWorld.z;
-          const sphSq = dx * dx + dy * dy + dz * dz;
-          if (sphSq > dMaxSq) {
-            // 检测2：射线胶囊距离（自交曲线后方部分）
-            const capSq = _distToCapSq(bsCenterWorld.x, bsCenterWorld.y, bsCenterWorld.z);
-            if (capSq > dMaxSq) {
-              toKeep.push(child);
-              continue;
-            }
+          if (dx * dx + dy * dy + dz * dz > dMax * dMax) {
+            toKeep.push(child);
+            continue;
           }
         }
 
-        // 使用预计算采样点检测擦除区间（带边界插值）
-        // 联合检测：groundPoint 球距离 ∪ 射线胶囊距离
-        // 取两者最小值作为最终判定距离，解决自交/复杂曲线中间部分被遮挡无法擦除的问题
+        // 使用预计算采样点检测擦除区间
         const thr = brushR + effR;
         const thrSq = thr * thr;
         const erasedRanges = [];
@@ -6071,71 +5087,24 @@ function _eraseAtSingle(groundPoint) {
         let rangeStart = 0;
         let anyHit = false;
 
-        // 收集每个采样点的擦除状态和联合最小距离
-        const isErasedArr = new Array(samplePts.length);
-        const distSqArr = new Array(samplePts.length);
         for (let i = 0; i < samplePts.length; i++) {
           const sp = samplePts[i];
-          // 检测1：groundPoint 球距离平方
-          const dx = sp.x - gx;
-          const dy = sp.y - gy;
-          const dz = sp.z - gz;
-          const sphSq = dx * dx + dy * dy + dz * dz;
-          // 检测2：射线胶囊距离平方
-          const capSq = _distToCapSq(sp.x, sp.y, sp.z);
-          // 取两者最小值作为最终判定距离
-          const dSq = sphSq < capSq ? sphSq : capSq;
-          distSqArr[i] = dSq;
-          isErasedArr[i] = dSq < thrSq;
-          if (isErasedArr[i]) anyHit = true;
-        }
+          const dx = gx - sp.x;
+          const dy = gy - sp.y;
+          const dz = gz - sp.z;
+          const distSq = dx * dx + dy * dy + dz * dz;
+          const isErased = distSq < thrSq;
 
-        // 边界插值：在擦除与未擦除的过渡处精确计算t值
-        function interpolateBoundary(i, prevErased) {
-          // 在 samplePts[i-1] 和 samplePts[i] 之间插值
-          const j = prevErased ? i - 1 : i; // 擦除侧的点
-          const k = prevErased ? i : i - 1; // 未擦除侧的点
-          const dJ = Math.sqrt(distSqArr[j]);
-          const dK = Math.sqrt(distSqArr[k]);
-          const thrDist = thr;
-          // 线性插值求精确t值
-          let frac;
-          if (prevErased) {
-            // 从擦除侧(j)到未擦除侧(k)，距离从dJ到dK
-            // thrDist位于其中的位置比例
-            frac = (thrDist - dJ) / (dK - dJ);
-          } else {
-            frac = (thrDist - dK) / (dJ - dK);
-          }
-          frac = Math.max(0, Math.min(1, frac));
-          const tJ = samplePts[j].t;
-          const tK = samplePts[k].t;
-          return tJ + frac * (tK - tJ);
-        }
-
-        for (let i = 0; i < samplePts.length; i++) {
-          const isE = isErasedArr[i];
-          if (isE && !inErase) {
-            // 开始擦除段：插值起点
-            if (i > 0 && !isErasedArr[i - 1]) {
-              rangeStart = interpolateBoundary(i, false);
-            } else {
-              rangeStart = samplePts[i].t;
-            }
+          if (isErased) anyHit = true;
+          if (isErased && !inErase) {
+            rangeStart = sp.t;
             inErase = true;
-          } else if (!isE && inErase) {
-            // 结束擦除段：插值终点
-            if (i > 0) {
-              erasedRanges.push(rangeStart, interpolateBoundary(i, true));
-            } else {
-              erasedRanges.push(rangeStart, samplePts[i].t);
-            }
+          } else if (!isErased && inErase) {
+            erasedRanges.push(rangeStart, sp.t);
             inErase = false;
           }
         }
-        if (inErase) {
-          erasedRanges.push(rangeStart, samplePts[samplePts.length - 1].t);
-        }
+        if (inErase) erasedRanges.push(rangeStart, 1);
 
         if (!anyHit) {
           toKeep.push(child);
@@ -6144,41 +5113,20 @@ function _eraseAtSingle(groundPoint) {
 
         // 转换为 {start, end} 数组
         const eR = erasedRanges;
-        let erased = [];
+        const erased = [];
         for (let i = 0; i < eR.length; i += 2) erased.push({ start: eR[i], end: eR[i + 1] });
 
-        // 计算每个擦除段对应的曲线长度，用于判断是否合并微小保留段
-        const totalCurveLen = curvePoints ? _computeCurveLength(curvePoints) : 1;
-        const minKeepFrac = (brushR * 0.3) / Math.max(totalCurveLen, 0.01); // 最小保留段比例
-
-        // 构建 keepRanges，同时将微小保留段合并到相邻擦除段中
         const keepRanges = [];
         let prevEnd = 0;
-        const mergedErased = [];
         for (const r of erased) {
-          const keepFrac = r.start - prevEnd;
-          if (keepFrac > minKeepFrac) {
-            // 正常保留段
+          if (r.start > prevEnd + 0.001) {
             keepRanges.push({ start: prevEnd, end: r.start });
-          } else if (prevEnd > 0 && mergedErased.length > 0) {
-            // 与上一个擦除段合并（扩大上一个擦除段范围）
-            mergedErased[mergedErased.length - 1].end = r.start;
-          } else {
-            // 独立微小擦除段，保持不变
           }
-          mergedErased.push(r);
           prevEnd = r.end;
         }
-        // 最后一段
-        const finalKeepFrac = 1 - prevEnd;
-        if (finalKeepFrac > minKeepFrac) {
+        if (prevEnd < 1 - 0.001) {
           keepRanges.push({ start: prevEnd, end: 1 });
-        } else if (prevEnd < 1 && mergedErased.length > 0) {
-          // 与最后一个擦除段合并
-          mergedErased[mergedErased.length - 1].end = 1;
         }
-
-        erased = mergedErased;
 
         if (keepRanges.length === 0) {
           toDelete.push(child);
@@ -6186,29 +5134,17 @@ function _eraseAtSingle(groundPoint) {
           if (caps) caps.forEach(cap => { if (cap) toDelete.push(cap); });
           continue;
         } else if (curvePoints && curvePoints.length >= 2) {
-          // 先克隆旧材质和曲线引用（在dispose之前克隆，避免克隆后再释放原材质）
-          const oldMat = child.material;
-          const origCurve = child.userData.brushCurve;
-          // 先克隆材质再dispose原材质，保证克隆时WebGL属性完整
-          const baseMat = oldMat ? oldMat.clone() : createBrushMaterial();
-          // 销毁旧几何和旧材质
+          // 销毁旧几何
           child.geometry.dispose();
-          if (child.material) {
-            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
-            else child.material.dispose();
-          }
+          if (child.material) child.material.dispose();
           o.mesh.remove(child);
-          childrenModified = true; // 管段分裂：子mesh已变更
           const origCaps = getSphereCapsMap().get(child);
           if (origCaps) {
             origCaps.forEach(cap => {
               if (cap) {
                 o.mesh.remove(cap);
                 if (cap.geometry) cap.geometry.dispose();
-                if (cap.material) {
-                  if (Array.isArray(cap.material)) cap.material.forEach(m => m.dispose());
-                  else cap.material.dispose();
-                }
+                if (cap.material) cap.material.dispose();
               }
             });
           }
@@ -6220,12 +5156,6 @@ function _eraseAtSingle(groundPoint) {
             if (endIdx <= startIdx) continue;
             const segPoints = curvePoints.slice(startIdx, endIdx + 1).map(p => p.clone());
 
-            // 用精确边界点替换首末点，确保端帽位于准确切点（消除残渣/缝隙）
-            if (origCurve && segPoints.length >= 2) {
-              segPoints[0] = origCurve.getPointAt(kr.start);
-              segPoints[segPoints.length - 1] = origCurve.getPointAt(kr.end);
-            }
-
             if (segPoints.length >= 2) {
               let segCurve;
               if (segPoints.length === 2) {
@@ -6236,12 +5166,10 @@ function _eraseAtSingle(groundPoint) {
                 segCurve = new THREE.CatmullRomCurve3(refinedSegPts, false, 'centripetal', 0.5);
               }
               const segLen = segCurve.getLength();
-              // 跳过过短的段：防止子mesh指数增长
-              if (segLen < brushR * 0.3) continue;
-              // 降低段分割数上限，减少几何体复杂度
-              const segSegs = Math.max(8, Math.min(60, Math.floor(segLen / (brushR * 0.5))));
-              const segGeo = new THREE.TubeGeometry(segCurve, segSegs, brushR, 24, false, 1);
-              const segMesh = new THREE.Mesh(segGeo, baseMat.clone());
+              const segSegs = Math.max(16, Math.min(120, Math.floor(segLen / (brushR * 0.5))));
+              // normalType: 0 = TangentSpaceNormal，防止拐弯处法向突变
+              const segGeo = new THREE.TubeGeometry(segCurve, segSegs, brushR, 16, false, 0);
+              const segMesh = new THREE.Mesh(segGeo, child.material ? child.material.clone() : createBrushMaterial());
               segMesh.position.copy(child.position);
               segMesh.quaternion.copy(child.quaternion);
               segMesh.scale.copy(child.scale);
@@ -6252,16 +5180,16 @@ function _eraseAtSingle(groundPoint) {
               o.mesh.add(segMesh);
               createdSegs.push(segMesh);
 
-              // 端帽：与原始创建一致的质量（24x16）
+              const matForCaps = child.material ? child.material.clone() : createBrushMaterial();
               const localOffset = child.position.clone();
-              const startCap = new THREE.Mesh(new THREE.SphereGeometry(brushR, 24, 16), baseMat.clone());
+              const startCap = new THREE.Mesh(new THREE.SphereGeometry(brushR, 16, 12), matForCaps.clone());
               startCap.position.copy(localOffset).add(segPoints[0]);
               startCap.quaternion.copy(child.quaternion);
               startCap.castShadow = true;
               o.mesh.add(startCap);
               createdSegs.push(startCap);
 
-              const endCap = new THREE.Mesh(new THREE.SphereGeometry(brushR, 24, 16), baseMat.clone());
+              const endCap = new THREE.Mesh(new THREE.SphereGeometry(brushR, 16, 12), matForCaps);
               endCap.position.copy(localOffset).add(segPoints[segPoints.length - 1]);
               endCap.quaternion.copy(child.quaternion);
               endCap.castShadow = true;
@@ -6292,16 +5220,11 @@ function _eraseAtSingle(groundPoint) {
           }
         }
       } else if (geo.type === 'SphereGeometry') {
-        // 3D画笔端帽：联合使用 groundPoint 球距离 + 射线胶囊距离
         const r = (params && params.radius !== undefined) ? params.radius : 0.1;
         const wPos = new THREE.Vector3();
         child.getWorldPosition(wPos);
-        const thr = (r + effR);
-        const thrSq = thr * thr;
         const dx = gx - wPos.x, dy = gy - wPos.y, dz = gz - wPos.z;
-        const sphSq = dx * dx + dy * dy + dz * dz;
-        const capSq = _distToCapSq(wPos.x, wPos.y, wPos.z);
-        hit = (sphSq <= thrSq) || (capSq <= thrSq);
+        hit = (dx * dx + dy * dy + dz * dz) <= (r + effR) * (r + effR);
       } else if (geo.type === 'CylinderGeometry') {
         const h = (params && params.height !== undefined) ? params.height : 0.1;
         const localA = new THREE.Vector3(0, -h / 2, 0);
@@ -6311,17 +5234,12 @@ function _eraseAtSingle(groundPoint) {
         const cylR = Math.max((params && params.radiusTop) || 0, (params && params.radiusBottom) || 0);
         hit = _sphereCylinderIntersect(groundPoint, radius, worldA, worldB, cylR);
       } else {
-        // 其他几何体：联合使用 groundPoint 球距离 + 射线胶囊距离
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         const childR = geo.boundingSphere ? geo.boundingSphere.radius : 0.1;
         const wPos = new THREE.Vector3();
         child.getWorldPosition(wPos);
-        const thr = effR + childR;
-        const thrSq = thr * thr;
         const dx = gx - wPos.x, dy = gy - wPos.y, dz = gz - wPos.z;
-        const sphSq = dx * dx + dy * dy + dz * dz;
-        const capSq = _distToCapSq(wPos.x, wPos.y, wPos.z);
-        hit = (sphSq <= thrSq) || (capSq <= thrSq);
+        hit = (dx * dx + dy * dy + dz * dz) <= (effR + childR) * (effR + childR);
       }
       if (hit) toDelete.push(child);
       else toKeep.push(child);
@@ -6345,12 +5263,6 @@ function _eraseAtSingle(groundPoint) {
       o._groupBoundsDirty = true;
       o._tubeSampleCacheDirty = true;
       anyDeleted = true;
-      childrenModified = true;
-    }
-    // 子mesh变更时（直接删除或管段分裂），标记需要在擦除结束后统一recenter
-    // 不在_eraseAtSingle内部调用recenterBrushGroup，避免反复调整子mesh位置导致乱闪错位
-    if (childrenModified) {
-      o._needsRecenter = true;
     }
   });
   return anyDeleted;
@@ -6359,9 +5271,9 @@ function _eraseAtSingle(groundPoint) {
 let _eraserDirty = false;
 function eraseAt(groundPoint) {
   const radius = state.eraserSize;
-
-  // 收集擦除范围内的所有非画笔对象（使用射线距离，避免表面吸附导致深度方向漏擦）
-  const nonBrushObjects = findObjectsNearRay(raycaster.ray, radius);
+  
+  // 收集擦除范围内的所有非画笔对象
+  const nonBrushObjects = findObjectsInRadius(groundPoint, radius).filter(o => !o.data.isBrush);
   
   if (state.eraserMode === 'local') {
     // 局部擦除模式：
@@ -6386,14 +5298,10 @@ function eraseAt(groundPoint) {
       nonBrushDeleted = true;
     });
     
-    // 2. 画笔痕迹部分擦除
-    // 3D画笔使用射线距离判定，单次调用即可覆盖整条射线，无需插值
-    // 2D画笔使用点距判定，需要路径插值避免快速移动漏擦
+    // 2. 画笔痕迹部分擦除（路径插值）
     let brushDeleted = false;
     const gp = groundPoint;
-    // 检查是否存在2D画笔对象（需要插值）
-    const has2DBrush = state.objects.some(o => o.data.isBrush && o.data.type === 'brush2d');
-    if (has2DBrush && _lastErasePoint) {
+    if (_lastErasePoint) {
       const segLen = gp.distanceTo(_lastErasePoint);
       const step = Math.max(0.02, radius / 3);
       const steps = Math.ceil(segLen / step);
@@ -6409,20 +5317,6 @@ function eraseAt(groundPoint) {
       if (_eraseAtSingle(gp)) brushDeleted = true;
     }
     _lastErasePoint = gp.clone();
-
-    // 擦除完成后，统一recenter需要调整的画笔group
-    // 拖拽过程中(state.pointerDown=true)延迟到pointerup时统一recenter，避免多次调用导致乱闪错位
-    if (!state.pointerDown) {
-      state.objects.forEach(o => {
-        if (o._needsRecenter) {
-          recenterBrushGroup(o.mesh);
-          o._needsRecenter = false;
-          if (state.selectedList.includes(o) && transformCtrl.object === o.mesh) {
-            try { transformCtrl.update(); } catch(e) {}
-          }
-        }
-      });
-    }
     
     if (nonBrushDeleted || brushDeleted) {
       clearEraserHighlight();
@@ -7424,16 +6318,6 @@ canvas.addEventListener('pointerup', (e) => {
       eraseAt(_lastMoveErasePoint);
       _lastMoveErasePoint = null;
     }
-    // 局部擦除拖拽结束：统一recenter需要调整的画笔group
-    state.objects.forEach(o => {
-      if (o._needsRecenter) {
-        recenterBrushGroup(o.mesh);
-        o._needsRecenter = false;
-        if (state.selectedList.includes(o) && transformCtrl.object === o.mesh) {
-          try { transformCtrl.update(); } catch(e) {}
-        }
-      }
-    });
     // 局部擦除拖拽结束：统一记录一次历史和UI更新（避免拖拽中频繁pushHistory导致卡顿漏擦）
     if (_eraserDirty) {
       updateSelBoxes();
@@ -7623,43 +6507,39 @@ function copySelected() {
 // 计算3D笔迹 group 的几何中心相对 group.position 的偏移
 // 返回 { offset: Vector3, childAdjust: [{child}] }
 // offset 表示几何中心相对于当前 group.position 的偏移量（在 group 局部坐标系中）
-// 使用 Box3.setFromObject 正确处理子mesh的旋转和缩放
 function computeBrushGroupCenter(group) {
+  let minX = Infinity, minY = Infinity, minZ = Infinity;
+  let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
   let hasAny = false;
-  const combinedBox = new THREE.Box3();
   group.children.forEach(child => {
     if (!child.isMesh || !child.geometry) return;
+    child.geometry.computeBoundingBox();
+    const bb = child.geometry.boundingBox;
+    if (!bb || bb.isEmpty()) return;
     hasAny = true;
-    // setFromObject 会自动应用子mesh的矩阵变换（位置、旋转、缩放），返回世界空间包围盒
-    const childBox = new THREE.Box3().setFromObject(child);
-    combinedBox.union(childBox);
+    const p = child.position;
+    minX = Math.min(minX, bb.min.x + p.x);
+    minY = Math.min(minY, bb.min.y + p.y);
+    minZ = Math.min(minZ, bb.min.z + p.z);
+    maxX = Math.max(maxX, bb.max.x + p.x);
+    maxY = Math.max(maxY, bb.max.y + p.y);
+    maxZ = Math.max(maxZ, bb.max.z + p.z);
   });
-  if (!hasAny || combinedBox.isEmpty()) return null;
-  // center 是几何中心在世界坐标系中的位置
-  const worldCenter = combinedBox.getCenter(new THREE.Vector3());
-  // 转换为 group 局部坐标系中的偏移量
-  const localCenter = worldCenter.clone().applyMatrix4(group.matrixWorld.clone().invert());
+  if (!hasAny) return null;
+  const center = new THREE.Vector3(
+    (minX + maxX) / 2,
+    (minY + maxY) / 2,
+    (minZ + maxZ) / 2
+  );
+  // offset = 几何中心相对 group 原点（局部坐标）的偏移
+  // 在 group 局部坐标系中，group 原点 = (0,0,0)
+  // 几何中心相对 group 原点的偏移 = center
+  // 我们希望把 group.position 移到这个中心，所以 group.position += center
+  // 同时所有子mesh 的 position 减去 center（保持世界位置不变）
   return {
-    offset: localCenter,
+    offset: center,
     childAdjust: group.children.filter(c => c.isMesh)
   };
-}
-// 擦除后重新居中画笔group：将group原点移到剩余子mesh的几何中心
-// 保持所有子mesh的世界位置不变（考虑group的旋转/缩放）
-function recenterBrushGroup(group) {
-  const result = computeBrushGroupCenter(group);
-  if (!result) return;
-  const offset = result.offset;
-  if (offset.lengthSq() < 1e-8) return;
-  // 将局部偏移转换为世界偏移（考虑group的旋转和缩放）
-  const worldOffset = offset.clone().applyQuaternion(group.quaternion).multiply(group.scale);
-  // 移动group位置到新中心
-  group.position.add(worldOffset);
-  // 子mesh局部位置减去偏移，保持世界位置不变
-  result.childAdjust.forEach(mesh => {
-    mesh.position.sub(offset);
-  });
-  group.updateMatrixWorld(true);
 }
 function pasteClipboard(offset = 0.2) {
   if (transformActive) { toast('变换中无法粘贴'); return; }
@@ -7720,9 +6600,9 @@ function pasteClipboard(offset = 0.2) {
             curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
           }
           const curveLength = curve.getLength();
-          // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
-          const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (segR * 0.05))));
-          const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 1);
+          const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (segR * 0.2))));
+          // normalType: 0 = TangentSpaceNormal，减少拐弯处法向突变导致的视觉缺陷
+          const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 0);
           const tubeMesh = new THREE.Mesh(tubeGeo, mat.clone());
           // 使用保存的子mesh position（= -原始center，固定值），而不是-groupPos
           // 这样对象移动后clone仍能正确恢复位置
@@ -7738,20 +6618,17 @@ function pasteClipboard(offset = 0.2) {
           tubeMesh.userData.brushRadius = segR;
           group.add(tubeMesh);
 
-          // 端帽：使用曲线端点确保与TubeGeometry无缝连接
+          // 端帽：使用与tubeMesh相同的offset
           const meshOffset = tubeMesh.position.clone();
           if (points.length >= 1) {
-            const startPt = curve.getPointAt(0);
             const startCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
-            startCap.position.copy(startPt).add(meshOffset);
+            startCap.position.copy(points[0]).add(meshOffset);
             startCap.castShadow = true;
             group.add(startCap);
           }
           if (points.length >= 2) {
-            const endPt = curve.getPointAt(1);
             const endCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
-            endCap.position.copy(endPt).add(meshOffset);
-            endCap.castShadow = true;
+            endCap.position.copy(points[points.length - 1]).add(meshOffset);
             group.add(endCap);
           }
         }
@@ -8265,7 +7142,3 @@ window.__debug = {
     return 'placed text; objects=' + state.objects.length;
   }
 };
-</script>
-
-</body>
-</html>
