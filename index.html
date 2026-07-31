@@ -3383,6 +3383,9 @@ function buildShapeGrid(containerId, shapes) {
         if (gp2 && dragGhost) {
           dragGhost.position.copy(gp2).sub(dragGhost.userData.ghostCenter);
           if (!dragGhost.visible) dragGhost.visible = true;
+        } else if (dragGhost) {
+          // 指针离开画布，隐藏幽灵对象，释放时将取消放置
+          dragGhost.visible = false;
         }
       };
       
@@ -3441,6 +3444,10 @@ function buildShapeGrid(containerId, shapes) {
 
 function pickGroundFromEvent(e) {
   const rect = canvas.getBoundingClientRect();
+  // 指针不在画布范围内时返回null，取消放置
+  if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+    return null;
+  }
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
