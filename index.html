@@ -4528,6 +4528,14 @@ function applyAppearance(o) {
   if (wasSelected && !hasAsyncTexture(o)) {
     applySelectionVisual(o, true);
   }
+  // 如果修改的是当前选中对象，立即更新透明度控件可见性（NO_COLOR切换时联动）
+  if (state.selectedList.length > 0 && state.selectedList[0] === o) {
+    const isNoColorBrush = (o.data.isBrush === true) && (o.data.color === NO_COLOR) && !o.data.pattern;
+    const isNoColorShape = (o.data.kind === '3d' || o.data.kind === '2d') && (o.data.color === NO_COLOR) &&
+      (!o.data.pattern || o.data.pattern === '纯色') && !o.data.image;
+    const row = document.getElementById('row-opacity');
+    if (row) row.style.display = (isNoColorBrush || isNoColorShape) ? 'none' : '';
+  }
 }
 
 // 辅助函数：判断是否有异步贴图需要加载
@@ -5007,19 +5015,17 @@ function newScene() {
   toast('已新建空白场景');
 }
 document.getElementById('btn-shot').addEventListener('click', () => {
-  // 极高分辨率截图：8倍尺寸 + 2倍超采样抗锯齿，确保最小对象放大后清晰无锯齿
+  // 高分辨率截图：8倍尺寸渲染，确保放大后细节清晰
   const SHOT_SCALE = 8;
-  const SUPER_SAMPLE = 2; // 超采样倍数：在GPU缓冲区中以2倍精度渲染再降采样，消除边缘锯齿
   const maxTexSize = renderer.capabilities.maxTextureSize;
   const cw = canvas.clientWidth;
   const ch = canvas.clientHeight;
   let w = Math.floor(cw * SHOT_SCALE);
   let h = Math.floor(ch * SHOT_SCALE);
-  // 考虑超采样后的实际GPU缓冲区尺寸 = w*SUPER_SAMPLE × h*SUPER_SAMPLE，不超过GPU最大纹理尺寸
-  const effectiveMax = Math.floor(maxTexSize / SUPER_SAMPLE);
+  // 不超过GPU最大纹理尺寸
   const maxSide = Math.max(w, h);
-  if (maxSide > effectiveMax) {
-    const r = effectiveMax / maxSide;
+  if (maxSide > maxTexSize) {
+    const r = maxTexSize / maxSide;
     w = Math.floor(w * r);
     h = Math.floor(h * r);
   }
@@ -5035,19 +5041,17 @@ document.getElementById('btn-shot').addEventListener('click', () => {
     }
   });
 
-  // 超采样渲染：pixelRatio=SUPER_SAMPLE 使GPU以高精度渲染，输出图像为 w*SS × h*SS 像素
-  renderer.setPixelRatio(SUPER_SAMPLE);
+  // 以1倍pixelRatio + 大尺寸缓冲区渲染，保留抗锯齿（WebGLRenderer已开启antialias）
+  renderer.setPixelRatio(1);
   renderer.setSize(w, h, false);
-  // 保持相机宽高比不变（同比例缩放，宽高比天然保持）
+  // 保持相机宽高比与画布一致，确保截图覆盖整个当前视野
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   renderer.render(scene, camera);
 
-  const outW = w * SUPER_SAMPLE;
-  const outH = h * SUPER_SAMPLE;
   const a = document.createElement('a');
   a.href = canvas.toDataURL('image/png'); a.download = 'cube3d-' + Date.now() + '.png'; a.click();
-  toast('图像已导出（' + outW + '×' + outH + '）');
+  toast('图像已导出（' + w + '×' + h + '）');
 
   // 恢复隐藏的无色对象
   hiddenMeshes.forEach(m => { m.visible = true; });
@@ -5257,6 +5261,7 @@ let ghostPlaceScale = 1;
 function createBrushMaterial() {
   const effectiveColor = brush.color === NO_COLOR ? 0xffffff : brush.color;
   // 使用 MeshStandardMaterial 光滑材质，受光照影响产生明暗层次
+  // roughness=0.5 使圆柱形笔迹表面有明显的明暗渐变（0.85太哑光，曲面明暗不明显）
   const mat = new THREE.MeshStandardMaterial({
     color: effectiveColor,
     transparent: brush.opacity < 1,
@@ -5264,7 +5269,7 @@ function createBrushMaterial() {
     depthWrite: true,
     depthTest: true,
     side: THREE.FrontSide,
-    roughness: 0.85,
+    roughness: 0.5,
     metalness: 0.05,
     flatShading: false
   });
@@ -5285,6 +5290,7 @@ function createBrushMaterialForSnapshot(s) {
   const brushColor = (s.color !== undefined && s.color !== NO_COLOR) ? s.color : 0xffffff;
   const opacity = s.opacity || 1;
   // 使用 MeshStandardMaterial 光滑材质，受光照影响产生明暗层次
+  // roughness=0.5 使圆柱形笔迹表面有明显的明暗渐变
   const mat = new THREE.MeshStandardMaterial({
     color: brushColor,
     transparent: opacity < 1,
@@ -5292,7 +5298,7 @@ function createBrushMaterialForSnapshot(s) {
     depthWrite: true,
     depthTest: true,
     side: THREE.FrontSide,
-    roughness: 0.85,
+    roughness: 0.5,
     metalness: 0.05,
     flatShading: false
   });
