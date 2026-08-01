@@ -739,9 +739,9 @@
       <div class="kbd-row"><b>→/←</b><span>沿Y轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
       <div class="kbd-row"><b>PgUp/PgDn</b><span>沿Z轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
       <div class="kbd-title">旋转操作</div>
-      <div class="kbd-row"><b>A/D</b><span>绕Z轴逆/顺时针旋转5°</span></div>
-      <div class="kbd-row"><b>W/S</b><span>绕Y轴逆/顺时针旋转5°</span></div>
-      <div class="kbd-row"><b>Q/E</b><span>绕X轴逆/顺时针旋转5°</span></div>
+      <div class="kbd-row"><b>A/D</b><span>绕Z轴顺/逆时针旋转5°</span></div>
+      <div class="kbd-row"><b>W/S</b><span>绕X轴顺/逆时针旋转5°</span></div>
+      <div class="kbd-row"><b>E/Q</b><span>绕Y轴顺/逆时针旋转5°</span></div>
       <div class="kbd-title">缩放操作</div>
       <div class="kbd-row"><b>+</b><span>放大5%</span></div>
       <div class="kbd-row"><b>-</b><span>缩小5%</span></div>
@@ -751,7 +751,7 @@
       <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
       <div class="kbd-title">组合键操作</div>
       <div class="kbd-row"><b>Shift + ←/→/↑/↓/PgUp/PgDn</b><span>沿某方向平移1单位网格长度（1.5单位长度）</span></div>
-      <div class="kbd-row"><b>Shift + A/D/W/S/Q/E</b><span>绕Z/Y/X轴逆/顺时针旋转90°</span></div>
+      <div class="kbd-row"><b>Shift + A/D/W/S/E/Q</b><span>绕Z/X/Y轴顺/逆时针旋转90°</span></div>
       <div class="kbd-row"><b>Shift + + / -</b><span>放大至原来的2倍/缩小到原来的50%</span></div>
       <div class="kbd-row"><b>Shift + 点击</b><span>加选对象（多点选）</span></div>
       <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
@@ -785,6 +785,7 @@
 <div class="declaration">
   <strong>声明</strong> · 本工具所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，
   支持自由用于个人学习与创意设计。场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。
+  <br>最后更新：2026-08-02
 </div>
 
 <!-- 底部状态 -->
@@ -8804,13 +8805,13 @@ window.addEventListener('keydown', (e) => {
     case 'ArrowDown':  objectsToModify.forEach(o => o.mesh.position.z += moveStep); break;
     case 'PageUp':     objectsToModify.forEach(o => o.mesh.position.y += moveStep); break;
     case 'PageDown':   objectsToModify.forEach(o => o.mesh.position.y -= moveStep); break;
-    // 旋转：A/D 绕 Z(UI)=Y(TJ)，W/S 绕 Y(UI)=Z(TJ)，Q/E 绕 X(=X)（逆时针减、顺时针增）
+    // 旋转：A/D 绕 Z(UI)=Y(TJ)，W/S 绕 X(=X)，E/Q 绕 Y(UI)=Z(TJ)（逆时针减、顺时针增）
     case 'a': case 'A': rotateSelection('y', -rotRad, objectsToModify); break;
     case 'd': case 'D': rotateSelection('y',  rotRad, objectsToModify); break;
-    case 'w': case 'W': rotateSelection('z', -rotRad, objectsToModify); break;
-    case 's': case 'S': rotateSelection('z',  rotRad, objectsToModify); break;
-    case 'q': case 'Q': rotateSelection('x', -rotRad, objectsToModify); break;
-    case 'e': case 'E': rotateSelection('x',  rotRad, objectsToModify); break;
+    case 'w': case 'W': rotateSelection('x', -rotRad, objectsToModify); break;
+    case 's': case 'S': rotateSelection('x',  rotRad, objectsToModify); break;
+    case 'q': case 'Q': rotateSelection('z',  rotRad, objectsToModify); break;
+    case 'e': case 'E': rotateSelection('z', -rotRad, objectsToModify); break;
     // 缩放：5%，Shift 时 ×2 / ×0.5（多选时禁止）
     case '+': case '=':
       if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
