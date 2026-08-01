@@ -37,9 +37,9 @@
 
   /* 顶部栏 */
   .topbar {
-    position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 50;
+    position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 50;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
+    padding: 0 14px;
     background: linear-gradient(180deg, rgba(12,14,22,0.92), rgba(12,14,22,0.45));
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
@@ -74,19 +74,19 @@
 
   /* 面板通用 */
   .panel {
-    position: fixed; top: 66px; z-index: 30;
+    position: fixed; top: 56px; z-index: 30;
     background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border); border-radius: var(--radius);
     box-shadow: var(--shadow); overflow-y: auto;
-    max-height: calc(100vh - 84px);
+    max-height: calc(100vh - 72px);
   }
-  .panel-left { left: 14px; width: 220px; transition: transform .25s ease; }
-  .panel-right { right: 14px; width: 250px; transition: transform .25s ease; }
+  .panel-left { left: 14px; width: clamp(160px, 16vw, 220px); transition: transform .25s ease; }
+  .panel-right { right: 14px; width: clamp(180px, 18vw, 250px); transition: transform .25s ease; }
   .panel-left.collapsed { transform: translateX(calc(-100% - 18px)); }
   .panel-right.collapsed { transform: translateX(calc(100% + 18px)); }
-  /* 桌面端收缩按钮 */
+  /* 面板收缩按钮（所有宽度统一） */
   .panel-toggle {
-    position: fixed; top: 66px; z-index: 35;
+    position: fixed; top: 56px; z-index: 35;
     width: 22px; height: 40px;
     background: var(--bg-panel); border: 1px solid var(--border);
     border-radius: var(--radius); cursor: pointer;
@@ -95,8 +95,8 @@
     transition: all .25s ease;
   }
   .panel-toggle:hover { color: var(--text); border-color: var(--accent); }
-  .panel-toggle.left { left: 240px; }
-  .panel-toggle.right { right: 280px; }
+  .panel-toggle.left { left: calc(20px + clamp(160px, 16vw, 220px)); }
+  .panel-toggle.right { right: calc(20px + clamp(180px, 18vw, 250px)); }
   .panel-toggle.left.collapsed { left: 14px; }
   .panel-toggle.right.collapsed { right: 14px; }
   .panel h3 {
@@ -229,8 +229,13 @@
   .toggle-btn:hover { color: var(--text); }
   .toggle-btn.active { background: rgba(110,231,255,0.18); color: var(--accent); border-color: var(--accent); }
   .multi-hint { font-size: 11px; color: var(--accent-2); padding: 4px 2px; }
-  .kbd { font-size: 10px; color: var(--text-dim); line-height: 1.7; padding: 4px 2px; }
-  .kbd b { color: var(--accent); font-weight: 600; }
+  .kbd { font-size: 10px; color: var(--text-dim); line-height: 1.5; padding: 4px 2px; }
+  .kbd b { color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .kbd-title { color: var(--accent-2); font-size: 10px; font-weight: 700; margin-top: 6px; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid var(--border); }
+  .kbd-title:first-child { margin-top: 0; }
+  .kbd-row { display: flex; gap: 6px; align-items: baseline; padding: 1px 0; }
+  .kbd-row > b { flex: 0 0 auto; min-width: 42px; }
+  .kbd-row > span { flex: 1 1 auto; word-break: break-all; }
 
   /* 底部状态条 */
   .bottombar {
@@ -262,7 +267,7 @@
 
   /* 提示 */
   .toast {
-    position: fixed; top: 66px; left: 50%; transform: translateX(-50%) translateY(-16px);
+    position: fixed; top: 56px; left: 50%; transform: translateX(-50%) translateY(-16px);
     padding: 9px 18px; z-index: 100;
     background: var(--bg-panel-solid); border:1px solid var(--accent);
     border-radius: 26px; color: var(--text); font-size: 12.5px;
@@ -342,46 +347,28 @@
   .panel-section:first-child { padding-top: 10px; }
   .panel-section:last-child { padding-bottom: 14px; }
 
-  /* 移动端 */
-  .mobile-toggle { display:none; position: fixed; top: 64px; z-index: 40;
-    width:38px; height:38px; background: var(--bg-panel); backdrop-filter: blur(18px);
-    border:1px solid var(--border); border-radius:10px; color: var(--accent);
-    cursor:pointer; font-size:17px; align-items:center; justify-content:center; }
-  .mobile-toggle.left { left: 14px; }
-  .mobile-toggle.right { right: 14px; }
-
-  /* 中等屏幕：隐藏按钮文字，仅显示图标，避免顶栏溢出 */
+  /* 中等屏幕：隐藏按钮文字，仅显示图标 */
   @media (max-width: 1180px) {
     .top-btn .lbl { display: none; }
     .top-btn { padding: 0 8px; }
     .top-btn-sep { margin: 0 2px; }
   }
-  @media (max-width: 820px) {
-    /* 窄屏顶栏：允许按钮换行，确保全部按钮都完全可见，不再被裁切 */
-    .topbar { height: auto; min-height: 48px; padding: 6px 8px; flex-wrap: wrap; gap: 4px 0; }
-    .brand { font-size: 13px; flex-shrink: 0; gap: 6px; }
-    .brand .logo { width:22px; height:22px; }
-    /* 窄屏隐藏品牌文字，只保留logo，为按钮腾出空间 */
+  /* 窄屏：顶栏按钮水平滚动，品牌文字隐藏，面板最大宽度收窄 */
+  @media (max-width: 960px) {
+    .topbar { padding: 0 8px; }
+    .brand { font-size: 13px; gap: 6px; }
+    .brand .logo { width: 22px; height: 22px; }
     .brand span { display: none; }
     .top-actions {
-      flex: 1 1 100%; overflow: visible;
-      flex-wrap: wrap; gap: 4px;
+      flex: 1; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 0;
       scrollbar-width: none; -ms-overflow-style: none;
     }
     .top-actions::-webkit-scrollbar { display: none; }
-    .top-btn { height: 28px; padding: 0 9px; font-size: 11.5px; flex-shrink: 0; }
-    .top-btn .lbl { display:none; }
+    .top-btn { height: 28px; padding: 0 8px; font-size: 11.5px; flex-shrink: 0; }
     .top-btn-sep { display: none; }
-    .mobile-toggle { display:flex; top: 56px; }
-    .panel-toggle { display: none; }
-    .panel-left, .panel-right {
-      top: 104px; width: calc(100vw - 28px); max-width: 280px;
-      max-height: calc(100vh - 200px);
-      transform: translateX(-130%); transition: transform .28s;
-    }
-    .panel-right { transform: translateX(130%); }
-    .panel-left.open { transform: translateX(0); }
-    .panel-right.open { transform: translateX(0); }
+    /* 面板宽度收窄上限 */
+    .panel-left { width: clamp(160px, 16vw, 200px); }
+    .panel-right { width: clamp(180px, 18vw, 220px); }
     .declaration { bottom: 64px; left: 8px; right: 8px; max-width:none; font-size:10px; padding:8px 10px; }
     .bottombar {
       bottom: 10px; padding: 5px; gap:4px;
@@ -391,7 +378,6 @@
     }
     .bottombar::-webkit-scrollbar { display: none; }
     .view-btn { height: 28px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
-    /* toast/属性面板等下移，避免被换行后的顶栏遮挡 */
     .toast { top: auto; bottom: 80px; }
   }
   @media (max-width: 460px) {
@@ -415,26 +401,24 @@
 <header class="topbar">
   <div class="brand"><div class="logo"></div><span>立方·三维设计工坊</span></div>
   <div class="top-actions">
-    <button class="top-btn" id="btn-new" title="新建场景 Ctrl+N"><span class="ic">✨</span><span class="lbl">新建</span></button>
-    <button class="top-btn" id="btn-import" title="导入场景 JSON"><span class="ic">📥</span><span class="lbl">导入</span></button>
-    <button class="top-btn" id="btn-export" title="导出场景 JSON"><span class="ic">📤</span><span class="lbl">导出</span></button>
-    <button class="top-btn" id="btn-shot" title="导出图像 PNG"><span class="ic">📷</span><span class="lbl">截图</span></button>
+    <button class="top-btn" id="btn-new" title="新建场景 (Ctrl+N)"><span class="ic">✨</span><span class="lbl">新建</span></button>
+    <button class="top-btn" id="btn-import" title="导入场景 JSON (Ctrl+O)"><span class="ic">📥</span><span class="lbl">导入</span></button>
+    <button class="top-btn" id="btn-export" title="导出场景 JSON (Ctrl+S)"><span class="ic">📤</span><span class="lbl">导出</span></button>
+    <button class="top-btn" id="btn-shot" title="导出图像 PNG (Ctrl+P)"><span class="ic">📷</span><span class="lbl">截图</span></button>
     <div class="top-btn-sep"></div>
-    <button class="top-btn" id="btn-undo" title="撤销 Ctrl+Z"><span class="ic">↶</span><span class="lbl">撤销</span></button>
-    <button class="top-btn" id="btn-redo" title="重做 Ctrl+Y"><span class="ic">↷</span><span class="lbl">重做</span></button>
-    <button class="top-btn" id="btn-copy" title="复制 Ctrl+C"><span class="ic">⧉</span><span class="lbl">复制</span></button>
-    <button class="top-btn" id="btn-paste" title="粘贴 Ctrl+V"><span class="ic">📋</span><span class="lbl">粘贴</span></button>
-    <button class="top-btn" id="btn-dup" title="克隆 Ctrl+D"><span class="ic">⎘</span><span class="lbl">克隆</span></button>
-    <button class="top-btn" id="btn-clear" title="清空场景"><span class="ic">🗑</span><span class="lbl">清空</span></button>
+    <button class="top-btn" id="btn-undo" title="撤销 (Ctrl+Z)"><span class="ic">↶</span><span class="lbl">撤销</span></button>
+    <button class="top-btn" id="btn-redo" title="重做 (Ctrl+Y)"><span class="ic">↷</span><span class="lbl">重做</span></button>
+    <button class="top-btn" id="btn-copy" title="复制 (Ctrl+C)"><span class="ic">⧉</span><span class="lbl">复制</span></button>
+    <button class="top-btn" id="btn-paste" title="粘贴 (Ctrl+V)"><span class="ic">📋</span><span class="lbl">粘贴</span></button>
+    <button class="top-btn" id="btn-dup" title="克隆 (Ctrl+D)"><span class="ic">⎘</span><span class="lbl">克隆</span></button>
+    <button class="top-btn" id="btn-clear" title="清空场景 (Ctrl+Del/Backspace)"><span class="ic">🗑</span><span class="lbl">清空</span></button>
     <div class="top-btn-sep"></div>
     <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl">坐标轴</span></button>
     <button class="top-btn" id="btn-grid" title="切换网格面显示"><span class="ic">🔲</span><span class="lbl">网格面</span></button>
-    <button class="top-btn primary" id="btn-fs" title="全屏"><span class="ic">⛶</span><span class="lbl">全屏</span></button>
+    <button class="top-btn primary" id="btn-fs" title="全屏 (F11 / Esc)"><span class="ic">⛶</span><span class="lbl">全屏</span></button>
   </div>
 </header>
 
-<button class="mobile-toggle left" id="toggle-left">☰</button>
-<button class="mobile-toggle right" id="toggle-right">⚙</button>
 <button class="panel-toggle left" id="toggle-panel-left">‹</button>
 <button class="panel-toggle right" id="toggle-panel-right">›</button>
 
@@ -517,15 +501,15 @@
       <div class="ctrl-row">
         <div class="ctrl-label"><span>横坐标 X</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
+          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>纵坐标 Y</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
+          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
       <div class="ctrl-row">
@@ -556,7 +540,7 @@
           <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
-      <div class="ctrl-row">
+      <div class="ctrl-row" id="row-scale">
         <div class="ctrl-label"><span>等比缩放</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="s-c" min="0.1" max="5" step="0.01" value="1" style="flex:1;">
@@ -659,21 +643,7 @@
   </div>
   <div class="panel-section" id="sec-del" style="display:none;">
     <div class="multi-hint" id="multi-hint" style="display:none;"></div>
-    <button class="danger-btn" id="del-btn">删除选中对象（Delete）</button>
-  </div>
-  <div class="panel-section collapsible" id="sec-kbd" style="display:none;">
-    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>键盘快捷键</h3><span class="collapse-arrow">▼</span>
-    </div>
-    <div class="collapsible-body">
-    <div class="kbd">
-      <b>←→</b> 横坐标X · <b>↑↓</b> 竖坐标Z · <b>PgUp/PgDn</b> 纵坐标Y<br>
-      <b>Shift+方向</b> 步进1 · <b>Q / E</b> 旋转5° · <b>+ / -</b> 缩放5%<br>
-      <b>Ctrl+C/V</b> 复制粘贴 · <b>Ctrl+D</b> 克隆<br>
-      <b>Ctrl+A</b> 全选 · <b>Shift+点选</b> 加选<br>
-      <b>Del</b> 删除 · <b>Esc</b> 取消
-    </div>
-    </div>
+    <button class="danger-btn" id="del-btn">删除选中对象（Del/Backspace）</button>
   </div>
   <!-- 画笔属性（仅画笔模式时显示） -->
   <div class="panel-section collapsible" id="sec-brush" style="display:none;">
@@ -738,6 +708,47 @@
         <button class="toggle-btn active" id="eraser-mode-object" data-mode="object">删除对象</button>
         <button class="toggle-btn" id="eraser-mode-local" data-mode="local">局部擦除</button>
       </div>
+    </div>
+    </div>
+  </div>
+  <!-- 键盘快捷键（常驻最底部） -->
+  <div class="panel-section collapsible" id="sec-kbd">
+    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
+      <h3>键盘快捷键</h3><span class="collapse-arrow">▼</span>
+    </div>
+    <div class="collapsible-body">
+    <div class="kbd">
+      <div class="kbd-title">平移操作</div>
+      <div class="kbd-row"><b>→/←</b><span>沿X轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-row"><b>↑/↓</b><span>沿Y轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-row"><b>PgUp/PgDn</b><span>沿Z轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-title">旋转操作</div>
+      <div class="kbd-row"><b>A/D</b><span>绕Z轴顺/逆时针旋转5°</span></div>
+      <div class="kbd-row"><b>W/S</b><span>绕Y轴顺/逆时针旋转5°</span></div>
+      <div class="kbd-row"><b>E/Q</b><span>绕X轴顺/逆时针旋转5°</span></div>
+      <div class="kbd-title">缩放操作</div>
+      <div class="kbd-row"><b>+</b><span>放大5%</span></div>
+      <div class="kbd-row"><b>-</b><span>缩小5%</span></div>
+      <div class="kbd-title">功能键</div>
+      <div class="kbd-row"><b>Esc</b><span>取消操作/退出全屏</span></div>
+      <div class="kbd-row"><b>F11</b><span>全屏/退出全屏</span></div>
+      <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
+      <div class="kbd-title">组合键操作</div>
+      <div class="kbd-row"><b>Shift + →/←/↑/↓/PgUp/PgDn</b><span>沿某方向平移1单位网格长度（1.5单位长度）</span></div>
+      <div class="kbd-row"><b>Shift + A/D/W/S/E/Q</b><span>绕Z/Y/X轴顺/逆时针旋转90°</span></div>
+      <div class="kbd-row"><b>Shift + + / -</b><span>放大至原来的2倍/缩小到原来的50%</span></div>
+      <div class="kbd-row"><b>Shift + 点击</b><span>加选对象（多点选）</span></div>
+      <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
+      <div class="kbd-row"><b>Ctrl+N</b><span>新建场景</span></div>
+      <div class="kbd-row"><b>Ctrl+O</b><span>导入场景</span></div>
+      <div class="kbd-row"><b>Ctrl+S</b><span>导出场景</span></div>
+      <div class="kbd-row"><b>Ctrl+P</b><span>截图导出图像</span></div>
+      <div class="kbd-row"><b>Ctrl+Z</b><span>撤销</span></div>
+      <div class="kbd-row"><b>Ctrl+Y</b><span>重做</span></div>
+      <div class="kbd-row"><b>Ctrl+C</b><span>复制</span></div>
+      <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
+      <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
+      <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
     </div>
     </div>
   </div>
@@ -833,6 +844,18 @@
 
 <!-- 隐藏文件输入 -->
 <input type="file" id="file-img" class="hidden-input" accept="image/*">
+
+<!-- 确认弹窗（替代原生confirm，避免全屏退出） -->
+<div class="modal-mask" id="confirm-modal">
+  <div class="modal-box" style="width:min(380px,90vw);">
+    <div class="modal-title" id="confirm-modal-title">确认</div>
+    <div id="confirm-modal-msg" style="font-size:14px; color:var(--text); line-height:1.6; margin-bottom:4px;"></div>
+    <div class="modal-actions">
+      <button class="top-btn" id="confirm-modal-cancel">取消</button>
+      <button class="top-btn primary" id="confirm-modal-ok">确定</button>
+    </div>
+  </div>
+</div>
 <input type="file" id="file-import" class="hidden-input" accept="application/json,.json">
 <input type="file" id="file-imgtool" class="hidden-input" accept="image/*">
 
@@ -1180,6 +1203,34 @@ function getSelectionCenter() {
   return box.getCenter(new THREE.Vector3());
 }
 
+// 多对象围绕选择中心整体旋转
+// axis: 'x'|'y'|'z', deltaRad: 旋转弧度, startStates: 各对象初始状态, center: 旋转中心
+function applyGroupRotation(axis, deltaRad, startStates, center) {
+  const rotMatrix = new THREE.Matrix4();
+  if (axis === 'x') rotMatrix.makeRotationX(deltaRad);
+  else if (axis === 'y') rotMatrix.makeRotationY(deltaRad);
+  else rotMatrix.makeRotationZ(deltaRad);
+  // 围绕中心的变换矩阵: T(center) * R(delta) * T(-center)
+  const groupMatrix = new THREE.Matrix4()
+    .makeTranslation(center.x, center.y, center.z)
+    .multiply(rotMatrix)
+    .multiply(new THREE.Matrix4().makeTranslation(-center.x, -center.y, -center.z));
+  startStates.forEach(item => {
+    const m = item.obj.mesh;
+    const objStart = new THREE.Matrix4().compose(
+      item.pos,
+      new THREE.Quaternion().setFromEuler(item.rot),
+      item.scale
+    );
+    const newMatrix = groupMatrix.clone().multiply(objStart);
+    const newPos = new THREE.Vector3(), newQuat = new THREE.Quaternion(), newScale = new THREE.Vector3();
+    newMatrix.decompose(newPos, newQuat, newScale);
+    m.position.copy(newPos);
+    m.quaternion.copy(newQuat);
+    m.scale.copy(newScale);
+  });
+}
+
 function attachMultiTransform() {
   if (state.selectedList.length === 0) {
     transformCtrl.detach();
@@ -1214,6 +1265,12 @@ transformCtrl.addEventListener('dragging-changed', (e) => {
       else { el.removeAttribute('disabled'); el.style.opacity=''; el.style.pointerEvents=''; }
     }
   });
+  // 粘贴按钮额外检查：剪贴板为空时也灰度禁用
+  updatePasteButtonState();
+  // 复制/克隆按钮额外检查：无选中对象时也灰度禁用
+  updateCopyCloneButtonState();
+  // 清空按钮额外检查：变换中禁用
+  updateClearButtonState();
   if (e.value) {
     // 记录初始缩放，用于等比缩放计算
     if (transformCtrl.object) {
@@ -2157,7 +2214,6 @@ const elSecPat = document.getElementById('sec-pat');
 const elSecImg = document.getElementById('sec-img-content');
 const elSecText = document.getElementById('sec-text');
 const elSecDel = document.getElementById('sec-del');
-const elSecKbd = document.getElementById('sec-kbd');
 const elSecBrush = document.getElementById('sec-brush');
 const elSecEraser = document.getElementById('sec-eraser');
 const elEditText = document.getElementById('edit-text');
@@ -2329,7 +2385,8 @@ function refreshProps() {
   const primary = sel[0];
   elEmpty.style.display = 'none';
   elSecDel.style.display = '';
-  elSecKbd.style.display = '';
+  updateCopyCloneButtonState(); // 有选中对象，启用复制/克隆
+  updateClearButtonState(); // 有对象时，启用清空
 
   const isBrush = primary.data.isBrush;
   const isImage = primary.data.kind === 'image';
@@ -2396,6 +2453,13 @@ function refreshProps() {
       && o.data.color === NO_COLOR
     );
     document.getElementById('row-opacity').style.display = anyNoColorSolid ? 'none' : '';
+    // 多选时隐藏等比缩放控件和锁定比例，禁用缩放模式按钮
+    document.getElementById('row-scale').style.display = 'none';
+    const _lr = document.querySelector('label.lock-ratio');
+    if (_lr) _lr.style.display = 'none';
+    const _ms = document.getElementById('mode-scale');
+    if (_ms) _ms.classList.add('disabled');
+    if (transformCtrl.getMode() === 'scale') setTransformMode('translate', true);
     hideShapeParams();
     syncProps(primary);
     if (allCanColor) {
@@ -2418,6 +2482,12 @@ function refreshProps() {
     const isNoColorShapeSolid = (isShape) && (primary.data.color === NO_COLOR) &&
       (!primary.data.pattern || primary.data.pattern === '纯色') && !primary.data.image;
     document.getElementById('row-opacity').style.display = (isNoColorBrushSolid || isNoColorShapeSolid) ? 'none' : '';
+    // 单选时恢复等比缩放控件和锁定比例，启用缩放模式按钮
+    document.getElementById('row-scale').style.display = '';
+    const _lr2 = document.querySelector('label.lock-ratio');
+    if (_lr2) _lr2.style.display = '';
+    const _ms2 = document.getElementById('mode-scale');
+    if (_ms2) _ms2.classList.remove('disabled');
     syncProps(primary);
     syncTextProps(primary);
     if (canColor) {
@@ -2449,8 +2519,16 @@ function hideProps() {
   elSecImg.style.display = 'none';
   elSecText.style.display = 'none';
   elSecDel.style.display = 'none';
-  elSecKbd.style.display = 'none';
   elMultiHint.style.display = 'none';
+  // 无选中时恢复等比缩放控件和锁定比例，启用缩放模式按钮
+  const _rs = document.getElementById('row-scale');
+  if (_rs) _rs.style.display = '';
+  const _lr3 = document.querySelector('label.lock-ratio');
+  if (_lr3) _lr3.style.display = '';
+  const _ms3 = document.getElementById('mode-scale');
+  if (_ms3) _ms3.classList.remove('disabled');
+  updateCopyCloneButtonState(); // 无选中对象，灰度禁用复制/克隆
+  updateClearButtonState(); // 更新清空按钮状态
   // 清空图形参数内容
   if (document.getElementById('shape-params-content')) {
     document.getElementById('shape-params-content').innerHTML = '';
@@ -2731,6 +2809,7 @@ function restore(snap) {
     state.objects.forEach(o => { if (o.mesh) o.mesh.updateMatrixWorld(true); });
     scene.updateMatrixWorld(true);
   });
+  updateClearButtonState();
 }
 
 // 将快照数据应用到现有对象（不重建几何体，只更新变换和外观）
@@ -3556,6 +3635,14 @@ function setTool(t) {
   if (lockRatioEl) lockRatioEl.classList.toggle('disabled', disableTransform);
   const lockRatioLabel = document.querySelector('label.lock-ratio');
   if (lockRatioLabel) lockRatioLabel.classList.toggle('disabled', disableTransform);
+  // 多选时始终禁用缩放模式按钮并隐藏等比缩放控件
+  if (state.selectedList.length > 1) {
+    const _ms = document.getElementById('mode-scale');
+    if (_ms) _ms.classList.add('disabled');
+    const _rs = document.getElementById('row-scale');
+    if (_rs) _rs.style.display = 'none';
+    if (lockRatioLabel) lockRatioLabel.style.display = 'none';
+  }
 }
 function updateShapeButtonStates() {
   // 选中对象时，所有工具按钮（图形/文本/图片/画笔/橡皮擦）统一灰度禁用
@@ -3564,6 +3651,40 @@ function updateShapeButtonStates() {
   document.querySelectorAll('.shape-btn, #tool-text, #tool-image, #tool-brush3d, #tool-brush2d, #tool-eraser').forEach(b => {
     b.classList.toggle('disabled', disabled && !b.classList.contains('active'));
   });
+}
+// 粘贴按钮状态：剪贴板为空或变换中时灰度禁用
+function updatePasteButtonState() {
+  const el = document.getElementById('btn-paste');
+  if (!el) return;
+  const empty = !state.clipboard || state.clipboard.length === 0;
+  if (empty || transformActive) {
+    el.setAttribute('disabled','true'); el.style.opacity = 0.4; el.style.pointerEvents='none';
+  } else {
+    el.removeAttribute('disabled'); el.style.opacity=''; el.style.pointerEvents='';
+  }
+}
+// 复制/克隆按钮状态：无选中对象或变换中时灰度禁用
+function updateCopyCloneButtonState() {
+  const noSel = state.selectedList.length === 0;
+  ['btn-copy','btn-dup'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (noSel || transformActive) {
+      el.setAttribute('disabled','true'); el.style.opacity = 0.4; el.style.pointerEvents='none';
+    } else {
+      el.removeAttribute('disabled'); el.style.opacity=''; el.style.pointerEvents='';
+    }
+  });
+}
+// 清空按钮状态：无可清空对象时灰度禁用
+function updateClearButtonState() {
+  const el = document.getElementById('btn-clear');
+  if (!el) return;
+  if (state.objects.length === 0 || transformActive) {
+    el.setAttribute('disabled','true'); el.style.opacity = 0.4; el.style.pointerEvents='none';
+  } else {
+    el.removeAttribute('disabled'); el.style.opacity=''; el.style.pointerEvents='';
+  }
 }
 function labelOf(t) {
   return ({box:'立方体',sphere:'球体',cylinder:'圆柱',cone:'圆锥',torus:'圆环',knot:'纽结',icosa:'正二十面体',octa:'正八面体',dodeca:'正十二面体',capsule:'胶囊',
@@ -4621,6 +4742,8 @@ document.getElementById('tool-eraser').addEventListener('click', () => {
   setTool(state.tool === 'eraser' ? null : 'eraser');
 });
 function setTransformMode(mode, silent) {
+  // 多选时禁止进入缩放模式
+  if (mode === 'scale' && state.selectedList.length > 1) return;
   transformCtrl.setMode(mode);
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('mode-' + mode);
@@ -4640,18 +4763,29 @@ document.getElementById('file-imgtool').addEventListener('change', (e) => {
 function bindTransform(id, valId, applyFn, fmt) {
   const sl = document.getElementById(id), val = document.getElementById(valId);
   let startVals = [];
+  // 多选旋转时记录初始状态和中心，用于围绕整体中心旋转
+  let rotStartStates = null;
+  let rotCenter = null;
+  const isRotation = (id === 'r-x' || id === 'r-y' || id === 'r-z');
+  const axis = id === 'r-x' ? 'x' : (id === 'r-y' ? 'y' : 'z');
   sl.addEventListener('input', () => {
     if (state.selectedList.length === 0) return;
     const v = parseFloat(sl.value);
     if (state.selectedList.length === 1) {
       applyFn(state.selectedList[0].mesh, v);
     } else {
-      // 多选：以主选中变化量为增量
-      const primary = state.selectedList[0];
-      const delta = v - startVals[0];
-      state.selectedList.forEach((o, i) => {
-        applyFn(o.mesh, startVals[i] + delta);
-      });
+      if (isRotation && rotStartStates && rotCenter) {
+        // 多选旋转：围绕整体中心整体旋转
+        const deltaDeg = v - startVals[0];
+        const deltaRad = deltaDeg * Math.PI / 180;
+        applyGroupRotation(axis, deltaRad, rotStartStates, rotCenter);
+      } else {
+        // 其他属性：以主选中变化量为增量
+        const delta = v - startVals[0];
+        state.selectedList.forEach((o, i) => {
+          applyFn(o.mesh, startVals[i] + delta);
+        });
+      }
     }
     if (val) val.textContent = fmt(v);
     updateSelBoxes();
@@ -4672,6 +4806,19 @@ function bindTransform(id, valId, applyFn, fmt) {
       if (id === 'p-opacity') return o.data?.opacity ?? (m.material ? m.material.opacity : 1.0);
       return 0;
     });
+    // 多选旋转时，记录各对象初始状态和选择中心
+    if (isRotation && state.selectedList.length > 1) {
+      rotStartStates = state.selectedList.map(o => ({
+        obj: o,
+        pos: o.mesh.position.clone(),
+        rot: o.mesh.rotation.clone(),
+        scale: o.mesh.scale.clone()
+      }));
+      rotCenter = getSelectionCenter();
+    } else {
+      rotStartStates = null;
+      rotCenter = null;
+    }
   });
   sl.addEventListener('change', () => { if (state.selectedList.length) pushHistory(); });
 }
@@ -4741,17 +4888,27 @@ bindTransform('p-opacity','v-opacity',(m,v)=>{
 function bindNumberInput(inputId, sliderId, applyFn) {
   const input = document.getElementById(inputId);
   const slider = document.getElementById(sliderId);
-  
+  const isRotation = (sliderId === 'r-x' || sliderId === 'r-y' || sliderId === 'r-z');
+  const axis = sliderId === 'r-x' ? 'x' : (sliderId === 'r-y' ? 'y' : 'z');
+  // 输入框多选旋转时记录初始状态
+  let inputRotStartStates = null;
+  let inputRotCenter = null;
+  let inputRotStartVal = 0;
+
   // 滑块变化 -> 更新数值框和对象
   slider.addEventListener('input', () => {
     if (state.selectedList.length === 0) return;
     const v = parseFloat(slider.value);
     if (isNaN(v)) return;
     input.value = v.toFixed(2);
+    // 旋转多选由 bindTransform 的 input 监听器处理，此处只同步输入框
+    if (isRotation && state.selectedList.length > 1) {
+      updateSelBoxes();
+      return;
+    }
     if (state.selectedList.length === 1) {
       applyFn(state.selectedList[0].mesh, v);
     } else {
-      const primary = state.selectedList[0];
       const startVals = state.selectedList.map(o => {
         const m = o.mesh;
         if (sliderId === 'p-x') return m.position.x;
@@ -4777,9 +4934,26 @@ function bindNumberInput(inputId, sliderId, applyFn) {
     }
     updateSelBoxes();
   });
-  
+
   slider.addEventListener('change', () => { if (state.selectedList.length) pushHistory(); });
-  
+
+  // 输入框获焦时记录初始状态（用于多选旋转）
+  input.addEventListener('focus', () => {
+    if (isRotation && state.selectedList.length > 1) {
+      inputRotStartStates = state.selectedList.map(o => ({
+        obj: o,
+        pos: o.mesh.position.clone(),
+        rot: o.mesh.rotation.clone(),
+        scale: o.mesh.scale.clone()
+      }));
+      inputRotCenter = getSelectionCenter();
+      inputRotStartVal = state.selectedList[0].mesh.rotation[axis] * 180 / Math.PI;
+    } else {
+      inputRotStartStates = null;
+      inputRotCenter = null;
+    }
+  });
+
   // 输入框：实时预览 + 回车/失焦确认
   input.addEventListener('input', () => {
     if (state.selectedList.length === 0) return;
@@ -4788,8 +4962,12 @@ function bindNumberInput(inputId, sliderId, applyFn) {
     slider.value = v;
     if (state.selectedList.length === 1) {
       applyFn(state.selectedList[0].mesh, v);
+    } else if (isRotation && inputRotStartStates && inputRotCenter) {
+      // 多选旋转：围绕整体中心整体旋转
+      const deltaDeg = v - inputRotStartVal;
+      const deltaRad = deltaDeg * Math.PI / 180;
+      applyGroupRotation(axis, deltaRad, inputRotStartStates, inputRotCenter);
     } else {
-      const primary = state.selectedList[0];
       const startVals = state.selectedList.map(o => {
         const m = o.mesh;
         if (sliderId === 'p-x') return m.position.x;
@@ -4815,7 +4993,7 @@ function bindNumberInput(inputId, sliderId, applyFn) {
     }
     updateSelBoxes();
   });
-  
+
   // 回车确认更新
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
@@ -4824,7 +5002,7 @@ function bindNumberInput(inputId, sliderId, applyFn) {
       if (state.selectedList.length) pushHistory();
     }
   });
-  
+
   // 失焦时格式化并记录历史
   input.addEventListener('blur', () => {
     if (state.selectedList.length) {
@@ -4834,6 +5012,8 @@ function bindNumberInput(inputId, sliderId, applyFn) {
         pushHistory();
       }
     }
+    inputRotStartStates = null;
+    inputRotCenter = null;
   });
 }
 
@@ -4918,6 +5098,7 @@ function deleteSelected() {
     state.objects = state.objects.filter(x => x !== o);
   });
   deselect(); pushHistory(); toast(`已删除 ${n} 个对象`);
+  updateClearButtonState();
 }
 
 // 贴图上传（批量应用到选中对象）
@@ -4965,16 +5146,19 @@ document.getElementById('btn-new').addEventListener('click', newScene);
 document.getElementById('btn-undo').addEventListener('click', undo);
 document.getElementById('btn-redo').addEventListener('click', redo);
 document.getElementById('btn-copy').addEventListener('click', copySelected);
-document.getElementById('btn-paste').addEventListener('click', () => pasteClipboard());
+document.getElementById('btn-paste').addEventListener('click', () => pasteClipboard(0.2, true));
 document.getElementById('btn-dup').addEventListener('click', cloneSelected);
-document.getElementById('btn-clear').addEventListener('click', () => {
-  if (!state.objects.length) return;
-  if (!confirm('确定清空场景？此操作可撤销。')) return;
+async function clearScene() {
+  if (!state.objects.length) { toast('场景已为空'); return; }
+  if (transformActive) { toast('变换进行中，无法清空'); return; }
+  if (!await showConfirm('确定清空场景？此操作可撤销。')) return;
   select(null);
   state.objects.forEach(disposeObject);
   state.objects = [];
+  updateClearButtonState();
   pushHistory(); toast('已清空');
-});
+}
+document.getElementById('btn-clear').addEventListener('click', clearScene);
 document.getElementById('btn-axes').addEventListener('click', () => {
   axesVisible = !axesVisible;
   axesGroup.visible = axesVisible;
@@ -4990,8 +5174,8 @@ document.getElementById('btn-grid').addEventListener('click', () => {
   toast(gridVisible ? '网格面已显示' : '网格面已隐藏');
 });
 // 新建场景
-function newScene() {
-  if (state.objects.length > 0 && !confirm('确定新建场景？当前场景将被清空。')) return;
+async function newScene() {
+  if (state.objects.length > 0 && !await showConfirm('确定新建场景？当前场景将被清空。')) return;
   // 清空所有对象
   state.objects.forEach(disposeObject);
   state.objects = [];
@@ -4999,6 +5183,7 @@ function newScene() {
   deselectAll();
   // 清空剪贴板
   state.clipboard = [];
+  updatePasteButtonState();
   // 重置工具
   setTool(null);
   // 重置默认颜色
@@ -5014,9 +5199,8 @@ function newScene() {
   updateUndoRedoUI();
   toast('已新建空白场景');
 }
-document.getElementById('btn-shot').addEventListener('click', () => {
-  // 高分辨率截图：setSize(w,h,true)同步更新CSS和drawing buffer
-  // 使用true参数确保canvas样式与缓冲区一致，避免toDataURL捕获错误区域
+// 截图导出 PNG：setSize(w,h,true) 同步 CSS 与 drawing buffer，保证视野与当前画面一致
+function captureScreenshot() {
   const SHOT_SCALE = 2;
   const cw = canvas.clientWidth;
   const ch = canvas.clientHeight;
@@ -5060,7 +5244,8 @@ document.getElementById('btn-shot').addEventListener('click', () => {
   camera.aspect = prevAspect;
   camera.updateProjectionMatrix();
   renderer.render(scene, camera);
-});
+}
+document.getElementById('btn-shot').addEventListener('click', captureScreenshot);
 document.getElementById('btn-fs').addEventListener('click', () => {
   if (!document.fullscreenElement) document.documentElement.requestFullscreen();
   else document.exitFullscreen();
@@ -5070,15 +5255,15 @@ document.addEventListener('fullscreenchange', () => {
   if (document.fullscreenElement) {
     btn.querySelector('.ic').textContent = '⤢';
     btn.querySelector('.lbl').textContent = '退出全屏';
-    btn.title = '退出全屏 (Esc)';
+    btn.title = '退出全屏 (F11 / Esc)';
   } else {
     btn.querySelector('.ic').textContent = '⛶';
     btn.querySelector('.lbl').textContent = '全屏';
-    btn.title = '全屏';
+    btn.title = '全屏 (F11 / Esc)';
   }
 });
-// 导出场景
-document.getElementById('btn-export').addEventListener('click', () => {
+// 导出场景 JSON
+function exportScene() {
   // 保存相机视角参数
   const cameraData = {
     position: [camera.position.x, camera.position.y, camera.position.z],
@@ -5094,9 +5279,11 @@ document.getElementById('btn-export').addEventListener('click', () => {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = 'cube3d-scene-' + Date.now() + '.json'; a.click();
   toast('场景已导出 JSON');
-});
-// 导入场景
-document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-import').click());
+}
+document.getElementById('btn-export').addEventListener('click', exportScene);
+// 导入场景 JSON
+function importScene() { document.getElementById('file-import').click(); }
+document.getElementById('btn-import').addEventListener('click', importScene);
 document.getElementById('file-import').addEventListener('change', (e) => {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
@@ -5175,6 +5362,7 @@ function setView(v) {
     else if (v === 'left') camera.position.set(-18, t.y + 0.5, t.z);
     else if (v === 'right') camera.position.set(18, t.y + 0.5, t.z);
     controls.update();
+    setTool(null); // 强制回到选择/变换模式
     return;
   }
   const center = box.getCenter(new THREE.Vector3());
@@ -5220,32 +5408,47 @@ function setView(v) {
   }
   camera.updateProjectionMatrix();
   controls.update();
+  // 切换视角后强制回到选择/变换模式
+  setTool(null);
 }
 
-// 移动端面板
-document.getElementById('toggle-left').addEventListener('click', () => {
-  document.getElementById('panel-left').classList.toggle('open');
-  document.getElementById('panel-right').classList.remove('open');
-});
-document.getElementById('toggle-right').addEventListener('click', () => {
-  document.getElementById('panel-right').classList.toggle('open');
-  document.getElementById('panel-left').classList.remove('open');
-});
-// 桌面端面板收缩/展开
+// 面板收缩/展开（所有宽度统一使用 collapsed 类）
+function setPanelCollapsed(side, collapsed) {
+  const panel = document.getElementById('panel-' + side);
+  const btn = document.getElementById('toggle-panel-' + side);
+  if (collapsed) {
+    panel.classList.add('collapsed');
+    btn.classList.add('collapsed');
+  } else {
+    panel.classList.remove('collapsed');
+    btn.classList.remove('collapsed');
+  }
+  btn.textContent = collapsed ? (side === 'left' ? '›' : '‹') : (side === 'left' ? '‹' : '›');
+}
 document.getElementById('toggle-panel-left').addEventListener('click', () => {
   const panel = document.getElementById('panel-left');
-  const btn = document.getElementById('toggle-panel-left');
-  panel.classList.toggle('collapsed');
-  btn.classList.toggle('collapsed');
-  btn.textContent = panel.classList.contains('collapsed') ? '›' : '‹';
+  setPanelCollapsed('left', !panel.classList.contains('collapsed'));
 });
 document.getElementById('toggle-panel-right').addEventListener('click', () => {
   const panel = document.getElementById('panel-right');
-  const btn = document.getElementById('toggle-panel-right');
-  panel.classList.toggle('collapsed');
-  btn.classList.toggle('collapsed');
-  btn.textContent = panel.classList.contains('collapsed') ? '‹' : '›';
+  setPanelCollapsed('right', !panel.classList.contains('collapsed'));
 });
+// 窄屏自动收起面板，宽屏自动展开（仅处理自动收起/展开，不影响用户手动操作）
+let _autoCollapsed = false;
+function _checkAutoCollapse() {
+  const narrow = window.innerWidth <= 960;
+  if (narrow && !_autoCollapsed) {
+    setPanelCollapsed('left', true);
+    setPanelCollapsed('right', true);
+    _autoCollapsed = true;
+  } else if (!narrow && _autoCollapsed) {
+    setPanelCollapsed('left', false);
+    setPanelCollapsed('right', false);
+    _autoCollapsed = false;
+  }
+}
+window.addEventListener('resize', _checkAutoCollapse);
+_checkAutoCollapse();
 
 // ============ 指针交互 ============
 const DRAG_THRESH = 5;
@@ -6316,33 +6519,8 @@ function _mergeSmallSegments(o, targetCount) {
 function _eraseAtSingle(groundPoint) {
   const radius = state.eraserSize;
   const effR = Math.max(radius, 0.05);
-  const effRSq = effR * effR;
   let anyDeleted = false;
   const brushObjects = state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
-
-  // 预计算射线胶囊：沿射线方向的胶囊状擦除区域
-  // 用于解决自交/复杂曲线的中间部分被前方曲面遮挡时无法擦除的问题
-  const ray = raycaster.ray;
-  const ro = ray.origin, rd = ray.direction;
-  const gv = groundPoint.clone().sub(ro);
-  const t_ground = gv.dot(rd);
-  const capHalfLen = effR * 3;
-  const start_t = Math.max(0, t_ground - capHalfLen);
-  const end_t = t_ground + capHalfLen;
-  const capStart = new THREE.Vector3().copy(rd).multiplyScalar(start_t).add(ro);
-  const capEndV = new THREE.Vector3().copy(rd).multiplyScalar(end_t).add(ro);
-  const capSeg = capEndV.clone().sub(capStart);
-  const capSegLenSq = capSeg.lengthSq();
-  function _distToCapSq(px, py, pz) {
-    const wx = px - capStart.x, wy = py - capStart.y, wz = pz - capStart.z;
-    let t = capSegLenSq > 1e-12 ? (wx * capSeg.x + wy * capSeg.y + wz * capSeg.z) / capSegLenSq : 0;
-    t = t < 0 ? 0 : (t > 1 ? 1 : t);
-    const cx = capStart.x + capSeg.x * t;
-    const cy = capStart.y + capSeg.y * t;
-    const cz = capStart.z + capSeg.z * t;
-    const dx = px - cx, dy = py - cy, dz = pz - cz;
-    return dx * dx + dy * dy + dz * dz;
-  }
 
   brushObjects.forEach(o => {
     let childrenModified = false; // 跟踪子mesh是否被修改（删除或分裂）
@@ -6501,6 +6679,7 @@ function _eraseAtSingle(groundPoint) {
 
       if (isBrush2D) {
         // === 2D画笔判定 ===
+        // 仅当笔迹段完全在橡皮光标圆圈内时才删除，确保不擦除圆圈以外的区域
         const tightR = Math.max(radius, 0.05);
         const tightRSq = tightR * tightR;
         if (geo.type === 'CircleGeometry') {
@@ -6508,8 +6687,9 @@ function _eraseAtSingle(groundPoint) {
           const wPos = new THREE.Vector3();
           child.getWorldPosition(wPos);
           const dx = gx - wPos.x, dz = gz - wPos.z;
-          // 仅当圆心在橡皮范围内时删除（避免擦除范围 = 橡皮半径 + 笔迹半径 过大）
-          hit = (dx * dx + dz * dz) <= tightRSq;
+          // 仅当笔迹圆完全在橡皮范围内时删除（d + r <= R_eraser）
+          const maxD = Math.max(0, tightR - r);
+          hit = (dx * dx + dz * dz) <= maxD * maxD;
         } else if (geo.type === 'BufferGeometry' && geo.attributes && geo.attributes.position) {
           const posAttr = geo.attributes.position;
           const pts = [];
@@ -6522,26 +6702,12 @@ function _eraseAtSingle(groundPoint) {
             const key = `${tmp.x.toFixed(4)}_${tmp.z.toFixed(4)}`;
             if (!seen.has(key)) { seen.add(key); pts.push([tmp.x, tmp.z]); }
           }
-          if (pts.length >= 3) {
-            while (pts.length < 4) pts.push(pts[0]);
-            hit = _circleRectIntersectXZ(gx, gz, tightR, pts);
-          } else if (pts.length === 2) {
-            const [a, b] = pts;
-            const d1x = gx - a[0], d1z = gz - a[1];
-            const d2x = gx - b[0], d2z = gz - b[1];
-            if (d1x * d1x + d1z * d1z <= tightRSq || d2x * d2x + d2z * d2z <= tightRSq) {
-              hit = true;
-            } else {
-              const abx = b[0] - a[0], abz = b[1] - a[1];
-              const lenSq = abx * abx + abz * abz;
-              if (lenSq > 1e-10) {
-                let t = ((gx - a[0]) * abx + (gz - a[1]) * abz) / lenSq;
-                t = Math.max(0, Math.min(1, t));
-                const px = a[0] + abx * t, pz = a[1] + abz * t;
-                const dx = gx - px, dz = gz - pz;
-                hit = (dx * dx + dz * dz) <= tightRSq;
-              }
-            }
+          if (pts.length >= 2) {
+            // 仅当所有顶点都在橡皮圆圈内时才删除（完全包含）
+            hit = pts.every(p => {
+              const dx = gx - p[0], dz = gz - p[1];
+              return (dx * dx + dz * dz) <= tightRSq;
+            });
           }
         } else {
           if (!geo.boundingSphere) geo.computeBoundingSphere();
@@ -6549,8 +6715,9 @@ function _eraseAtSingle(groundPoint) {
           const wPos = new THREE.Vector3();
           child.getWorldPosition(wPos);
           const dx = gx - wPos.x, dz = gz - wPos.z;
-          // 仅当中心在橡皮范围内时删除
-          hit = (dx * dx + dz * dz) <= tightRSq;
+          // 仅当对象完全在橡皮范围内时删除（d + childR <= R_eraser）
+          const maxD = Math.max(0, tightR - childR);
+          hit = (dx * dx + dz * dz) <= maxD * maxD;
         }
       } else if (geo.type === 'TubeGeometry') {
         // === 3D画笔TubeGeometry：使用预计算缓存，缺失时即时构建（兜底，防止首次擦除tube不可擦） ===
@@ -6581,7 +6748,7 @@ function _eraseAtSingle(groundPoint) {
         }
         const { samplePts, brushRadius: brushR, curvePoints } = cacheEntry;
 
-        // 先用 boundingSphere + 射线胶囊/groundPoint 距离双粗筛
+        // 先用 boundingSphere + groundPoint 球距离粗筛
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         if (geo.boundingSphere) {
           const bsCenterLocal = geo.boundingSphere.center;
@@ -6589,24 +6756,19 @@ function _eraseAtSingle(groundPoint) {
           const bsR = geo.boundingSphere.radius;
           const dMax = brushR + effR + bsR;
           const dMaxSq = dMax * dMax;
-          // 检测1：groundPoint 球距离
           const dx = gx - bsCenterWorld.x;
           const dy = gy - bsCenterWorld.y;
           const dz = gz - bsCenterWorld.z;
           const sphSq = dx * dx + dy * dy + dz * dz;
           if (sphSq > dMaxSq) {
-            // 检测2：射线胶囊距离（自交曲线后方部分）
-            const capSq = _distToCapSq(bsCenterWorld.x, bsCenterWorld.y, bsCenterWorld.z);
-            if (capSq > dMaxSq) {
-              toKeep.push(child);
-              continue;
-            }
+            toKeep.push(child);
+            continue;
           }
         }
 
         // 使用预计算采样点检测擦除区间（带边界插值）
-        // 联合检测：groundPoint 球距离 ∪ 射线胶囊距离
-        // 取两者最小值作为最终判定距离，解决自交/复杂曲线中间部分被遮挡无法擦除的问题
+        // 仅使用 groundPoint 球距离判定，确保只擦除光标附近的曲线段，
+        // 不影响交点处其他分支或远处的曲线部分
         const thr = brushR + effR;
         const thrSq = thr * thr;
         const erasedRanges = [];
@@ -6614,22 +6776,17 @@ function _eraseAtSingle(groundPoint) {
         let rangeStart = 0;
         let anyHit = false;
 
-        // 收集每个采样点的擦除状态和联合最小距离
+        // 收集每个采样点的擦除状态和球距离
         const isErasedArr = new Array(samplePts.length);
         const distSqArr = new Array(samplePts.length);
         for (let i = 0; i < samplePts.length; i++) {
           const sp = samplePts[i];
-          // 检测1：groundPoint 球距离平方
           const dx = sp.x - gx;
           const dy = sp.y - gy;
           const dz = sp.z - gz;
           const sphSq = dx * dx + dy * dy + dz * dz;
-          // 检测2：射线胶囊距离平方
-          const capSq = _distToCapSq(sp.x, sp.y, sp.z);
-          // 取两者最小值作为最终判定距离
-          const dSq = sphSq < capSq ? sphSq : capSq;
-          distSqArr[i] = dSq;
-          isErasedArr[i] = dSq < thrSq;
+          distSqArr[i] = sphSq;
+          isErasedArr[i] = sphSq < thrSq;
           if (isErasedArr[i]) anyHit = true;
         }
 
@@ -6835,16 +6992,14 @@ function _eraseAtSingle(groundPoint) {
           }
         }
       } else if (geo.type === 'SphereGeometry') {
-        // 3D画笔端帽：联合使用 groundPoint 球距离 + 射线胶囊距离
+        // 3D画笔端帽：仅使用 groundPoint 球距离判定
         const r = (params && params.radius !== undefined) ? params.radius : 0.1;
         const wPos = new THREE.Vector3();
         child.getWorldPosition(wPos);
         const thr = (r + effR);
         const thrSq = thr * thr;
         const dx = gx - wPos.x, dy = gy - wPos.y, dz = gz - wPos.z;
-        const sphSq = dx * dx + dy * dy + dz * dz;
-        const capSq = _distToCapSq(wPos.x, wPos.y, wPos.z);
-        hit = (sphSq <= thrSq) || (capSq <= thrSq);
+        hit = (dx * dx + dy * dy + dz * dz) <= thrSq;
       } else if (geo.type === 'CylinderGeometry') {
         const h = (params && params.height !== undefined) ? params.height : 0.1;
         const localA = new THREE.Vector3(0, -h / 2, 0);
@@ -6854,7 +7009,7 @@ function _eraseAtSingle(groundPoint) {
         const cylR = Math.max((params && params.radiusTop) || 0, (params && params.radiusBottom) || 0);
         hit = _sphereCylinderIntersect(groundPoint, radius, worldA, worldB, cylR);
       } else {
-        // 其他几何体：联合使用 groundPoint 球距离 + 射线胶囊距离
+        // 其他几何体：仅使用 groundPoint 球距离判定
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         const childR = geo.boundingSphere ? geo.boundingSphere.radius : 0.1;
         const wPos = new THREE.Vector3();
@@ -6862,9 +7017,7 @@ function _eraseAtSingle(groundPoint) {
         const thr = effR + childR;
         const thrSq = thr * thr;
         const dx = gx - wPos.x, dy = gy - wPos.y, dz = gz - wPos.z;
-        const sphSq = dx * dx + dy * dy + dz * dz;
-        const capSq = _distToCapSq(wPos.x, wPos.y, wPos.z);
-        hit = (sphSq <= thrSq) || (capSq <= thrSq);
+        hit = (dx * dx + dy * dy + dz * dz) <= thrSq;
       }
       if (hit) toDelete.push(child);
       else toKeep.push(child);
@@ -6932,13 +7085,13 @@ function eraseAt(groundPoint) {
     });
     
     // 2. 画笔痕迹部分擦除
-    // 3D画笔使用射线距离判定，单次调用即可覆盖整条射线，无需插值
-    // 2D画笔使用点距判定，需要路径插值避免快速移动漏擦
+    // 所有画笔类型均使用 groundPoint 球距离判定，需要路径插值避免快速移动漏擦
     let brushDeleted = false;
     const gp = groundPoint;
-    // 检查是否存在2D画笔对象（需要插值）
-    const has2DBrush = state.objects.some(o => o.data.isBrush && o.data.type === 'brush2d');
-    if (has2DBrush && _lastErasePoint) {
+    // 检查是否存在画笔对象（需要插值）
+    const hasBrush = state.objects.some(o => o.data.isBrush);
+    if (hasBrush && _lastErasePoint) {
+      // 对所有画笔类型（2D/3D）使用路径插值，避免快速移动漏擦
       const segLen = gp.distanceTo(_lastErasePoint);
       const step = Math.max(0.02, radius / 3);
       const steps = Math.ceil(segLen / step);
@@ -8166,6 +8319,7 @@ function copySelected() {
     };
   });
   toast('已复制 ' + state.clipboard.length + ' 个对象');
+  updatePasteButtonState();
 }
 // 计算3D笔迹 group 的几何中心相对 group.position 的偏移
 // 返回 { offset: Vector3, childAdjust: [{child}] }
@@ -8208,9 +8362,29 @@ function recenterBrushGroup(group) {
   });
   group.updateMatrixWorld(true);
 }
-function pasteClipboard(offset = 0.2) {
+// 获取当前视图中心在XY面上的坐标
+function getViewCenterOnGround() {
+  const ray = new THREE.Raycaster();
+  ray.setFromCamera(new THREE.Vector2(0, 0), camera);
+  const out = new THREE.Vector3();
+  return ray.ray.intersectPlane(groundMathPlane, out) ? out : controls.target.clone();
+}
+function pasteClipboard(offset = 0.2, useViewCenter = false) {
   if (transformActive) { toast('变换中无法粘贴'); return; }
   if (state.clipboard.length === 0) { toast('剪贴板为空'); return; }
+  // 计算粘贴偏移量：useViewCenter 时移到视图中心，否则用 offset 微偏移
+  let pasteDelta = new THREE.Vector3(offset, 0, offset);
+  if (useViewCenter) {
+    const cbCenter = new THREE.Vector3();
+    let count = 0;
+    state.clipboard.forEach(item => {
+      const p = (item.worldPos && Array.isArray(item.worldPos)) ? item.worldPos : ((item.pos && Array.isArray(item.pos)) ? item.pos : null);
+      if (p) { cbCenter.x += p[0]; cbCenter.z += p[2]; count++; }
+    });
+    if (count > 0) { cbCenter.x /= count; cbCenter.z /= count; }
+    const viewCenter = getViewCenterOnGround();
+    pasteDelta.set(viewCenter.x - cbCenter.x, 0, viewCenter.z - cbCenter.z);
+  }
   const newOnes = [];
   const asyncPromises = [];
   state.clipboard.forEach(item => {
@@ -8233,7 +8407,7 @@ function pasteClipboard(offset = 0.2) {
         mat.color.set(0xffffff);
       }
 
-      const offsetVec = new THREE.Vector3(offset, 0, offset);
+      const offsetVec = pasteDelta;
       // 安全获取位置
       const brushPos = (item.pos && Array.isArray(item.pos)) ? item.pos : ((item.worldPos && Array.isArray(item.worldPos)) ? item.worldPos : [0, 0, 0]);
       const groupPos = new THREE.Vector3(brushPos[0], brushPos[1], brushPos[2]).add(offsetVec);
@@ -8394,8 +8568,8 @@ function pasteClipboard(offset = 0.2) {
         rotX: item.rotX || 0,
         rotZ: item.rotZ || 0,
         scale: item.scale || 1,
-        // 传递完整3D变换用于精确覆盖，带 offset 偏移
-        worldPos: [basePos[0] + offset, basePos[1], basePos[2] + offset],
+        // 传递完整3D变换用于精确覆盖，带 pasteDelta 偏移
+        worldPos: [basePos[0] + pasteDelta.x, basePos[1], basePos[2] + pasteDelta.z],
         worldQuat: item.worldQuat || [0, 0, 0, 1],
         worldScale: item.worldScale || [1, 1, 1]
       };
@@ -8471,66 +8645,129 @@ function cloneSelected() {
 }
 
 // ============ 键盘快捷键 ============
+// 在选中对象上施加旋转：多选时绕整体中心，单选时绕自身
+function rotateSelection(axis, deltaRad, objects) {
+  if (objects.length > 1) {
+    const center = getSelectionCenter();
+    const startStates = objects.map(o => ({
+      obj: o, pos: o.mesh.position.clone(),
+      rot: o.mesh.rotation.clone(), scale: o.mesh.scale.clone()
+    }));
+    applyGroupRotation(axis, deltaRad, startStates, center);
+  } else {
+    objects.forEach(o => {
+      if (axis === 'x') o.mesh.rotation.x += deltaRad;
+      else if (axis === 'y') o.mesh.rotation.y += deltaRad;
+      else o.mesh.rotation.z += deltaRad;
+    });
+  }
+}
 window.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
   const sel = state.selectedList;
   const shift = e.shiftKey;
-  // 新建场景
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') { e.preventDefault(); newScene(); return; }
-  // 撤销/重做
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
-  if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) { e.preventDefault(); redo(); return; }
-  // 复制 / 粘贴 / 克隆
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') { e.preventDefault(); copySelected(); return; }
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') { e.preventDefault(); pasteClipboard(); return; }
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') { e.preventDefault(); cloneSelected(); return; }
-  // 全选：自动切换到选择/变换模式，然后全选
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+  const ctrl = e.ctrlKey || e.metaKey;
+
+  // ---- Ctrl 组合键 ----
+  if (ctrl) {
+    const k = e.key.toLowerCase();
+    if (k === 'n') { e.preventDefault(); newScene(); return; }
+    if (k === 'o') { e.preventDefault(); importScene(); return; }        // 拦截浏览器“打开”
+    if (k === 's') { e.preventDefault(); exportScene(); return; }        // 拦截浏览器“保存”
+    if (k === 'p') { e.preventDefault(); captureScreenshot(); return; }  // 拦截浏览器“打印”
+    if (k === 'z' && !shift) { e.preventDefault(); undo(); return; }
+    if (k === 'y' || (shift && k === 'z')) { e.preventDefault(); redo(); return; }
+    if (k === 'c') {
+      e.preventDefault();
+      if (transformActive) { toast('变换进行中，无法复制'); return; }
+      if (sel.length === 0) { toast('请先选中对象再复制'); return; }
+      copySelected(); return;
+    }
+    if (k === 'v') { e.preventDefault(); pasteClipboard(0.2, true); return; }
+    if (k === 'd') {
+      e.preventDefault();
+      if (transformActive) { toast('变换进行中，无法克隆'); return; }
+      if (sel.length === 0) { toast('请先选中对象再克隆'); return; }
+      cloneSelected(); return;
+    }
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault(); clearScene(); return;
+    }
+    if (k === 'a') {
+      e.preventDefault();
+      if (state.tool === 'brush3d' || state.tool === 'brush2d') endBrushStroke(true);
+      setTool(null);
+      selectAll();
+      return;
+    }
+    return; // 其它 Ctrl 组合交给浏览器
+  }
+
+  // ---- 功能键 ----
+  if (e.key === 'F11') {
     e.preventDefault();
-    // 画笔模式下，结束当前画笔（取消模式）
-    if (state.tool === 'brush3d' || state.tool === 'brush2d') endBrushStroke(true);
-    setTool(null);
-    selectAll();
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
     return;
   }
-  // 删除
-  if (e.key === 'Delete' || e.key === 'Backspace') { if (sel.length) { e.preventDefault(); deleteSelected(); } return; }
-  // 取消
-  if (e.key === 'Escape') { setTool(null); deselect(); return; }
+  if (e.key === 'Escape') {
+    // 全屏时 Esc 优先退出全屏；否则取消工具/选择
+    if (document.fullscreenElement) { e.preventDefault(); document.exitFullscreen(); return; }
+    setTool(null); deselect(); return;
+  }
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (transformActive) { toast('变换进行中，无法删除'); return; }
+    if (sel.length) { e.preventDefault(); deleteSelected(); }
+    else { toast('请先选中对象再删除'); }
+    return;
+  }
 
-  // 获取要操作的对象列表（支持多选和变换模式下的单选）
+  // ---- 对象操作（需选中对象）----
   let objectsToModify = [];
   if (sel.length > 0) {
     objectsToModify = sel;
   } else if (transformCtrl.object) {
-    // 变换模式下，使用transformCtrl.object
+    // 变换模式下，使用 transformCtrl.object
     const obj = state.objects.find(o => o.mesh === transformCtrl.object);
     if (obj) objectsToModify = [obj];
   }
-  
-  if (objectsToModify.length === 0) return;
-  
+  if (objectsToModify.length === 0) { toast('请先选中对象'); return; }
+
+  // 平移：0.1 网格单位（0.15 长度），Shift 时 1 网格单位（1.5 长度）
+  const moveStep = (shift ? 1 : 0.1) * GRID_UNIT;
+  // 旋转：5°，Shift 时 90°
+  const rotRad = (shift ? 90 : 5) * Math.PI / 180;
+
   let handled = true;
-  const step = shift ? 1 : 0.1;
-  const rotStep = shift ? 15 : 5;
-  const scaleStep = shift ? 0.15 : 0.05;
-  
   switch (e.key) {
-    case 'ArrowLeft':  objectsToModify.forEach(o => o.mesh.position.x -= step); break;
-    case 'ArrowRight': objectsToModify.forEach(o => o.mesh.position.x += step); break;
-    case 'ArrowUp':    objectsToModify.forEach(o => o.mesh.position.y += step); break;
-    case 'ArrowDown':  objectsToModify.forEach(o => o.mesh.position.y -= step); break;
-    case 'PageUp':     objectsToModify.forEach(o => o.mesh.position.z -= step); break;
-    case 'PageDown':   objectsToModify.forEach(o => o.mesh.position.z += step); break;
-    case 'q': case 'Q': objectsToModify.forEach(o => o.mesh.rotation.y -= rotStep * Math.PI / 180); break;
-    case 'e': case 'E': objectsToModify.forEach(o => o.mesh.rotation.y += rotStep * Math.PI / 180); break;
-    case '+': case '=': objectsToModify.forEach(o => o.mesh.scale.setScalar(o.mesh.scale.x * (1 + scaleStep))); break;
-    case '-': case '_': objectsToModify.forEach(o => o.mesh.scale.setScalar(o.mesh.scale.x * (1 - scaleStep))); break;
+    // 平移（X/Y 轴互换：←/→→Y轴，↑/↓→X轴；Z 轴不变）
+    case 'ArrowLeft':  objectsToModify.forEach(o => o.mesh.position.z -= moveStep); break;
+    case 'ArrowRight': objectsToModify.forEach(o => o.mesh.position.z += moveStep); break;
+    case 'ArrowUp':    objectsToModify.forEach(o => o.mesh.position.x += moveStep); break;
+    case 'ArrowDown':  objectsToModify.forEach(o => o.mesh.position.x -= moveStep); break;
+    case 'PageUp':     objectsToModify.forEach(o => o.mesh.position.y += moveStep); break;
+    case 'PageDown':   objectsToModify.forEach(o => o.mesh.position.y -= moveStep); break;
+    // 旋转（X/Y 轴互换：W/S→绕X，Q/E→绕Y；Z 轴 A/D 不变）
+    case 'a': case 'A': rotateSelection('y', -rotRad, objectsToModify); break;
+    case 'd': case 'D': rotateSelection('y',  rotRad, objectsToModify); break;
+    case 'w': case 'W': rotateSelection('x', -rotRad, objectsToModify); break;
+    case 's': case 'S': rotateSelection('x',  rotRad, objectsToModify); break;
+    case 'q': case 'Q': rotateSelection('z',  rotRad, objectsToModify); break;
+    case 'e': case 'E': rotateSelection('z', -rotRad, objectsToModify); break;
+    // 缩放：5%，Shift 时 ×2 / ×0.5（多选时禁止）
+    case '+': case '=':
+      if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
+      objectsToModify.forEach(o => o.mesh.scale.setScalar(o.mesh.scale.x * (shift ? 2 : 1.05)));
+      break;
+    case '-': case '_':
+      if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
+      objectsToModify.forEach(o => o.mesh.scale.setScalar(o.mesh.scale.x * (shift ? 0.5 : 0.95)));
+      break;
     default: handled = false;
   }
   if (handled) {
     e.preventDefault();
-    // 如果在变换模式下，同步更新TransformControls
+    // 变换模式下同步更新 TransformControls
     if (transformCtrl.object) {
       try { if (transformCtrl.update) transformCtrl.update(); } catch(e) {}
     }
@@ -8565,6 +8802,40 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 1700);
 }
 function setStatus(s) { /* status bar removed - text no longer displayed */ }
+
+// 确认弹窗（替代原生confirm，避免全屏模式退出）
+function showConfirm(msg, title = '确认') {
+  return new Promise(resolve => {
+    const mask = document.getElementById('confirm-modal');
+    const titleEl = document.getElementById('confirm-modal-title');
+    const msgEl = document.getElementById('confirm-modal-msg');
+    const ok = document.getElementById('confirm-modal-ok');
+    const cancel = document.getElementById('confirm-modal-cancel');
+    titleEl.textContent = title;
+    msgEl.textContent = msg;
+    mask.classList.add('show');
+    function done(val) {
+      mask.classList.remove('show');
+      ok.removeEventListener('click', onOk);
+      cancel.removeEventListener('click', onCancel);
+      mask.removeEventListener('click', onMask);
+      document.removeEventListener('keydown', onKey);
+      resolve(val);
+    }
+    function onOk() { done(true); }
+    function onCancel() { done(false); }
+    function onMask(e) { if (e.target === mask) done(false); }
+    function onKey(e) {
+      if (e.key === 'Enter') { e.preventDefault(); done(true); }
+      else if (e.key === 'Escape') { e.preventDefault(); done(false); }
+    }
+    ok.addEventListener('click', onOk);
+    cancel.addEventListener('click', onCancel);
+    mask.addEventListener('click', onMask);
+    document.addEventListener('keydown', onKey);
+    setTimeout(() => ok.focus(), 50);
+  });
+}
 
 // 文本输入弹窗（替代浏览器原生 prompt，更稳定且支持多行）
 function showTextPrompt(title, defaultVal = '') {
@@ -8838,12 +9109,11 @@ function animate() {
   requestAnimationFrame(animate);
   // 动态调整缩放范围（在 controls.update() 之前设置，确保本帧即生效）
   // minDistance: 可见高度 = GRID_UNIT 时的距离（再近就看不全一个完整网格单元）
-  // maxDistance: 网格单元在屏幕上至少2像素时的距离（再远网格单元就看不见了）
+  // maxDistance: 无上限，允许无限缩小视野
   const fovRad = camera.fov * Math.PI / 180;
   const halfTan = Math.tan(fovRad / 2);
-  const sh = canvas.clientHeight;
   controls.minDistance = GRID_UNIT / (2 * halfTan);
-  controls.maxDistance = GRID_UNIT * sh / (2 * halfTan * 2);
+  controls.maxDistance = Infinity;
   controls.update();
   // 动态调整相机近远裁剪面：根据相机到目标的距离自动伸缩
   const dist = camera.position.distanceTo(controls.target);
@@ -8884,6 +9154,9 @@ canvas.addEventListener('pointerleave', () => {
 
 // 初始化
 setTool(null);
+updatePasteButtonState(); // 剪贴板为空，灰度禁用粘贴按钮
+updateCopyCloneButtonState(); // 无选中对象，灰度禁用复制/克隆
+updateClearButtonState(); // 无对象，灰度禁用清空
 pushHistory(); // 初始空状态
 setTimeout(() => {
   document.getElementById('loader').classList.add('hidden');
