@@ -1,8 +1,8 @@
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add('http://localhost:9000/')
+$listener.Prefixes.Add('http://localhost:8090/')
 $listener.Start()
-Write-Host 'Server running at http://localhost:9000/'
-$root = 'c:\Users\yushi\Documents\trae_projects\ffdf'
+Write-Host 'Server running at http://localhost:8090/'
+$root = 'c:\Users\yushi\Documents\trae_projects\3d-editor'
 $mime = @{
   '.html'='text/html; charset=utf-8'
   '.js'='application/javascript; charset=utf-8'

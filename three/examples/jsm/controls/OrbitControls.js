@@ -57,7 +57,7 @@ class OrbitControls extends EventDispatcher {
 		this.maxTargetRadius = Infinity;
 
 		// How far you can orbit vertically, upper and lower limits.
-		// Range is 0 to Math.PI radians.
+		// Range is 0 to Math.PI radians (standard) or 0 to 2*Math.PI for free 360° rotation.
 		this.minPolarAngle = 0; // radians
 		this.maxPolarAngle = Math.PI; // radians
 
@@ -185,15 +185,30 @@ class OrbitControls extends EventDispatcher {
 
 			return function update( deltaTime = null ) {
 
-				const position = scope.object.position;
+			const position = scope.object.position;
 
-				offset.copy( position ).sub( scope.target );
+			offset.copy( position ).sub( scope.target );
 
-				// rotate offset to "y-axis-is-up" space
-				offset.applyQuaternion( quat );
+			// 检测外部代码（如 setView）大幅改变相机位置：
+			// 若位置发生跳跃，重置 spherical.phi 到标准范围 [0, π]，
+			// 避免 setFromCartesianCoords 的 phi>π 自由旋转追踪误判新位置所在的半球。
+			if ( scope._lastPosition ) {
 
-				// angle from z-axis around y-axis
-				spherical.setFromVector3( offset );
+				const jumpDist = scope._lastPosition.distanceTo( position );
+				if ( jumpDist > 1.0 ) {
+
+					spherical.phi = 0; // 强制下一行 setFromVector3 走标准 acos 路径
+
+				}
+
+			}
+			scope._lastPosition = position.clone();
+
+			// rotate offset to "y-axis-is-up" space
+			offset.applyQuaternion( quat );
+
+			// angle from z-axis around y-axis
+			spherical.setFromVector3( offset );
 
 				if ( scope.autoRotate && state === STATE.NONE ) {
 
@@ -239,9 +254,29 @@ class OrbitControls extends EventDispatcher {
 				}
 
 				// restrict phi to be between desired limits
-				spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
+			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
 
+			// 自由360°旋转支持：当 maxPolarAngle > Math.PI 时，允许 phi 超过 π（穿过南极），
+			// 也允许 phi 穿过 0/2π（穿过北极），实现真正的全方向自由旋转。
+			// 在极点附近 (phi 接近 0, π, 2π) 使用 EPS 防止 gimbal lock 导致闪烁，
+			// 但不阻止穿越极点，确保各方向均可360°旋转。
+			const _freeEPS = 0.002;
+			if ( scope.maxPolarAngle > Math.PI ) {
+				// 北极穿越：phi 越过 0 或 2π 时环绕到另一侧，避免在北极卡住
+				if ( spherical.phi < 0 ) spherical.phi += 2 * Math.PI;
+				else if ( spherical.phi >= 2 * Math.PI ) spherical.phi -= 2 * Math.PI;
+				// 自由模式：允许 phi 在 (EPS, 2π-EPS) 范围内自由旋转
+				if ( spherical.phi < _freeEPS ) spherical.phi = _freeEPS;
+				else if ( spherical.phi > 2 * Math.PI - _freeEPS ) spherical.phi = 2 * Math.PI - _freeEPS;
+				// 在 phi = π 附近也加 EPS（南极 gimbal lock 点）
+				const distFromPi = Math.abs( spherical.phi - Math.PI );
+				if ( distFromPi < _freeEPS ) {
+					spherical.phi = spherical.phi < Math.PI ? Math.PI - _freeEPS : Math.PI + _freeEPS;
+				}
+			} else {
+				// 标准模式：保持原有 makeSafe 行为
 				spherical.makeSafe();
+			}
 
 
 				// move target to panned location
@@ -682,9 +717,13 @@ class OrbitControls extends EventDispatcher {
 
 			const element = scope.domElement;
 
-			rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+			// 当相机穿过南极 (phi > π) 时，由于相机上下颠倒，
+			// 鼠标拖拽方向需要反转，以保持屏幕空间方向一致。
+			const invert = ( scope.maxPolarAngle > Math.PI && spherical.phi > Math.PI ) ? - 1 : 1;
 
-			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
+			rotateLeft( invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+
+			rotateUp( invert * 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
 			rotateStart.copy( rotateEnd );
 
@@ -914,9 +953,13 @@ class OrbitControls extends EventDispatcher {
 
 			const element = scope.domElement;
 
-			rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+			// 当相机穿过南极 (phi > π) 时，由于相机上下颠倒，
+			// 触摸拖拽方向需要反转，以保持屏幕空间方向一致。
+			const invert = ( scope.maxPolarAngle > Math.PI && spherical.phi > Math.PI ) ? - 1 : 1;
 
-			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
+			rotateLeft( invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+
+			rotateUp( invert * 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
 			rotateStart.copy( rotateEnd );
 
