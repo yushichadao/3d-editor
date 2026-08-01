@@ -5015,22 +5015,15 @@ function newScene() {
   toast('已新建空白场景');
 }
 document.getElementById('btn-shot').addEventListener('click', () => {
-  // 高分辨率截图：8倍尺寸渲染，确保放大后细节清晰
+  // 高分辨率截图：通过提高pixelRatio在相同视野下渲染更多像素
+  // 不改变camera.aspect和renderer.setSize，确保截图与当前视野完全一致
   const SHOT_SCALE = 8;
   const maxTexSize = renderer.capabilities.maxTextureSize;
   const cw = canvas.clientWidth;
   const ch = canvas.clientHeight;
-  let w = Math.floor(cw * SHOT_SCALE);
-  let h = Math.floor(ch * SHOT_SCALE);
-  // 不超过GPU最大纹理尺寸
-  const maxSide = Math.max(w, h);
-  if (maxSide > maxTexSize) {
-    const r = maxTexSize / maxSide;
-    w = Math.floor(w * r);
-    h = Math.floor(h * r);
-  }
-  const prevSize = new THREE.Vector2();
-  renderer.getSize(prevSize);
+  // 计算安全的超采样倍数，确保 drawing buffer = cw*ratio × ch*ratio 不超过GPU最大纹理尺寸
+  const maxRatio = Math.floor(maxTexSize / Math.max(cw, ch));
+  const ratio = Math.max(1, Math.min(SHOT_SCALE, maxRatio));
   const prevRatio = renderer.getPixelRatio();
 
   // 无色对象（color === NO_COLOR）仅在空间编辑时可见，截图时隐藏
@@ -5041,26 +5034,25 @@ document.getElementById('btn-shot').addEventListener('click', () => {
     }
   });
 
-  // 以1倍pixelRatio + 大尺寸缓冲区渲染，保留抗锯齿（WebGLRenderer已开启antialias）
-  renderer.setPixelRatio(1);
-  renderer.setSize(w, h, false);
-  // 保持相机宽高比与画布一致，确保截图覆盖整个当前视野
-  camera.aspect = w / h;
+  // 仅提高pixelRatio，不改变canvas尺寸和camera参数
+  // drawing buffer变为 cw*ratio × ch*ratio，但视野与当前画面完全一致
+  renderer.setPixelRatio(ratio);
+  renderer.setSize(cw, ch, false);
   camera.updateProjectionMatrix();
   renderer.render(scene, camera);
 
+  const outW = Math.floor(cw * ratio);
+  const outH = Math.floor(ch * ratio);
   const a = document.createElement('a');
   a.href = canvas.toDataURL('image/png'); a.download = 'cube3d-' + Date.now() + '.png'; a.click();
-  toast('图像已导出（' + w + '×' + h + '）');
+  toast('图像已导出（' + outW + '×' + outH + '）');
 
   // 恢复隐藏的无色对象
   hiddenMeshes.forEach(m => { m.visible = true; });
 
-  // 恢复原始分辨率和宽高比
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  // 恢复原始pixelRatio
   renderer.setPixelRatio(prevRatio);
-  renderer.setSize(prevSize.x, prevSize.y, false);
+  renderer.setSize(cw, ch, false);
   renderer.render(scene, camera);
 });
 document.getElementById('btn-fs').addEventListener('click', () => {
