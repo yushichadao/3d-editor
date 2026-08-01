@@ -721,7 +721,7 @@ class OrbitControls extends EventDispatcher {
 			// 鼠标拖拽方向需要反转，以保持屏幕空间方向一致。
 			const invert = ( scope.maxPolarAngle > Math.PI && spherical.phi > Math.PI ) ? - 1 : 1;
 
-			rotateLeft( invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+			rotateLeft( -1 * invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // 水平方向取反：向右拖拽→场景向左移动（转头效果）
 
 			rotateUp( invert * 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
@@ -957,7 +957,7 @@ class OrbitControls extends EventDispatcher {
 			// 触摸拖拽方向需要反转，以保持屏幕空间方向一致。
 			const invert = ( scope.maxPolarAngle > Math.PI && spherical.phi > Math.PI ) ? - 1 : 1;
 
-			rotateLeft( invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+			rotateLeft( -1 * invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // 水平方向取反：向右拖拽→场景向左移动（转头效果）
 
 			rotateUp( invert * 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
