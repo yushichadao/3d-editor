@@ -898,8 +898,8 @@ controls.autoRotate = false;
 // 解除所有方向的视角限制，允许真正的360°自由旋转：
 // maxPolarAngle = 2π 使相机可以穿过南北极继续旋转，不再卡在Z轴或任何方向。
 // 配合 OrbitControls.js 的自由旋转模式与 Spherical.setFromCartesianCoords 的 phi>π 追踪。
-controls.minDistance = 2;
-controls.maxDistance = 500;
+controls.minDistance = 0.1;
+controls.maxDistance = Infinity;
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = 2 * Math.PI;
 controls.target.set(0, 0, 0);
@@ -5015,16 +5015,18 @@ function newScene() {
   toast('已新建空白场景');
 }
 document.getElementById('btn-shot').addEventListener('click', () => {
-  // 高分辨率截图：通过提高pixelRatio在相同视野下渲染更多像素
-  // 不改变camera.aspect和renderer.setSize，确保截图与当前视野完全一致
-  const SHOT_SCALE = 8;
-  const maxTexSize = renderer.capabilities.maxTextureSize;
+  // 高分辨率截图：setSize(w,h,true)同步更新CSS和drawing buffer
+  // 使用true参数确保canvas样式与缓冲区一致，避免toDataURL捕获错误区域
+  const SHOT_SCALE = 2;
   const cw = canvas.clientWidth;
   const ch = canvas.clientHeight;
-  // 计算安全的超采样倍数，确保 drawing buffer = cw*ratio × ch*ratio 不超过GPU最大纹理尺寸
-  const maxRatio = Math.floor(maxTexSize / Math.max(cw, ch));
-  const ratio = Math.max(1, Math.min(SHOT_SCALE, maxRatio));
-  const prevRatio = renderer.getPixelRatio();
+  const w = Math.floor(cw * SHOT_SCALE);
+  const h = Math.floor(ch * SHOT_SCALE);
+
+  // 保存原始状态
+  const prevSize = new THREE.Vector2();
+  renderer.getSize(prevSize);
+  const prevAspect = camera.aspect;
 
   // 无色对象（color === NO_COLOR）仅在空间编辑时可见，截图时隐藏
   const hiddenMeshes = [];
@@ -5034,22 +5036,29 @@ document.getElementById('btn-shot').addEventListener('click', () => {
     }
   });
 
-  // 仅提高pixelRatio，setPixelRatio内部自动setSize更新drawing buffer
-  // camera.aspect、camera.position、camera.rotation 全部不变，视野与当前画面100%一致
-  renderer.setPixelRatio(ratio);
+  // 防止canvas扩大时出现滚动条
+  document.body.style.overflow = 'hidden';
+
+  // setSize(w, h, true)：同步更新drawing buffer和CSS样式
+  // camera.aspect = w/h 与drawing buffer一致，视野与当前画面完全相同
+  renderer.setPixelRatio(1);
+  renderer.setSize(w, h, true);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
   renderer.render(scene, camera);
 
-  const outW = Math.floor(cw * ratio);
-  const outH = Math.floor(ch * ratio);
   const a = document.createElement('a');
   a.href = canvas.toDataURL('image/png'); a.download = 'cube3d-' + Date.now() + '.png'; a.click();
-  toast('图像已导出（' + outW + '×' + outH + '）');
+  toast('图像已导出（' + w + '×' + h + '）');
 
   // 恢复隐藏的无色对象
   hiddenMeshes.forEach(m => { m.visible = true; });
 
-  // 恢复原始pixelRatio
-  renderer.setPixelRatio(prevRatio);
+  // 恢复原始canvas尺寸和相机参数
+  document.body.style.overflow = '';
+  renderer.setSize(prevSize.x, prevSize.y, true);
+  camera.aspect = prevAspect;
+  camera.updateProjectionMatrix();
   renderer.render(scene, camera);
 });
 document.getElementById('btn-fs').addEventListener('click', () => {
@@ -8663,28 +8672,10 @@ function updateDynamicGrid() {
     _expandBoxByObject(bbox, o);
     hasContent = true;
   });
-  // 幽灵对象实时位置
+  // 幽灵对象实时位置 — 使用与实体对象相同的 _expandBoxByObject 计算包围盒
   if (ghostMesh && ghostMesh.visible !== false) {
-    ghostMesh.updateMatrixWorld(true);
-    const gm = ghostMesh.matrixWorld.elements;
-    const gx = gm[12], gy = gm[13], gz = gm[14];
-    const gsx = Math.sqrt(gm[0]*gm[0] + gm[1]*gm[1] + gm[2]*gm[2]);
-    const gsy = Math.sqrt(gm[4]*gm[4] + gm[5]*gm[5] + gm[6]*gm[6]);
-    const gsz = Math.sqrt(gm[8]*gm[8] + gm[9]*gm[9] + gm[10]*gm[10]);
-    if (ghostMesh.geometry) {
-      ghostMesh.geometry.computeBoundingBox();
-      const gb = ghostMesh.geometry.boundingBox;
-      if (gb && !gb.isEmpty()) {
-        bbox.expandByPoint({ x: gx + gb.min.x * gsx, y: gy + gb.min.y * gsy, z: gz + gb.min.z * gsz });
-        bbox.expandByPoint({ x: gx + gb.max.x * gsx, y: gy + gb.max.y * gsy, z: gz + gb.max.z * gsz });
-        hasContent = true;
-      }
-    } else {
-      const r = 1;
-      bbox.expandByPoint({ x: gx - r, y: gy - r, z: gz - r });
-      bbox.expandByPoint({ x: gx + r, y: gy + r, z: gz + r });
-      hasContent = true;
-    }
+    _expandBoxByObject(bbox, { mesh: ghostMesh, data: {} });
+    hasContent = true;
   }
   // 3D画笔实时预览 mesh（笔画结束前的临时可视化）
   if (brush.previewMesh && brush.drawing) {
