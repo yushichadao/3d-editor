@@ -269,13 +269,13 @@
 | 137 | `findObjectsNearRay` | 查找射线附近对象 | 6266-6325 | 基于鼠标射线的包围盒粗查，返回可能被擦除的对象候选列表 |
 | 138 | `findObjectsInRadius` | 查找半径内对象 | 6326-6459 | 精确判断指定半径球内的对象与笔画子 mesh，使用 boundingSphere 球距离判定（3D 橡皮擦不再做 ray-capsule 检测） |
 | 139 | `_scheduleErase` | 调度擦除 | 6460-6476 | 节流擦除操作，每帧最多执行 1 次 _eraseAtSingle |
-| 140 | `_circleRectIntersectXZ` | XZ 圆与矩形相交 | 6477-6502 | XZ 平面上圆形 vs 四边形相交判定（用于 2D 矩形橡皮擦） |
-| 141 | `_ptInRectXZ` | XZ 点在矩形内 | 6503-6517 | XZ 平面上点在四边形内的判定（内含 _ptInTri 三角子判定） |
-| 142 | `_sphereCylinderIntersect` | 球与圆柱相交 | 6518-6531 | 球与有限圆柱段相交判定（用于笔画管段精确擦除判定） |
-| 143 | `_refineCurvePoints` | 细化曲线点 | 6532-6592 | 对曲线点按最大间距插值细分，防止漏擦拐角 |
-| 144 | `_computeCurveLength` | 计算曲线长度 | 6593-6601 | 计算离散点序列的总折线长度 |
-| 145 | `_mergeSmallSegments` | 合并小段 | 6602-6643 | 合并过短的管段（< minLen）到相邻段，减少子 mesh 数量 |
-| 146 | `_eraseAtSingle` | 单次擦除 | 6644-7180 | 擦除操作的核心：对象模式整体删除，局部擦除模式按 groundPoint 球距重建画笔分段（含插值补偿、边界过渡、毛刺规避） |
+| 140 | `_circleRectIntersectXZ` | XZ 圆与矩形相交 | 6477-6502 | XZ 平面上圆形 vs 四边形相交判定（用于 2D 画笔连接段矩形与橡皮擦圆的相交判定） |
+| 141 | `_ptInRectXZ` | XZ 点在矩形内 | 6503-6517 | XZ 平面上点在四边形内的判定（内含 _ptInTri 三角子判定，作为圆-矩形相交的子判定） |
+| 142 | `_sphereCylinderIntersect` | 球与圆柱相交 | 6518-6531 | 球与有限圆柱段相交判定（用于 3D 画笔管段精确擦除判定） |
+| 143 | `_refineCurvePoints` | 细化曲线点 | 6532-6592 | 对曲线点按最大间距插值细分，防止 3D 画笔拐角漏擦 |
+| 144 | `_computeCurveLength` | 计算曲线长度 | 6593-6601 | 计算离散点序列的总折线长度（用于判断保留段是否过短） |
+| 145 | `_mergeSmallSegments` | 合并小段 | 6602-6643 | 合并过短的管段（< minLen）到相邻段，防止子 mesh 指数增长 |
+| 146 | `_eraseAtSingle` | 单次擦除 | 6644-7180 | 擦除操作核心：对象模式整体删除；局部擦除模式下，2D 画笔按相交即擦除（圆点两圆相交+连接段圆-矩形相交），3D 画笔按 groundPoint 球距重建 TubeGeometry 分段（含插值补偿、边界过渡、毛刺规避） |
 | 147 | `eraseAt` | 擦除 | 7181-7506 | 橡皮擦对外接口，创建/销毁间隔并调用 _scheduleErase；结束时 pushHistory |
 
 ## 二十五、形状参数面板
