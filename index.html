@@ -898,7 +898,7 @@ controls.autoRotate = false;
 // 解除所有方向的视角限制，允许真正的360°自由旋转：
 // maxPolarAngle = 2π 使相机可以穿过南北极继续旋转，不再卡在Z轴或任何方向。
 // 配合 OrbitControls.js 的自由旋转模式与 Spherical.setFromCartesianCoords 的 phi>π 追踪。
-controls.minDistance = 0.1;
+controls.minDistance = 2;
 controls.maxDistance = Infinity;
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = 2 * Math.PI;
