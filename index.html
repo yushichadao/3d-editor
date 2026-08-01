@@ -5034,11 +5034,9 @@ document.getElementById('btn-shot').addEventListener('click', () => {
     }
   });
 
-  // 仅提高pixelRatio，不改变canvas尺寸和camera参数
-  // drawing buffer变为 cw*ratio × ch*ratio，但视野与当前画面完全一致
+  // 仅提高pixelRatio，setPixelRatio内部自动setSize更新drawing buffer
+  // camera.aspect、camera.position、camera.rotation 全部不变，视野与当前画面100%一致
   renderer.setPixelRatio(ratio);
-  renderer.setSize(cw, ch, false);
-  camera.updateProjectionMatrix();
   renderer.render(scene, camera);
 
   const outW = Math.floor(cw * ratio);
@@ -5052,7 +5050,6 @@ document.getElementById('btn-shot').addEventListener('click', () => {
 
   // 恢复原始pixelRatio
   renderer.setPixelRatio(prevRatio);
-  renderer.setSize(cw, ch, false);
   renderer.render(scene, camera);
 });
 document.getElementById('btn-fs').addEventListener('click', () => {
