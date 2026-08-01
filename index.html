@@ -245,20 +245,34 @@
     border: 1px solid var(--border); border-radius: 40px; box-shadow: var(--shadow);
     max-width: calc(100vw - 16px); overflow-x: auto;
     scrollbar-width: none; -ms-overflow-style: none;
+    transition: padding .28s ease, border-radius .28s ease;
   }
   .bottombar::-webkit-scrollbar { display: none; }
   .bottombar > .bb-toggle {
-    display: flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px; flex-shrink: 0;
-    border-radius: 50%; cursor: pointer; user-select: none;
-    background: rgba(255,255,255,0.04); border: 1px solid transparent;
-    color: var(--text); font-size: 11px; transition: all .18s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    height: 32px; padding: 0 12px; flex-shrink: 0;
+    border-radius: 20px; cursor: pointer; user-select: none;
+    background: rgba(110,231,255,0.07); border: 1px solid rgba(110,231,255,0.25);
+    color: var(--accent); font-size: 12px; font-weight: 600;
+    transition: all .2s ease;
   }
-  .bottombar > .bb-toggle:hover { background: rgba(110,231,255,0.1); border-color: var(--accent); }
-  .bottombar > .bb-body { display: flex; gap: 6px; }
-  .bottombar.collapsed > .bb-body { display: none; }
-  .bottombar > .bb-toggle .bb-arrow { transition: transform .2s; display: inline-block; }
+  .bottombar > .bb-toggle:hover { background: rgba(110,231,255,0.14); border-color: var(--accent); }
+  .bottombar > .bb-toggle .bb-arrow {
+    transition: transform .28s ease; display: inline-block; font-size: 10px;
+  }
   .bottombar.collapsed > .bb-toggle .bb-arrow { transform: rotate(-90deg); }
+  .bottombar > .bb-body {
+    display: flex; gap: 6px; align-items: center;
+    overflow: hidden;
+    max-width: 1200px; opacity: 1;
+    transition: max-width .32s ease, opacity .22s ease .04s;
+  }
+  .bottombar.collapsed > .bb-body {
+    max-width: 0; opacity: 0;
+    transition: max-width .28s ease, opacity .18s ease;
+    pointer-events: none;
+  }
+  .bottombar.collapsed { padding: 6px; border-radius: 40px; }
   .view-btn {
     height: 32px; padding: 0 12px; font-size: 12px;
     background: rgba(255,255,255,0.04); border:1px solid transparent; border-radius: 20px;
@@ -276,16 +290,30 @@
     overflow: hidden;
   }
   .declaration > .decl-header {
-    padding: 6px 10px; display: flex; align-items: center; gap: 6px;
+    padding: 7px 11px; display: flex; align-items: center; gap: 6px;
     cursor: pointer; user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .25s;
   }
-  .declaration > .decl-header strong { color: var(--accent); flex: 1; }
+  .declaration:not(.collapsed) > .decl-header {
+    border-bottom-color: rgba(110,231,255,0.12);
+  }
+  .declaration > .decl-header strong { color: var(--accent); flex: 1; font-weight: 600; }
   .declaration > .decl-header .decl-arrow {
-    transition: transform .2s; font-size: 10px;
+    transition: transform .28s ease; font-size: 10px; color: var(--text-dim);
   }
   .declaration.collapsed > .decl-header .decl-arrow { transform: rotate(-90deg); }
-  .declaration > .decl-body { padding: 0 12px 10px 12px; }
-  .declaration.collapsed > .decl-body { display: none; }
+  .declaration > .decl-body {
+    padding: 0 12px 10px 12px;
+    max-height: 500px; opacity: 1;
+    transition: max-height .32s ease, opacity .24s ease .04s, padding .28s ease;
+    overflow: hidden;
+  }
+  .declaration.collapsed > .decl-body {
+    max-height: 0; opacity: 0;
+    padding-top: 0; padding-bottom: 0;
+    transition: max-height .28s ease, opacity .18s ease, padding .24s ease;
+  }
 
   /* 提示 */
   .toast {
@@ -823,7 +851,7 @@
 <!-- 底部状态 -->
 <div class="bottombar">
   <div class="bb-toggle" onclick="this.parentElement.classList.toggle('collapsed')" title="展开/收起视角切换">
-    <span class="bb-arrow">▼</span>
+    视角 <span class="bb-arrow">▼</span>
   </div>
   <div class="bb-body">
     <button class="view-btn" data-view="persp">透视</button>
