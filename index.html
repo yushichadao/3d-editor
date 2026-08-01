@@ -898,8 +898,8 @@ controls.autoRotate = false;
 // 解除所有方向的视角限制，允许真正的360°自由旋转：
 // maxPolarAngle = 2π 使相机可以穿过南北极继续旋转，不再卡在Z轴或任何方向。
 // 配合 OrbitControls.js 的自由旋转模式与 Spherical.setFromCartesianCoords 的 phi>π 追踪。
-controls.minDistance = 2;
-controls.maxDistance = Infinity;
+// minDistance/maxDistance 在 animate() 中动态计算（基于FOV和屏幕高度）
+// 确保最近距离能看到至少一个完整网格单元，最远距离网格单元仍清晰可见
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = 2 * Math.PI;
 controls.target.set(0, 0, 0);
@@ -8836,9 +8836,16 @@ function resizeGrid(newSize) {
 
 function animate() {
   requestAnimationFrame(animate);
+  // 动态调整缩放范围（在 controls.update() 之前设置，确保本帧即生效）
+  // minDistance: 可见高度 = GRID_UNIT 时的距离（再近就看不全一个完整网格单元）
+  // maxDistance: 网格单元在屏幕上至少2像素时的距离（再远网格单元就看不见了）
+  const fovRad = camera.fov * Math.PI / 180;
+  const halfTan = Math.tan(fovRad / 2);
+  const sh = canvas.clientHeight;
+  controls.minDistance = GRID_UNIT / (2 * halfTan);
+  controls.maxDistance = GRID_UNIT * sh / (2 * halfTan * 2);
   controls.update();
   // 动态调整相机近远裁剪面：根据相机到目标的距离自动伸缩
-  // 避免视野极大时 far=2000 裁剪掉所有对象，同时保持近处深度精度
   const dist = camera.position.distanceTo(controls.target);
   const newNear = Math.max(0.1, dist / 1000);
   const newFar = Math.max(2000, dist * 50);
