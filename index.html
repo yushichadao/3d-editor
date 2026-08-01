@@ -240,14 +240,25 @@
   /* 底部状态条 */
   .bottombar {
     position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 30;
-    display: flex; gap: 6px; padding: 6px;
+    display: flex; align-items: center; gap: 6px; padding: 6px;
     background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border); border-radius: 40px; box-shadow: var(--shadow);
-    align-items: center;
     max-width: calc(100vw - 16px); overflow-x: auto;
     scrollbar-width: none; -ms-overflow-style: none;
   }
   .bottombar::-webkit-scrollbar { display: none; }
+  .bottombar > .bb-toggle {
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 50%; cursor: pointer; user-select: none;
+    background: rgba(255,255,255,0.04); border: 1px solid transparent;
+    color: var(--text); font-size: 11px; transition: all .18s;
+  }
+  .bottombar > .bb-toggle:hover { background: rgba(110,231,255,0.1); border-color: var(--accent); }
+  .bottombar > .bb-body { display: flex; gap: 6px; }
+  .bottombar.collapsed > .bb-body { display: none; }
+  .bottombar > .bb-toggle .bb-arrow { transition: transform .2s; display: inline-block; }
+  .bottombar.collapsed > .bb-toggle .bb-arrow { transform: rotate(-90deg); }
   .view-btn {
     height: 32px; padding: 0 12px; font-size: 12px;
     background: rgba(255,255,255,0.04); border:1px solid transparent; border-radius: 20px;
@@ -258,12 +269,23 @@
   /* 声明 */
   .declaration {
     position: fixed; bottom: 60px; left: 14px; z-index: 25;
-    max-width: 270px; padding: 10px 12px;
+    max-width: 270px;
     background: var(--bg-panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--border); border-radius: 12px;
     font-size: 10.5px; color: var(--text-dim); line-height: 1.6;
+    overflow: hidden;
   }
-  .declaration strong { color: var(--accent); }
+  .declaration > .decl-header {
+    padding: 6px 10px; display: flex; align-items: center; gap: 6px;
+    cursor: pointer; user-select: none;
+  }
+  .declaration > .decl-header strong { color: var(--accent); flex: 1; }
+  .declaration > .decl-header .decl-arrow {
+    transition: transform .2s; font-size: 10px;
+  }
+  .declaration.collapsed > .decl-header .decl-arrow { transform: rotate(-90deg); }
+  .declaration > .decl-body { padding: 0 12px 10px 12px; }
+  .declaration.collapsed > .decl-body { display: none; }
 
   /* 提示 */
   .toast {
@@ -783,20 +805,35 @@
 
 <!-- 声明 -->
 <div class="declaration">
-  <strong>声明</strong> · 本工具所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，
-  支持自由用于个人学习与创意设计。场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。
-  <br>最后更新：2026-08-02
+  <div class="decl-header" onclick="this.parentElement.classList.toggle('collapsed')">
+    <strong>声明</strong>
+    <span class="decl-arrow">▼</span>
+  </div>
+  <div class="decl-body">
+    本工具是一款基于 Three.js 的纯前端 3D/2D 场景编辑器，内置丰富的 3D/2D 参数化图形、
+    2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。
+    <br>所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。
+    场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。
+    <br><strong>作者</strong>：yushichadao
+    <br><strong>AI 辅助</strong>：使用 TRAE 工具的 AI 能力辅助生成
+    <br><strong>最后更新</strong>：2026-08-02
+  </div>
 </div>
 
 <!-- 底部状态 -->
 <div class="bottombar">
-  <button class="view-btn" data-view="persp">透视</button>
-  <button class="view-btn" data-view="top">顶视</button>
-  <button class="view-btn" data-view="bottom">底视</button>
-  <button class="view-btn" data-view="front">正视</button>
-  <button class="view-btn" data-view="back">后视</button>
-  <button class="view-btn" data-view="left">左视</button>
-  <button class="view-btn" data-view="right">右视</button>
+  <div class="bb-toggle" onclick="this.parentElement.classList.toggle('collapsed')" title="展开/收起视角切换">
+    <span class="bb-arrow">▼</span>
+  </div>
+  <div class="bb-body">
+    <button class="view-btn" data-view="persp">透视</button>
+    <button class="view-btn" data-view="top">顶视</button>
+    <button class="view-btn" data-view="bottom">底视</button>
+    <button class="view-btn" data-view="front">正视</button>
+    <button class="view-btn" data-view="back">后视</button>
+    <button class="view-btn" data-view="left">左视</button>
+    <button class="view-btn" data-view="right">右视</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
