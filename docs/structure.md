@@ -1,10 +1,10 @@
 # index.html 结构剖析
 
-> 本文档对 `index.html`（约 9188 行）进行章节级结构剖析，涵盖 HTML 骨架、CSS 样式、JavaScript 模块三大组成部分。
+> 本文档对 `index.html`（约 9193 行）进行章节级结构剖析，涵盖 HTML 骨架、CSS 样式、JavaScript 模块三大组成部分。
 
 ## 一、文件总体结构
 
-`index.html` 是一个**单文件应用**，集成了 HTML 结构、CSS 样式与 JavaScript 逻辑，共计约 9188 行。整体结构如下：
+`index.html` 是一个**单文件应用**，集成了 HTML 结构、CSS 样式与 JavaScript 逻辑，共计约 9193 行。整体结构如下：
 
 | 行号区间 | 内容 | 说明 |
 |---------|------|------|
@@ -97,7 +97,7 @@
 
 | 面板 | ID | 功能 |
 |------|-----|------|
-| 属性 | `sec-props` | 坐标、旋转、缩放、透明度、图形参数 |
+| 属性 | `sec-props` | 坐标、旋转、缩放、透明度、图形参数（旋转数字输入框限定 -180~180） |
 | 颜色 | `sec-color` | 颜色预设、自定义颜色、花纹选择 |
 | 贴图 | `sec-img-content` | 图片上传、清除贴图 |
 | 文本 | `sec-text` | 字体、字号、粗细、排列方向 |
@@ -135,7 +135,7 @@
 
 ### 3.2 主程序分区
 
-主程序 `<script type="module">`（903-9188 行）按功能模块划分为以下区块：
+主程序 `<script type="module">`（903-9193 行）按功能模块划分为以下区块：
 
 | 行号区间 | 模块 | 说明 |
 |---------|------|------|
@@ -156,22 +156,22 @@
 | 3176-3370 | 射线拾取 | raycaster、intersectObjects、getHitPointAndNormal |
 | 3370-3600 | 画笔参考平面与文本输入 | updateBrushRefPlane、showInlineTextInput |
 | 3594-3725 | 工具切换 | setTool、按钮状态更新 |
-| 3727-3940 | 图形网格构建与放置 | buildShapeGrid、placeObjectAt |
+| 3727-3940 | 图形网格构建与放置 | buildShapeGrid、placeObjectAt（支持点击添加与拖动添加） |
 | 3940-4530 | 颜色与花纹 UI | 颜色选择器、花纹预览、HSV 转换 |
 | 4533-4770 | 外观应用与文本重建 | applyAppearance、rebuildText |
-| 4773-5110 | 变换绑定与数字输入 | bindTransform、bindNumberInput、deleteSelected |
-| 5112-5485 | 场景操作 | 截图、导出、导入、视角切换、面板折叠 |
-| 5496-5905 | 画笔绘制 | createBrushMaterial、startBrushStroke、addBrushPoint3D/2D、endBrushStroke |
-| 5909-6175 | 画笔与橡皮擦光标 | createBrushCursor、createEraserRing、高亮反馈 |
-| 6179-6560 | 擦除几何运算 | findObjectsNearRay、_sphereCylinderIntersect、_refineCurvePoints |
-| 6557-7200 | 擦除执行 | _eraseAtSingle、eraseAt |
-| 7203-7920 | 形状参数面板 | showShapeParams、rebuildShape、buildParametricGeo3D/2D |
-| 7920-8260 | 画布事件 | pointerdown、pointermove、pointerup、dblclick |
-| 8276-8685 | 剪贴板 | copySelected、pasteClipboard、cloneSelected |
-| 8687-8830 | 旋转与提示 | rotateSelection、toast、showConfirm |
-| 8830-8905 | 对话框 | showConfirm、showTextPrompt |
-| 8905-9145 | 动态网格 | _expandBoxByObject、updateDynamicGrid、resizeGrid |
-| 9144-9188 | 渲染循环 | animate、窗口事件 |
+| 4773-5115 | 变换绑定与数字输入 | bindTransform、bindNumberInput（旋转输入限定 -180~180）、deleteSelected |
+| 5117-5490 | 场景操作 | 截图、导出、导入、视角切换、面板折叠 |
+| 5501-5910 | 画笔绘制 | createBrushMaterial、startBrushStroke、addBrushPoint3D/2D、endBrushStroke |
+| 5914-6180 | 画笔与橡皮擦光标 | createBrushCursor、createEraserRing、高亮反馈 |
+| 6184-6565 | 擦除几何运算 | findObjectsNearRay、_sphereCylinderIntersect、_refineCurvePoints |
+| 6562-7205 | 擦除执行 | _eraseAtSingle、eraseAt |
+| 7208-7925 | 形状参数面板 | showShapeParams、rebuildShape、buildParametricGeo3D/2D |
+| 7925-8265 | 画布事件 | pointerdown、pointermove、pointerup、dblclick |
+| 8281-8690 | 剪贴板 | copySelected、pasteClipboard（粘贴到视野中心）、cloneSelected（克隆到原对象附近） |
+| 8692-8835 | 旋转与提示 | rotateSelection、toast、showConfirm |
+| 8835-8910 | 对话框 | showConfirm、showTextPrompt |
+| 8910-9150 | 动态网格 | _expandBoxByObject、updateDynamicGrid、resizeGrid |
+| 9149-9193 | 渲染循环 | animate、窗口事件 |
 
 ### 3.3 关键全局对象
 

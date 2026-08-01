@@ -515,7 +515,7 @@
       <div class="ctrl-row">
         <div class="ctrl-label"><span>竖坐标 Z</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-y" min="-5" max="30" step="0.01" value="0" style="flex:1;">
+          <input type="range" id="p-y" min="-50" max="50" step="0.01" value="0" style="flex:1;">
           <input type="number" id="input-py" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
@@ -5002,8 +5002,13 @@ function bindNumberInput(inputId, sliderId, applyFn) {
   // 输入框：实时预览 + 回车/失焦确认
   input.addEventListener('input', () => {
     if (state.selectedList.length === 0) return;
-    const v = parseFloat(input.value);
+    let v = parseFloat(input.value);
     if (isNaN(v)) return;
+    // 旋转输入限制在 -180 ~ 180
+    if (isRotation) {
+      if (v < -180) { v = -180; input.value = '-180'; }
+      else if (v > 180) { v = 180; input.value = '180'; }
+    }
     slider.value = v;
     if (state.selectedList.length === 1) {
       applyFn(state.selectedList[0].mesh, v);
