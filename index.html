@@ -8837,6 +8837,16 @@ function resizeGrid(newSize) {
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+  // 动态调整相机近远裁剪面：根据相机到目标的距离自动伸缩
+  // 避免视野极大时 far=2000 裁剪掉所有对象，同时保持近处深度精度
+  const dist = camera.position.distanceTo(controls.target);
+  const newNear = Math.max(0.1, dist / 1000);
+  const newFar = Math.max(2000, dist * 50);
+  if (Math.abs(camera.near - newNear) > 0.01 || Math.abs(camera.far - newFar) > 1) {
+    camera.near = newNear;
+    camera.far = newFar;
+    camera.updateProjectionMatrix();
+  }
   updateSelBox();
   // 幽灵预览跟随光标（每帧更新，确保平滑）
   if (state.tool && (SHAPES_3D[state.tool] || SHAPES_2D[state.tool]) && ghostMesh && !ghostDragging) {
