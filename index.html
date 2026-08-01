@@ -8805,13 +8805,13 @@ window.addEventListener('keydown', (e) => {
     case 'ArrowDown':  objectsToModify.forEach(o => o.mesh.position.z += moveStep); break;
     case 'PageUp':     objectsToModify.forEach(o => o.mesh.position.y += moveStep); break;
     case 'PageDown':   objectsToModify.forEach(o => o.mesh.position.y -= moveStep); break;
-    // 旋转：A/D 绕 Z(UI)=Y(TJ)，W/S/Q/E 非Shift与Shift行为不同
+    // 旋转：A/D 绕 Z(UI)=Y(TJ)，W/S 绕 X(=X)，E/Q 绕 Y(UI)=Z(TJ)（逆时针减、顺时针增；Shift仅改变角度，方向一致）
     case 'a': case 'A': rotateSelection('y', -rotRad, objectsToModify); break;
     case 'd': case 'D': rotateSelection('y',  rotRad, objectsToModify); break;
-    case 'w': case 'W': if (!shift) rotateSelection('x', -rotRad, objectsToModify); else rotateSelection('z',  rotRad, objectsToModify); break;
-    case 's': case 'S': if (!shift) rotateSelection('x',  rotRad, objectsToModify); else rotateSelection('z', -rotRad, objectsToModify); break;
-    case 'q': case 'Q': if (!shift) rotateSelection('z',  rotRad, objectsToModify); else rotateSelection('x',  rotRad, objectsToModify); break;
-    case 'e': case 'E': if (!shift) rotateSelection('z', -rotRad, objectsToModify); else rotateSelection('x', -rotRad, objectsToModify); break;
+    case 'w': case 'W': rotateSelection('x', -rotRad, objectsToModify); break;
+    case 's': case 'S': rotateSelection('x',  rotRad, objectsToModify); break;
+    case 'q': case 'Q': rotateSelection('z',  rotRad, objectsToModify); break;
+    case 'e': case 'E': rotateSelection('z', -rotRad, objectsToModify); break;
     // 缩放：5%，Shift 时 ×2 / ×0.5（多选时禁止）
     case '+': case '=':
       if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
