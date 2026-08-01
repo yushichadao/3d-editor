@@ -917,10 +917,12 @@ controls.touches = {
 // 环境光提供基础亮度（暗面），方向光提供明暗层次与阴影（亮面）
 // 总光强 = ambient + directional = 0.3 + 0.7 = 1.0，使亮面颜色与选定颜色一致（不过曝）
 // 方向光从无限远处射向原点，形成稳定的光照方向
+// 使用非对称角度(5000,12000,6000)使顶/前/右三个可见面亮度不同，靠明暗区分边缘
 scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 const sun = new THREE.DirectionalLight(0xffffff, 0.7);
 // 位置设在极远处，方向指向原点（与透视视角中由无限远处射向原点一致）
-sun.position.set(10000, 10000, 10000);
+// 非对称角度：顶面最亮(NdotL=0.85)、前面中等(NdotL=0.42)、右面较暗(NdotL=0.35)
+sun.position.set(5000, 12000, 6000);
 sun.target.position.set(0, 0, 0);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
@@ -2070,7 +2072,7 @@ function createObject(spec) {
       mat.depthWrite = false;
     }
     mesh = new THREE.Mesh(geo, mat);
-    mesh.castShadow = true; mesh.receiveShadow = true;
+    mesh.castShadow = true; mesh.receiveShadow = true; mesh.receiveShadow = true;
     data = {
       kind: spec.kind,
       type: spec.shape,
@@ -2826,7 +2828,7 @@ function rebuildFromSnapshot(s, promises) {
         const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 1);
         const tubeMesh = new THREE.Mesh(tubeGeo, mat.clone());
         tubeMesh.position.copy(meshOffset);
-        tubeMesh.castShadow = true;
+        tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
         tubeMesh.userData.brushCurve = curve;
         tubeMesh.userData.brushCurvePoints = points;
         tubeMesh.userData.brushRadius = segR;
@@ -2837,14 +2839,14 @@ function rebuildFromSnapshot(s, promises) {
           const startPt = curve.getPointAt(0);
           const startCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
           startCap.position.copy(startPt).add(meshOffset);
-          startCap.castShadow = true;
+          startCap.castShadow = true; startCap.receiveShadow = true;
           group.add(startCap);
         }
         if (points.length >= 2) {
           const endPt = curve.getPointAt(1);
           const endCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
           endCap.position.copy(endPt).add(meshOffset);
-          endCap.castShadow = true;
+          endCap.castShadow = true; endCap.receiveShadow = true;
           group.add(endCap);
         }
       }
@@ -2857,7 +2859,7 @@ function rebuildFromSnapshot(s, promises) {
             const mesh = new THREE.Mesh(geo, mat.clone());
             mesh.position.set(ch.pos[0], ch.pos[1], ch.pos[2]);
             if (ch.quat) mesh.quaternion.set(ch.quat[0], ch.quat[1], ch.quat[2], ch.quat[3]);
-            mesh.castShadow = true;
+            mesh.castShadow = true; mesh.receiveShadow = true;
             group.add(mesh);
           }
         });
@@ -2887,7 +2889,7 @@ function rebuildFromSnapshot(s, promises) {
       }
       const meshOffset2 = tubeChildPos2 || new THREE.Vector3(-s.pos[0], -s.pos[1], -s.pos[2]);
       tubeMesh.position.copy(meshOffset2);
-      tubeMesh.castShadow = true;
+      tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
       tubeMesh.userData.brushCurve = curve;
       tubeMesh.userData.brushCurvePoints = points;
       tubeMesh.userData.brushRadius = r;
@@ -2897,12 +2899,12 @@ function rebuildFromSnapshot(s, promises) {
       const startPt = curve.getPointAt(0);
       const startCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
       startCap.position.copy(startPt).add(meshOffset2);
-      startCap.castShadow = true;
+      startCap.castShadow = true; startCap.receiveShadow = true;
       group.add(startCap);
       const endPt = curve.getPointAt(1);
       const endCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
       endCap.position.copy(endPt).add(meshOffset2);
-      endCap.castShadow = true;
+      endCap.castShadow = true; endCap.receiveShadow = true;
       group.add(endCap);
     } else if (s.children && s.children.length > 0) {
       s.children.forEach(ch => {
@@ -2936,13 +2938,13 @@ function rebuildFromSnapshot(s, promises) {
         mesh.position.set(ch.pos[0], ch.pos[1], ch.pos[2]);
         if (ch.quat) mesh.quaternion.set(ch.quat[0], ch.quat[1], ch.quat[2], ch.quat[3]);
         if (ch.scale) mesh.scale.set(ch.scale[0], ch.scale[1], ch.scale[2]);
-        mesh.castShadow = true;
+        mesh.castShadow = true; mesh.receiveShadow = true;
         group.add(mesh);
       });
     } else {
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat.clone());
       sphere.position.set(0, 0, 0);
-      sphere.castShadow = true;
+      sphere.castShadow = true; sphere.receiveShadow = true;
       group.add(sphere);
     }
     group.position.set(s.pos[0], s.pos[1], s.pos[2]);
@@ -5324,7 +5326,7 @@ function startBrushStroke(groundPoint) {
     const mat = createBrushMaterial();
     const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat);
     sphere.position.copy(groundPoint);
-    sphere.castShadow = true;
+    sphere.castShadow = true; sphere.receiveShadow = true;
     sphere.userData.isPreview = true;
     brush.previewMesh = sphere;
     scene.add(sphere);
@@ -5362,7 +5364,7 @@ function addBrushPoint3D(groundPoint) {
     if (brush.previewMesh) {
       const oldMesh = brush.previewMesh;
       const newMesh = new THREE.Mesh(tubeGeo, oldMesh.material);
-      newMesh.castShadow = true;
+      newMesh.castShadow = true; newMesh.receiveShadow = true;
       newMesh.userData.isPreview = true;
       brush.previewMesh = newMesh;
       scene.add(newMesh);
@@ -5375,7 +5377,7 @@ function addBrushPoint3D(groundPoint) {
       // 第一次创建预览mesh
       const mat = createBrushMaterial();
       const newMesh = new THREE.Mesh(tubeGeo, mat);
-      newMesh.castShadow = true;
+      newMesh.castShadow = true; newMesh.receiveShadow = true;
       newMesh.userData.isPreview = true;
       brush.previewMesh = newMesh;
       scene.add(newMesh);
@@ -5390,7 +5392,7 @@ function addBrushPoint3D(groundPoint) {
       const sphereRadius = r * 0.8;
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(sphereRadius, 32, 24), mat);
       sphere.position.copy(pts[0]);
-      sphere.castShadow = true;
+      sphere.castShadow = true; sphere.receiveShadow = true;
       sphere.userData.isPreview = true;
       brush.previewMesh = sphere;
       scene.add(sphere);
@@ -5448,7 +5450,7 @@ function endBrushStroke(cancel) {
       // 单点：创建一个球体
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
       sphere.position.copy(pts[0]);
-      sphere.castShadow = true;
+      sphere.castShadow = true; sphere.receiveShadow = true;
       brush.currentMeshes.push(sphere);
     } else {
       // 多点：使用CatmullRomCurve3创建平滑曲线
@@ -5469,7 +5471,7 @@ function endBrushStroke(cancel) {
       const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (r * 0.05))));
       const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
-      tubeMesh.castShadow = true;
+      tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
 
       // 存储曲线引用用于擦除功能（使用细化后的点）
       tubeMesh.userData.brushCurve = curve;
@@ -5483,12 +5485,12 @@ function endBrushStroke(cancel) {
       const endPt = curve.getPointAt(1);
       const startCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
       startCap.position.copy(startPt);
-      startCap.castShadow = true;
+      startCap.castShadow = true; startCap.receiveShadow = true;
       brush.currentMeshes.push(startCap);
 
       const endCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
       endCap.position.copy(endPt);
-      endCap.castShadow = true;
+      endCap.castShadow = true; endCap.receiveShadow = true;
       brush.currentMeshes.push(endCap);
     }
   }
@@ -6785,7 +6787,7 @@ function _eraseAtSingle(groundPoint) {
               segMesh.userData.brushCurve = segCurve;
               segMesh.userData.brushCurvePoints = segPoints;
               segMesh.userData.brushRadius = brushR;
-              segMesh.castShadow = true;
+              segMesh.castShadow = true; segMesh.receiveShadow = true;
               o.mesh.add(segMesh);
               createdSegs.push(segMesh);
 
@@ -6794,14 +6796,14 @@ function _eraseAtSingle(groundPoint) {
               const startCap = new THREE.Mesh(new THREE.SphereGeometry(brushR, 24, 16), baseMat.clone());
               startCap.position.copy(localOffset).add(segPoints[0]);
               startCap.quaternion.copy(child.quaternion);
-              startCap.castShadow = true;
+              startCap.castShadow = true; startCap.receiveShadow = true;
               o.mesh.add(startCap);
               createdSegs.push(startCap);
 
               const endCap = new THREE.Mesh(new THREE.SphereGeometry(brushR, 24, 16), baseMat.clone());
               endCap.position.copy(localOffset).add(segPoints[segPoints.length - 1]);
               endCap.quaternion.copy(child.quaternion);
-              endCap.castShadow = true;
+              endCap.castShadow = true; endCap.receiveShadow = true;
               o.mesh.add(endCap);
               createdSegs.push(endCap);
             } else if (segPoints.length === 1) {
@@ -6812,7 +6814,7 @@ function _eraseAtSingle(groundPoint) {
               sphereMesh.position.copy(child.position).add(segPoints[0]);
               sphereMesh.quaternion.copy(child.quaternion);
               sphereMesh.scale.copy(child.scale);
-              sphereMesh.castShadow = true;
+              sphereMesh.castShadow = true; sphereMesh.receiveShadow = true;
               o.mesh.add(sphereMesh);
               createdSegs.push(sphereMesh);
             }
@@ -8272,7 +8274,7 @@ function pasteClipboard(offset = 0.2) {
             // 兼容旧数据：使用 brushPos（已在上方安全获取）
             tubeMesh.position.set(-brushPos[0], -brushPos[1], -brushPos[2]);
           }
-          tubeMesh.castShadow = true;
+          tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
           tubeMesh.userData.brushCurve = curve;
           tubeMesh.userData.brushCurvePoints = points;
           tubeMesh.userData.brushRadius = segR;
@@ -8284,14 +8286,14 @@ function pasteClipboard(offset = 0.2) {
             const startPt = curve.getPointAt(0);
             const startCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
             startCap.position.copy(startPt).add(meshOffset);
-            startCap.castShadow = true;
+            startCap.castShadow = true; startCap.receiveShadow = true;
             group.add(startCap);
           }
           if (points.length >= 2) {
             const endPt = curve.getPointAt(1);
             const endCap = new THREE.Mesh(new THREE.SphereGeometry(segR, 24, 16), mat.clone());
             endCap.position.copy(endPt).add(meshOffset);
-            endCap.castShadow = true;
+            endCap.castShadow = true; endCap.receiveShadow = true;
             group.add(endCap);
           }
         }
@@ -8335,7 +8337,7 @@ function pasteClipboard(offset = 0.2) {
           const mesh = new THREE.Mesh(geo, mat.clone());
           mesh.position.set(ch.pos[0], ch.pos[1], ch.pos[2]);
           if (ch.quat) mesh.quaternion.set(ch.quat[0], ch.quat[1], ch.quat[2], ch.quat[3]);
-          mesh.castShadow = true;
+          mesh.castShadow = true; mesh.receiveShadow = true;
           // 2D画笔的renderOrder
           const order = getNextRenderOrder();
           mesh.renderOrder = order;
@@ -8350,7 +8352,7 @@ function pasteClipboard(offset = 0.2) {
         // 没有任何子部件数据，创建一个简单球体
         const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat.clone());
         sphere.position.set(-groupPos.x, -groupPos.y, -groupPos.z);
-        sphere.castShadow = true;
+        sphere.castShadow = true; sphere.receiveShadow = true;
         group.add(sphere);
       }
 
