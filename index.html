@@ -411,7 +411,7 @@
     <button class="top-btn" id="btn-copy" title="复制 (Ctrl+C)"><span class="ic">⧉</span><span class="lbl">复制</span></button>
     <button class="top-btn" id="btn-paste" title="粘贴 (Ctrl+V)"><span class="ic">📋</span><span class="lbl">粘贴</span></button>
     <button class="top-btn" id="btn-dup" title="克隆 (Ctrl+D)"><span class="ic">⎘</span><span class="lbl">克隆</span></button>
-    <button class="top-btn" id="btn-clear" title="清空场景 (Ctrl+Del/Backspace)"><span class="ic">🗑</span><span class="lbl">清空</span></button>
+    <button class="top-btn" id="btn-clear" title="清空场景"><span class="ic">🗑</span><span class="lbl">清空</span></button>
     <div class="top-btn-sep"></div>
     <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl">坐标轴</span></button>
     <button class="top-btn" id="btn-grid" title="切换网格面显示"><span class="ic">🔲</span><span class="lbl">网格面</span></button>
@@ -501,15 +501,15 @@
       <div class="ctrl-row">
         <div class="ctrl-label"><span>横坐标 X</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
+          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>纵坐标 Y</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
+          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
         </div>
       </div>
       <div class="ctrl-row">
@@ -643,7 +643,7 @@
   </div>
   <div class="panel-section" id="sec-del" style="display:none;">
     <div class="multi-hint" id="multi-hint" style="display:none;"></div>
-    <button class="danger-btn" id="del-btn">删除选中对象（Del/Backspace）</button>
+    <button class="danger-btn" id="del-btn">删除选中对象（Delete）</button>
   </div>
   <!-- 画笔属性（仅画笔模式时显示） -->
   <div class="panel-section collapsible" id="sec-brush" style="display:none;">
@@ -719,13 +719,13 @@
     <div class="collapsible-body">
     <div class="kbd">
       <div class="kbd-title">平移操作</div>
-      <div class="kbd-row"><b>→/←</b><span>沿X轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
-      <div class="kbd-row"><b>↑/↓</b><span>沿Y轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-row"><b>↓/↑</b><span>沿X轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-row"><b>→/←</b><span>沿Y轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
       <div class="kbd-row"><b>PgUp/PgDn</b><span>沿Z轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
       <div class="kbd-title">旋转操作</div>
-      <div class="kbd-row"><b>A/D</b><span>绕Z轴顺/逆时针旋转5°</span></div>
-      <div class="kbd-row"><b>W/S</b><span>绕Y轴顺/逆时针旋转5°</span></div>
-      <div class="kbd-row"><b>E/Q</b><span>绕X轴顺/逆时针旋转5°</span></div>
+      <div class="kbd-row"><b>A/D</b><span>绕Z轴逆/顺时针旋转5°</span></div>
+      <div class="kbd-row"><b>W/S</b><span>绕Y轴逆/顺时针旋转5°</span></div>
+      <div class="kbd-row"><b>Q/E</b><span>绕X轴逆/顺时针旋转5°</span></div>
       <div class="kbd-title">缩放操作</div>
       <div class="kbd-row"><b>+</b><span>放大5%</span></div>
       <div class="kbd-row"><b>-</b><span>缩小5%</span></div>
@@ -734,8 +734,8 @@
       <div class="kbd-row"><b>F11</b><span>全屏/退出全屏</span></div>
       <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
       <div class="kbd-title">组合键操作</div>
-      <div class="kbd-row"><b>Shift + →/←/↑/↓/PgUp/PgDn</b><span>沿某方向平移1单位网格长度（1.5单位长度）</span></div>
-      <div class="kbd-row"><b>Shift + A/D/W/S/E/Q</b><span>绕Z/Y/X轴顺/逆时针旋转90°</span></div>
+      <div class="kbd-row"><b>Shift + ←/→/↑/↓/PgUp/PgDn</b><span>沿某方向平移1单位网格长度（1.5单位长度）</span></div>
+      <div class="kbd-row"><b>Shift + A/D/W/S/Q/E</b><span>绕Z/Y/X轴逆/顺时针旋转90°</span></div>
       <div class="kbd-row"><b>Shift + + / -</b><span>放大至原来的2倍/缩小到原来的50%</span></div>
       <div class="kbd-row"><b>Shift + 点击</b><span>加选对象（多点选）</span></div>
       <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
@@ -749,6 +749,17 @@
       <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
       <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
       <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
+      <div class="kbd-title">属性栏滑动条</div>
+      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">点击或拖动滑动条时生效，原键盘快捷键暂时失效；点击滑动条以外的位置恢复</div>
+      <div class="kbd-row"><b>→/↑</b><span>增加0.01（字号增加2）</span></div>
+      <div class="kbd-row"><b>←/↓</b><span>减少0.01（字号减少2）</span></div>
+      <div class="kbd-row"><b>PgUp/PgDn</b><span>增加/减少10%（字号增加/减少20）</span></div>
+      <div class="kbd-title">属性栏数字输入框</div>
+      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">点击数字输入框时生效，原键盘快捷键暂时失效；点击输入框以外的位置恢复</div>
+      <div class="kbd-row"><b>↑/↓</b><span>增加/减少0.01（字号增加/减少2）</span></div>
+      <div class="kbd-row"><b>←/→</b><span>向左/向右移动光标</span></div>
+      <div class="kbd-row"><b>+/-</b><span>正号/负号</span></div>
+      <div class="kbd-row"><b>PgUp/PgDn</b><span>向上/向下滑动右栏</span></div>
     </div>
     </div>
   </div>
@@ -921,8 +932,8 @@ controls.autoRotate = false;
 // 解除所有方向的视角限制，允许真正的360°自由旋转：
 // maxPolarAngle = 2π 使相机可以穿过南北极继续旋转，不再卡在Z轴或任何方向。
 // 配合 OrbitControls.js 的自由旋转模式与 Spherical.setFromCartesianCoords 的 phi>π 追踪。
-// minDistance/maxDistance 在 animate() 中动态计算（基于FOV和屏幕高度）
-// 确保最近距离能看到至少一个完整网格单元，最远距离网格单元仍清晰可见
+// minDistance/maxDistance 在 animate() 中动态计算（基于FOV和屏幕宽高比）
+// 最近距离允许 1/10 网格单元占据屏幕宽度（可放大 10×看清极小对象），最远距离无上限
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = 2 * Math.PI;
 controls.target.set(0, 0, 0);
@@ -2715,6 +2726,11 @@ function snapshot() {
   });
 }
 function pushHistory() {
+  // 清除挂起的键盘变换 timer，避免延迟回调产生重复快照导致撤销错乱
+  if (window._kbdHistoryTimer) {
+    clearTimeout(window._kbdHistoryTimer);
+    window._kbdHistoryTimer = null;
+  }
   // 截断 redo 分支
   state.history = state.history.slice(0, state.hIndex + 1);
   state.history.push(snapshot());
@@ -2858,6 +2874,7 @@ function applySnapshotToExisting(o, s) {
     applyOpacityToObject(o, s.opacity);
   }
   if (s.pattern !== undefined) o.data.pattern = s.pattern;
+  if (s.image !== undefined) o.data.image = s.image; // 恢复图片贴图（添加/清除贴图撤销支持）
   if (s.text !== undefined) o.data.text = s.text;
   if (s.font !== undefined) o.data.font = s.font;
   if (s.fontSize !== undefined) o.data.fontSize = s.fontSize;
@@ -3125,6 +3142,13 @@ function rebuildFromSnapshot(s, promises) {
   }
 }
 function undo() {
+  // 若有挂起的键盘变换 timer，先 flush 记录到历史，再撤销
+  // 否则会出现"第一次无响应、第二次撤两步"的异常
+  if (window._kbdHistoryTimer) {
+    clearTimeout(window._kbdHistoryTimer);
+    window._kbdHistoryTimer = null;
+    pushHistory();
+  }
   if (state.hIndex <= 0) { toast('已是最早状态'); return; }
   state.hIndex--;
   restore(state.history[state.hIndex]);
@@ -3132,6 +3156,11 @@ function undo() {
   toast('已撤销');
 }
 function redo() {
+  if (window._kbdHistoryTimer) {
+    clearTimeout(window._kbdHistoryTimer);
+    window._kbdHistoryTimer = null;
+    pushHistory();
+  }
   if (state.hIndex >= state.history.length - 1) { toast('已是最新状态'); return; }
   state.hIndex++;
   restore(state.history[state.hIndex]);
@@ -5051,6 +5080,13 @@ document.getElementById('input-tsize').addEventListener('input', (e) => {
     updateSelBoxes();
   }
 });
+// 字号数字输入框禁止输入正负号
+document.getElementById('input-tsize').addEventListener('keypress', (e) => {
+  if (e.key === '+' || e.key === '-') e.preventDefault();
+});
+document.getElementById('input-tsize').addEventListener('keydown', (e) => {
+  if (e.key === '+' || e.key === '-') e.preventDefault();
+});
 document.getElementById('t-size').addEventListener('change', () => { if (state.selectedList.length) pushHistory(); });
 document.querySelectorAll('#sec-text .toggle-btn[data-bold]').forEach(b => {
   b.addEventListener('click', () => {
@@ -5148,17 +5184,15 @@ document.getElementById('btn-redo').addEventListener('click', redo);
 document.getElementById('btn-copy').addEventListener('click', copySelected);
 document.getElementById('btn-paste').addEventListener('click', () => pasteClipboard(0.2, true));
 document.getElementById('btn-dup').addEventListener('click', cloneSelected);
-async function clearScene() {
-  if (!state.objects.length) { toast('场景已为空'); return; }
-  if (transformActive) { toast('变换进行中，无法清空'); return; }
+document.getElementById('btn-clear').addEventListener('click', async () => {
+  if (!state.objects.length) return;
   if (!await showConfirm('确定清空场景？此操作可撤销。')) return;
   select(null);
   state.objects.forEach(disposeObject);
   state.objects = [];
   updateClearButtonState();
   pushHistory(); toast('已清空');
-}
-document.getElementById('btn-clear').addEventListener('click', clearScene);
+});
 document.getElementById('btn-axes').addEventListener('click', () => {
   axesVisible = !axesVisible;
   axesGroup.visible = axesVisible;
@@ -5490,6 +5524,8 @@ function createBrushMaterial() {
 function createBrushMaterialForSnapshot(s) {
   const brushColor = (s.color !== undefined && s.color !== NO_COLOR) ? s.color : 0xffffff;
   const opacity = s.opacity || 1;
+  // 2D画笔需双面可见（与 addBrushPoint2D 中 mat.side = THREE.DoubleSide 保持一致）
+  const is2D = s.type === 'brush2d';
   // 使用 MeshStandardMaterial 光滑材质，受光照影响产生明暗层次
   // roughness=0.5 使圆柱形笔迹表面有明显的明暗渐变
   const mat = new THREE.MeshStandardMaterial({
@@ -5498,7 +5534,7 @@ function createBrushMaterialForSnapshot(s) {
     opacity: opacity,
     depthWrite: true,
     depthTest: true,
-    side: THREE.FrontSide,
+    side: is2D ? THREE.DoubleSide : THREE.FrontSide,
     roughness: 0.5,
     metalness: 0.05,
     flatShading: false
@@ -5770,6 +5806,7 @@ function endBrushStroke(cancel) {
     const entry = {
       mesh: group,
       data: {
+        id: idCounter++,
         kind: 'brush',
         type: state.tool,
         color: color,
@@ -5779,6 +5816,7 @@ function endBrushStroke(cancel) {
         isBrush: true
       }
     };
+    entry.mesh.userData.id = entry.data.id;
 
     // 对于3D画笔，存储细化后的曲线点用于擦除/重建（确保与渲染一致）
     if (!is2D && pts.length >= 2) {
@@ -8690,9 +8728,6 @@ window.addEventListener('keydown', (e) => {
       if (sel.length === 0) { toast('请先选中对象再克隆'); return; }
       cloneSelected(); return;
     }
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      e.preventDefault(); clearScene(); return;
-    }
     if (k === 'a') {
       e.preventDefault();
       if (state.tool === 'brush3d' || state.tool === 'brush2d') endBrushStroke(true);
@@ -8740,20 +8775,21 @@ window.addEventListener('keydown', (e) => {
 
   let handled = true;
   switch (e.key) {
-    // 平移（X/Y 轴互换：←/→→Y轴，↑/↓→X轴；Z 轴不变）
-    case 'ArrowLeft':  objectsToModify.forEach(o => o.mesh.position.z -= moveStep); break;
-    case 'ArrowRight': objectsToModify.forEach(o => o.mesh.position.z += moveStep); break;
-    case 'ArrowUp':    objectsToModify.forEach(o => o.mesh.position.x += moveStep); break;
-    case 'ArrowDown':  objectsToModify.forEach(o => o.mesh.position.x -= moveStep); break;
+    // 平移（UI 为 Z-up：UI X=Three.js X，UI Y=Three.js Z，UI Z=Three.js Y）
+    // ← 沿 +X，→ 沿 -X；↑ 沿 +Y(UI)=+Z(TJ)，↓ 沿 -Y(UI)=-Z(TJ)；PgUp 沿 +Z(UI)=+Y(TJ)，PgDn 沿 -Z(UI)=-Y(TJ)
+    case 'ArrowLeft':  objectsToModify.forEach(o => o.mesh.position.x -= moveStep); break;
+    case 'ArrowRight': objectsToModify.forEach(o => o.mesh.position.x += moveStep); break;
+    case 'ArrowUp':    objectsToModify.forEach(o => o.mesh.position.z -= moveStep); break;
+    case 'ArrowDown':  objectsToModify.forEach(o => o.mesh.position.z += moveStep); break;
     case 'PageUp':     objectsToModify.forEach(o => o.mesh.position.y += moveStep); break;
     case 'PageDown':   objectsToModify.forEach(o => o.mesh.position.y -= moveStep); break;
-    // 旋转（X/Y 轴互换：W/S→绕X，Q/E→绕Y；Z 轴 A/D 不变）
+    // 旋转：A/D 绕 Z(UI)=Y(TJ)，W/S 绕 Y(UI)=Z(TJ)，Q/E 绕 X(=X)（逆时针减、顺时针增）
     case 'a': case 'A': rotateSelection('y', -rotRad, objectsToModify); break;
     case 'd': case 'D': rotateSelection('y',  rotRad, objectsToModify); break;
-    case 'w': case 'W': rotateSelection('x', -rotRad, objectsToModify); break;
-    case 's': case 'S': rotateSelection('x',  rotRad, objectsToModify); break;
-    case 'q': case 'Q': rotateSelection('z',  rotRad, objectsToModify); break;
-    case 'e': case 'E': rotateSelection('z', -rotRad, objectsToModify); break;
+    case 'w': case 'W': rotateSelection('z', -rotRad, objectsToModify); break;
+    case 's': case 'S': rotateSelection('z',  rotRad, objectsToModify); break;
+    case 'q': case 'Q': rotateSelection('x', -rotRad, objectsToModify); break;
+    case 'e': case 'E': rotateSelection('x',  rotRad, objectsToModify); break;
     // 缩放：5%，Shift 时 ×2 / ×0.5（多选时禁止）
     case '+': case '=':
       if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
@@ -9108,12 +9144,16 @@ function resizeGrid(newSize) {
 function animate() {
   requestAnimationFrame(animate);
   // 动态调整缩放范围（在 controls.update() 之前设置，确保本帧即生效）
-  // minDistance: 可见高度 = GRID_UNIT 时的距离（再近就看不全一个完整网格单元）
+  // 固定倍率缩放，保持 zoomSpeed 一致，避免"先快后慢"
+  // minDistance: 基于水平视场角，允许 GRID_UNIT/10 占据屏幕宽度（再放大10倍看清极小对象）
+  //   水平可视宽度 W = 2*d*tan(FOV_v/2)*aspect，要求 W = GRID_UNIT/10 → d = (GRID_UNIT/10) / (2*tan(FOV_v/2)*aspect)
   // maxDistance: 无上限，允许无限缩小视野
+  const aspect = camera.aspect;
   const fovRad = camera.fov * Math.PI / 180;
   const halfTan = Math.tan(fovRad / 2);
-  controls.minDistance = GRID_UNIT / (2 * halfTan);
+  controls.minDistance = (GRID_UNIT / 10) / (2 * halfTan * aspect);
   controls.maxDistance = Infinity;
+  controls.zoomSpeed = 3; // 固定缩放速率：每次滚轮30%倍率变化，保持一致速度感
   controls.update();
   // 动态调整相机近远裁剪面：根据相机到目标的距离自动伸缩
   const dist = camera.position.distanceTo(controls.target);
