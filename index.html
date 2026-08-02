@@ -1119,6 +1119,11 @@ controls.touches = {
 
 // ============ 触摸设备检测 ============
 const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+// 移动端降低手势灵敏度：旋转/平移/缩放速度减半，避免视角变化过于剧烈
+if (isTouch) {
+  controls.rotateSpeed = 0.5;
+  controls.panSpeed = 0.5;
+}
 
 // ============ 光照 ============
 // 环境光提供基础亮度（暗面），方向光提供明暗层次与阴影（亮面）
@@ -3854,6 +3859,12 @@ function setTool(t) {
   if (disableTransform) {
     transformCtrl.detach();
   }
+  // 移动端画笔/橡皮擦模式下完全禁用手势操作（旋转/平移/缩放），防止误触
+  if (isTouch && (t === 'brush3d' || t === 'brush2d' || t === 'eraser')) {
+    controls.enabled = false;
+  } else if (isTouch) {
+    controls.enabled = true;
+  }
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('disabled', disableTransform));
   const lockRatioEl = document.getElementById('lock-ratio');
   if (lockRatioEl) lockRatioEl.classList.toggle('disabled', disableTransform);
@@ -4940,15 +4951,18 @@ document.getElementById('tool-image').addEventListener('click', () => {
 document.getElementById('tool-select').addEventListener('click', () => setTool(null));
 document.getElementById('tool-brush3d').addEventListener('click', () => {
   if (state.selectedList.length > 0) return;
-  setTool(state.tool === 'brush3d' ? null : 'brush3d');
+  if (state.tool === 'brush3d') return;
+  setTool('brush3d');
 });
 document.getElementById('tool-brush2d').addEventListener('click', () => {
   if (state.selectedList.length > 0) return;
-  setTool(state.tool === 'brush2d' ? null : 'brush2d');
+  if (state.tool === 'brush2d') return;
+  setTool('brush2d');
 });
 document.getElementById('tool-eraser').addEventListener('click', () => {
   if (state.selectedList.length > 0) return;
-  setTool(state.tool === 'eraser' ? null : 'eraser');
+  if (state.tool === 'eraser') return;
+  setTool('eraser');
 });
 function setTransformMode(mode, silent) {
   // 多选时禁止进入缩放模式
@@ -9457,7 +9471,7 @@ function animate() {
   const halfTan = Math.tan(fovRad / 2);
   controls.minDistance = (GRID_UNIT / 10) / (2 * halfTan * aspect);
   controls.maxDistance = Infinity;
-  controls.zoomSpeed = 3; // 固定缩放速率：每次滚轮30%倍率变化，保持一致速度感
+  controls.zoomSpeed = isTouch ? 1.2 : 3; // 移动端降低缩放速度，避免过于剧烈
   controls.update();
   // 动态调整相机近远裁剪面：根据相机到目标的距离自动伸缩
   const dist = camera.position.distanceTo(controls.target);
