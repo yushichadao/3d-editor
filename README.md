@@ -113,22 +113,10 @@
 
 ## 运行方式
 
-### 1. 安装依赖
-本项目为纯前端项目，仅需本机已安装 [Node.js](https://nodejs.org/)。
-
-### 2. 启动本地服务器
-
-```bash
-npm start
-# 或
-node server.js
-```
-
-### 3. 访问编辑器
-在浏览器中打开：
+### 在浏览器中打开：
 
 ```
-http://localhost:8090
+https://yushichadao.github.io/3d-editor/
 ```
 
 ---
