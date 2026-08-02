@@ -70,7 +70,7 @@
   .top-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0a0a14; font-weight:600; border-color:transparent; }
   .top-btn .ic { font-size: 13px; line-height: 1; }
   /* 顶栏按钮分组分隔符 */
-  .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.1); margin: 0 3px; flex-shrink: 0; }
+  .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.15); margin: 0 3px; flex-shrink: 0; }
 
   /* 面板通用 */
   .panel {
@@ -416,32 +416,34 @@
     .topbar { padding: 0 8px; }
     .brand { font-size: 13px; gap: 6px; }
     .brand .logo { width: 22px; height: 22px; }
+    .brand .logo::after { transform: translate(6px,6px); }
     .brand span { display: none; }
     .top-actions {
       flex: 1; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 0;
       scrollbar-width: none; -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
     }
     .top-actions::-webkit-scrollbar { display: none; }
     .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
-    .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+    .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); flex-shrink: 0; margin: 0 3px; }
     /* 面板宽度收窄上限 */
     .panel-left { width: clamp(170px, 17vw, 210px); }
     .panel-right { width: clamp(200px, 20vw, 240px); }
     .panel { max-height: calc(100vh - 130px); }
-    /* 面板折叠按钮移至顶栏下方，避免遮挡 */
+    /* 面板折叠按钮移至顶栏下方，增加与面板的间距 */
     .panel-toggle { top: 56px; }
     .panel-toggle.left.collapsed { left: 8px; }
     .panel-toggle.right.collapsed { right: 8px; }
-    .panel-toggle.left:not(.collapsed) { left: calc(12px + clamp(170px, 17vw, 210px)); }
-    .panel-toggle.right:not(.collapsed) { right: calc(12px + clamp(200px, 20vw, 240px)); }
+    .panel-toggle.left:not(.collapsed) { left: calc(20px + clamp(170px, 17vw, 210px)); }
+    .panel-toggle.right:not(.collapsed) { right: calc(20px + clamp(200px, 20vw, 240px)); }
     /* 声明保持卡片样式，不全宽拉伸 */
     .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
-      bottom: 10px; padding: 5px 8px; gap:4px;
+      bottom: 10px; padding: 5px 12px; gap:4px;
       max-width: calc(100vw - 16px); overflow-x: auto;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
-      border-radius: 20px;
+      border-radius: 14px;
     }
     .bottombar::-webkit-scrollbar { display: none; }
     .view-btn { height: 30px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
@@ -451,9 +453,8 @@
     .top-btn { padding: 0 7px; }
     .view-btn { padding: 0 7px; font-size: 10.5px; }
     .declaration { max-width: 200px; }
-    .brand { gap: 4px; }
-    .brand .logo { width: 20px; height: 20px; }
-    .brand .logo::after { width: 8px; height: 8px; transform: translate(6px,6px); }
+    /* 极窄屏隐藏品牌图标，释放顶栏空间 */
+    .brand { display: none; }
     .top-actions { -webkit-overflow-scrolling: touch; }
   }
 
@@ -5642,11 +5643,21 @@ function setPanelCollapsed(side, collapsed) {
 }
 document.getElementById('toggle-panel-left').addEventListener('click', () => {
   const panel = document.getElementById('panel-left');
-  setPanelCollapsed('left', !panel.classList.contains('collapsed'));
+  const willExpand = !panel.classList.contains('collapsed');
+  setPanelCollapsed('left', !willExpand);
+  // 竖屏模式：展开左栏时自动收起右栏，避免重叠
+  if (willExpand && window.innerWidth <= 960) {
+    setPanelCollapsed('right', true);
+  }
 });
 document.getElementById('toggle-panel-right').addEventListener('click', () => {
   const panel = document.getElementById('panel-right');
-  setPanelCollapsed('right', !panel.classList.contains('collapsed'));
+  const willExpand = !panel.classList.contains('collapsed');
+  setPanelCollapsed('right', !willExpand);
+  // 竖屏模式：展开右栏时自动收起左栏，避免重叠
+  if (willExpand && window.innerWidth <= 960) {
+    setPanelCollapsed('left', true);
+  }
 });
 // 窄屏自动收起面板，宽屏自动展开（仅处理自动收起/展开，不影响用户手动操作）
 let _autoCollapsed = false;
