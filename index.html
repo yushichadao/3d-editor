@@ -6759,13 +6759,15 @@ function _mergeSmallSegments(o, targetCount) {
   o._capsMapDirty = true;
   o._needsRecenter = true;
 }
-function _eraseAtSingle(groundPoint) {
+function _eraseAtSingle(groundPoint, brushObjectsParam) {
   const radius = state.eraserSize;
   const effR = Math.max(radius, 0.05);
   let anyDeleted = false;
-  const brushObjects = state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
+  const brushObjects = brushObjectsParam || state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
 
   brushObjects.forEach(o => {
+    // 跳过已被删除的对象（可能在路径插值多步循环中被前一步删除）
+    if (!o.mesh.parent) return;
     let childrenModified = false; // 跟踪子mesh是否被修改（删除或分裂）
     // 注意：不在此处调用_mergeSmallSegments，避免删除远离橡皮的短段导致乱闪
 
@@ -7310,12 +7312,13 @@ function eraseAt(groundPoint) {
     // 所有画笔类型均使用 groundPoint 球距离判定，需要路径插值避免快速移动漏擦
     let brushDeleted = false;
     const gp = groundPoint;
-    // 检查是否存在画笔对象（需要插值）
-    const hasBrush = state.objects.some(o => o.data.isBrush);
-    if (hasBrush && _lastErasePoint) {
+    // 预过滤画笔对象，避免路径插值多步中重复过滤
+    const brushObjects = state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
+    if (brushObjects.length > 0 && _lastErasePoint) {
       // 对所有画笔类型（2D/3D）使用路径插值，避免快速移动漏擦
+      // 步长设为橡皮半径的一半，确保擦除球覆盖无遗漏（有效擦除半径=brushR+effR > step）
       const segLen = gp.distanceTo(_lastErasePoint);
-      const step = Math.max(0.02, radius / 3);
+      const step = Math.max(0.05, radius * 0.5);
       const steps = Math.ceil(segLen / step);
       for (let i = 0; i <= steps; i++) {
         const t = steps === 0 ? 1 : (i / steps);
@@ -7323,10 +7326,10 @@ function eraseAt(groundPoint) {
         const py = _lastErasePoint.y + (gp.y - _lastErasePoint.y) * t;
         const pz = _lastErasePoint.z + (gp.z - _lastErasePoint.z) * t;
         const pt = new THREE.Vector3(px, py, pz);
-        if (_eraseAtSingle(pt)) brushDeleted = true;
+        if (_eraseAtSingle(pt, brushObjects)) brushDeleted = true;
       }
     } else {
-      if (_eraseAtSingle(gp)) brushDeleted = true;
+      if (_eraseAtSingle(gp, brushObjects.length > 0 ? brushObjects : undefined)) brushDeleted = true;
     }
     _lastErasePoint = gp.clone();
 
@@ -9449,18 +9452,27 @@ if (isTouch) {
   if (kbdSec) kbdSec.style.display = 'none';
 }
 
-// ============ 顶栏交互：滚轮横向滚动 + 禁用视野操作 ============
-// 鼠标在顶栏区域时，滚轮横向滚动按钮区而非缩放视野
-// 顶栏 z-index 高于画布，pointerdown 不会到达画布，视野旋转/平移自然被禁用
+// ============ 顶栏交互：滚轮横向滚动 + 视野缩放转发 ============
+// 鼠标在按钮区时滚轮横向滚动；在其他区域时转发到画布进行视野缩放
 const topbarEl = document.querySelector('.topbar');
 const topActionsEl = document.querySelector('.top-actions');
 if (topbarEl) {
-  // 顶栏区域拦截 wheel 事件，阻止视野缩放，转为横向滚动按钮区
   topbarEl.addEventListener('wheel', (e) => {
-    // 按钮区可横向滚动时，消费滚轮事件用于横向滚动
-    if (topActionsEl && topActionsEl.scrollWidth > topActionsEl.clientWidth) {
+    // 仅当鼠标在按钮区(.top-actions)内且按钮区有溢出时，用滚轮横向滚动
+    if (topActionsEl && topActionsEl.contains(e.target) && topActionsEl.scrollWidth > topActionsEl.clientWidth) {
       e.preventDefault();
       topActionsEl.scrollLeft += e.deltaY !== 0 ? e.deltaY : e.deltaX;
+    } else {
+      // 其他区域：将滚轮事件转发到画布，触发视野缩放
+      e.preventDefault();
+      canvas.dispatchEvent(new WheelEvent('wheel', {
+        deltaY: e.deltaY,
+        deltaX: e.deltaX,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        bubbles: true,
+        cancelable: true
+      }));
     }
   }, { passive: false });
 }
