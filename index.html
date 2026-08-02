@@ -423,7 +423,7 @@
     }
     .top-actions::-webkit-scrollbar { display: none; }
     .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
-    .top-btn-sep { display: none; }
+    .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
     /* 面板宽度收窄上限 */
     .panel-left { width: clamp(170px, 17vw, 210px); }
     .panel-right { width: clamp(200px, 20vw, 240px); }
@@ -437,10 +437,11 @@
     /* 声明保持卡片样式，不全宽拉伸 */
     .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
-      bottom: 10px; padding: 5px; gap:4px;
+      bottom: 10px; padding: 5px 8px; gap:4px;
       max-width: calc(100vw - 16px); overflow-x: auto;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
+      border-radius: 20px;
     }
     .bottombar::-webkit-scrollbar { display: none; }
     .view-btn { height: 30px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
@@ -450,6 +451,10 @@
     .top-btn { padding: 0 7px; }
     .view-btn { padding: 0 7px; font-size: 10.5px; }
     .declaration { max-width: 200px; }
+    .brand { gap: 4px; }
+    .brand .logo { width: 20px; height: 20px; }
+    .brand .logo::after { width: 8px; height: 8px; transform: translate(6px,6px); }
+    .top-actions { -webkit-overflow-scrolling: touch; }
   }
 
   /* 隐藏文件输入 */
@@ -461,7 +466,6 @@
   .touch-device .panel-toggle,
   .touch-device .bb-toggle { min-height: 36px; }
   .touch-device .kbd-row { padding: 2px 0; }
-  .touch-device #btn-touch-mode.active { background: var(--accent); color: var(--bg-deep); }
   .touch-device .panel-toggle { width: 28px; }
   .touch-device .shape-btn { min-width: 36px; min-height: 36px; }
   .touch-device input[type="range"] { height: 8px; }
@@ -827,10 +831,11 @@
     <div class="kbd touch-only" style="display:none;">
       <div class="kbd-row"><b>单指单击</b><span>选择对象/控件</span></div>
       <div class="kbd-row"><b>单指双击</b><span>编辑文本</span></div>
-      <div class="kbd-row"><b>单指拖动</b><span>操作对象/控件</span></div>
-      <div class="kbd-row"><b>双指拖动</b><span>视角旋转（默认）/ 平移（切换后）</span></div>
+      <div class="kbd-row"><b>单指拖动对象</b><span>操作对象/控件</span></div>
+      <div class="kbd-row"><b>单指拖动空白</b><span>视角旋转</span></div>
+      <div class="kbd-row"><b>单指轻点空白</b><span>取消选择</span></div>
+      <div class="kbd-row"><b>双指拖动</b><span>视角平移</span></div>
       <div class="kbd-row"><b>双指捏合</b><span>视角缩放</span></div>
-      <div class="kbd-note">底部"旋转/平移"按钮切换双指拖动模式</div>
     </div>
     </div>
   </div>
@@ -924,7 +929,6 @@
     <button class="view-btn" data-view="left">左视</button>
     <button class="view-btn" data-view="right">右视</button>
   </div>
-  <button class="view-btn touch-only" id="btn-touch-mode" onclick="setTouchPanMode(!touchPanMode)" title="切换双指模式：旋转/平移" style="display:none;">旋转</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1088,23 +1092,12 @@ controls.mouseButtons = {
   RIGHT: THREE.MOUSE.ROTATE
 };
 controls.touches = {
-  ONE: null,                 // 单指留给对象交互
-  TWO: THREE.TOUCH.DOLLY_ROTATE
+  ONE: null,                 // 单指：由画布 handler 动态决定（对象交互或视角旋转）
+  TWO: THREE.TOUCH.DOLLY_PAN // 双指：平移 + 缩放
 };
 
 // ============ 触摸设备检测 ============
 const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
-// 触摸设备：双指模式切换（旋转↔平移），缩放始终可用
-let touchPanMode = false; // false=双指旋转, true=双指平移
-function setTouchPanMode(pan) {
-  touchPanMode = pan;
-  controls.touches.TWO = pan ? THREE.TOUCH.DOLLY_PAN : THREE.TOUCH.DOLLY_ROTATE;
-  const btn = document.getElementById('btn-touch-mode');
-  if (btn) {
-    btn.textContent = pan ? '平移' : '旋转';
-    btn.classList.toggle('active', pan);
-  }
-}
 
 // ============ 光照 ============
 // 环境光提供基础亮度（暗面），方向光提供明暗层次与阴影（亮面）
@@ -1360,6 +1353,30 @@ scene.add(multiTransformProxy);
 let _multiDragStart = null;
 // 记录拖拽开始时各选中对象的初始世界变换
 let _multiObjStart = [];
+
+// ============ 触摸设备：单指动态切换（对象交互 ↔ 视角旋转）============
+// 捕获阶段 raycast，在 OrbitControls 的 pointerdown 之前决定 touches.ONE
+const _touchNdc = new THREE.Vector2();
+const _touchRay = new THREE.Raycaster();
+canvas.addEventListener('pointerdown', (e) => {
+  if (!isTouch || e.pointerType !== 'touch' || !e.isPrimary) return;
+  const rect = canvas.getBoundingClientRect();
+  _touchNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  _touchNdc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  _touchRay.setFromCamera(_touchNdc, camera);
+  // 变换控件手柄上 → 留给 TransformControls
+  if (transformCtrl && transformCtrl.visible) {
+    const gizmoHits = _touchRay.intersectObject(transformCtrl, true);
+    if (gizmoHits.length > 0) {
+      controls.touches.ONE = null;
+      return;
+    }
+  }
+  // 快速 raycast 检测是否触摸到用户对象
+  const meshes = state.objects.map(o => o.mesh);
+  const hits = meshes.length > 0 ? _touchRay.intersectObjects(meshes, true) : [];
+  controls.touches.ONE = hits.length > 0 ? null : THREE.TOUCH.ROTATE;
+}, true); // 捕获阶段：先于 OrbitControls 执行
 
 function getSelectionCenter() {
   if (state.selectedList.length === 0) return null;
@@ -8093,6 +8110,12 @@ canvas.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return; // 仅左键
   // 触摸设备：非主指（第二指）交给 OrbitControls 处理双指手势
   if (e.pointerType === 'touch' && e.isPrimary === false) return;
+  // 触摸设备：TransformControls 正在拖拽手柄时，禁用 OrbitControls 避免冲突
+  if (isTouch && transformCtrl.dragging) {
+    controls.enabled = false;
+    state.pointerDown = false;
+    return;
+  }
 
   // 文本输入框激活时，点击画布（非文本框区域）应自动切换到"选择/变换"模式
   // 而不是创建第二个文本框（禁止多个文本编辑框共存）
@@ -8193,15 +8216,20 @@ canvas.addEventListener('pointerdown', (e) => {
       };
     }
   } else {
-    // 空白区域：开始拖框选择（非 shift 时先清空）
-    if (!e.shiftKey) deselect();
-    state.boxSelecting = true;
-    state.boxStart.set(e.clientX, e.clientY);
-    boxSelEl.style.display = 'block';
-    boxSelEl.style.left = e.clientX + 'px';
-    boxSelEl.style.top = e.clientY + 'px';
-    boxSelEl.style.width = '0px';
-    boxSelEl.style.height = '0px';
+    // 触摸设备空白区域：由 OrbitControls 旋转视角，轻点取消选择
+    if (isTouch && e.pointerType === 'touch') {
+      state.touchEmptyTap = true;
+    } else {
+      // 桌面端：开始拖框选择（非 shift 时先清空）
+      if (!e.shiftKey) deselect();
+      state.boxSelecting = true;
+      state.boxStart.set(e.clientX, e.clientY);
+      boxSelEl.style.display = 'block';
+      boxSelEl.style.left = e.clientX + 'px';
+      boxSelEl.style.top = e.clientY + 'px';
+      boxSelEl.style.width = '0px';
+      boxSelEl.style.height = '0px';
+    }
   }
 });
 
@@ -8328,6 +8356,8 @@ canvas.addEventListener('pointermove', (e) => {
 });
 
 canvas.addEventListener('pointerup', (e) => {
+  // 触摸设备：恢复 OrbitControls（TransformControls 拖拽结束后）
+  if (isTouch && !controls.enabled) controls.enabled = true;
   // 画笔/橡皮结束
   if (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser') {
     if (brush.drawing) endBrushStroke();
@@ -8425,6 +8455,11 @@ canvas.addEventListener('pointerup', (e) => {
       if (state.selectedList.length === 0) toast('框选未命中对象');
       else toast('已框选 ' + state.selectedList.length + ' 个对象');
     }
+  }
+  // 触摸设备：轻点空白区域取消选择（拖动旋转不触发取消）
+  if (state.touchEmptyTap) {
+    state.touchEmptyTap = false;
+    if (!state.pointerMoved && !e.shiftKey) deselect();
   }
   state.pointerDown = false;
 });
@@ -9409,9 +9444,6 @@ animate();
 // ============ 触摸设备 UI 初始化 ============
 if (isTouch) {
   document.body.classList.add('touch-device');
-  // 显示触摸模式切换按钮
-  const tBtn = document.getElementById('btn-touch-mode');
-  if (tBtn) tBtn.style.display = '';
   // 隐藏鼠标操作面板，显示手势面板
   document.querySelectorAll('.mouse-only').forEach(el => el.style.display = 'none');
   document.querySelectorAll('.touch-only').forEach(el => el.style.display = '');
