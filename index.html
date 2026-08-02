@@ -39,7 +39,7 @@
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 50;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 14px; overflow: hidden;
+    padding: 0 14px;
     background: linear-gradient(180deg, rgba(12,14,22,0.92), rgba(12,14,22,0.45));
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
@@ -419,7 +419,8 @@
     .brand .logo::after { transform: translate(6px,6px); }
     .brand span { display: none; }
     .top-actions {
-      flex: 1; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 0;
+      flex: 1 1 0; min-width: 0; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 0;
+      justify-content: flex-start;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
     }
@@ -439,13 +440,18 @@
     /* 声明保持卡片样式，不全宽拉伸 */
     .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
-      bottom: 10px; padding: 5px 14px; gap:4px;
-      left: 4px; right: 4px; transform: none;
-      max-width: none; overflow-x: auto;
+      bottom: 10px; padding: 5px 10px; gap:4px;
+      max-width: calc(100vw - 16px); overflow: visible;
+      scrollbar-width: none; -ms-overflow-style: none;
+      border-radius: 12px;
+    }
+    .bottombar > .bb-body {
+      flex: 1 1 0; min-width: 0;
+      overflow-x: auto; overflow-y: hidden;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
-      border-radius: 10px;
     }
+    .bottombar > .bb-body::-webkit-scrollbar { display: none; }
     .bottombar::-webkit-scrollbar { display: none; }
     .view-btn { height: 30px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
     .toast { top: auto; bottom: 80px; }
