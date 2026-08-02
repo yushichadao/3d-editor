@@ -248,29 +248,35 @@
   /* 底部状态条 */
   .bottombar {
     position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 30;
-    display: flex; align-items: center; gap: 6px; padding: 6px;
+    display: flex; align-items: center; gap: 4px; padding: 5px;
     background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border); border-radius: 40px; box-shadow: var(--shadow);
+    border: 1px solid var(--border); border-radius: 36px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(110,231,255,0.05);
     max-width: calc(100vw - 16px); overflow-x: auto;
     scrollbar-width: none; -ms-overflow-style: none;
-    transition: padding .28s ease, border-radius .28s ease;
+    transition: padding .28s ease, border-radius .28s ease, box-shadow .28s ease;
   }
   .bottombar::-webkit-scrollbar { display: none; }
   .bottombar > .bb-toggle {
     display: flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; padding: 0; flex-shrink: 0;
+    width: 34px; height: 34px; padding: 0; flex-shrink: 0;
     border-radius: 50%; cursor: pointer; user-select: none;
-    background: rgba(110,231,255,0.07); border: 1px solid rgba(110,231,255,0.25);
+    background: linear-gradient(135deg, rgba(110,231,255,0.12), rgba(168,85,247,0.08));
+    border: 1px solid rgba(110,231,255,0.3);
     color: var(--accent); font-size: 13px;
     transition: all .2s ease;
   }
-  .bottombar > .bb-toggle:hover { background: rgba(110,231,255,0.14); border-color: var(--accent); }
+  .bottombar > .bb-toggle:hover {
+    background: linear-gradient(135deg, rgba(110,231,255,0.22), rgba(168,85,247,0.14));
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(110,231,255,0.25);
+  }
   .bottombar > .bb-toggle .bb-arrow {
     transition: transform .28s ease; display: inline-block; font-size: 12px;
   }
   .bottombar.collapsed > .bb-toggle .bb-arrow { transform: rotate(-90deg); }
   .bottombar > .bb-body {
-    display: flex; gap: 6px; align-items: center;
+    display: flex; gap: 2px; align-items: center;
     overflow: hidden;
     max-width: 1200px; opacity: 1;
     transition: max-width .32s ease, opacity .22s ease .04s;
@@ -280,13 +286,17 @@
     transition: max-width .28s ease, opacity .18s ease;
     pointer-events: none;
   }
-  .bottombar.collapsed { padding: 6px; border-radius: 40px; }
+  .bottombar.collapsed { padding: 5px; border-radius: 36px; }
   .view-btn {
-    height: 32px; padding: 0 12px; font-size: 12px;
-    background: rgba(255,255,255,0.04); border:1px solid transparent; border-radius: 20px;
-    color: var(--text); cursor: pointer; transition: all .18s; flex-shrink: 0; white-space: nowrap;
+    height: 32px; padding: 0 13px; font-size: 12px; font-weight: 500;
+    background: transparent; border: none; border-radius: 18px;
+    color: var(--text-dim); cursor: pointer; transition: all .18s; flex-shrink: 0; white-space: nowrap;
   }
-  .view-btn:hover { background: rgba(110,231,255,0.1); border-color: var(--accent); }
+  .view-btn:hover { background: rgba(110,231,255,0.1); color: var(--text); }
+  .view-btn.active {
+    background: linear-gradient(135deg, rgba(110,231,255,0.18), rgba(168,85,247,0.10));
+    color: var(--accent); font-weight: 600;
+  }
 
   /* 声明 */
   .declaration {
@@ -406,11 +416,8 @@
   .loader-box div:nth-child(3){ border-color: var(--accent-3); animation-delay:.5s; transform:rotate(60deg); }
   @keyframes pulse { 0%,100%{ transform:scale(.8) rotate(0); opacity:.4;} 50%{ transform:scale(1.1) rotate(180deg); opacity:1;} }
 
-  .panel::-webkit-scrollbar { width:4px; }
-  .panel::-webkit-scrollbar-thumb { background: var(--accent); border-radius:2px; }
-  .panel::-webkit-scrollbar-track { background:transparent; }
-  /* 滚动条不超出面板圆角边界 */
-  .panel { overflow-y: auto; overscroll-behavior: contain; }
+  .panel::-webkit-scrollbar { display: none; }
+  .panel { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; -ms-overflow-style: none; }
   .panel-section:first-child { padding-top: 10px; }
   .panel-section:last-child { padding-bottom: 14px; }
 
@@ -428,7 +435,7 @@
     .brand span { display: none; }
     .top-actions {
       flex: 1 1 0; min-width: 0; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 4px;
-      justify-content: flex-start;
+      justify-content: flex-end;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
       padding: 0 2px;
@@ -449,10 +456,10 @@
     /* 声明保持卡片样式，不全宽拉伸 */
     .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
-      bottom: 10px; padding: 5px 10px; gap:4px;
+      bottom: 10px; padding: 4px 6px; gap: 3px;
       max-width: calc(100vw - 16px); overflow: visible;
       scrollbar-width: none; -ms-overflow-style: none;
-      border-radius: 12px;
+      border-radius: 28px;
     }
     .bottombar > .bb-body {
       flex: 1 1 0; min-width: 0;
@@ -462,7 +469,7 @@
     }
     .bottombar > .bb-body::-webkit-scrollbar { display: none; }
     .bottombar::-webkit-scrollbar { display: none; }
-    .view-btn { height: 30px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
+    .view-btn { height: 30px; padding: 0 10px; font-size: 11px; flex-shrink: 0; }
     .toast { top: auto; bottom: 80px; }
   }
   @media (max-width: 460px) {
@@ -5575,6 +5582,10 @@ document.querySelectorAll('.view-btn').forEach(btn => {
   btn.addEventListener('click', () => setView(btn.dataset.view));
 });
 function setView(v) {
+  // 标记当前激活的视角按钮
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === v);
+  });
   // 计算所有对象的包围盒
   const box = new THREE.Box3();
   let hasObjects = false;
@@ -5786,23 +5797,28 @@ function startBrushStroke(groundPoint) {
 function addBrushPoint3D(groundPoint) {
   const pts = brush.currentPoints;
   const last = pts[pts.length - 1];
-  const minDist = brush.thickness * 0.05;
+  // 使用绝对值作为最小节点间距，不随画笔粗细变化
+  const minDist = 0.02;
   if (last && last.distanceTo(groundPoint) < minDist) return;
-  
-  if (pts.length >= 500) return;
-  
+
   pts.push(groundPoint.clone());
   
   // 实时预览：重建TubeGeometry显示平滑连接
   if (pts.length >= 2) {
     const r = brush.thickness / 2;
     let curve;
-    if (pts.length === 2) {
-      curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
+    // 预览使用原始点（不refine），长笔画时降采样以保持流畅
+    let previewPts = pts;
+    if (pts.length > 200) {
+      const step = Math.ceil(pts.length / 200);
+      previewPts = [pts[0]];
+      for (let i = step; i < pts.length - 1; i += step) previewPts.push(pts[i]);
+      previewPts.push(pts[pts.length - 1]);
+    }
+    if (previewPts.length === 2) {
+      curve = new THREE.LineCurve3(previewPts[0].clone(), previewPts[1].clone());
     } else {
-      // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-      const refinedPts = _refineCurvePoints(pts, r);
-      curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
+      curve = new THREE.CatmullRomCurve3(previewPts, false, 'centripetal', 0.5);
     }
     const curveLength = curve.getLength();
     const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
@@ -7169,15 +7185,27 @@ function _eraseAtSingle(groundPoint) {
 
           const createdSegs = [];
           for (const kr of keepRanges) {
-            const startIdx = Math.floor(kr.start * (curvePoints.length - 1));
-            const endIdx = Math.ceil(kr.end * (curvePoints.length - 1));
-            if (endIdx <= startIdx) continue;
-            const segPoints = curvePoints.slice(startIdx, endIdx + 1).map(p => p.clone());
-
-            // 用精确边界点替换首末点，确保端帽位于准确切点（消除残渣/缝隙）
-            if (origCurve && segPoints.length >= 2) {
+            // 从原始曲线采样点，保持原有形状不变
+            // 不再切片curvePoints后重新插值，避免剩余笔迹形状改变导致"乱飞"
+            const segPoints = [];
+            if (origCurve) {
+              // 按曲线长度计算采样密度，足够密集以保持原形状
+              const segLenEst = (kr.end - kr.start) * (cacheEntry.curveLen || 1);
+              const numSamples = Math.max(2, Math.min(300, Math.ceil(segLenEst / Math.max(brushR * 0.3, 0.01))));
+              for (let i = 0; i < numSamples; i++) {
+                const t = kr.start + (kr.end - kr.start) * (i / (numSamples - 1));
+                segPoints.push(origCurve.getPointAt(t));
+              }
+              // 确保首末点精确位于擦除边界
               segPoints[0] = origCurve.getPointAt(kr.start);
               segPoints[segPoints.length - 1] = origCurve.getPointAt(kr.end);
+            } else if (curvePoints && curvePoints.length >= 2) {
+              // 兜底：无origCurve时从curvePoints切片
+              const startIdx = Math.floor(kr.start * (curvePoints.length - 1));
+              const endIdx = Math.ceil(kr.end * (curvePoints.length - 1));
+              if (endIdx <= startIdx) continue;
+              const sliced = curvePoints.slice(startIdx, endIdx + 1).map(p => p.clone());
+              segPoints.push(...sliced);
             }
 
             if (segPoints.length >= 2) {
@@ -7185,9 +7213,9 @@ function _eraseAtSingle(groundPoint) {
               if (segPoints.length === 2) {
                 segCurve = new THREE.LineCurve3(segPoints[0], segPoints[1]);
               } else {
-                // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-                const refinedSegPts = _refineCurvePoints(segPoints, brushR);
-                segCurve = new THREE.CatmullRomCurve3(refinedSegPts, false, 'centripetal', 0.5);
+                // 直接用采样点创建曲线，不再_refineCurvePoints
+                // 采样点已足够密集，refine会增加不必要的计算并可能改变形状
+                segCurve = new THREE.CatmullRomCurve3(segPoints, false, 'centripetal', 0.5);
               }
               const segLen = segCurve.getLength();
               // 跳过过短的段：防止子mesh指数增长
