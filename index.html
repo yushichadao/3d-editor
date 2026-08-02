@@ -39,7 +39,7 @@
   .topbar {
     position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 50;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 14px;
+    padding: 0 14px; overflow: hidden;
     background: linear-gradient(180deg, rgba(12,14,22,0.92), rgba(12,14,22,0.45));
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
@@ -414,7 +414,7 @@
   /* 窄屏：顶栏按钮水平滚动，品牌文字隐藏，面板最大宽度收窄 */
   @media (max-width: 960px) {
     .topbar { padding: 0 8px; }
-    .brand { font-size: 13px; gap: 6px; }
+    .brand { font-size: 13px; gap: 6px; margin-right: 6px; }
     .brand .logo { width: 22px; height: 22px; }
     .brand .logo::after { transform: translate(6px,6px); }
     .brand span { display: none; }
@@ -439,11 +439,12 @@
     /* 声明保持卡片样式，不全宽拉伸 */
     .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
-      bottom: 10px; padding: 5px 12px; gap:4px;
-      max-width: calc(100vw - 16px); overflow-x: auto;
+      bottom: 10px; padding: 5px 14px; gap:4px;
+      left: 4px; right: 4px; transform: none;
+      max-width: none; overflow-x: auto;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
-      border-radius: 14px;
+      border-radius: 10px;
     }
     .bottombar::-webkit-scrollbar { display: none; }
     .view-btn { height: 30px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
@@ -5643,19 +5644,19 @@ function setPanelCollapsed(side, collapsed) {
 }
 document.getElementById('toggle-panel-left').addEventListener('click', () => {
   const panel = document.getElementById('panel-left');
-  const willExpand = !panel.classList.contains('collapsed');
-  setPanelCollapsed('left', !willExpand);
+  const wasCollapsed = panel.classList.contains('collapsed');
+  setPanelCollapsed('left', !wasCollapsed); // 切换状态
   // 竖屏模式：展开左栏时自动收起右栏，避免重叠
-  if (willExpand && window.innerWidth <= 960) {
+  if (wasCollapsed && window.innerWidth <= 960) {
     setPanelCollapsed('right', true);
   }
 });
 document.getElementById('toggle-panel-right').addEventListener('click', () => {
   const panel = document.getElementById('panel-right');
-  const willExpand = !panel.classList.contains('collapsed');
-  setPanelCollapsed('right', !willExpand);
+  const wasCollapsed = panel.classList.contains('collapsed');
+  setPanelCollapsed('right', !wasCollapsed); // 切换状态
   // 竖屏模式：展开右栏时自动收起左栏，避免重叠
-  if (willExpand && window.innerWidth <= 960) {
+  if (wasCollapsed && window.innerWidth <= 960) {
     setPanelCollapsed('left', true);
   }
 });
