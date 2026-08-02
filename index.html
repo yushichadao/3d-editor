@@ -784,34 +784,27 @@
     </div>
     <div class="collapsible-body">
     <div class="kbd">
-      <div class="kbd-title">平移操作</div>
-      <div class="kbd-row"><b>↓/↑</b><span>沿X轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
-      <div class="kbd-row"><b>→/←</b><span>沿Y轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
-      <div class="kbd-row"><b>PgUp/PgDn</b><span>沿Z轴正/负方向平移0.1单位网格长度（0.15单位长度）</span></div>
-      <div class="kbd-title">旋转操作</div>
-      <div class="kbd-row"><b>A/D</b><span>绕Z轴顺/逆时针旋转5°</span></div>
-      <div class="kbd-row"><b>W/S</b><span>绕Y轴顺/逆时针旋转5°</span></div>
-      <div class="kbd-row"><b>E/Q</b><span>绕X轴顺/逆时针旋转5°</span></div>
-      <div class="kbd-title">缩放操作</div>
-      <div class="kbd-row"><b>+</b><span>放大5%</span></div>
-      <div class="kbd-row"><b>-</b><span>缩小5%</span></div>
+      <div class="kbd-title">对象操作 / 视角操作（按是否选取对象自动切换）</div>
+      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">步长：平移0.1单位网格长度（0.15长度），旋转5°；Shift时平移1单位网格长度（1.5长度），旋转90°</div>
+      <div class="kbd-row"><b>→/←</b><span>[对象]沿Y轴正/负平移 / [视角]向左/右平移</span></div>
+      <div class="kbd-row"><b>↓/↑</b><span>[对象]沿X轴正/负平移 / [视角]向上/下平移</span></div>
+      <div class="kbd-row"><b>PgUp/PgDn</b><span>[对象]沿Z轴正/负平移</span></div>
+      <div class="kbd-row"><b>A/D</b><span>[对象]绕Z轴顺/逆时针旋转 / [视角]向左/右旋转</span></div>
+      <div class="kbd-row"><b>W/S</b><span>[对象]绕Y轴顺/逆时针旋转 / [视角]向上/下旋转</span></div>
+      <div class="kbd-row"><b>E/Q</b><span>[对象]绕X轴顺/逆时针旋转</span></div>
+      <div class="kbd-row"><b>+/-</b><span>[对象]放大5%/缩小5%</span></div>
       <div class="kbd-title">功能键</div>
       <div class="kbd-row"><b>Esc</b><span>取消操作/退出全屏</span></div>
       <div class="kbd-row"><b>F11</b><span>全屏/退出全屏</span></div>
       <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
-      <div class="kbd-title">视角操作（未选取对象时）</div>
-      <div class="kbd-row"><b>←/→</b><span>视角向左/右平移0.1单位网格长度（0.15单位长度）</span></div>
-      <div class="kbd-row"><b>↑/↓</b><span>视角向上/下平移0.1单位网格长度（0.15单位长度）</span></div>
-      <div class="kbd-row"><b>A/D</b><span>视角向左/右旋转5°</span></div>
-      <div class="kbd-row"><b>W/S</b><span>视角向上/下旋转5°</span></div>
-      <div class="kbd-title">组合键操作</div>
-      <div class="kbd-row"><b>Shift +  ↓/↑/→/←/PgUp/PgDn</b><span>沿某方向平移1单位网格长度（1.5单位长度）</span></div>
-      <div class="kbd-row"><b>Shift + A/D/W/S/E/Q</b><span>绕Z/Y/X轴顺/逆时针旋转90°</span></div>
-      <div class="kbd-row"><b>Shift + + / -</b><span>放大至原来的2倍/缩小到原来的50%</span></div>
-      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">未选取对象时，Shift组合键同样适用于视角操作</div>
-      <div class="kbd-row"><b>Shift + ←/→/↑/↓</b><span>视角平移1单位网格长度（1.5单位长度）</span></div>
-      <div class="kbd-row"><b>Shift + A/D/W/S</b><span>视角旋转90°</span></div>
+      <div class="kbd-title">Shift 组合键</div>
+      <div class="kbd-row"><b>Shift + →/←/↓/↑</b><span>[对象]沿轴平移 / [视角]视角平移</span></div>
+      <div class="kbd-row"><b>Shift + PgUp/PgDn</b><span>[对象]沿Z轴平移</span></div>
+      <div class="kbd-row"><b>Shift + A/D/W/S</b><span>[对象]绕轴旋转 / [视角]视角旋转</span></div>
+      <div class="kbd-row"><b>Shift + E/Q</b><span>[对象]绕X轴旋转90°</span></div>
+      <div class="kbd-row"><b>Shift + + / -</b><span>放大至2倍/缩小到50%</span></div>
       <div class="kbd-row"><b>Shift + 点击</b><span>加选对象（多点选）</span></div>
+      <div class="kbd-title">Ctrl 组合键</div>
       <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
       <div class="kbd-row"><b>Ctrl+N</b><span>新建场景</span></div>
       <div class="kbd-row"><b>Ctrl+O</b><span>导入场景</span></div>
@@ -823,17 +816,13 @@
       <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
       <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
       <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
-      <div class="kbd-title">滑动条</div>
-      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">点击或拖动滑动条时生效，原键盘快捷键暂时失效；点击滑动条以外的位置恢复</div>
-      <div class="kbd-row"><b>→/↑</b><span>增加</span></div>
-      <div class="kbd-row"><b>←/↓</b><span>减少</span></div>
-      <div class="kbd-row"><b>PgUp/PgDn</b><span>大幅增加/减少</span></div>
-      <div class="kbd-title">数字输入框</div>
-      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">点击数字输入框时生效，原键盘快捷键暂时失效；点击输入框以外的位置恢复</div>
-      <div class="kbd-row"><b>↑/↓</b><span>增加/减少</span></div>
-      <div class="kbd-row"><b>←/→</b><span>向左/向右移动光标</span></div>
-      <div class="kbd-row"><b>+/-</b><span>正号/负号</span></div>
-      <div class="kbd-row"><b>PgUp/PgDn</b><span>向上/向下滑动右栏</span></div>
+      <div class="kbd-title">滑动条 / 数字输入框</div>
+      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">点击或拖动滑动条/数字输入框时生效，原键盘快捷键暂时失效；点击以外位置恢复</div>
+      <div class="kbd-row"><b>→/↑</b><span>[滑动条]增加 / [输入框]向右移动光标</span></div>
+      <div class="kbd-row"><b>←/↓</b><span>[滑动条]减少 / [输入框]向左移动光标</span></div>
+      <div class="kbd-row"><b>↑/↓</b><span>[输入框]增加/减少</span></div>
+      <div class="kbd-row"><b>+/-</b><span>[输入框]正号/负号</span></div>
+      <div class="kbd-row"><b>PgUp/PgDn</b><span>[滑动条]大幅增减 / [输入框]上下滑动右栏</span></div>
     </div>
     </div>
   </div>
