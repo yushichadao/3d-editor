@@ -286,7 +286,7 @@
     transition: max-width .28s ease, opacity .18s ease;
     pointer-events: none;
   }
-  .bottombar.collapsed { padding: 5px; border-radius: 36px; }
+  .bottombar.collapsed { padding: 5px; border-radius: 50%; }
   .view-btn {
     height: 32px; padding: 0 13px; font-size: 12px; font-weight: 500;
     background: transparent; border: none; border-radius: 18px;
@@ -435,11 +435,13 @@
     .brand span { display: none; }
     .top-actions {
       flex: 1 1 0; min-width: 0; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 4px;
-      justify-content: flex-end;
+      justify-content: flex-start;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
       padding: 0 2px;
     }
+    /* 按钮区内容不足时右对齐（margin-left:auto吸收剩余空间）；溢出时自动变为0，正常左右滚动 */
+    .top-actions > :first-child { margin-left: auto; }
     .top-actions::-webkit-scrollbar { display: none; }
     .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
     .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); flex-shrink: 0; margin: 0 2px; }
@@ -5807,18 +5809,12 @@ function addBrushPoint3D(groundPoint) {
   if (pts.length >= 2) {
     const r = brush.thickness / 2;
     let curve;
-    // 预览使用原始点（不refine），长笔画时降采样以保持流畅
-    let previewPts = pts;
-    if (pts.length > 200) {
-      const step = Math.ceil(pts.length / 200);
-      previewPts = [pts[0]];
-      for (let i = step; i < pts.length - 1; i += step) previewPts.push(pts[i]);
-      previewPts.push(pts[pts.length - 1]);
-    }
-    if (previewPts.length === 2) {
-      curve = new THREE.LineCurve3(previewPts[0].clone(), previewPts[1].clone());
+    if (pts.length === 2) {
+      curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
     } else {
-      curve = new THREE.CatmullRomCurve3(previewPts, false, 'centripetal', 0.5);
+      // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
+      const refinedPts = _refineCurvePoints(pts, r);
+      curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
     }
     const curveLength = curve.getLength();
     const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
@@ -6784,11 +6780,7 @@ function _eraseAtSingle(groundPoint) {
 
   brushObjects.forEach(o => {
     let childrenModified = false; // 跟踪子mesh是否被修改（删除或分裂）
-    // === 子mesh数超限时合并最小段，防止指数增长 ===
-    const MAX_CHILDREN = 80;
-    if (o.mesh.children.length > MAX_CHILDREN) {
-      _mergeSmallSegments(o, MAX_CHILDREN / 2);
-    }
+    // 注意：不在此处调用_mergeSmallSegments，避免删除远离橡皮的短段导致乱闪
 
     // === 预计算/复用整体包围盒（与 findObjectsInRadius 共享缓存） ===
     if (!o._groupBounds || o._groupBoundsDirty) {
