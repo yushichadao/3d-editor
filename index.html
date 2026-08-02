@@ -286,7 +286,7 @@
     transition: max-width .28s ease, opacity .18s ease;
     pointer-events: none;
   }
-  .bottombar.collapsed { padding: 5px; border-radius: 50%; }
+  .bottombar.collapsed { padding: 5px; border-radius: 50%; gap: 0; }
   .view-btn {
     height: 32px; padding: 0 13px; font-size: 12px; font-weight: 500;
     background: transparent; border: none; border-radius: 18px;
@@ -3114,9 +3114,8 @@ function rebuildFromSnapshot(s, promises) {
         if (points.length === 2) {
           curve = new THREE.LineCurve3(points[0].clone(), points[1].clone());
         } else {
-          // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-          const refinedPts = _refineCurvePoints(points, segR);
-          curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
+          // 直接使用原始点，不进行细化优化
+          curve = new THREE.CatmullRomCurve3(points.map(p => p.clone()), false, 'centripetal', 0.5);
         }
         const curveLength = curve.getLength();
         // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
@@ -3166,9 +3165,8 @@ function rebuildFromSnapshot(s, promises) {
       if (points.length === 2) {
         curve = new THREE.LineCurve3(points[0].clone(), points[1].clone());
       } else {
-        // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-        const refinedPts = _refineCurvePoints(points, r);
-        curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
+        // 直接使用原始点，不进行细化优化
+        curve = new THREE.CatmullRomCurve3(points.map(p => p.clone()), false, 'centripetal', 0.5);
       }
       const curveLength = curve.getLength();
       // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
@@ -5796,6 +5794,7 @@ function startBrushStroke(groundPoint) {
 }
 
 // 3D画笔：连续绘制，实时生成平滑TubeGeometry
+// 不进行任何优化：直接用原始点创建曲线，原地更新几何体避免闪烁
 function addBrushPoint3D(groundPoint) {
   const pts = brush.currentPoints;
   const last = pts[pts.length - 1];
@@ -5804,7 +5803,7 @@ function addBrushPoint3D(groundPoint) {
   if (last && last.distanceTo(groundPoint) < minDist) return;
 
   pts.push(groundPoint.clone());
-  
+
   // 实时预览：重建TubeGeometry显示平滑连接
   if (pts.length >= 2) {
     const r = brush.thickness / 2;
@@ -5812,28 +5811,18 @@ function addBrushPoint3D(groundPoint) {
     if (pts.length === 2) {
       curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
     } else {
-      // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-      const refinedPts = _refineCurvePoints(pts, r);
-      curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
+      // 直接使用原始点，不进行细化优化
+      curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
     }
     const curveLength = curve.getLength();
     const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
-    // normalType: 0 = TangentSpaceNormal，减少拐弯处法向突变导致的视觉缺陷
     const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
-    
-    // 更新或替换临时预览mesh
+
+    // 原地更新几何体，避免mesh替换导致闪烁
     if (brush.previewMesh) {
-      const oldMesh = brush.previewMesh;
-      const newMesh = new THREE.Mesh(tubeGeo, oldMesh.material);
-      newMesh.castShadow = true; newMesh.receiveShadow = true;
-      newMesh.userData.isPreview = true;
-      brush.previewMesh = newMesh;
-      scene.add(newMesh);
-      // 延迟移除旧mesh，避免闪烁
-      setTimeout(() => {
-        if (oldMesh.geometry) oldMesh.geometry.dispose();
-        scene.remove(oldMesh);
-      }, 0);
+      if (brush.previewMesh.geometry) brush.previewMesh.geometry.dispose();
+      brush.previewMesh.geometry = tubeGeo;
+      brush.previewMesh.position.set(0, 0, 0); // 重置位置（球体模式可能设置了位置）
     } else {
       // 第一次创建预览mesh
       const mat = createBrushMaterial();
@@ -5847,6 +5836,8 @@ function addBrushPoint3D(groundPoint) {
     // 单点时创建或更新预览球
     const r = brush.thickness / 2;
     if (brush.previewMesh) {
+      if (brush.previewMesh.geometry) brush.previewMesh.geometry.dispose();
+      brush.previewMesh.geometry = new THREE.SphereGeometry(r * 0.8, 32, 24);
       brush.previewMesh.position.copy(pts[0]);
     } else {
       const mat = createBrushMaterial();
@@ -5914,18 +5905,14 @@ function endBrushStroke(cancel) {
       sphere.castShadow = true; sphere.receiveShadow = true;
       brush.currentMeshes.push(sphere);
     } else {
-      // 多点：使用CatmullRomCurve3创建平滑曲线
+      // 多点：直接使用原始点创建曲线，不进行细化优化
       let curve;
       if (pts.length === 2) {
         curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
-        curvePoints = pts.map(p => p.clone());
       } else {
-        // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-        const refinedPts = _refineCurvePoints(pts, r);
-        curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
-        // 存储细化后的点，确保擦除/重建时与渲染一致
-        curvePoints = refinedPts.map(p => p.clone());
+        curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
       }
+      curvePoints = pts.map(p => p.clone());
 
       const curveLength = curve.getLength();
       // 增加 tubularSegments 密度，确保笔迹连续平滑（每段至少4个分割）
@@ -5934,7 +5921,7 @@ function endBrushStroke(cancel) {
       const tubeMesh = new THREE.Mesh(tubeGeo, mat);
       tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
 
-      // 存储曲线引用用于擦除功能（使用细化后的点）
+      // 存储曲线引用用于擦除功能（使用原始点）
       tubeMesh.userData.brushCurve = curve;
       tubeMesh.userData.brushCurvePoints = curvePoints;
       tubeMesh.userData.brushRadius = r;
@@ -7109,38 +7096,18 @@ function _eraseAtSingle(groundPoint) {
         let erased = [];
         for (let i = 0; i < eR.length; i += 2) erased.push({ start: eR[i], end: eR[i + 1] });
 
-        // 计算每个擦除段对应的曲线长度，用于判断是否合并微小保留段
-        const totalCurveLen = curvePoints ? _computeCurveLength(curvePoints) : 1;
-        const minKeepFrac = (brushR * 0.3) / Math.max(totalCurveLen, 0.01); // 最小保留段比例
-
-        // 构建 keepRanges，同时将微小保留段合并到相邻擦除段中
+        // 不进行任何优化：直接构建保留段，不合并微小段
         const keepRanges = [];
         let prevEnd = 0;
-        const mergedErased = [];
         for (const r of erased) {
-          const keepFrac = r.start - prevEnd;
-          if (keepFrac > minKeepFrac) {
-            // 正常保留段
+          if (r.start > prevEnd) {
             keepRanges.push({ start: prevEnd, end: r.start });
-          } else if (prevEnd > 0 && mergedErased.length > 0) {
-            // 与上一个擦除段合并（扩大上一个擦除段范围）
-            mergedErased[mergedErased.length - 1].end = r.start;
-          } else {
-            // 独立微小擦除段，保持不变
           }
-          mergedErased.push(r);
           prevEnd = r.end;
         }
-        // 最后一段
-        const finalKeepFrac = 1 - prevEnd;
-        if (finalKeepFrac > minKeepFrac) {
+        if (prevEnd < 1) {
           keepRanges.push({ start: prevEnd, end: 1 });
-        } else if (prevEnd < 1 && mergedErased.length > 0) {
-          // 与最后一个擦除段合并
-          mergedErased[mergedErased.length - 1].end = 1;
         }
-
-        erased = mergedErased;
 
         if (keepRanges.length === 0) {
           toDelete.push(child);
@@ -7148,10 +7115,8 @@ function _eraseAtSingle(groundPoint) {
           if (caps) caps.forEach(cap => { if (cap) toDelete.push(cap); });
           continue;
         } else if (curvePoints && curvePoints.length >= 2) {
-          // 先克隆旧材质和曲线引用（在dispose之前克隆，避免克隆后再释放原材质）
+          // 先克隆旧材质（在dispose之前克隆，避免克隆后再释放原材质）
           const oldMat = child.material;
-          const origCurve = child.userData.brushCurve;
-          // 先克隆材质再dispose原材质，保证克隆时WebGL属性完整
           const baseMat = oldMat ? oldMat.clone() : createBrushMaterial();
           // 销毁旧几何和旧材质
           child.geometry.dispose();
@@ -7177,42 +7142,25 @@ function _eraseAtSingle(groundPoint) {
 
           const createdSegs = [];
           for (const kr of keepRanges) {
-            // 从原始曲线采样点，保持原有形状不变
-            // 不再切片curvePoints后重新插值，避免剩余笔迹形状改变导致"乱飞"
+            // 直接从curvePoints切片，保持原有形状不变
+            // 不使用重采样，避免CatmullRom端点切线不一致导致炸线
             const segPoints = [];
-            if (origCurve) {
-              // 按曲线长度计算采样密度，足够密集以保持原形状
-              const segLenEst = (kr.end - kr.start) * (cacheEntry.curveLen || 1);
-              const numSamples = Math.max(2, Math.min(300, Math.ceil(segLenEst / Math.max(brushR * 0.3, 0.01))));
-              for (let i = 0; i < numSamples; i++) {
-                const t = kr.start + (kr.end - kr.start) * (i / (numSamples - 1));
-                segPoints.push(origCurve.getPointAt(t));
-              }
-              // 确保首末点精确位于擦除边界
-              segPoints[0] = origCurve.getPointAt(kr.start);
-              segPoints[segPoints.length - 1] = origCurve.getPointAt(kr.end);
-            } else if (curvePoints && curvePoints.length >= 2) {
-              // 兜底：无origCurve时从curvePoints切片
-              const startIdx = Math.floor(kr.start * (curvePoints.length - 1));
-              const endIdx = Math.ceil(kr.end * (curvePoints.length - 1));
-              if (endIdx <= startIdx) continue;
-              const sliced = curvePoints.slice(startIdx, endIdx + 1).map(p => p.clone());
-              segPoints.push(...sliced);
-            }
+            const startIdx = Math.floor(kr.start * (curvePoints.length - 1));
+            const endIdx = Math.ceil(kr.end * (curvePoints.length - 1));
+            if (endIdx <= startIdx) continue;
+            const sliced = curvePoints.slice(startIdx, endIdx + 1).map(p => p.clone());
+            segPoints.push(...sliced);
 
             if (segPoints.length >= 2) {
               let segCurve;
               if (segPoints.length === 2) {
                 segCurve = new THREE.LineCurve3(segPoints[0], segPoints[1]);
               } else {
-                // 直接用采样点创建曲线，不再_refineCurvePoints
-                // 采样点已足够密集，refine会增加不必要的计算并可能改变形状
+                // 直接用切片点创建曲线，不进行任何优化
                 segCurve = new THREE.CatmullRomCurve3(segPoints, false, 'centripetal', 0.5);
               }
               const segLen = segCurve.getLength();
-              // 跳过过短的段：防止子mesh指数增长
-              if (segLen < brushR * 0.3) continue;
-              // 降低段分割数上限，减少几何体复杂度
+              // 不跳过短段：保持原有形状不变
               const segSegs = Math.max(8, Math.min(60, Math.floor(segLen / (brushR * 0.5))));
               const segGeo = new THREE.TubeGeometry(segCurve, segSegs, brushR, 24, false, 1);
               const segMesh = new THREE.Mesh(segGeo, baseMat.clone());
@@ -7244,7 +7192,7 @@ function _eraseAtSingle(groundPoint) {
             } else if (segPoints.length === 1) {
               const sphereMesh = new THREE.Mesh(
                 new THREE.SphereGeometry(brushR, 20, 14),
-                child.material ? child.material.clone() : createBrushMaterial()
+                baseMat.clone()
               );
               sphereMesh.position.copy(child.position).add(segPoints[0]);
               sphereMesh.quaternion.copy(child.quaternion);
@@ -8749,9 +8697,8 @@ function pasteClipboard(offset = 0.2, useViewCenter = false) {
           if (points.length === 2) {
             curve = new THREE.LineCurve3(points[0].clone(), points[1].clone());
           } else {
-            // 在高曲率段插入额外点以防止TubeGeometry拐弯处产生"刺"
-            const refinedPts = _refineCurvePoints(points, segR);
-            curve = new THREE.CatmullRomCurve3(refinedPts, false, 'centripetal', 0.5);
+            // 直接使用原始点，不进行细化优化
+            curve = new THREE.CatmullRomCurve3(points.map(p => p.clone()), false, 'centripetal', 0.5);
           }
           const curveLength = curve.getLength();
           // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
