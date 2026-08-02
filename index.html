@@ -257,16 +257,16 @@
   }
   .bottombar::-webkit-scrollbar { display: none; }
   .bottombar > .bb-toggle {
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-    height: 32px; padding: 0 12px; flex-shrink: 0;
-    border-radius: 20px; cursor: pointer; user-select: none;
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; padding: 0; flex-shrink: 0;
+    border-radius: 50%; cursor: pointer; user-select: none;
     background: rgba(110,231,255,0.07); border: 1px solid rgba(110,231,255,0.25);
-    color: var(--accent); font-size: 12px; font-weight: 600;
+    color: var(--accent); font-size: 13px;
     transition: all .2s ease;
   }
   .bottombar > .bb-toggle:hover { background: rgba(110,231,255,0.14); border-color: var(--accent); }
   .bottombar > .bb-toggle .bb-arrow {
-    transition: transform .28s ease; display: inline-block; font-size: 10px;
+    transition: transform .28s ease; display: inline-block; font-size: 12px;
   }
   .bottombar.collapsed > .bb-toggle .bb-arrow { transform: rotate(-90deg); }
   .bottombar > .bb-body {
@@ -296,17 +296,18 @@
     border: 1px solid var(--border); border-radius: 12px;
     font-size: 10.5px; color: var(--text-dim); line-height: 1.6;
     overflow: hidden;
+    transition: max-width .28s ease, border-radius .28s ease;
   }
   .declaration > .decl-header {
     padding: 7px 11px; display: flex; align-items: center; gap: 6px;
     cursor: pointer; user-select: none;
     border-bottom: 1px solid transparent;
-    transition: border-color .25s;
+    transition: border-color .25s, padding .28s ease;
   }
   .declaration:not(.collapsed) > .decl-header {
     border-bottom-color: rgba(110,231,255,0.12);
   }
-  .declaration > .decl-header strong { color: var(--accent); flex: 1; font-weight: 600; }
+  .declaration > .decl-header strong { color: var(--accent); flex: 1; font-weight: 600; transition: font-size .28s ease; }
   .declaration > .decl-header .decl-arrow {
     transition: transform .28s ease; font-size: 10px; color: var(--text-dim);
   }
@@ -322,6 +323,14 @@
     padding-top: 0; padding-bottom: 0;
     transition: max-height .28s ease, opacity .18s ease, padding .24s ease;
   }
+  /* 收缩后变为紧凑药丸样式，减少占屏面积 */
+  .declaration.collapsed {
+    max-width: 70px; border-radius: 20px;
+  }
+  .declaration.collapsed > .decl-header {
+    padding: 4px 10px; gap: 3px;
+  }
+  .declaration.collapsed > .decl-header strong { font-size: 10px; }
 
   /* 提示 */
   .toast {
@@ -411,22 +420,22 @@
     .top-btn { padding: 0 8px; }
     .top-btn-sep { margin: 0 2px; }
   }
-  /* 窄屏：顶栏按钮水平滚动，品牌文字隐藏，面板最大宽度收窄 */
+  /* 窄屏：顶栏按钮水平滚动，品牌仅显示logo，面板最大宽度收窄 */
   @media (max-width: 960px) {
     .topbar { padding: 0 8px; }
-    .brand { font-size: 13px; gap: 6px; margin-right: 6px; }
-    .brand .logo { width: 22px; height: 22px; }
-    .brand .logo::after { transform: translate(6px,6px); }
+    .brand { gap: 6px; margin-right: 4px; flex-shrink: 0; }
+    .brand .logo { width: 24px; height: 24px; }
     .brand span { display: none; }
     .top-actions {
-      flex: 1 1 0; min-width: 0; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 0;
+      flex: 1 1 0; min-width: 0; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; gap: 4px;
       justify-content: flex-start;
       scrollbar-width: none; -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
+      padding: 0 2px;
     }
     .top-actions::-webkit-scrollbar { display: none; }
     .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
-    .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); flex-shrink: 0; margin: 0 3px; }
+    .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); flex-shrink: 0; margin: 0 2px; }
     /* 面板宽度收窄上限 */
     .panel-left { width: clamp(170px, 17vw, 210px); }
     .panel-right { width: clamp(200px, 20vw, 240px); }
@@ -460,8 +469,6 @@
     .top-btn { padding: 0 7px; }
     .view-btn { padding: 0 7px; font-size: 10.5px; }
     .declaration { max-width: 200px; }
-    /* 极窄屏隐藏品牌图标，释放顶栏空间 */
-    .brand { display: none; }
     .top-actions { -webkit-overflow-scrolling: touch; }
   }
 
@@ -926,7 +933,7 @@
 <!-- 底部状态 -->
 <div class="bottombar">
   <div class="bb-toggle" onclick="this.parentElement.classList.toggle('collapsed')" title="展开/收起视角切换">
-    视角 <span class="bb-arrow">▼</span>
+    <span class="bb-arrow">▼</span>
   </div>
   <div class="bb-body">
     <button class="view-btn" data-view="persp">透视</button>
@@ -9470,15 +9477,25 @@ if (isTouch) {
     document.getElementById('panel-left').classList.add('collapsed');
     document.getElementById('panel-right').classList.add('collapsed');
   }
-  // 键盘快捷键面板添加触摸说明
-  const kbdPanel = document.getElementById('sec-kbd');
-  if (kbdPanel) {
-    const note = document.createElement('div');
-    note.className = 'kbd-note touch-only';
-    note.style.display = '';
-    note.innerHTML = '以下快捷键需外接键盘；常用操作可通过顶部按钮与手势完成';
-    kbdPanel.querySelector('.collapsible-body').prepend(note);
-  }
+  // 手机/平板模式隐藏键盘快捷键说明（需外接键盘，移动端不适用）
+  const kbdSec = document.getElementById('sec-kbd');
+  if (kbdSec) kbdSec.style.display = 'none';
+}
+
+// ============ 顶栏交互：滚轮横向滚动 + 禁用视野操作 ============
+// 鼠标在顶栏区域时，滚轮横向滚动按钮区而非缩放视野
+// 顶栏 z-index 高于画布，pointerdown 不会到达画布，视野旋转/平移自然被禁用
+const topbarEl = document.querySelector('.topbar');
+const topActionsEl = document.querySelector('.top-actions');
+if (topbarEl) {
+  // 顶栏区域拦截 wheel 事件，阻止视野缩放，转为横向滚动按钮区
+  topbarEl.addEventListener('wheel', (e) => {
+    // 按钮区可横向滚动时，消费滚轮事件用于横向滚动
+    if (topActionsEl && topActionsEl.scrollWidth > topActionsEl.clientWidth) {
+      e.preventDefault();
+      topActionsEl.scrollLeft += e.deltaY !== 0 ? e.deltaY : e.deltaX;
+    }
+  }, { passive: false });
 }
 
 // 响应式
