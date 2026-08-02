@@ -1386,6 +1386,12 @@ const _touchNdc = new THREE.Vector2();
 const _touchRay = new THREE.Raycaster();
 canvas.addEventListener('pointerdown', (e) => {
   if (!isTouch || e.pointerType !== 'touch' || !e.isPrimary) return;
+  // 画笔/橡皮擦模式下：禁止一切视角操作，仅允许画笔/橡皮擦事件
+  if (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser') {
+    controls.touches.ONE = null;
+    controls.touches.TWO = null;
+    return;
+  }
   const rect = canvas.getBoundingClientRect();
   _touchNdc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   _touchNdc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -2640,31 +2646,36 @@ function refreshProps() {
       if (oi) hasImage = true;
       if (os && ht) hasTexShape = true;
     });
-    // 构建提示文字（合并"作为整体"与解决方案）
+    // 预计算多选特殊状态
+    const noNoColorInSel = !sel.some(o => o.data.color === NO_COLOR);
+    // 无颜色对象：透明度/颜色/花纹/贴图均不可用
+    const anyNoColorSolid = !noNoColorInSel;
+    // 构建提示文字（统一模板：当前包含"特殊对象"，已隐藏"相关控件"（仅支持""解除操作"））
     const hints = ['已选中 ' + sel.length + ' 个对象 · 变换将作为整体操作'];
     if (hasBrush || hasText || hasImage) {
       const blocked = [];
       if (hasBrush) blocked.push('画笔笔迹');
       if (hasText) blocked.push('文本');
       if (hasImage) blocked.push('图片');
-      hints.push('当前包含 ' + blocked.join('、') + '，已隐藏花纹/贴图栏（仅图形对象支持）');
+      hints.push('当前包含"' + blocked.join('、') + '"，已隐藏"花纹/贴图栏"（仅支持"图形对象"，解除操作：排除非图形对象后单选）');
     }
     if (hasImage || hasTexShape) {
-      hints.push('当前包含图片或带贴图的图形，已隐藏颜色栏（请先清除贴图后再上色）');
+      hints.push('当前包含"图片或带贴图图形"，已隐藏"颜色栏"（仅支持"无贴图对象"，解除操作：清除贴图后单选）');
     }
+    if (!noNoColorInSel) {
+      hints.push('当前包含"无颜色对象"，已隐藏"颜色栏、透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为对象上色后单选）');
+    }
+    hints.push('当前为"多选模式"，已隐藏"等比缩放控件"（仅支持"单选模式"，解除操作：单选对象后操作）');
     elMultiHint.style.display = '';
     elMultiHint.innerHTML = hints.join('<br>');
     elProps.style.display = 'block';
     elSecColor.style.display = allCanColor ? '' : 'none';
-    elSecPat.style.display = allCanPattern ? '' : 'none'; // 多选时仅全部可花纹才显示
+    // 多选时若任一对象为 NO_COLOR，禁止花纹/贴图操作
+    elSecPat.style.display = (allCanPattern && noNoColorInSel) ? '' : 'none';
     elSecImg.style.display = 'none'; // 多选时不显示贴图按钮
     elSecText.style.display = 'none';
     elEditText.style.display = 'none';
-    // 多选时若有任一对象为 NO_COLOR+纯色，隐藏透明度控件避免误操作
-    const anyNoColorSolid = sel.some(o =>
-      (o.data.isBrush === true ? !o.data.pattern : (!o.data.pattern || o.data.pattern === '纯色') && !o.data.image)
-      && o.data.color === NO_COLOR
-    );
+    // 多选时若有任一对象为 NO_COLOR，隐藏透明度控件
     document.getElementById('row-opacity').style.display = anyNoColorSolid ? 'none' : '';
     // 多选时隐藏等比缩放控件和锁定比例，禁用缩放模式按钮
     document.getElementById('row-scale').style.display = 'none';
@@ -2686,7 +2697,9 @@ function refreshProps() {
     elMultiHint.style.display = 'none';
     elProps.style.display = 'block';
     elSecColor.style.display = canColor ? '' : 'none';
-    elSecPat.style.display = (canPattern || canTexture) ? '' : 'none';
+    // 无颜色对象禁止花纹/贴图操作，隐藏设置入口
+    const isNoColor = primary.data.color === NO_COLOR;
+    elSecPat.style.display = ((canPattern || canTexture) && !isNoColor) ? '' : 'none';
     elSecImg.style.display = canTexture ? '' : 'none';
     elSecText.style.display = isText ? '' : 'none';
     elEditText.style.display = isText ? '' : 'none';
@@ -2708,12 +2721,12 @@ function refreshProps() {
       // 更新花纹预览
       updatePatternPreviews(primary.data.color === NO_COLOR ? 0xcccccc : primary.data.color);
     }
-    if (canPattern) {
+    if (canPattern && !isNoColor) {
       document.querySelectorAll('.pat-btn').forEach(b => b.classList.toggle('active', b.dataset.p === primary.data.pattern));
     }
-    // 花纹/贴图合并栏：花纹网格仅在有花纹时显示
+    // 花纹/贴图合并栏：花纹网格仅在可花纹且非NO_COLOR时显示
     const patGridEl = document.getElementById('pat-grid');
-    if (patGridEl) patGridEl.style.display = canPattern ? '' : 'none';
+    if (patGridEl) patGridEl.style.display = (canPattern && !isNoColor) ? '' : 'none';
     // 显示形状参数（3D/2D形状）或图片尺寸
     if (isShape) {
       showShapeParams(primary);
@@ -3862,8 +3875,13 @@ function setTool(t) {
   // 移动端画笔/橡皮擦模式下完全禁用手势操作（旋转/平移/缩放），防止误触
   if (isTouch && (t === 'brush3d' || t === 'brush2d' || t === 'eraser')) {
     controls.enabled = false;
+    controls.touches.ONE = null;
+    controls.touches.TWO = null;
   } else if (isTouch) {
     controls.enabled = true;
+    // 恢复默认手势：单指动态判断，双指缩放+平移
+    controls.touches.ONE = null;
+    controls.touches.TWO = THREE.TOUCH.DOLLY_PAN;
   }
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('disabled', disableTransform));
   const lockRatioEl = document.getElementById('lock-ratio');
@@ -4157,6 +4175,10 @@ noColorDot.addEventListener('click', () => {
   if (state.selectedList.length === 0) return;
   state.selectedList.forEach(o => {
     o.data.color = NO_COLOR;
+    // 无颜色时清除花纹和贴图，改为默认纯色
+    o.data.pattern = '纯色';
+    delete o.data.image;
+    delete o.data._imgTex;
     applyAppearance(o);
     const mk = getMemoryKey(o);
     if (mk) colorMemory[mk] = NO_COLOR;
@@ -4164,6 +4186,8 @@ noColorDot.addEventListener('click', () => {
   pushHistory();
   updateColorSelectionUI();
   updatePatternPreviews(0xcccccc);
+  // 立即隐藏花纹/贴图设置入口
+  elSecPat.style.display = 'none';
 });
 colorRow.appendChild(noColorDot);
 // 添加预设颜色（无颜色之后）
@@ -4184,6 +4208,10 @@ COLORS.forEach(c => {
     pushHistory();
     updateColorSelectionUI();
     updatePatternPreviews(c);
+    // 从NO_COLOR切换到普通颜色时，立即恢复花纹/贴图栏
+    if (state.selectedList.some(o => o.data.type !== 'brush')) {
+      elSecPat.style.display = state.selectedList.every(o => o.data.color !== NO_COLOR) ? '' : 'none';
+    }
   });
   colorRow.appendChild(dot);
 });
@@ -4529,6 +4557,10 @@ objCustomColor.addEventListener('input', (e) => {
     updatePatternPreviews(colorVal);
     // 节流保存状态，确保点击外部后修改不会丢失
     scheduleColorSave();
+    // 取色器过程中从NO_COLOR切换到普通颜色时，恢复花纹/贴图栏
+    if (state.selectedList.some(o => o.data.type !== 'brush')) {
+      elSecPat.style.display = state.selectedList.every(o => o.data.color !== NO_COLOR) ? '' : 'none';
+    }
   }
 });
 objCustomColor.addEventListener('blur', () => {
@@ -4565,6 +4597,10 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
       updateColorSelectionUI();
       // 更新花纹预览
       updatePatternPreviews(colorVal);
+      // 从NO_COLOR切换到普通颜色时，立即恢复花纹/贴图栏
+      if (state.selectedList.some(o => o.data.type !== 'brush')) {
+        elSecPat.style.display = state.selectedList.every(o => o.data.color !== NO_COLOR) ? '' : 'none';
+      }
       toast('已应用颜色 ' + hex);
     }
   }
