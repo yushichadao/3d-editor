@@ -6759,19 +6759,20 @@ function _mergeSmallSegments(o, targetCount) {
   o._capsMapDirty = true;
   o._needsRecenter = true;
 }
-function _eraseAtSingle(groundPoint, brushObjectsParam) {
+function _eraseAtSingle(points, brushObjectsParam) {
+  // points: 擦除点数组（路径插值后的所有点），批量处理避免多次遍历子mesh
+  if (!Array.isArray(points)) points = [points];
   const radius = state.eraserSize;
   const effR = Math.max(radius, 0.05);
   let anyDeleted = false;
   const brushObjects = brushObjectsParam || state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
 
   brushObjects.forEach(o => {
-    // 跳过已被删除的对象（可能在路径插值多步循环中被前一步删除）
+    // 跳过已被删除的对象
     if (!o.mesh.parent) return;
-    let childrenModified = false; // 跟踪子mesh是否被修改（删除或分裂）
-    // 注意：不在此处调用_mergeSmallSegments，避免删除远离橡皮的短段导致乱闪
+    let childrenModified = false;
 
-    // === 预计算/复用整体包围盒（与 findObjectsInRadius 共享缓存） ===
+    // === 预计算/复用整体包围盒 ===
     if (!o._groupBounds || o._groupBoundsDirty) {
       o.mesh.updateMatrixWorld(false);
       let minX = Infinity, minY = Infinity, minZ = Infinity;
@@ -6799,15 +6800,18 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
     const isBrush2D = o.data.type === 'brush2d';
     const bounds = o._groupBounds;
     if (bounds) {
+      // 检查是否有任何一个擦除点在包围盒范围内
+      let inRange = false;
       if (isBrush2D) {
-        // 2D画笔：使用点距判定（XZ平面）
-        const cx = Math.max(bounds.minX, Math.min(groundPoint.x, bounds.maxX));
-        const cz = Math.max(bounds.minZ, Math.min(groundPoint.z, bounds.maxZ));
-        const dx = groundPoint.x - cx, dz = groundPoint.z - cz;
-        if (dx * dx + dz * dz > (radius + 0.15) * (radius + 0.15)) return;
+        const r2d = (radius + 0.15);
+        const r2dSq = r2d * r2d;
+        for (const pt of points) {
+          const cx = Math.max(bounds.minX, Math.min(pt.x, bounds.maxX));
+          const cz = Math.max(bounds.minZ, Math.min(pt.z, bounds.maxZ));
+          const dx = pt.x - cx, dz = pt.z - cz;
+          if (dx * dx + dz * dz <= r2dSq) { inRange = true; break; }
+        }
       } else {
-        // 3D画笔：使用 groundPoint 到 AABB 的距离判定
-        // 这比射线距离更准确，特别是对于自交/复杂曲线
         const ccx = (bounds.minX + bounds.maxX) * 0.5;
         const ccy = (bounds.minY + bounds.maxY) * 0.5;
         const ccz = (bounds.minZ + bounds.maxZ) * 0.5;
@@ -6816,12 +6820,14 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
           (bounds.maxY - bounds.minY) * (bounds.maxY - bounds.minY) +
           (bounds.maxZ - bounds.minZ) * (bounds.maxZ - bounds.minZ)
         ) * 0.5;
-        const dx = groundPoint.x - ccx;
-        const dy = groundPoint.y - ccy;
-        const dz = groundPoint.z - ccz;
         const maxDist = radius + halfDiag + 0.15;
-        if (dx * dx + dy * dy + dz * dz > maxDist * maxDist) return;
+        const maxDistSq = maxDist * maxDist;
+        for (const pt of points) {
+          const dx = pt.x - ccx, dy = pt.y - ccy, dz = pt.z - ccz;
+          if (dx * dx + dy * dy + dz * dz <= maxDistSq) { inRange = true; break; }
+        }
       }
+      if (!inRange) return;
     }
 
     const toDelete = [];
@@ -6909,7 +6915,6 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
     o.mesh.updateMatrixWorld(false); // false=不强制更新子节点，性能更好
     // 使用副本遍历，避免分裂时o.mesh.remove/add修改原数组导致子对象被跳过
     const children = o.mesh.children.slice();
-    const gx = groundPoint.x, gy = groundPoint.y, gz = groundPoint.z;
 
     for (const child of children) {
       if (!child.isMesh) continue;
@@ -6919,18 +6924,19 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
       let hit = false;
 
       if (isBrush2D) {
-        // === 2D画笔判定：相交即擦除 ===
-        // 只要笔迹段与橡皮擦光标圆圈有任何部分重叠就删除该段
+        // === 2D画笔判定：相交即擦除（检查所有擦除点） ===
         const effR2D = Math.max(radius, 0.05);
         const effRSq = effR2D * effR2D;
         if (geo.type === 'CircleGeometry') {
           const r = (params && params.radius !== undefined) ? params.radius : 0.1;
           const wPos = new THREE.Vector3();
           child.getWorldPosition(wPos);
-          const dx = gx - wPos.x, dz = gz - wPos.z;
-          // 两圆相交判定：圆心距离 < 橡皮擦半径 + 笔迹半径
           const thr = effR2D + r;
-          hit = (dx * dx + dz * dz) <= thr * thr;
+          const thrSq = thr * thr;
+          for (const pt of points) {
+            const dx = pt.x - wPos.x, dz = pt.z - wPos.z;
+            if (dx * dx + dz * dz <= thrSq) { hit = true; break; }
+          }
         } else if (geo.type === 'BufferGeometry' && geo.attributes && geo.attributes.position) {
           const posAttr = geo.attributes.position;
           const pts = [];
@@ -6944,31 +6950,35 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
             if (!seen.has(key)) { seen.add(key); pts.push([tmp.x, tmp.z]); }
           }
           if (pts.length >= 3) {
-            // 连接段矩形与橡皮擦圆相交判定
-            hit = _circleRectIntersectXZ(gx, gz, effR2D, pts);
+            for (const pt of points) {
+              if (_circleRectIntersectXZ(pt.x, pt.z, effR2D, pts)) { hit = true; break; }
+            }
           } else if (pts.length === 2) {
-            // 退化为线段与圆相交
             const [a, b] = pts;
             const abx = b[0] - a[0], abz = b[1] - a[1];
             const lenSq = abx * abx + abz * abz;
-            let t = 0;
-            if (lenSq > 1e-10) {
-              t = ((gx - a[0]) * abx + (gz - a[1]) * abz) / lenSq;
-              t = Math.max(0, Math.min(1, t));
+            for (const pt of points) {
+              let t = 0;
+              if (lenSq > 1e-10) {
+                t = ((pt.x - a[0]) * abx + (pt.z - a[1]) * abz) / lenSq;
+                t = Math.max(0, Math.min(1, t));
+              }
+              const px = a[0] + abx * t, pz = a[1] + abz * t;
+              const dx = pt.x - px, dz = pt.z - pz;
+              if (dx * dx + dz * dz <= effRSq) { hit = true; break; }
             }
-            const px = a[0] + abx * t, pz = a[1] + abz * t;
-            const dx = gx - px, dz = gz - pz;
-            hit = (dx * dx + dz * dz) <= effRSq;
           }
         } else {
           if (!geo.boundingSphere) geo.computeBoundingSphere();
           const childR = geo.boundingSphere ? geo.boundingSphere.radius : 0.1;
           const wPos = new THREE.Vector3();
           child.getWorldPosition(wPos);
-          const dx = gx - wPos.x, dz = gz - wPos.z;
-          // 相交判定：圆心距离 < 橡皮擦半径 + 对象半径
           const thr = effR2D + childR;
-          hit = (dx * dx + dz * dz) <= thr * thr;
+          const thrSq = thr * thr;
+          for (const pt of points) {
+            const dx = pt.x - wPos.x, dz = pt.z - wPos.z;
+            if (dx * dx + dz * dz <= thrSq) { hit = true; break; }
+          }
         }
       } else if (geo.type === 'TubeGeometry') {
         // === 3D画笔TubeGeometry：使用预计算缓存，缺失时即时构建（兜底，防止首次擦除tube不可擦） ===
@@ -6999,7 +7009,7 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
         }
         const { samplePts, brushRadius: brushR, curvePoints } = cacheEntry;
 
-        // 先用 boundingSphere + groundPoint 球距离粗筛
+        // 先用 boundingSphere 球距离粗筛（检查所有擦除点）
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         if (geo.boundingSphere) {
           const bsCenterLocal = geo.boundingSphere.center;
@@ -7007,19 +7017,21 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
           const bsR = geo.boundingSphere.radius;
           const dMax = brushR + effR + bsR;
           const dMaxSq = dMax * dMax;
-          const dx = gx - bsCenterWorld.x;
-          const dy = gy - bsCenterWorld.y;
-          const dz = gz - bsCenterWorld.z;
-          const sphSq = dx * dx + dy * dy + dz * dz;
-          if (sphSq > dMaxSq) {
+          let inBsRange = false;
+          for (const pt of points) {
+            const dx = pt.x - bsCenterWorld.x;
+            const dy = pt.y - bsCenterWorld.y;
+            const dz = pt.z - bsCenterWorld.z;
+            if (dx * dx + dy * dy + dz * dz <= dMaxSq) { inBsRange = true; break; }
+          }
+          if (!inBsRange) {
             toKeep.push(child);
             continue;
           }
         }
 
         // 使用预计算采样点检测擦除区间（带边界插值）
-        // 仅使用 groundPoint 球距离判定，确保只擦除光标附近的曲线段，
-        // 不影响交点处其他分支或远处的曲线部分
+        // 批量处理：对每个采样点找到最近的擦除点，用其距离判定擦除状态
         const thr = brushR + effR;
         const thrSq = thr * thr;
         const erasedRanges = [];
@@ -7027,17 +7039,21 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
         let rangeStart = 0;
         let anyHit = false;
 
-        // 收集每个采样点的擦除状态和球距离
+        // 收集每个采样点的擦除状态和到最近擦除点的球距离
         const isErasedArr = new Array(samplePts.length);
         const distSqArr = new Array(samplePts.length);
         for (let i = 0; i < samplePts.length; i++) {
           const sp = samplePts[i];
-          const dx = sp.x - gx;
-          const dy = sp.y - gy;
-          const dz = sp.z - gz;
-          const sphSq = dx * dx + dy * dy + dz * dz;
-          distSqArr[i] = sphSq;
-          isErasedArr[i] = sphSq < thrSq;
+          let minSq = Infinity;
+          for (let j = 0; j < points.length; j++) {
+            const dx = sp.x - points[j].x;
+            const dy = sp.y - points[j].y;
+            const dz = sp.z - points[j].z;
+            const sq = dx * dx + dy * dy + dz * dz;
+            if (sq < minSq) minSq = sq;
+          }
+          distSqArr[i] = minSq;
+          isErasedArr[i] = minSq < thrSq;
           if (isErasedArr[i]) anyHit = true;
         }
 
@@ -7216,14 +7232,16 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
           }
         }
       } else if (geo.type === 'SphereGeometry') {
-        // 3D画笔端帽：仅使用 groundPoint 球距离判定
+        // 3D画笔端帽：检查所有擦除点的球距离
         const r = (params && params.radius !== undefined) ? params.radius : 0.1;
         const wPos = new THREE.Vector3();
         child.getWorldPosition(wPos);
         const thr = (r + effR);
         const thrSq = thr * thr;
-        const dx = gx - wPos.x, dy = gy - wPos.y, dz = gz - wPos.z;
-        hit = (dx * dx + dy * dy + dz * dz) <= thrSq;
+        for (const pt of points) {
+          const dx = pt.x - wPos.x, dy = pt.y - wPos.y, dz = pt.z - wPos.z;
+          if (dx * dx + dy * dy + dz * dz <= thrSq) { hit = true; break; }
+        }
       } else if (geo.type === 'CylinderGeometry') {
         const h = (params && params.height !== undefined) ? params.height : 0.1;
         const localA = new THREE.Vector3(0, -h / 2, 0);
@@ -7231,17 +7249,21 @@ function _eraseAtSingle(groundPoint, brushObjectsParam) {
         const worldA = localA.applyMatrix4(child.matrixWorld);
         const worldB = localB.applyMatrix4(child.matrixWorld);
         const cylR = Math.max((params && params.radiusTop) || 0, (params && params.radiusBottom) || 0);
-        hit = _sphereCylinderIntersect(groundPoint, radius, worldA, worldB, cylR);
+        for (const pt of points) {
+          if (_sphereCylinderIntersect(pt, radius, worldA, worldB, cylR)) { hit = true; break; }
+        }
       } else {
-        // 其他几何体：仅使用 groundPoint 球距离判定
+        // 其他几何体：检查所有擦除点的球距离
         if (!geo.boundingSphere) geo.computeBoundingSphere();
         const childR = geo.boundingSphere ? geo.boundingSphere.radius : 0.1;
         const wPos = new THREE.Vector3();
         child.getWorldPosition(wPos);
         const thr = effR + childR;
         const thrSq = thr * thr;
-        const dx = gx - wPos.x, dy = gy - wPos.y, dz = gz - wPos.z;
-        hit = (dx * dx + dy * dy + dz * dz) <= thrSq;
+        for (const pt of points) {
+          const dx = pt.x - wPos.x, dy = pt.y - wPos.y, dz = pt.z - wPos.z;
+          if (dx * dx + dy * dy + dz * dz <= thrSq) { hit = true; break; }
+        }
       }
       if (hit) toDelete.push(child);
       else toKeep.push(child);
@@ -7314,22 +7336,26 @@ function eraseAt(groundPoint) {
     const gp = groundPoint;
     // 预过滤画笔对象，避免路径插值多步中重复过滤
     const brushObjects = state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
-    if (brushObjects.length > 0 && _lastErasePoint) {
-      // 对所有画笔类型（2D/3D）使用路径插值，避免快速移动漏擦
-      // 步长设为橡皮半径的一半，确保擦除球覆盖无遗漏（有效擦除半径=brushR+effR > step）
-      const segLen = gp.distanceTo(_lastErasePoint);
-      const step = Math.max(0.05, radius * 0.5);
-      const steps = Math.ceil(segLen / step);
-      for (let i = 0; i <= steps; i++) {
-        const t = steps === 0 ? 1 : (i / steps);
-        const px = _lastErasePoint.x + (gp.x - _lastErasePoint.x) * t;
-        const py = _lastErasePoint.y + (gp.y - _lastErasePoint.y) * t;
-        const pz = _lastErasePoint.z + (gp.z - _lastErasePoint.z) * t;
-        const pt = new THREE.Vector3(px, py, pz);
-        if (_eraseAtSingle(pt, brushObjects)) brushDeleted = true;
+    if (brushObjects.length > 0) {
+      // 路径插值：收集所有插值点，一次性批量处理
+      const allPoints = [];
+      if (_lastErasePoint) {
+        const segLen = gp.distanceTo(_lastErasePoint);
+        const step = Math.max(0.05, radius * 0.5);
+        const steps = Math.ceil(segLen / step);
+        for (let i = 0; i <= steps; i++) {
+          const t = steps === 0 ? 1 : (i / steps);
+          allPoints.push(new THREE.Vector3(
+            _lastErasePoint.x + (gp.x - _lastErasePoint.x) * t,
+            _lastErasePoint.y + (gp.y - _lastErasePoint.y) * t,
+            _lastErasePoint.z + (gp.z - _lastErasePoint.z) * t
+          ));
+        }
+      } else {
+        allPoints.push(gp);
       }
-    } else {
-      if (_eraseAtSingle(gp, brushObjects.length > 0 ? brushObjects : undefined)) brushDeleted = true;
+      // 批量处理：一次遍历所有子mesh，用所有擦除点同时检测
+      if (_eraseAtSingle(allPoints, brushObjects)) brushDeleted = true;
     }
     _lastErasePoint = gp.clone();
 
