@@ -80,8 +80,8 @@
     box-shadow: var(--shadow); overflow-y: auto;
     max-height: calc(100vh - 72px);
   }
-  .panel-left { left: 14px; width: clamp(160px, 16vw, 220px); transition: transform .25s ease; }
-  .panel-right { right: 14px; width: clamp(180px, 18vw, 250px); transition: transform .25s ease; }
+  .panel-left { left: 14px; width: clamp(180px, 18vw, 240px); transition: transform .25s ease; }
+  .panel-right { right: 14px; width: clamp(210px, 21vw, 280px); transition: transform .25s ease; }
   .panel-left.collapsed { transform: translateX(calc(-100% - 18px)); }
   .panel-right.collapsed { transform: translateX(calc(100% + 18px)); }
   /* 面板收缩按钮（所有宽度统一） */
@@ -95,8 +95,8 @@
     transition: all .25s ease;
   }
   .panel-toggle:hover { color: var(--text); border-color: var(--accent); }
-  .panel-toggle.left { left: calc(20px + clamp(160px, 16vw, 220px)); }
-  .panel-toggle.right { right: calc(20px + clamp(180px, 18vw, 250px)); }
+  .panel-toggle.left { left: calc(20px + clamp(180px, 18vw, 240px)); }
+  .panel-toggle.right { right: calc(20px + clamp(210px, 21vw, 280px)); }
   .panel-toggle.left.collapsed { left: 14px; }
   .panel-toggle.right.collapsed { right: 14px; }
   .panel h3 {
@@ -425,8 +425,8 @@
     .top-btn { height: 28px; padding: 0 8px; font-size: 11.5px; flex-shrink: 0; }
     .top-btn-sep { display: none; }
     /* 面板宽度收窄上限 */
-    .panel-left { width: clamp(160px, 16vw, 200px); }
-    .panel-right { width: clamp(180px, 18vw, 220px); }
+    .panel-left { width: clamp(170px, 17vw, 210px); }
+    .panel-right { width: clamp(200px, 20vw, 240px); }
     .declaration { bottom: 64px; left: 8px; right: 8px; max-width:none; font-size:10px; padding:8px 10px; }
     .bottombar {
       bottom: 10px; padding: 5px; gap:4px;
@@ -796,9 +796,9 @@
       <div class="kbd-note">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
       <table class="kbd-table">
         <tr><th>按键</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑</td><td>X轴+/−平移</td><td>视角下/上平移</td></tr>
-        <tr><td>→/←</td><td>Y轴+/−平移</td><td>视角右/左平移</td></tr>
-        <tr><td>PgUp/PgDn</td><td>Z轴+/−平移</td><td>—</td></tr>
+        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角下/上平移</td></tr>
+        <tr><td>→/←</td><td>沿Y轴+/−平移</td><td>视角右/左平移</td></tr>
+        <tr><td>PgUp/PgDn</td><td>沿Z轴+/−平移</td><td>—</td></tr>
         <tr><td>A/D</td><td>绕Z轴逆/顺旋转</td><td>视角左/右旋转</td></tr>
         <tr><td>W/S</td><td>绕Y轴逆/顺旋转</td><td>视角上/下旋转</td></tr>
         <tr><td>E/Q</td><td>绕X轴逆/顺旋转</td><td>—</td></tr>
@@ -837,6 +837,7 @@
       <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
       <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
       <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
+      <div class="kbd-title">其他</div>
       <div class="kbd-row"><b>Shift+点击</b><span>加选对象（多点选）</span></div>
     </div>
     </div>
