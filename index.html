@@ -236,6 +236,12 @@
   .kbd-row { display: flex; gap: 6px; align-items: baseline; padding: 1px 0; }
   .kbd-row > b { flex: 0 0 auto; min-width: 42px; }
   .kbd-row > span { flex: 1 1 auto; word-break: break-all; }
+  .kbd-table { width: 100%; border-collapse: collapse; font-size: 9px; margin: 2px 0 4px; }
+  .kbd-table th { color: var(--accent-2); font-weight: 700; padding: 2px 1px; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
+  .kbd-table td { padding: 1px 2px; border-bottom: 1px solid rgba(128,128,128,0.1); vertical-align: top; }
+  .kbd-table td:first-child { color: var(--accent); font-weight: 600; white-space: nowrap; text-align: left; }
+  .kbd-table td:not(:first-child) { color: var(--text-dim); text-align: center; }
+  .kbd-note { font-size: 9px; color: var(--text-dim); line-height: 1.4; padding: 1px 2px 3px; }
 
   /* 底部状态条 */
   .bottombar {
@@ -784,26 +790,30 @@
     </div>
     <div class="collapsible-body">
     <div class="kbd">
-      <div class="kbd-title">对象操作 / 视角操作（按是否选取对象自动切换）</div>
-      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">步长：平移0.1单位网格长度（0.15长度），旋转5°；Shift时平移1单位网格长度（1.5长度），旋转90°</div>
-      <div class="kbd-row"><b>→/←</b><span>[对象]沿Y轴正/负平移 / [视角]向左/右平移</span></div>
-      <div class="kbd-row"><b>↓/↑</b><span>[对象]沿X轴正/负平移 / [视角]向上/下平移</span></div>
-      <div class="kbd-row"><b>PgUp/PgDn</b><span>[对象]沿Z轴正/负平移</span></div>
-      <div class="kbd-row"><b>A/D</b><span>[对象]绕Z轴顺/逆时针旋转 / [视角]向左/右旋转</span></div>
-      <div class="kbd-row"><b>W/S</b><span>[对象]绕Y轴顺/逆时针旋转 / [视角]向上/下旋转</span></div>
-      <div class="kbd-row"><b>E/Q</b><span>[对象]绕X轴顺/逆时针旋转</span></div>
-      <div class="kbd-row"><b>+/-</b><span>[对象]放大5%/缩小5%</span></div>
+      <div class="kbd-title">基础按键（按上下文区分）</div>
+      <div class="kbd-note">选取对象时：平移0.1网格（0.15长度）/ 旋转5°；未选取时：视角平移0.1网格 / 旋转5°</div>
+      <table class="kbd-table">
+        <tr><th>按键</th><th>选取对象时</th><th>未选取时</th><th>滑动条</th><th>输入框</th></tr>
+        <tr><td>←/→</td><td>沿Y轴平移</td><td>视角左右平移</td><td>减/增</td><td>移动光标</td></tr>
+        <tr><td>↑/↓</td><td>沿X轴平移</td><td>视角上下平移</td><td>增/减</td><td>增/减</td></tr>
+        <tr><td>PgUp/PgDn</td><td>沿Z轴平移</td><td>—</td><td>大幅增减</td><td>滚动右栏</td></tr>
+        <tr><td>A/D</td><td>绕Z轴旋转</td><td>视角左右旋转</td><td>—</td><td>—</td></tr>
+        <tr><td>W/S</td><td>绕Y轴旋转</td><td>视角上下旋转</td><td>—</td><td>—</td></tr>
+        <tr><td>E/Q</td><td>绕X轴旋转</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>+/-</td><td>缩放5%</td><td>—</td><td>—</td><td>正/负号</td></tr>
+      </table>
+      <div class="kbd-title">Shift 组合键（按上下文区分）</div>
+      <div class="kbd-note">选取对象时：平移1网格（1.5长度）/ 旋转90°；未选取时：视角平移1网格 / 旋转90°</div>
+      <table class="kbd-table">
+        <tr><th>Shift+</th><th>选取对象时</th><th>未选取时</th></tr>
+        <tr><td>←/→/↑/↓/PgUp/PgDn</td><td>平移1网格</td><td>视角平移1网格</td></tr>
+        <tr><td>A/D/W/S/E/Q</td><td>旋转90°</td><td>视角旋转90°</td></tr>
+        <tr><td>+/-</td><td>×2/×0.5</td><td>—</td></tr>
+      </table>
       <div class="kbd-title">功能键</div>
       <div class="kbd-row"><b>Esc</b><span>取消操作/退出全屏</span></div>
       <div class="kbd-row"><b>F11</b><span>全屏/退出全屏</span></div>
       <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
-      <div class="kbd-title">Shift 组合键</div>
-      <div class="kbd-row"><b>Shift + →/←/↓/↑</b><span>[对象]沿轴平移 / [视角]视角平移</span></div>
-      <div class="kbd-row"><b>Shift + PgUp/PgDn</b><span>[对象]沿Z轴平移</span></div>
-      <div class="kbd-row"><b>Shift + A/D/W/S</b><span>[对象]绕轴旋转 / [视角]视角旋转</span></div>
-      <div class="kbd-row"><b>Shift + E/Q</b><span>[对象]绕X轴旋转90°</span></div>
-      <div class="kbd-row"><b>Shift + + / -</b><span>放大至2倍/缩小到50%</span></div>
-      <div class="kbd-row"><b>Shift + 点击</b><span>加选对象（多点选）</span></div>
       <div class="kbd-title">Ctrl 组合键</div>
       <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
       <div class="kbd-row"><b>Ctrl+N</b><span>新建场景</span></div>
@@ -816,13 +826,9 @@
       <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
       <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
       <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
-      <div class="kbd-title">滑动条 / 数字输入框</div>
-      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">点击或拖动滑动条/数字输入框时生效，原键盘快捷键暂时失效；点击以外位置恢复</div>
-      <div class="kbd-row"><b>→/↑</b><span>[滑动条]增加 / [输入框]向右移动光标</span></div>
-      <div class="kbd-row"><b>←/↓</b><span>[滑动条]减少 / [输入框]向左移动光标</span></div>
-      <div class="kbd-row"><b>↑/↓</b><span>[输入框]增加/减少</span></div>
-      <div class="kbd-row"><b>+/-</b><span>[输入框]正号/负号</span></div>
-      <div class="kbd-row"><b>PgUp/PgDn</b><span>[滑动条]大幅增减 / [输入框]上下滑动右栏</span></div>
+      <div class="kbd-title">其他组合</div>
+      <div class="kbd-row"><b>Shift+点击</b><span>加选对象（多点选）</span></div>
+      <div class="kbd-note">滑动条/输入框：点击对应控件时生效，原快捷键暂时失效；点击以外区域恢复</div>
     </div>
     </div>
   </div>
