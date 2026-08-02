@@ -241,7 +241,7 @@
   .kbd-table th:first-child { width: 28%; }
   .kbd-table th:not(:first-child) { width: 36%; }
   .kbd-table td { padding: 1px 2px; border-bottom: 1px solid rgba(128,128,128,0.1); vertical-align: top; word-break: break-all; }
-  .kbd-table td:first-child { color: var(--accent); font-weight: 600; white-space: nowrap; text-align: left; overflow: hidden; text-overflow: ellipsis; }
+  .kbd-table td:first-child { color: var(--accent); font-weight: 600; text-align: left; }
   .kbd-table td:not(:first-child) { color: var(--text-dim); text-align: center; }
   .kbd-note { font-size: 9px; color: var(--text-dim); line-height: 1.4; padding: 1px 2px 3px; }
 
@@ -808,9 +808,11 @@
       <div class="kbd-note">选取对象时：平移1网格（1.5长度）/ 旋转90°<br>未选取时：视角平移1网格 / 旋转90°</div>
       <table class="kbd-table">
         <tr><th>Shift+</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑/→/←/PgUp/PgDn</td><td>平移1网格</td><td>视角平移1网格</td></tr>
+        <tr><td>↓/↑/→/←</td><td>平移1网格</td><td>视角平移1网格</td></tr>
+        <tr><td>PgUp/PgDn</td><td>平移1网格</td><td>视角平移1网格</td></tr>
         <tr><td>A/D/W/S/E/Q</td><td>旋转90°</td><td>视角旋转90°</td></tr>
         <tr><td>+/-</td><td>放大×2/缩小×0.5</td><td>—</td></tr>
+        <tr><td>点击</td><td colspan="2">加选对象（多点选）</td></tr>
       </table>
       <div class="kbd-title">滑动条 / 输入框</div>
       <div class="kbd-note">聚焦滑动条或输入框时生效，原快捷键暂时失效</div>
@@ -837,8 +839,6 @@
       <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
       <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
       <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
-      <div class="kbd-title">其他</div>
-      <div class="kbd-row"><b>Shift+点击</b><span>加选对象（多点选）</span></div>
     </div>
     </div>
   </div>
