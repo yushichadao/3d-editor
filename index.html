@@ -422,12 +422,20 @@
       scrollbar-width: none; -ms-overflow-style: none;
     }
     .top-actions::-webkit-scrollbar { display: none; }
-    .top-btn { height: 28px; padding: 0 8px; font-size: 11.5px; flex-shrink: 0; }
+    .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
     .top-btn-sep { display: none; }
     /* 面板宽度收窄上限 */
     .panel-left { width: clamp(170px, 17vw, 210px); }
     .panel-right { width: clamp(200px, 20vw, 240px); }
-    .declaration { bottom: 64px; left: 8px; right: 8px; max-width:none; font-size:10px; padding:8px 10px; }
+    .panel { max-height: calc(100vh - 130px); }
+    /* 面板折叠按钮移至顶栏下方，避免遮挡 */
+    .panel-toggle { top: 56px; }
+    .panel-toggle.left.collapsed { left: 8px; }
+    .panel-toggle.right.collapsed { right: 8px; }
+    .panel-toggle.left:not(.collapsed) { left: calc(12px + clamp(170px, 17vw, 210px)); }
+    .panel-toggle.right:not(.collapsed) { right: calc(12px + clamp(200px, 20vw, 240px)); }
+    /* 声明保持卡片样式，不全宽拉伸 */
+    .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
       bottom: 10px; padding: 5px; gap:4px;
       max-width: calc(100vw - 16px); overflow-x: auto;
@@ -435,12 +443,13 @@
       -webkit-overflow-scrolling: touch;
     }
     .bottombar::-webkit-scrollbar { display: none; }
-    .view-btn { height: 28px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
+    .view-btn { height: 30px; padding: 0 9px; font-size: 11px; flex-shrink: 0; }
     .toast { top: auto; bottom: 80px; }
   }
   @media (max-width: 460px) {
     .top-btn { padding: 0 7px; }
     .view-btn { padding: 0 7px; font-size: 10.5px; }
+    .declaration { max-width: 200px; }
   }
 
   /* 隐藏文件输入 */
@@ -470,10 +479,6 @@
       max-width: 80vw;
       z-index: 55;
     }
-    .panel-left { left: 8px; }
-    .panel-right { right: 8px; }
-    .panel-toggle.left { left: calc(12px + clamp(170px, 17vw, 210px)); }
-    .panel-toggle.right { right: calc(12px + clamp(200px, 20vw, 240px)); }
     .shape-grid { grid-template-columns: repeat(4, 1fr); }
   }
   @media (max-width: 460px) {
