@@ -6830,6 +6830,40 @@ function _eraseAtSingle(points, brushObjectsParam) {
       if (!inRange) return;
     }
 
+    // === 3D画笔：局部擦除模式下改为全部删除（不做管段分裂） ===
+    if (!isBrush2D) {
+      o.mesh.updateMatrixWorld(false);
+      const children3d = o.mesh.children;
+      let anyChildHit = false;
+      for (let ci = 0; ci < children3d.length; ci++) {
+        const child = children3d[ci];
+        if (!child.isMesh || !child.geometry) continue;
+        const geo = child.geometry;
+        if (!geo.boundingSphere) geo.computeBoundingSphere();
+        if (geo.boundingSphere) {
+          const bsCenter = geo.boundingSphere.center.clone().applyMatrix4(child.matrixWorld);
+          const bsR = geo.boundingSphere.radius;
+          const dMax = effR + bsR;
+          const dMaxSq = dMax * dMax;
+          for (const pt of points) {
+            const dx = pt.x - bsCenter.x;
+            const dy = pt.y - bsCenter.y;
+            const dz = pt.z - bsCenter.z;
+            if (dx * dx + dy * dy + dz * dz <= dMaxSq) { anyChildHit = true; break; }
+          }
+          if (anyChildHit) break;
+        }
+      }
+      if (anyChildHit) {
+        scene.remove(o.mesh);
+        disposeObject(o);
+        const idx = state.objects.indexOf(o);
+        if (idx >= 0) state.objects.splice(idx, 1);
+        anyDeleted = true;
+      }
+      return; // 3D画笔不做后续局部擦除
+    }
+
     const toDelete = [];
     const toKeep = [];
 
