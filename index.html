@@ -829,9 +829,10 @@
     </div>
     <div class="ctrl-row">
       <div class="ctrl-label"><span>橡皮擦模式</span></div>
-      <div class="toggle-row2" style="gap:4px;">
-        <button class="toggle-btn active" id="eraser-mode-object" data-mode="object">删除对象</button>
-        <button class="toggle-btn" id="eraser-mode-local" data-mode="local">局部擦除</button>
+      <div class="toggle-row2" style="gap:4px; align-items:center;">
+        <label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:12px; color:var(--text);">
+          <input type="checkbox" id="eraser-local-2d" style="width:16px; height:16px; cursor:pointer;">2D笔迹局部擦除
+        </label>
       </div>
     </div>
     </div>
@@ -1979,7 +1980,7 @@ const state = {
   shiftDown: false,
   brushThickness: 0.5,
   eraserSize: 0.30,
-  eraserMode: 'object',  // 'object' = 删除整个对象, 'local' = 局部擦除（画笔笔画片段）
+  eraserLocal2D: false,  // false = 全部删除对象模式, true = 2D笔迹局部擦除+其他删除对象
   brushRefPlane: null,  // 3D画笔参考平面（锁定）
   brushRefPlaneMesh: null, // 3D画笔参考平面mesh
   brushLockedPlane: null,  // 笔画期间锁定的参考平面
@@ -4600,11 +4601,9 @@ document.getElementById('input-eraser-size').addEventListener('input', e => {
     }
   }
 });
-// 橡皮擦模式切换
-document.getElementById('eraser-mode-object').addEventListener('click', () => {
-  state.eraserMode = 'object';
-  document.getElementById('eraser-mode-object').classList.add('active');
-  document.getElementById('eraser-mode-local').classList.remove('active');
+// 橡皮擦模式：2D笔迹局部擦除复选框
+document.getElementById('eraser-local-2d').addEventListener('change', (e) => {
+  state.eraserLocal2D = e.target.checked;
   // 重置光标以正确显示模式差异
   if (eraserHoverMesh) {
     scene.remove(eraserHoverMesh);
@@ -4612,20 +4611,7 @@ document.getElementById('eraser-mode-object').addEventListener('click', () => {
     eraserHoverMesh = null;
   }
   clearEraserHighlight();
-  toast('橡皮擦模式：删除对象');
-});
-document.getElementById('eraser-mode-local').addEventListener('click', () => {
-  state.eraserMode = 'local';
-  document.getElementById('eraser-mode-local').classList.add('active');
-  document.getElementById('eraser-mode-object').classList.remove('active');
-  // 重置光标以正确显示模式差异
-  if (eraserHoverMesh) {
-    scene.remove(eraserHoverMesh);
-    eraserHoverMesh.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
-    eraserHoverMesh = null;
-  }
-  clearEraserHighlight();
-  toast('橡皮擦模式：局部擦除');
+  toast(state.eraserLocal2D ? '2D笔迹局部擦除已开启' : '全部删除对象模式');
 });
 document.getElementById('brush-opacity').addEventListener('input', e => {
   brush.opacity = parseFloat(e.target.value);
@@ -6315,16 +6301,20 @@ function updateEraserRing(groundPoint, normal) {
     eraserHoverMesh.quaternion.identity();
   }
   
-  // 只有"删除对象"模式才高亮；"局部擦除"模式不高亮，直接删除
-  if (state.eraserMode === 'object') {
-    const hovered = findObjectsInRadius(groundPoint, size);
-    if (hovered.length > 0) {
-      setEraserHighlight(hovered[0]);
+  // 高亮：删除对象模式高亮最近对象；2D局部擦除模式仅高亮非2D画笔对象
+  const hovered = findObjectsInRadius(groundPoint, size);
+  let highlightTarget = null;
+  if (hovered.length > 0) {
+    if (!state.eraserLocal2D) {
+      highlightTarget = hovered[0];
     } else {
-      clearEraserHighlight();
+      // 2D局部擦除模式：高亮最近的非2D画笔对象
+      highlightTarget = hovered.find(o => !(o.data.isBrush && o.data.type === 'brush2d'));
     }
+  }
+  if (highlightTarget) {
+    setEraserHighlight(highlightTarget);
   } else {
-    // 局部擦除模式：不高亮对象
     clearEraserHighlight();
   }
 }
@@ -7338,39 +7328,16 @@ function eraseAt(groundPoint) {
   if (groundPoint) _gridEraserPoint = groundPoint.clone();
   const radius = state.eraserSize;
 
-  // 收集擦除范围内的所有非画笔对象（使用射线距离，避免表面吸附导致深度方向漏擦）
-  const nonBrushObjects = findObjectsNearRay(raycaster.ray, radius);
-  
-  if (state.eraserMode === 'local') {
-    // 局部擦除模式：
-    // 1. 非画笔对象（图形/文字/图片）在范围内→直接删除
-    // 2. 画笔痕迹→部分擦除
-    let nonBrushDeleted = false;
-    nonBrushObjects.forEach(o => {
-      scene.remove(o.mesh);
-      const idx = state.objects.indexOf(o);
-      if (idx >= 0) state.objects.splice(idx, 1);
-      const sIdx = state.selectedList.indexOf(o);
-      if (sIdx >= 0) state.selectedList.splice(sIdx, 1);
-      if (o._eraserOrigMaterials) {
-        o._eraserOrigMaterials.forEach(m => m.dispose());
-        o._eraserOrigMaterials = null;
-      }
-      if (o._selectionOrigMaterials) {
-        o._selectionOrigMaterials.forEach(m => m.dispose());
-        o._selectionOrigMaterials = null;
-      }
-      disposeObject(o);
-      nonBrushDeleted = true;
-    });
-    
-    // 2. 画笔痕迹部分擦除
-    // 所有画笔类型均使用 groundPoint 球距离判定，需要路径插值避免快速移动漏擦
+  if (state.eraserLocal2D) {
+    // 2D笔迹局部擦除模式：
+    // 1. 2D画笔→局部擦除（管段分裂）
+    // 2. 其他对象（3D画笔/图形/文字/图片）→删除对象模式（最近的一个）
+
+    // Step 1: 2D画笔局部擦除
     let brushDeleted = false;
     const gp = groundPoint;
-    // 预过滤画笔对象，避免路径插值多步中重复过滤
-    const brushObjects = state.objects.filter(o => o.data.isBrush && o.mesh.isGroup);
-    if (brushObjects.length > 0) {
+    const brush2DObjects = state.objects.filter(o => o.data.isBrush && o.data.type === 'brush2d' && o.mesh.isGroup);
+    if (brush2DObjects.length > 0) {
       // 路径插值：收集所有插值点，一次性批量处理
       const allPoints = [];
       if (_lastErasePoint) {
@@ -7388,13 +7355,33 @@ function eraseAt(groundPoint) {
       } else {
         allPoints.push(gp);
       }
-      // 批量处理：一次遍历所有子mesh，用所有擦除点同时检测
-      if (_eraseAtSingle(allPoints, brushObjects)) brushDeleted = true;
+      if (_eraseAtSingle(allPoints, brush2DObjects)) brushDeleted = true;
     }
     _lastErasePoint = gp.clone();
 
+    // Step 2: 删除最近的非2D画笔对象
+    let nonBrushDeleted = false;
+    const nearest = findObjectsInRadius(groundPoint, radius).filter(o => !(o.data.isBrush && o.data.type === 'brush2d'));
+    if (nearest.length > 0) {
+      const o = nearest[0];
+      scene.remove(o.mesh);
+      const idx = state.objects.indexOf(o);
+      if (idx >= 0) state.objects.splice(idx, 1);
+      const sIdx = state.selectedList.indexOf(o);
+      if (sIdx >= 0) state.selectedList.splice(sIdx, 1);
+      if (o._eraserOrigMaterials) {
+        o._eraserOrigMaterials.forEach(m => m.dispose());
+        o._eraserOrigMaterials = null;
+      }
+      if (o._selectionOrigMaterials) {
+        o._selectionOrigMaterials.forEach(m => m.dispose());
+        o._selectionOrigMaterials = null;
+      }
+      disposeObject(o);
+      nonBrushDeleted = true;
+    }
+
     // 擦除完成后，统一recenter需要调整的画笔group
-    // 拖拽过程中(state.pointerDown=true)延迟到pointerup时统一recenter，避免多次调用导致乱闪错位
     if (!state.pointerDown) {
       state.objects.forEach(o => {
         if (o._needsRecenter) {
@@ -7406,7 +7393,7 @@ function eraseAt(groundPoint) {
         }
       });
     }
-    
+
     if (nonBrushDeleted || brushDeleted) {
       clearEraserHighlight();
       if (state.pointerDown) {
@@ -7419,7 +7406,7 @@ function eraseAt(groundPoint) {
     }
     return;
   }
-  
+
   // 删除对象模式：删除范围内最近的一个对象
   const nearest = findObjectsInRadius(groundPoint, radius);
   if (nearest.length > 0) {
