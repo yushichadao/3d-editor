@@ -51128,25 +51128,8 @@ class Spherical {
 
 		} else {
 
-			const newTheta = Math.atan2( x, z );
-			const standardPhi = Math.acos( clamp( y / this.radius, - 1, 1 ) );
-
-			// 支持 phi > π 的自由360°旋转：
-			// acos 返回 [0, π]，当相机穿过南极（phi 越过 π）后，
-			// 位置坐标的 y 仍为负，但 acos 会把 phi 重新映射回 (π/2, π)。
-			// 通过记录上一帧 phi 是否在 (π, 2π) 区间，将 standardPhi 映射回 (π, 2π)，
-			// 并把 theta 翻转 π（因为 sin(phi) 变号导致 x/z 反向）。
-			if ( this.phi > Math.PI ) {
-				this.phi = 2 * Math.PI - standardPhi;
-				this.theta = newTheta + Math.PI;
-			} else {
-				this.phi = standardPhi;
-				this.theta = newTheta;
-			}
-
-			// 归一化 theta 到 [-π, π]
-			if ( this.theta > Math.PI ) this.theta -= 2 * Math.PI;
-			else if ( this.theta < - Math.PI ) this.theta += 2 * Math.PI;
+			this.theta = Math.atan2( x, z );
+			this.phi = Math.acos( clamp( y / this.radius, - 1, 1 ) );
 
 		}
 

@@ -799,10 +799,18 @@
       <div class="kbd-row"><b>Esc</b><span>取消操作/退出全屏</span></div>
       <div class="kbd-row"><b>F11</b><span>全屏/退出全屏</span></div>
       <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
+      <div class="kbd-title">视角操作（未选取对象时）</div>
+      <div class="kbd-row"><b>←/→</b><span>视角向左/右平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-row"><b>↑/↓</b><span>视角向上/下平移0.1单位网格长度（0.15单位长度）</span></div>
+      <div class="kbd-row"><b>A/D</b><span>视角向左/右旋转5°</span></div>
+      <div class="kbd-row"><b>W/S</b><span>视角向上/下旋转5°</span></div>
       <div class="kbd-title">组合键操作</div>
       <div class="kbd-row"><b>Shift +  ↓/↑/→/←/PgUp/PgDn</b><span>沿某方向平移1单位网格长度（1.5单位长度）</span></div>
       <div class="kbd-row"><b>Shift + A/D/W/S/E/Q</b><span>绕Z/Y/X轴顺/逆时针旋转90°</span></div>
       <div class="kbd-row"><b>Shift + + / -</b><span>放大至原来的2倍/缩小到原来的50%</span></div>
+      <div class="kbd-row" style="font-size:9.5px; color:var(--text-dim); line-height:1.5; padding:2px 2px;">未选取对象时，Shift组合键同样适用于视角操作</div>
+      <div class="kbd-row"><b>Shift + ←/→/↑/↓</b><span>视角平移1单位网格长度（1.5单位长度）</span></div>
+      <div class="kbd-row"><b>Shift + A/D/W/S</b><span>视角旋转90°</span></div>
       <div class="kbd-row"><b>Shift + 点击</b><span>加选对象（多点选）</span></div>
       <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
       <div class="kbd-row"><b>Ctrl+N</b><span>新建场景</span></div>
@@ -984,7 +992,7 @@ setTimeout(function() {
 
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js?v=2';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js?v=6';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 
 // ============ 渲染器 / 场景 / 相机 ============
@@ -1012,8 +1020,8 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.12;
 controls.autoRotate = false;
 // 解除所有方向的视角限制，允许真正的360°自由旋转：
-// maxPolarAngle = 2π 使相机可以穿过南北极继续旋转，不再卡在Z轴或任何方向。
-// 配合 OrbitControls.js 的自由旋转模式与 Spherical.setFromCartesianCoords 的 phi>π 追踪。
+// OrbitControls 使用四元数旋转模式，彻底消除万向节锁，
+// 相机可自由穿过南北极，穿越后画面与鼠标控制自动适应（无需 phi>π 追踪）。
 // minDistance/maxDistance 在 animate() 中动态计算（基于FOV和屏幕宽高比）
 // 最近距离允许 1/10 网格单元占据屏幕宽度（可放大 10×看清极小对象），最远距离无上限
 controls.minPolarAngle = 0;
@@ -8780,6 +8788,16 @@ function cloneSelected() {
 }
 
 // ============ 键盘快捷键 ============
+// 视角平移：沿相机屏幕空间的右/上轴同时移动相机与目标
+function panCamera(dx, dy) {
+  const v = new THREE.Vector3();
+  v.setFromMatrixColumn(camera.matrix, 0); // 相机右轴
+  camera.position.addScaledVector(v, dx);
+  controls.target.addScaledVector(v, dx);
+  v.setFromMatrixColumn(camera.matrix, 1); // 相机上轴
+  camera.position.addScaledVector(v, dy);
+  controls.target.addScaledVector(v, dy);
+}
 // 在选中对象上施加旋转：多选时绕整体中心，单选时绕自身
 function rotateSelection(axis, deltaRad, objects) {
   if (objects.length > 1) {
@@ -8863,7 +8881,32 @@ window.addEventListener('keydown', (e) => {
     const obj = state.objects.find(o => o.mesh === transformCtrl.object);
     if (obj) objectsToModify = [obj];
   }
-  if (objectsToModify.length === 0) { toast('请先选中对象'); return; }
+  if (objectsToModify.length === 0) {
+    // 未选取对象时：←/→/↑/↓ 平移视角，A/D/W/S 旋转视角
+    const camRotRad = (shift ? 90 : 5) * Math.PI / 180;
+    const panDist = (shift ? 1 : 0.1) * GRID_UNIT;
+    let camHandled = true;
+    switch (e.key) {
+      // 平移视角：沿相机屏幕空间的右/上轴移动相机与目标
+      case 'ArrowLeft':  panCamera(-panDist, 0); break;
+      case 'ArrowRight': panCamera( panDist, 0); break;
+      case 'ArrowUp':    panCamera(0,  panDist); break;
+      case 'ArrowDown':  panCamera(0, -panDist); break;
+      // 旋转视角
+      case 'a': case 'A': controls.rotateCameraHorizontal(-camRotRad); break;
+      case 'd': case 'D': controls.rotateCameraHorizontal( camRotRad); break;
+      case 'w': case 'W': controls.rotateCameraVertical(-camRotRad); break;
+      case 's': case 'S': controls.rotateCameraVertical( camRotRad); break;
+      default: camHandled = false;
+    }
+    if (camHandled) {
+      e.preventDefault();
+      controls.update();
+    } else {
+      toast('请先选中对象');
+    }
+    return;
+  }
 
   // 平移：0.1 网格单位（0.15 长度），Shift 时 1 网格单位（1.5 长度）
   const moveStep = (shift ? 1 : 0.1) * GRID_UNIT;

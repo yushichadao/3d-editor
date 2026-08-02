@@ -131,6 +131,19 @@ class OrbitControls extends EventDispatcher {
 
 		};
 
+		// 公开旋转接口，供键盘快捷键调用
+		this.rotateCameraHorizontal = function ( angle ) {
+
+			rotateLeft( angle );
+
+		};
+
+		this.rotateCameraVertical = function ( angle ) {
+
+			rotateUp( angle );
+
+		};
+
 		this.listenToKeyEvents = function ( domElement ) {
 
 			domElement.addEventListener( 'keydown', onKeyDown );
@@ -160,6 +173,7 @@ class OrbitControls extends EventDispatcher {
 			scope.object.zoom = scope.zoom0;
 
 			scope.object.updateProjectionMatrix();
+			scope.object.lookAt( scope.target );
 			scope.dispatchEvent( _changeEvent );
 
 			scope.update();
@@ -173,15 +187,18 @@ class OrbitControls extends EventDispatcher {
 
 			const offset = new Vector3();
 
-			// so camera.up is the orbit axis
-			const quat = new Quaternion().setFromUnitVectors( object.up, new Vector3( 0, 1, 0 ) );
-			const quatInverse = quat.clone().invert();
-
 			const lastPosition = new Vector3();
 			const lastQuaternion = new Quaternion();
 			const lastTargetPosition = new Vector3();
 
-			const twoPI = 2 * Math.PI;
+			// 四元数旋转模式：彻底消除万向节锁，支持自由穿越南北极
+			// 水平旋转绕世界向上轴（Y），垂直旋转绕相机右轴（始终有定义）
+			// 同时旋转 offset 和 camera.quaternion，保持相机始终看向目标
+			const worldUp = new Vector3( 0, 1, 0 );
+			const camRight = new Vector3();
+			const qH = new Quaternion();
+			const qV = new Quaternion();
+			const qTotal = new Quaternion();
 
 			return function update( deltaTime = null ) {
 
@@ -189,94 +206,69 @@ class OrbitControls extends EventDispatcher {
 
 			offset.copy( position ).sub( scope.target );
 
-			// 检测外部代码（如 setView）大幅改变相机位置：
-			// 若位置发生跳跃，重置 spherical.phi 到标准范围 [0, π]，
-			// 避免 setFromCartesianCoords 的 phi>π 自由旋转追踪误判新位置所在的半球。
-			if ( scope._lastPosition ) {
-
-				const jumpDist = scope._lastPosition.distanceTo( position );
-				if ( jumpDist > 1.0 ) {
-
-					spherical.phi = 0; // 强制下一行 setFromVector3 走标准 acos 路径
-
-				}
-
-			}
-			scope._lastPosition = position.clone();
-
-			// rotate offset to "y-axis-is-up" space
-			offset.applyQuaternion( quat );
-
-			// angle from z-axis around y-axis
-			spherical.setFromVector3( offset );
-
 				if ( scope.autoRotate && state === STATE.NONE ) {
 
 					rotateLeft( getAutoRotationAngle( deltaTime ) );
 
 				}
 
+				// 计算旋转增量（含阻尼）
+				let thetaDelta, phiDelta;
+
 				if ( scope.enableDamping ) {
 
-					spherical.theta += sphericalDelta.theta * scope.dampingFactor;
-					spherical.phi += sphericalDelta.phi * scope.dampingFactor;
+					thetaDelta = sphericalDelta.theta * scope.dampingFactor;
+					phiDelta = sphericalDelta.phi * scope.dampingFactor;
 
 				} else {
 
-					spherical.theta += sphericalDelta.theta;
-					spherical.phi += sphericalDelta.phi;
+					thetaDelta = sphericalDelta.theta;
+					phiDelta = sphericalDelta.phi;
 
 				}
 
-				// restrict theta to be between desired limits
+				// 使用四元数旋转，彻底消除万向节锁
+				if ( thetaDelta !== 0 || phiDelta !== 0 ) {
 
-				let min = scope.minAzimuthAngle;
-				let max = scope.maxAzimuthAngle;
+					// 水平旋转：始终绕世界向上轴（Y）同一方向旋转
+					qH.setFromAxisAngle( worldUp, thetaDelta );
 
-				if ( isFinite( min ) && isFinite( max ) ) {
+					// 垂直旋转：绕相机的右轴（始终有定义，无奇点）
+					camRight.set( 1, 0, 0 ).applyQuaternion( scope.object.quaternion );
+					if ( camRight.lengthSq() < EPS ) {
 
-					if ( min < - Math.PI ) min += twoPI; else if ( min > Math.PI ) min -= twoPI;
-
-					if ( max < - Math.PI ) max += twoPI; else if ( max > Math.PI ) max -= twoPI;
-
-					if ( min <= max ) {
-
-						spherical.theta = Math.max( min, Math.min( max, spherical.theta ) );
+						camRight.set( 1, 0, 0 ); // 极端情况下的回退
 
 					} else {
 
-						spherical.theta = ( spherical.theta > ( min + max ) / 2 ) ?
-							Math.max( min, spherical.theta ) :
-							Math.min( max, spherical.theta );
+						camRight.normalize();
 
 					}
 
+					qV.setFromAxisAngle( camRight, phiDelta );
+
+					// 组合旋转：先水平后垂直
+					qTotal.copy( qV ).multiply( qH );
+
+					// 同时旋转偏移向量和相机四元数，保持相机始终看向目标
+					offset.applyQuaternion( qTotal );
+					scope.object.quaternion.premultiply( qTotal );
+
 				}
 
-				// restrict phi to be between desired limits
-			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
+				// 检测相机是否穿越极点（上下颠倒状态翻转）：
+				// 通过四元数直接计算相机 up 向量的 Y 分量，无需额外向量
+				const _q = scope.object.quaternion;
+				const _camUpY = 1 - 2 * ( _q.x * _q.x + _q.z * _q.z );
+				const _invert = ( _camUpY < 0 ) ? - 1 : 1;
+				if ( scope._lastInvert !== undefined && scope._lastInvert !== _invert ) {
 
-			// 自由360°旋转支持：当 maxPolarAngle > Math.PI 时，允许 phi 超过 π（穿过南极），
-			// 也允许 phi 穿过 0/2π（穿过北极），实现真正的全方向自由旋转。
-			// 在极点附近 (phi 接近 0, π, 2π) 使用 EPS 防止 gimbal lock 导致闪烁，
-			// 但不阻止穿越极点，确保各方向均可360°旋转。
-			const _freeEPS = 0.002;
-			if ( scope.maxPolarAngle > Math.PI ) {
-				// 北极穿越：phi 越过 0 或 2π 时环绕到另一侧，避免在北极卡住
-				if ( spherical.phi < 0 ) spherical.phi += 2 * Math.PI;
-				else if ( spherical.phi >= 2 * Math.PI ) spherical.phi -= 2 * Math.PI;
-				// 自由模式：允许 phi 在 (EPS, 2π-EPS) 范围内自由旋转
-				if ( spherical.phi < _freeEPS ) spherical.phi = _freeEPS;
-				else if ( spherical.phi > 2 * Math.PI - _freeEPS ) spherical.phi = 2 * Math.PI - _freeEPS;
-				// 在 phi = π 附近也加 EPS（南极 gimbal lock 点）
-				const distFromPi = Math.abs( spherical.phi - Math.PI );
-				if ( distFromPi < _freeEPS ) {
-					spherical.phi = spherical.phi < Math.PI ? Math.PI - _freeEPS : Math.PI + _freeEPS;
+					// 穿越极点：清除水平旋转阻尼残差，避免旧方向残差与新方向输入冲突
+					sphericalDelta.theta = 0;
+
 				}
-			} else {
-				// 标准模式：保持原有 makeSafe 行为
-				spherical.makeSafe();
-			}
+				scope._lastInvert = _invert;
+
 
 
 				// move target to panned location
@@ -296,26 +288,22 @@ class OrbitControls extends EventDispatcher {
 				scope.target.clampLength( scope.minTargetRadius, scope.maxTargetRadius );
 				scope.target.add( scope.cursor );
 
-				// adjust the camera position based on zoom only if we're not zooming to the cursor or if it's an ortho camera
-				// we adjust zoom later in these cases
-				if ( scope.zoomToCursor && performCursorZoom || scope.object.isOrthographicCamera ) {
+				// adjust the camera position based on zoom
+			if ( scope.zoomToCursor && performCursorZoom || scope.object.isOrthographicCamera ) {
 
-					spherical.radius = clampDistance( spherical.radius );
+				offset.setLength( clampDistance( offset.length() ) );
 
-				} else {
+			} else {
 
-					spherical.radius = clampDistance( spherical.radius * scale );
+				offset.setLength( clampDistance( offset.length() * scale ) );
 
-				}
+			}
 
-				offset.setFromSpherical( spherical );
+			position.copy( scope.target ).add( offset );
 
-				// rotate offset back to "camera-up-vector-is-up" space
-				offset.applyQuaternion( quatInverse );
-
-				position.copy( scope.target ).add( offset );
-
-				scope.object.lookAt( scope.target );
+			// 四元数模式：相机朝向由四元数维护，无需 lookAt
+			// 更新矩阵确保后续 zoomToCursor 等逻辑可读取正确的相机矩阵
+			scope.object.updateMatrixWorld();
 
 				if ( scope.enableDamping === true ) {
 
@@ -416,9 +404,12 @@ class OrbitControls extends EventDispatcher {
 				}
 
 				scale = 1;
-				performCursorZoom = false;
+			performCursorZoom = false;
 
-				// update condition is:
+			// 为 getPolarAngle / getAzimuthalAngle 更新 spherical（仅用于读取）
+			spherical.setFromVector3( offset );
+
+			// update condition is:
 				// min(camera displacement, camera rotation in radians)^2 > EPS
 				// using small-angle approximation cos(x/2) = 1 - x^2 / 8
 
@@ -717,14 +708,15 @@ class OrbitControls extends EventDispatcher {
 
 			const element = scope.domElement;
 
-			// 当相机穿过南极 (phi > π) 时，由于相机上下颠倒，
-			// 鼠标拖拽方向需要反转，以保持屏幕空间方向一致。
-			const invert = ( scope.maxPolarAngle > Math.PI && spherical.phi > Math.PI ) ? - 1 : 1;
+			// 穿越极点后相机上下颠倒，水平方向需反转以保持屏幕空间一致
+			// invert 仅作用于新输入，不影响 update() 中的阻尼残差，避免极点处突变
+			const _q = scope.object.quaternion;
+			const _camUpY = 1 - 2 * ( _q.x * _q.x + _q.z * _q.z );
+			const invert = ( _camUpY < 0 ) ? - 1 : 1;
 
-			// 水平旋转：向右划 → theta减小 → 相机左移 → 场景右移（顺时针，场景跟随鼠标）
 			rotateLeft( invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
 
-			rotateUp( invert * 2 * Math.PI * rotateDelta.y / element.clientHeight );
+			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
 			rotateStart.copy( rotateEnd );
 
@@ -954,14 +946,14 @@ class OrbitControls extends EventDispatcher {
 
 			const element = scope.domElement;
 
-			// 当相机穿过南极 (phi > π) 时，由于相机上下颠倒，
-			// 触摸拖拽方向需要反转，以保持屏幕空间方向一致。
-			const invert = ( scope.maxPolarAngle > Math.PI && spherical.phi > Math.PI ) ? - 1 : 1;
+			// 穿越极点后水平方向需反转（与鼠标旋转逻辑一致）
+			const _q = scope.object.quaternion;
+			const _camUpY = 1 - 2 * ( _q.x * _q.x + _q.z * _q.z );
+			const invert = ( _camUpY < 0 ) ? - 1 : 1;
 
-			// 水平旋转：向右划 → theta减小 → 相机左移 → 场景右移（顺时针，场景跟随手指）
 			rotateLeft( invert * 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
 
-			rotateUp( invert * 2 * Math.PI * rotateDelta.y / element.clientHeight );
+			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
 
 			rotateStart.copy( rotateEnd );
 
@@ -1450,6 +1442,9 @@ class OrbitControls extends EventDispatcher {
 		scope.domElement.addEventListener( 'pointerdown', onPointerDown );
 		scope.domElement.addEventListener( 'pointercancel', onPointerUp );
 		scope.domElement.addEventListener( 'wheel', onMouseWheel, { passive: false } );
+
+		// 确保初始相机朝向目标（四元数模式需要正确的初始朝向）
+		scope.object.lookAt( scope.target );
 
 		// force an update at start
 
