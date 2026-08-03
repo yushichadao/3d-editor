@@ -80,8 +80,9 @@
     box-shadow: var(--shadow); overflow-y: auto;
     max-height: calc(100vh - 72px);
   }
-  .panel-left { left: 14px; width: clamp(180px, 18vw, 240px); transition: transform .25s ease; }
-  .panel-right { right: 14px; width: clamp(210px, 21vw, 280px); transition: transform .25s ease; }
+  /* 固定宽度：页面变窄时左右栏不收缩，保持左/右浮窗布置方式不变 */
+  .panel-left { left: 14px; width: 240px; transition: transform .25s ease; }
+  .panel-right { right: 14px; width: 280px; transition: transform .25s ease; }
   .panel-left.collapsed { transform: translateX(calc(-100% - 18px)); }
   .panel-right.collapsed { transform: translateX(calc(100% + 18px)); }
   /* 面板收缩按钮（所有宽度统一） */
@@ -95,8 +96,8 @@
     transition: all .25s ease;
   }
   .panel-toggle:hover { color: var(--text); border-color: var(--accent); }
-  .panel-toggle.left { left: calc(20px + clamp(180px, 18vw, 240px)); }
-  .panel-toggle.right { right: calc(20px + clamp(210px, 21vw, 280px)); }
+  .panel-toggle.left { left: calc(20px + 240px); }
+  .panel-toggle.right { right: calc(20px + 280px); }
   .panel-toggle.left.collapsed { left: 14px; }
   .panel-toggle.right.collapsed { right: 14px; }
   .panel h3 {
@@ -459,16 +460,12 @@
     .top-actions::-webkit-scrollbar { display: none; }
     .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
     .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); flex-shrink: 0; margin: 0 2px; }
-    /* 面板宽度收窄上限 */
-    .panel-left { width: clamp(170px, 17vw, 210px); }
-    .panel-right { width: clamp(200px, 20vw, 240px); }
+    /* 面板保持固定宽度（见基础规则），窄屏不再收窄，仅调整高度与折叠按钮间距 */
     .panel { max-height: calc(100vh - 130px); }
     /* 面板折叠按钮移至顶栏下方，增加与面板的间距 */
     .panel-toggle { top: 56px; }
     .panel-toggle.left.collapsed { left: 8px; }
     .panel-toggle.right.collapsed { right: 8px; }
-    .panel-toggle.left:not(.collapsed) { left: calc(20px + clamp(170px, 17vw, 210px)); }
-    .panel-toggle.right:not(.collapsed) { right: calc(20px + clamp(200px, 20vw, 240px)); }
     /* 声明保持卡片样式，不全宽拉伸 */
     .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
@@ -515,10 +512,9 @@
   .touch-device .touch-only { display: revert !important; }
   .touch-device .touch-only[style*="display:none"] { display: revert !important; }
 
-  /* 窄屏触摸：面板可覆盖画布 */
+  /* 窄屏触摸：面板可覆盖画布（宽度固定，不随视口收缩） */
   @media (max-width: 768px) {
     .panel-left, .panel-right {
-      max-width: 80vw;
       z-index: 55;
     }
     .shape-grid { grid-template-columns: repeat(4, 1fr); }
