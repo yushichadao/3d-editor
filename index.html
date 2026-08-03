@@ -5983,6 +5983,26 @@ function addBrushPoint3D(groundPoint) {
     segmentMesh.userData.isPreview = true;
     brush.currentMeshes.push(segmentMesh);
     scene.add(segmentMesh);
+
+    // 拐角关节球：相邻两段方向不同时，两段端面切口无法重合，外侧会留下楔形空隙。
+    // 在交界锚点补一颗与管等半径的球即可填满（球心在中心线上，不改变笔迹形状与粗细）。
+    if (pts.length >= 2) {
+      const prev = pts[pts.length - 2];
+      const d1 = new THREE.Vector3().subVectors(last, prev);
+      const d2 = new THREE.Vector3().subVectors(groundPoint, last);
+      if (d1.lengthSq() > 1e-12 && d2.lengthSq() > 1e-12) {
+        // 缺口宽度 ≈ r*tan(θ/2)，夹角小于约 3.6° 时不可见，无需补球（省开销）
+        if (d1.normalize().dot(d2.normalize()) < 0.998) {
+          const joint = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), createBrushMaterial());
+          joint.position.copy(last);
+          joint.castShadow = true; joint.receiveShadow = true;
+          joint.userData.isPreview = true;
+          joint.userData.isBrushCap = true;
+          brush.currentMeshes.push(joint);
+          scene.add(joint);
+        }
+      }
+    }
   }
 
   pts.push(groundPoint.clone());
