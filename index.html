@@ -844,7 +844,7 @@
         <input type="number" id="input-eraser-size" step="0.05" value="0.30" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
       </div>
     </div>
-      <!-- 橡皮擦模式（整体/局部）已移至上方“橡皮擦模式”栏 -->
+      <!-- 橡皮擦模式（整体/局部）已移至上方"橡皮擦模式"栏 -->
     </div>
   </div>
   <!-- 操作说明（鼠标/手势自动切换） -->
@@ -1185,8 +1185,8 @@ ground.receiveShadow = true;
 ground.name = 'GROUND';
 scene.add(ground);
 
-// 主地面网格（XZ 平面，蓝色 #4488ff）
-let grid = new THREE.GridHelper(GROUND_SIZE, 20, 0x4488ff, 0x335599);
+// 主地面网格（XZ 平面）—— X红 + Z蓝 = 紫色
+let grid = new THREE.GridHelper(GROUND_SIZE, 20, 0xa266b3, 0xa266b3);
 grid.material.opacity = 0.5; grid.material.transparent = true;
 grid.position.y = 0.002;
 scene.add(grid);
@@ -1250,30 +1250,30 @@ function makeAxisLabel(text, color) {
   sp.scale.set(1.2, 0.6, 1);
   return sp;
 }
-const xLabel = makeAxisLabel('Y', axisColors.x);
-const yLabel = makeAxisLabel('Z', axisColors.y);
-const zLabel = makeAxisLabel('X', axisColors.z);
+const xLabel = makeAxisLabel('X', axisColors.x);
+const yLabel = makeAxisLabel('Y', axisColors.y);
+const zLabel = makeAxisLabel('Z', axisColors.z);
 // 标签放在正半轴箭头尖端附近，紧贴箭头
 xLabel.position.set(AXIS_LEN + 0.6, 0, 0);
 yLabel.position.set(0, AXIS_LEN + 0.6, 0);
 zLabel.position.set(0, 0, AXIS_LEN + 0.6);
 axesGroup.add(xLabel, yLabel, zLabel);
 
-axesGroup.position.y = 0.01;
+axesGroup.position.y = 0.002;
 scene.add(axesGroup);
 
-// 背墙网格（YZ 平面，绿色 #44ff88）
-let gridXZ = new THREE.GridHelper(GROUND_SIZE, 20, 0x44ff88, 0x336644);
+// 背墙网格（XY 平面）—— X红 + Y绿 = 黄色
+let gridXZ = new THREE.GridHelper(GROUND_SIZE, 20, 0xa2a277, 0xa2a277);
 gridXZ.material.opacity = 0.25; gridXZ.material.transparent = true;
 gridXZ.rotation.x = Math.PI / 2;
-gridXZ.position.set(0, 0, 0);
+gridXZ.position.set(0, 0.002, 0);
 scene.add(gridXZ);
 
-// 侧墙网格（XY 平面，橙色 #ff8844）
-let gridYZ = new THREE.GridHelper(GROUND_SIZE, 20, 0xff8844, 0x664433);
+// 侧墙网格（YZ 平面）—— Y绿 + Z蓝 = 青色
+let gridYZ = new THREE.GridHelper(GROUND_SIZE, 20, 0x44c4c4, 0x44c4c4);
 gridYZ.material.opacity = 0.25; gridYZ.material.transparent = true;
 gridYZ.rotation.z = Math.PI / 2;
-gridYZ.position.set(0, 0, 0);
+gridYZ.position.set(0, 0.002, 0);
 scene.add(gridYZ);
 
 let axesVisible = true;
@@ -4265,7 +4265,7 @@ COLORS.forEach(c => {
       if (mk) colorMemory[mk] = c;
     });
     pushHistory();
-    // 重建属性面板：恢复透明度/花纹贴图栏并清除“无颜色”说明
+    // 重建属性面板：恢复透明度/花纹贴图栏并清除"无颜色"说明
     refreshProps();
     updateColorSelectionUI();
     updatePatternPreviews(c);
@@ -4652,7 +4652,7 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
       // 同步对象自定义颜色控件
       objCustomColor.value = hex;
       objCustomHex.textContent = hex.substring(1).toUpperCase();
-      refreshProps(); // 重建面板：恢复透明度/花纹贴图栏并清除“无颜色”说明
+      refreshProps(); // 重建面板：恢复透明度/花纹贴图栏并清除"无颜色"说明
       updateColorSelectionUI();
       // 更新花纹预览
       updatePatternPreviews(colorVal);
@@ -5542,7 +5542,7 @@ async function newScene() {
   state.history = []; state.hIndex = -1;
   pushHistory();
   updateUndoRedoUI();
-  setView('persp'); // 新建场景后回到透视视角，并点亮“透视”按钮（相机移动后熄灭）
+  setView('persp'); // 新建场景后回到透视视角，并点亮"透视"按钮（相机移动后熄灭）
   setPanelCollapsed('left', true);
   setPanelCollapsed('right', true);
   toast('已新建空白场景');
@@ -6650,7 +6650,7 @@ function updateEraserRing(groundPoint, normal) {
     eraserHoverMesh.quaternion.identity();
   }
   
-  // 高亮：删除对象模式高亮最近对象；局部擦除模式仅高亮“不会被局部擦除”的对象
+  // 高亮：删除对象模式高亮最近对象；局部擦除模式仅高亮"不会被局部擦除"的对象
   const hovered = findObjectsInRadius(groundPoint, size);
   let highlightTarget = null;
   if (hovered.length > 0) {
@@ -6945,7 +6945,7 @@ function eraseAt(groundPoint) {
 
   _lastErasePoint = gp.clone();
 
-  // Step C: 删除最近的非“局部擦除笔迹”对象（整条删除）
+  // Step C: 删除最近的非"局部擦除笔迹"对象（整条删除）
   let nonBrushDeleted = false;
   const nearest = findObjectsInRadius(groundPoint, radius).filter(o => {
     if (o.data.isBrush) return false;  // 笔迹对象已走局部擦除，整条删除时跳过
@@ -8595,9 +8595,9 @@ window.addEventListener('keydown', (e) => {
   if (ctrl) {
     const k = e.key.toLowerCase();
     if (k === 'n') { e.preventDefault(); newScene(); return; }
-    if (k === 'o') { e.preventDefault(); importScene(); return; }        // 拦截浏览器“打开”
-    if (k === 's') { e.preventDefault(); exportScene(); return; }        // 拦截浏览器“保存”
-    if (k === 'p') { e.preventDefault(); captureScreenshot(); return; }  // 拦截浏览器“打印”
+    if (k === 'o') { e.preventDefault(); importScene(); return; }        // 拦截浏览器"打开"
+    if (k === 's') { e.preventDefault(); exportScene(); return; }        // 拦截浏览器"保存"
+    if (k === 'p') { e.preventDefault(); captureScreenshot(); return; }  // 拦截浏览器"打印"
     if (k === 'z' && !shift) { e.preventDefault(); undo(); return; }
     if (k === 'y' || (shift && k === 'z')) { e.preventDefault(); redo(); return; }
     if (k === 'c') {
