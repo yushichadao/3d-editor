@@ -295,7 +295,10 @@
     height: 32px; padding: 0 13px; font-size: 12px; font-weight: 500;
     background: transparent; border: none; border-radius: 18px;
     color: var(--text-dim); cursor: pointer; transition: all .18s; flex-shrink: 0; white-space: nowrap;
+    outline: none;
   }
+  /* 点击后焦点仍在，但不显示聚焦描边（避免蓝色熄灭后灰按钮外出现圈） */
+  .view-btn:focus-visible { outline: none; }
   .view-btn:hover { background: rgba(110,231,255,0.1); color: var(--text); }
   .view-btn.active {
     background: linear-gradient(135deg, rgba(110,231,255,0.18), rgba(168,85,247,0.10));
