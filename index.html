@@ -5632,7 +5632,12 @@ document.getElementById('file-import').addEventListener('change', (e) => {
 
 // 视角预设
 document.querySelectorAll('.view-btn').forEach(btn => {
-  btn.addEventListener('click', () => setView(btn.dataset.view));
+  btn.addEventListener('click', () => {
+    // 切换视角时同时收起左右两栏，最大化视野空间
+    setPanelCollapsed('left', true);
+    setPanelCollapsed('right', true);
+    setView(btn.dataset.view);
+  });
 });
 function setView(v) {
   // 标记当前激活的视角按钮
