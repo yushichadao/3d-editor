@@ -168,8 +168,7 @@
   .color-dot.active { border-color: white; transform: scale(1.15); }
   .no-color-dot { background-color: #f5f5f5; }
   .no-color-dot.active { border-color: var(--accent, #6ee7ff); }
-  .color-row-title { font-size:12px; color:var(--text-dim); margin:4px 0 6px; }
-  .custom-swatch { width:28px; height:28px; border:2px solid var(--border); border-radius:50%; cursor:pointer; box-sizing:border-box; }
+  .custom-swatch { border:2px solid var(--border); border-radius:50%; cursor:pointer; }
 
   .pat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
   .pat-btn {
@@ -703,12 +702,16 @@
       <h3>颜色</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
-    <div class="color-row-title">预设颜色</div>
-    <div class="color-row" id="color-row"></div>
+    <div class="ctrl-row" style="margin-bottom:4px;">
+      <div class="ctrl-label"><span>预设颜色</span></div>
+      <div class="color-row" id="color-row"></div>
+    </div>
     <div class="ctrl-row" style="margin-top:8px;">
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <div id="obj-custom-swatch" class="color-dot custom-swatch" style="background:#ffffff;"></div>
+        <div class="color-row" style="grid-template-columns:1fr; width:calc((100% - 30px)/7);">
+          <div id="obj-custom-swatch" class="color-dot custom-swatch" style="background:#ffffff;"></div>
+        </div>
         <span id="obj-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">FFFFFF</span>
         <button class="tool-btn" id="open-color-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
@@ -798,7 +801,9 @@
     <div class="ctrl-row">
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
+        <div class="color-row" style="grid-template-columns:1fr; width:calc((100% - 30px)/7);">
+          <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
+        </div>
         <span id="brush-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">000000</span>
         <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
@@ -4568,8 +4573,29 @@ document.getElementById('brush-open-picker').addEventListener('click', () => ope
 // 对象自定义颜色拾取（圆形色块 + 取色器）
 const objCustomSwatch = document.getElementById('obj-custom-swatch');
 const objCustomHex = document.getElementById('obj-custom-hex');
-// 自定义颜色统一由取色器"确定"后应用；圆形色块点击即打开取色器
-if (objCustomSwatch) objCustomSwatch.addEventListener('click', () => openColorPicker('object'));
+// 点击圆形自定义色块 = 直接应用该颜色（不打开取色器）；改色请用"选取器"按钮
+function applyObjCustomColor() {
+  const sw = document.getElementById('obj-custom-swatch');
+  if (!sw) return;
+  const rgb = hexToRgb(sw.style.background);
+  if (!rgb) return;
+  const colorVal = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
+  state.defaultColor = colorVal;
+  if (state.selectedList.length > 0) {
+    state.selectedList.forEach(o => {
+      o.data.color = colorVal;
+      applyAppearance(o);
+      const mk = getMemoryKey(o);
+      if (mk) colorMemory[mk] = colorVal;
+    });
+  }
+  pushHistory();
+  refreshProps();
+  updateColorSelectionUI();
+  updatePatternPreviews(colorVal);
+  toast('已应用颜色 ' + ('#' + colorVal.toString(16).padStart(6, '0').toUpperCase()));
+}
+if (objCustomSwatch) objCustomSwatch.addEventListener('click', applyObjCustomColor);
 
 document.getElementById('color-picker-cancel').addEventListener('click', () => {
   pickerModal.classList.remove('show');
@@ -4742,8 +4768,11 @@ COLORS.forEach(c => {
   });
   brushColorRow.appendChild(dot);
 });
-// 自定义颜色拾取（圆形色块点击打开取色器，颜色统一由取色器确定后应用）
-if (brushCustomSwatch) brushCustomSwatch.addEventListener('click', () => openColorPicker('brush'));
+// 画笔圆形色块点击 = 直接应用当前自定义色（不打开取色器）；改色请用"选取器"按钮
+if (brushCustomSwatch) brushCustomSwatch.addEventListener('click', () => {
+  const rgb = hexToRgb(brushCustomSwatch.style.background);
+  if (rgb) setBrushColor((rgb[0] << 16) | (rgb[1] << 8) | rgb[2]);
+});
 
 // 画笔纹路选择（已移除纹路栏，保留代码兼容性）
 const brushPatRow = document.getElementById('brush-pattern-row');
