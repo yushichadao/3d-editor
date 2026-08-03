@@ -1128,7 +1128,11 @@ controls.touches = {
 };
 
 // ============ 触摸设备检测 ============
-const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+// 允许通过 URL 参数 ?touch / ?touch=1 / ?mobile 强制启用触屏版（便于桌面浏览器测试移动端）
+const FORCE_TOUCH = /[?&](touch|mobile)(=1)?\b/.test(location.search);
+const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || FORCE_TOUCH;
+// 触摸输入判断：真实触摸指针，或强制触屏模式下把鼠标当作手指
+function touchPointer(e) { return isTouch && (e.pointerType === 'touch' || FORCE_TOUCH); }
 // 移动端降低手势灵敏度：旋转/平移/缩放速度减半，避免视角变化过于剧烈
 if (isTouch) {
   controls.rotateSpeed = 0.5;
@@ -8313,7 +8317,7 @@ canvas.addEventListener('pointerdown', (e) => {
   const hit = intersectObjects();
   if (hit) {
     state.clickHitObject = true;
-    if (isTouch && e.pointerType === 'touch') {
+    if (touchPointer(e)) {
       // 触摸：长按=加选(等价桌面 Shift+单击)；拖动=移动；轻点=单选替换
       _touchDownObj = hit.obj;
       _lpHandled = false;
@@ -8331,7 +8335,7 @@ canvas.addEventListener('pointerdown', (e) => {
     }
     // TransformControls 已激活时，不启动自定义拖拽（由 TC 处理）
     // 触摸端拖拽延迟到 pointermove 超阈值时启动，避免与长按加选冲突
-    if (!tcHasObj && !(isTouch && e.pointerType === 'touch')) {
+    if (!tcHasObj && !touchPointer(e)) {
       state.isDragging = true;
       const gp = intersectGround();
       state.dragStartGround.copy(gp || new THREE.Vector3());
@@ -8352,7 +8356,7 @@ canvas.addEventListener('pointerdown', (e) => {
     }
   } else {
     // 触摸设备空白区域
-    if (isTouch && e.pointerType === 'touch') {
+    if (touchPointer(e)) {
       if (state.boxSelectMode) {
         // 框选模式：单指拖拽=画框，临时禁用 OrbitControls 旋转
         if (!e.shiftKey) deselect();
@@ -8463,7 +8467,7 @@ canvas.addEventListener('pointermove', (e) => {
   if (Math.hypot(dx, dy) > DRAG_THRESH) state.pointerMoved = true;
 
   // 触摸端：长按未触发且超过阈值 → 启动对象拖动（延迟于 pointerdown，避免与长按加选冲突）
-  if (isTouch && e.pointerType === 'touch' && _touchDownObj && !_lpHandled && !state.isDragging && !state.boxSelecting) {
+  if (touchPointer(e) && _touchDownObj && !_lpHandled && !state.isDragging && !state.boxSelecting) {
     if (Math.hypot(dx, dy) > DRAG_THRESH) {
       clearTimeout(_lpTimer); _lpTimer = null; _lpHandled = false;
       if (!isSelected(_touchDownObj)) selectOnly(_touchDownObj);
@@ -8604,7 +8608,7 @@ canvas.addEventListener('pointerup', (e) => {
   }
 
   // 触摸端：长按加选 / 轻点单选 的收尾
-  if (isTouch && e.pointerType === 'touch') {
+  if (touchPointer(e)) {
     clearTimeout(_lpTimer); _lpTimer = null;
     if (_lpHandled) {
       // 长按已加选，跳过拖动收尾与单击替换/取消
