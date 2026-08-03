@@ -2694,7 +2694,10 @@ function refreshProps() {
       hints.push('当前包含"图片或带贴图图形"，已隐藏"颜色栏"（仅支持"无贴图对象"，解除操作：清除贴图后单选）');
     }
     if (!noNoColorInSel) {
-      hints.push('当前包含"无颜色对象"，已隐藏"颜色栏、透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为对象上色后单选）');
+      const noColorCount = sel.filter(o => o.data.color === NO_COLOR).length;
+      hints.push(noColorCount === sel.length
+        ? '当前' + sel.length + '个对象"全部为无颜色"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：直接点选颜色重新上色）'
+        : '当前包含' + noColorCount + '个"无颜色对象"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为无颜色对象重新上色）');
     }
     hints.push('当前为"多选模式"，已隐藏"等比缩放控件"（仅支持"单选模式"，解除操作：单选对象后操作）');
     elMultiHint.style.display = '';
@@ -4236,10 +4239,14 @@ noColorDot.addEventListener('click', () => {
     if (mk) colorMemory[mk] = NO_COLOR;
   });
   pushHistory();
+  // 立即重建属性面板：隐藏透明度/花纹贴图栏，并刷新多选说明文字
+  refreshProps();
   updateColorSelectionUI();
   updatePatternPreviews(0xcccccc);
-  // 立即隐藏花纹/贴图设置入口
-  elSecPat.style.display = 'none';
+  const _n = state.selectedList.length;
+  toast(_n > 1
+    ? '已将 ' + _n + ' 个对象设为无颜色 · 不支持透明度、花纹与贴图'
+    : '已设为无颜色 · 不支持透明度、花纹与贴图');
 });
 colorRow.appendChild(noColorDot);
 // 添加预设颜色（无颜色之后）
@@ -4258,12 +4265,10 @@ COLORS.forEach(c => {
       if (mk) colorMemory[mk] = c;
     });
     pushHistory();
+    // 重建属性面板：恢复透明度/花纹贴图栏并清除“无颜色”说明
+    refreshProps();
     updateColorSelectionUI();
     updatePatternPreviews(c);
-    // 从NO_COLOR切换到普通颜色时，立即恢复花纹/贴图栏
-    if (state.selectedList.some(o => o.data.type !== 'brush')) {
-      elSecPat.style.display = state.selectedList.every(o => o.data.color !== NO_COLOR) ? '' : 'none';
-    }
   });
   colorRow.appendChild(dot);
 });
@@ -4622,6 +4627,7 @@ objCustomColor.addEventListener('blur', () => {
     _colorSaveTimer = null;
     if (state.selectedList.length) pushHistory();
   }
+  if (state.selectedList.length) refreshProps(); // 同步面板显示与说明文字
 });
 objCustomColor.addEventListener('click', (e) => e.stopPropagation());
 
@@ -4646,13 +4652,10 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
       // 同步对象自定义颜色控件
       objCustomColor.value = hex;
       objCustomHex.textContent = hex.substring(1).toUpperCase();
+      refreshProps(); // 重建面板：恢复透明度/花纹贴图栏并清除“无颜色”说明
       updateColorSelectionUI();
       // 更新花纹预览
       updatePatternPreviews(colorVal);
-      // 从NO_COLOR切换到普通颜色时，立即恢复花纹/贴图栏
-      if (state.selectedList.some(o => o.data.type !== 'brush')) {
-        elSecPat.style.display = state.selectedList.every(o => o.data.color !== NO_COLOR) ? '' : 'none';
-      }
       toast('已应用颜色 ' + hex);
     }
   }
