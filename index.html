@@ -5657,7 +5657,7 @@ document.getElementById('file-import').addEventListener('change', (e) => {
 });
 
 // 视角预设
-document.querySelectorAll('.view-btn').forEach(btn => {
+document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
   btn.addEventListener('click', () => {
     // 切换视角时同时收起左右两栏，最大化视野空间
     setPanelCollapsed('left', true);
@@ -5722,7 +5722,7 @@ controls.addEventListener('change', () => {
 });
 function setView(v) {
   // 标记当前激活的视角按钮
-  document.querySelectorAll('.view-btn').forEach(btn => {
+  document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.view === v);
   });
   // 视野中心固定为原点（0,0,0），与网页中心重合
