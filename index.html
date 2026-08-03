@@ -888,7 +888,7 @@
       <div class="kbd-note">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
       <table class="kbd-table">
         <tr><th>按键</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角后/前平移</td></tr>
+        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角前/后平移</td></tr>
         <tr><td>→/←</td><td>沿Y轴+/−平移</td><td>视角右/左平移</td></tr>
         <tr><td>PgUp/PgDn</td><td>沿Z轴+/−平移</td><td>视角上/下平移</td></tr>
         <tr><td>A/D</td><td>绕Z轴逆/顺旋转</td><td>视角左/右旋转</td></tr>
@@ -5984,20 +5984,20 @@ function addBrushPoint3D(groundPoint) {
     brush.currentMeshes.push(segmentMesh);
     scene.add(segmentMesh);
 
-    // 拐角关节球：每段直管端面是垂直平切的，转向处两管外侧会留下楔形缺口。
-    // 球心在中心线上，但球半径必须略大于 r/cos(φ/2)（φ 为相邻段夹角）才能盖住缺口针尖，
-    // 否则仍残留极细缝隙。故按几何放大并设上限，避免关节鼓包过大；同时提高分段减少多边形收缩。
+    // 拐角关节球：相邻两段方向不同时，两段端面切口无法重合，外侧会留下楔形空隙。
+    // 在交界锚点补一颗与管等半径（略放大以覆盖球面多边形细分带来的极细缝）的球，
+    // 球心在中心线上，不改变笔迹整体形状与粗细观感。
     if (pts.length >= 2) {
       const prev = pts[pts.length - 2];
       const d1 = new THREE.Vector3().subVectors(last, prev);
       const d2 = new THREE.Vector3().subVectors(groundPoint, last);
       if (d1.lengthSq() > 1e-12 && d2.lengthSq() > 1e-12) {
-        const cosPhi = d1.normalize().dot(d2.normalize());
-        if (cosPhi < 0.9995) { // 几乎共线（直行）无缺口，跳过省开销
-          const halfPhi = Math.acos(THREE.MathUtils.clamp(cosPhi, -1, 1)) / 2;
-          const gapR = r / Math.max(Math.cos(halfPhi), 1e-3); // 缺口针尖起点半径
-          const jointR = Math.min(gapR * 1.15, r * 2.2);        // 放大 1.15 倍覆盖针尖 + 上限防鼓包
-          const joint = new THREE.Mesh(new THREE.SphereGeometry(jointR, 20, 16), createBrushMaterial());
+        // 仅当两段不共线才补球；直线笔迹 d1·d2≈1 精确跳过，避免成百上千冗余球。
+        // 阈值 0.9999 覆盖到约 1.1°，确保小角度下的极细楔形缺口也被填满。
+        if (d1.normalize().dot(d2.normalize()) < 0.9999) {
+          // 半径略放大 1%：SphereGeometry 经纬度细分的最细处 ≈ r·cos(π/24)，
+          // 仅放大 1% 即可让球面处处 ≥ r，彻底消除球与管接缝处的极细缝（1% 视觉不可察觉）。
+          const joint = new THREE.Mesh(new THREE.SphereGeometry(r * 1.01, 24, 16), createBrushMaterial());
           joint.position.copy(last);
           joint.castShadow = true; joint.receiveShadow = true;
           joint.userData.isPreview = true;
@@ -9291,8 +9291,8 @@ window.addEventListener('keydown', (e) => {
       // 平移视角：←/→ 右/左，↑/↓ 前/后，PgUp/PgDn 上/下
       case 'ArrowLeft':  panCamera(-panDist, 0, 0); break;
       case 'ArrowRight': panCamera( panDist, 0, 0); break;
-      case 'ArrowUp':    panCamera(0, 0, -panDist); break; // ⬆ 视角后平移
-      case 'ArrowDown':  panCamera(0, 0,  panDist); break; // ⬇ 视角前平移
+      case 'ArrowUp':    panCamera(0, 0,  panDist); break;
+      case 'ArrowDown':  panCamera(0, 0, -panDist); break;
       case 'PageUp':     panCamera(0,  panDist, 0); break;
       case 'PageDown':   panCamera(0, -panDist, 0); break;
       // 旋转视角
