@@ -702,14 +702,12 @@
       <h3>颜色</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
-    <div class="ctrl-row" style="margin-bottom:4px;">
-      <div class="ctrl-label"><span>预设颜色</span></div>
-      <div class="color-row" id="color-row"></div>
-    </div>
+    <div class="ctrl-label" style="margin:4px 0 6px;"><span>预设颜色</span></div>
+    <div class="color-row" id="color-row"></div>
     <div class="ctrl-row" style="margin-top:8px;">
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <div class="color-row" style="grid-template-columns:1fr; width:calc((100% - 30px)/7);">
+        <div style="width: calc((100% - 30px)/7); aspect-ratio:1;">
           <div id="obj-custom-swatch" class="color-dot custom-swatch" style="background:#ffffff;"></div>
         </div>
         <span id="obj-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">FFFFFF</span>
@@ -801,9 +799,7 @@
     <div class="ctrl-row">
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <div class="color-row" style="grid-template-columns:1fr; width:calc((100% - 30px)/7);">
-          <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
-        </div>
+        <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
         <span id="brush-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">000000</span>
         <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
@@ -4573,29 +4569,23 @@ document.getElementById('brush-open-picker').addEventListener('click', () => ope
 // 对象自定义颜色拾取（圆形色块 + 取色器）
 const objCustomSwatch = document.getElementById('obj-custom-swatch');
 const objCustomHex = document.getElementById('obj-custom-hex');
-// 点击圆形自定义色块 = 直接应用该颜色（不打开取色器）；改色请用"选取器"按钮
-function applyObjCustomColor() {
-  const sw = document.getElementById('obj-custom-swatch');
-  if (!sw) return;
-  const rgb = hexToRgb(sw.style.background);
-  if (!rgb) return;
-  const colorVal = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
-  state.defaultColor = colorVal;
-  if (state.selectedList.length > 0) {
-    state.selectedList.forEach(o => {
-      o.data.color = colorVal;
-      applyAppearance(o);
-      const mk = getMemoryKey(o);
-      if (mk) colorMemory[mk] = colorVal;
-    });
-  }
+// 记录对象自定义色数值（圆形块所代表的颜色）
+let objCustomColorVal = 0xffffff;
+// 圆形色块点击：直接把选中对象颜色切换为该自定义色（与预设色行为一致），不打开取色器
+if (objCustomSwatch) objCustomSwatch.addEventListener('click', () => {
+  if (state.selectedList.length === 0) return;
+  const c = objCustomColorVal;
+  state.selectedList.forEach(o => {
+    o.data.color = c;
+    applyAppearance(o);
+    const mk = getMemoryKey(o);
+    if (mk) colorMemory[mk] = c;
+  });
   pushHistory();
   refreshProps();
   updateColorSelectionUI();
-  updatePatternPreviews(colorVal);
-  toast('已应用颜色 ' + ('#' + colorVal.toString(16).padStart(6, '0').toUpperCase()));
-}
-if (objCustomSwatch) objCustomSwatch.addEventListener('click', applyObjCustomColor);
+  updatePatternPreviews(c);
+});
 
 document.getElementById('color-picker-cancel').addEventListener('click', () => {
   pickerModal.classList.remove('show');
@@ -4607,6 +4597,7 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
     const colorVal = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
     if (pickerTarget === 'brush') {
       setBrushColor(colorVal);
+      brushCustomColorVal = colorVal;
       toast('画笔颜色已设置为 ' + hex);
     } else {
       state.defaultColor = colorVal;
@@ -4617,6 +4608,7 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
       pushHistory();
       // 同步对象自定义颜色控件（圆形色块，仅在自定义时更新）
       setObjCustomSwatch(colorVal);
+      objCustomColorVal = colorVal;
       refreshProps(); // 重建面板：恢复透明度/花纹贴图栏并清除"无颜色"说明
       updateColorSelectionUI();
       // 更新花纹预览
@@ -4768,10 +4760,10 @@ COLORS.forEach(c => {
   });
   brushColorRow.appendChild(dot);
 });
-// 画笔圆形色块点击 = 直接应用当前自定义色（不打开取色器）；改色请用"选取器"按钮
+// 自定义颜色拾取（圆形色块直接切换画笔颜色，不打开取色器）
+let brushCustomColorVal = 0x000000;
 if (brushCustomSwatch) brushCustomSwatch.addEventListener('click', () => {
-  const rgb = hexToRgb(brushCustomSwatch.style.background);
-  if (rgb) setBrushColor((rgb[0] << 16) | (rgb[1] << 8) | rgb[2]);
+  setBrushColor(brushCustomColorVal);
 });
 
 // 画笔纹路选择（已移除纹路栏，保留代码兼容性）
@@ -5624,6 +5616,7 @@ document.getElementById('file-import').addEventListener('change', (e) => {
       if (typeof json.defaultColor === 'number') {
         state.defaultColor = json.defaultColor;
         setObjCustomSwatch(state.defaultColor);
+        objCustomColorVal = state.defaultColor;
       }
       if (typeof json.brushColor === 'number') {
         setBrushColor(json.brushColor);
