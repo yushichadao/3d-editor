@@ -5469,6 +5469,8 @@ document.getElementById('btn-clear').addEventListener('click', async () => {
   state.objects = [];
   updateClearButtonState();
   pushHistory(); toast('已清空');
+  setPanelCollapsed('left', true);
+  setPanelCollapsed('right', true);
 });
 document.getElementById('btn-axes').addEventListener('click', () => {
   axesVisible = !axesVisible;
@@ -5509,6 +5511,8 @@ async function newScene() {
   pushHistory();
   updateUndoRedoUI();
   setView('persp'); // 新建场景后回到透视视角，并点亮“透视”按钮（相机移动后熄灭）
+  setPanelCollapsed('left', true);
+  setPanelCollapsed('right', true);
   toast('已新建空白场景');
 }
 // 截图导出 PNG：setSize(w,h,true) 同步 CSS 与 drawing buffer，保证视野与当前画面一致
@@ -8670,6 +8674,13 @@ canvas.addEventListener('pointerup', (e) => {
       selectWithinBox(x0, y0, x1, y1);
       if (state.selectedList.length === 0) toast('框选未命中对象');
       else { toast('已框选 ' + state.selectedList.length + ' 个对象'); pushHistory(); }
+      // 框选完成后退出框选模式：按钮蓝色消失，再次框选需重新点击
+      if (state.boxSelectMode) {
+        state.boxSelectMode = false;
+        const bsBtn = document.getElementById('btn-boxselect');
+        if (bsBtn) bsBtn.classList.remove('active');
+        if (!controls.enabled) controls.enabled = true;
+      }
     }
   }
   // 触摸设备：轻点空白区域取消选择（拖动旋转不触发取消）
