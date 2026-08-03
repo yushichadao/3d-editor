@@ -5984,16 +5984,20 @@ function addBrushPoint3D(groundPoint) {
     brush.currentMeshes.push(segmentMesh);
     scene.add(segmentMesh);
 
-    // 拐角关节球：相邻两段方向不同时，两段端面切口无法重合，外侧会留下楔形空隙。
-    // 在交界锚点补一颗与管等半径的球即可填满（球心在中心线上，不改变笔迹形状与粗细）。
+    // 拐角关节球：每段直管端面是垂直平切的，转向处两管外侧会留下楔形缺口。
+    // 球心在中心线上，但球半径必须略大于 r/cos(φ/2)（φ 为相邻段夹角）才能盖住缺口针尖，
+    // 否则仍残留极细缝隙。故按几何放大并设上限，避免关节鼓包过大；同时提高分段减少多边形收缩。
     if (pts.length >= 2) {
       const prev = pts[pts.length - 2];
       const d1 = new THREE.Vector3().subVectors(last, prev);
       const d2 = new THREE.Vector3().subVectors(groundPoint, last);
       if (d1.lengthSq() > 1e-12 && d2.lengthSq() > 1e-12) {
-        // 缺口宽度 ≈ r*tan(θ/2)，夹角小于约 3.6° 时不可见，无需补球（省开销）
-        if (d1.normalize().dot(d2.normalize()) < 0.998) {
-          const joint = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), createBrushMaterial());
+        const cosPhi = d1.normalize().dot(d2.normalize());
+        if (cosPhi < 0.9995) { // 几乎共线（直行）无缺口，跳过省开销
+          const halfPhi = Math.acos(THREE.MathUtils.clamp(cosPhi, -1, 1)) / 2;
+          const gapR = r / Math.max(Math.cos(halfPhi), 1e-3); // 缺口针尖起点半径
+          const jointR = Math.min(gapR * 1.15, r * 2.2);        // 放大 1.15 倍覆盖针尖 + 上限防鼓包
+          const joint = new THREE.Mesh(new THREE.SphereGeometry(jointR, 20, 16), createBrushMaterial());
           joint.position.copy(last);
           joint.castShadow = true; joint.receiveShadow = true;
           joint.userData.isPreview = true;
