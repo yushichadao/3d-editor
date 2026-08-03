@@ -77,8 +77,10 @@
     position: fixed; top: 56px; z-index: 30;
     background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border); border-radius: var(--radius);
-    box-shadow: var(--shadow); overflow-y: auto;
+    box-shadow: none; overflow-y: auto;
     max-height: calc(100vh - 72px);
+    /* 手机版：上下滑动在面板内部消化，不外泄到页面/画布，避免误触 */
+    touch-action: pan-y; overscroll-behavior: contain;
   }
   /* 固定宽度：页面变窄时左右栏不收缩，保持左/右浮窗布置方式不变 */
   .panel-left { left: 14px; width: 240px; transition: transform .25s ease; }
@@ -252,7 +254,7 @@
     display: flex; align-items: center; gap: 4px; padding: 5px;
     background: var(--bg-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border); border-radius: 36px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(110,231,255,0.05);
+    box-shadow: none;
     max-width: calc(100vw - 16px); overflow-x: auto;
     scrollbar-width: none; -ms-overflow-style: none;
     transition: padding .28s ease, border-radius .28s ease, box-shadow .28s ease;
@@ -5881,6 +5883,27 @@ function _checkAutoCollapse() {
 }
 window.addEventListener('resize', _checkAutoCollapse);
 _checkAutoCollapse();
+
+// ============ 手机版：面板内滑动抑误触 ============
+// 在面板内上下滑动滚动内容时，若按下到松开之间发生明显位移（滑动），
+// 则拦截随后触发的 click，避免滚动结束落在按钮/滑块上造成误点击。
+// 正常轻点（无位移）不受影响，滑块拖动（用 input 事件）也不受影响。
+function enablePanelScrollGuard(panel) {
+  if (!panel) return;
+  let startY = 0, moved = false;
+  panel.addEventListener('pointerdown', (e) => {
+    startY = e.clientY; moved = false;
+  }, { passive: true });
+  panel.addEventListener('pointermove', (e) => {
+    if (Math.abs(e.clientY - startY) > 8) moved = true;
+  }, { passive: true });
+  // 捕获阶段拦截，确保优先于面板内按钮的 click
+  panel.addEventListener('click', (e) => {
+    if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+  }, true);
+}
+enablePanelScrollGuard(document.getElementById('panel-left'));
+enablePanelScrollGuard(document.getElementById('panel-right'));
 
 // ============ 指针交互 ============
 const DRAG_THRESH = 5;
