@@ -296,7 +296,14 @@
     background: transparent; border: none; border-radius: 18px; outline: none;
     color: var(--text-dim); cursor: pointer; transition: all .18s; flex-shrink: 0; white-space: nowrap;
   }
-  .view-btn:hover { background: rgba(110,231,255,0.1); color: var(--text); }
+  /* hover 仅对真实鼠标生效，避免触屏点完后 hover 粘滞导致按钮不立即变灰 */
+  @media (hover: hover) and (pointer: fine) {
+    .view-btn:hover { background: rgba(110,231,255,0.1); color: var(--text); }
+  }
+  /* 触摸模式下彻底禁用非激活按钮的 hover 残留 */
+  .touch-device .view-btn:not(.active):hover {
+    background: transparent; color: var(--text-dim);
+  }
   /* 熄灭后（非激活）聚焦时不残留外圈，保持灰字原样 */
   .view-btn:not(.active):focus,
   .view-btn:not(.active):focus-visible { outline: none; box-shadow: none; }
@@ -5666,6 +5673,7 @@ document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
     setPanelCollapsed('left', true);
     setPanelCollapsed('right', true);
     setView(btn.dataset.view);
+    btn.blur(); // 立即失焦，熄灭后无残留 hover/焦点态
   });
 });
 
@@ -5676,6 +5684,7 @@ if (boxSelBtn) {
     state.boxSelectMode = !state.boxSelectMode;
     boxSelBtn.classList.toggle('active', state.boxSelectMode);
     if (!state.boxSelectMode && !controls.enabled) controls.enabled = true;
+    boxSelBtn.blur(); // 立即失焦，避免残留焦点/hover 态
     toast(state.boxSelectMode ? '框选模式：单指拖拽框选对象' : '已退出框选模式');
   });
 }
@@ -5683,6 +5692,7 @@ const selAllBtn = document.getElementById('btn-selectall');
 if (selAllBtn) selAllBtn.addEventListener('click', () => {
   selectAll();
   selAllBtn.classList.add('active');
+  selAllBtn.blur(); // 立即失焦，蓝色熄灭后直接回灰
   setTimeout(() => selAllBtn.classList.remove('active'), 220);
 });
 
@@ -8681,7 +8691,7 @@ canvas.addEventListener('pointerup', (e) => {
       if (state.boxSelectMode) {
         state.boxSelectMode = false;
         const bsBtn = document.getElementById('btn-boxselect');
-        if (bsBtn) bsBtn.classList.remove('active');
+        if (bsBtn) { bsBtn.classList.remove('active'); bsBtn.blur(); }
         if (!controls.enabled) controls.enabled = true;
       }
     }
