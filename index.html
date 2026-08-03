@@ -297,6 +297,9 @@
     color: var(--text-dim); cursor: pointer; transition: all .18s; flex-shrink: 0; white-space: nowrap;
   }
   .view-btn:hover { background: rgba(110,231,255,0.1); color: var(--text); }
+  /* 熄灭后（非激活）聚焦时不残留外圈，保持灰字原样 */
+  .view-btn:not(.active):focus,
+  .view-btn:not(.active):focus-visible { outline: none; box-shadow: none; }
   .view-btn.active {
     background: linear-gradient(135deg, rgba(110,231,255,0.18), rgba(168,85,247,0.10));
     color: var(--accent); font-weight: 600;
