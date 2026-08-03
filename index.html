@@ -277,16 +277,20 @@
   .bottombar.collapsed > .bb-toggle .bb-arrow { transform: rotate(-90deg); }
   .bottombar > .bb-body {
     display: flex; gap: 2px; align-items: center;
-    overflow: hidden;
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -ms-overflow-style: none;
     max-width: 1200px; opacity: 1;
     transition: max-width .32s ease, opacity .22s ease .04s;
   }
+  .bottombar > .bb-body::-webkit-scrollbar { display: none; }
   .bottombar.collapsed > .bb-body {
     max-width: 0; opacity: 0;
     transition: max-width .28s ease, opacity .18s ease;
     pointer-events: none;
   }
   .bottombar.collapsed { padding: 5px; border-radius: 50%; gap: 0; }
+  /* 框选/全选 与 视角选择区 之间的竖线分隔 */
+  .bb-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.18); flex-shrink: 0; margin: 0 6px; }
   .view-btn {
     height: 32px; padding: 0 13px; font-size: 12px; font-weight: 500;
     background: transparent; border: none; border-radius: 18px;
@@ -852,9 +856,12 @@
     <div class="kbd touch-only" style="display:none;">
       <div class="kbd-row"><b>单指单击</b><span>选择对象/控件</span></div>
       <div class="kbd-row"><b>单指双击</b><span>编辑文本</span></div>
+      <div class="kbd-row"><b>单指长按对象</b><span>加选/减选（等价 Shift 单击）</span></div>
       <div class="kbd-row"><b>单指拖动对象</b><span>操作对象/控件</span></div>
       <div class="kbd-row"><b>单指拖动空白</b><span>视角旋转</span></div>
       <div class="kbd-row"><b>单指轻点空白</b><span>取消选择</span></div>
+      <div class="kbd-row"><b>「全选」按钮</b><span>选中所有对象</span></div>
+      <div class="kbd-row"><b>「框选」按钮</b><span>开启后单指拖拽框选对象</span></div>
       <div class="kbd-row"><b>双指拖动</b><span>视角平移</span></div>
       <div class="kbd-row"><b>双指捏合</b><span>视角缩放</span></div>
     </div>
@@ -942,6 +949,9 @@
     <span class="bb-arrow">▼</span>
   </div>
   <div class="bb-body">
+    <button class="view-btn touch-only" id="btn-boxselect" style="display:none;" title="框选模式：单指拖拽框选对象">▢ 框选</button>
+    <button class="view-btn touch-only" id="btn-selectall" style="display:none;" title="全选所有对象">全选</button>
+    <div class="bb-sep"></div>
     <button class="view-btn" data-view="persp">透视</button>
     <button class="view-btn" data-view="top">顶视</button>
     <button class="view-btn" data-view="bottom">底视</button>
@@ -1124,6 +1134,13 @@ if (isTouch) {
   controls.rotateSpeed = 0.5;
   controls.panSpeed = 0.5;
 }
+
+// 触摸端多选状态：长按加选 / 框选模式
+let _lpTimer = null;      // 长按计时器
+let _lpHandled = false;   // 长按是否已触发加选
+let _lpObj = null;        // 长按候选对象
+let _touchDownObj = null; // 触摸按下命中的对象
+const LONG_PRESS_MS = 450;
 
 // ============ 光照 ============
 // 环境光提供基础亮度（暗面），方向光提供明暗层次与阴影（亮面）
@@ -5639,6 +5656,43 @@ document.querySelectorAll('.view-btn').forEach(btn => {
     setView(btn.dataset.view);
   });
 });
+
+// 触摸端多选：框选模式切换 + 全选
+const boxSelBtn = document.getElementById('btn-boxselect');
+if (boxSelBtn) {
+  boxSelBtn.addEventListener('click', () => {
+    state.boxSelectMode = !state.boxSelectMode;
+    boxSelBtn.classList.toggle('active', state.boxSelectMode);
+    if (!state.boxSelectMode && !controls.enabled) controls.enabled = true;
+    toast(state.boxSelectMode ? '框选模式：单指拖拽框选对象' : '已退出框选模式');
+  });
+}
+const selAllBtn = document.getElementById('btn-selectall');
+if (selAllBtn) selAllBtn.addEventListener('click', () => selectAll());
+
+// 底栏：拖动 / 触摸横移以显示溢出按钮（隐藏滚动条，无额外滑动条）
+(function initBottomBarScroll() {
+  const bbBody = document.querySelector('.bottombar > .bb-body');
+  if (!bbBody) return;
+  let down = false, startX = 0, startScroll = 0, moved = false;
+  bbBody.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('button')) return; // 点击按钮不触发横移
+    down = true; moved = false;
+    startX = e.clientX; startScroll = bbBody.scrollLeft;
+    if (bbBody.setPointerCapture) { try { bbBody.setPointerCapture(e.pointerId); } catch (_) {} }
+  });
+  bbBody.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const d = e.clientX - startX;
+    if (Math.abs(d) > 4) moved = true;
+    bbBody.scrollLeft = startScroll - d;
+  });
+  bbBody.addEventListener('pointerup', (e) => {
+    down = false;
+    if (moved) e.preventDefault();
+  });
+  bbBody.addEventListener('pointercancel', () => { down = false; });
+})();
 function setView(v) {
   // 标记当前激活的视角按钮
   document.querySelectorAll('.view-btn').forEach(btn => {
@@ -8259,13 +8313,25 @@ canvas.addEventListener('pointerdown', (e) => {
   const hit = intersectObjects();
   if (hit) {
     state.clickHitObject = true;
-    if (e.shiftKey) {
+    if (isTouch && e.pointerType === 'touch') {
+      // 触摸：长按=加选(等价桌面 Shift+单击)；拖动=移动；轻点=单选替换
+      _touchDownObj = hit.obj;
+      _lpHandled = false;
+      _lpObj = hit.obj;
+      _lpTimer = setTimeout(() => {
+        _lpHandled = true;
+        toggleSelect(_lpObj);
+        updateShapeButtonStates();
+        clearTimeout(_lpTimer); _lpTimer = null;
+      }, LONG_PRESS_MS);
+    } else if (e.shiftKey) {
       toggleSelect(hit.obj);
     } else if (!isSelected(hit.obj)) {
       selectOnly(hit.obj);
     }
     // TransformControls 已激活时，不启动自定义拖拽（由 TC 处理）
-    if (!tcHasObj) {
+    // 触摸端拖拽延迟到 pointermove 超阈值时启动，避免与长按加选冲突
+    if (!tcHasObj && !(isTouch && e.pointerType === 'touch')) {
       state.isDragging = true;
       const gp = intersectGround();
       state.dragStartGround.copy(gp || new THREE.Vector3());
@@ -8285,9 +8351,23 @@ canvas.addEventListener('pointerdown', (e) => {
       };
     }
   } else {
-    // 触摸设备空白区域：由 OrbitControls 旋转视角，轻点取消选择
+    // 触摸设备空白区域
     if (isTouch && e.pointerType === 'touch') {
-      state.touchEmptyTap = true;
+      if (state.boxSelectMode) {
+        // 框选模式：单指拖拽=画框，临时禁用 OrbitControls 旋转
+        if (!e.shiftKey) deselect();
+        state.boxSelecting = true;
+        controls.enabled = false;
+        state.boxStart.set(e.clientX, e.clientY);
+        boxSelEl.style.display = 'block';
+        boxSelEl.style.left = e.clientX + 'px';
+        boxSelEl.style.top = e.clientY + 'px';
+        boxSelEl.style.width = '0px';
+        boxSelEl.style.height = '0px';
+      } else {
+        // 非框选模式：由 OrbitControls 旋转视角，轻点取消选择
+        state.touchEmptyTap = true;
+      }
     } else {
       // 桌面端：开始拖框选择（非 shift 时先清空）
       if (!e.shiftKey) deselect();
@@ -8381,6 +8461,23 @@ canvas.addEventListener('pointermove', (e) => {
   const dx = e.clientX - state.pointerStart.x;
   const dy = e.clientY - state.pointerStart.y;
   if (Math.hypot(dx, dy) > DRAG_THRESH) state.pointerMoved = true;
+
+  // 触摸端：长按未触发且超过阈值 → 启动对象拖动（延迟于 pointerdown，避免与长按加选冲突）
+  if (isTouch && e.pointerType === 'touch' && _touchDownObj && !_lpHandled && !state.isDragging && !state.boxSelecting) {
+    if (Math.hypot(dx, dy) > DRAG_THRESH) {
+      clearTimeout(_lpTimer); _lpTimer = null; _lpHandled = false;
+      if (!isSelected(_touchDownObj)) selectOnly(_touchDownObj);
+      state.isDragging = true;
+      const gp = intersectGround();
+      state.dragStartGround.copy(gp || new THREE.Vector3());
+      state._dragStartNdcY = (e.clientY / canvas.clientHeight) * 2 - 1;
+      state.dragStartPositions = state.selectedList.map(o => ({
+        obj: o, sx: o.mesh.position.x, sz: o.mesh.position.z, sy: o.mesh.position.y
+      }));
+      canvas.classList.add('grabbing');
+      controls.mouseButtons = { LEFT: null, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.ROTATE };
+    }
+  }
 
   if (state.isDragging && state.selectedList.length) {
     setPointer(e);
@@ -8506,6 +8603,23 @@ canvas.addEventListener('pointerup', (e) => {
     return;
   }
 
+  // 触摸端：长按加选 / 轻点单选 的收尾
+  if (isTouch && e.pointerType === 'touch') {
+    clearTimeout(_lpTimer); _lpTimer = null;
+    if (_lpHandled) {
+      // 长按已加选，跳过拖动收尾与单击替换/取消
+      _lpHandled = false;
+      _touchDownObj = null;
+      state.pointerDown = false;
+      return;
+    }
+    // 轻点对象（未移动、未框选）→ 单选替换
+    if (_touchDownObj && !state.pointerMoved && !state.boxSelecting) {
+      selectOnly(_touchDownObj);
+    }
+    _touchDownObj = null;
+  }
+
   if (state.isDragging) {
     state.isDragging = false;
     canvas.classList.remove('grabbing');
@@ -8526,7 +8640,7 @@ canvas.addEventListener('pointerup', (e) => {
     if (Math.abs(x1 - x0) > 4 || Math.abs(y1 - y0) > 4) {
       selectWithinBox(x0, y0, x1, y1);
       if (state.selectedList.length === 0) toast('框选未命中对象');
-      else toast('已框选 ' + state.selectedList.length + ' 个对象');
+      else { toast('已框选 ' + state.selectedList.length + ' 个对象'); pushHistory(); }
     }
   }
   // 触摸设备：轻点空白区域取消选择（拖动旋转不触发取消）
@@ -9520,6 +9634,8 @@ animate();
 // ============ 触摸设备 UI 初始化 ============
 if (isTouch) {
   document.body.classList.add('touch-device');
+  // 触摸端多选状态初始化
+  state.boxSelectMode = false;
   // 隐藏鼠标操作面板，显示手势面板
   document.querySelectorAll('.mouse-only').forEach(el => el.style.display = 'none');
   document.querySelectorAll('.touch-only').forEach(el => el.style.display = '');
