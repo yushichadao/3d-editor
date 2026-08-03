@@ -888,7 +888,7 @@
       <div class="kbd-note">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
       <table class="kbd-table">
         <tr><th>按键</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角前/后平移</td></tr>
+        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角后/前平移</td></tr>
         <tr><td>→/←</td><td>沿Y轴+/−平移</td><td>视角右/左平移</td></tr>
         <tr><td>PgUp/PgDn</td><td>沿Z轴+/−平移</td><td>视角上/下平移</td></tr>
         <tr><td>A/D</td><td>绕Z轴逆/顺旋转</td><td>视角左/右旋转</td></tr>
@@ -9291,8 +9291,8 @@ window.addEventListener('keydown', (e) => {
       // 平移视角：←/→ 右/左，↑/↓ 前/后，PgUp/PgDn 上/下
       case 'ArrowLeft':  panCamera(-panDist, 0, 0); break;
       case 'ArrowRight': panCamera( panDist, 0, 0); break;
-      case 'ArrowUp':    panCamera(0, 0,  panDist); break;
-      case 'ArrowDown':  panCamera(0, 0, -panDist); break;
+      case 'ArrowUp':    panCamera(0, 0, -panDist); break; // 前进
+      case 'ArrowDown':  panCamera(0, 0,  panDist); break; // 后退
       case 'PageUp':     panCamera(0,  panDist, 0); break;
       case 'PageDown':   panCamera(0, -panDist, 0); break;
       // 旋转视角
