@@ -540,7 +540,7 @@
     <button class="top-btn" id="btn-copy" title="复制 (Ctrl+C)"><span class="ic">⧉</span><span class="lbl">复制</span></button>
     <button class="top-btn" id="btn-paste" title="粘贴 (Ctrl+V)"><span class="ic">📋</span><span class="lbl">粘贴</span></button>
     <button class="top-btn" id="btn-dup" title="克隆 (Ctrl+D)"><span class="ic">⎘</span><span class="lbl">克隆</span></button>
-    <button class="top-btn" id="btn-clear" title="清空场景"><span class="ic">🗑</span><span class="lbl">清空</span></button>
+    <button class="top-btn" id="btn-clear" title="清空场景（Ctrl+Del/Backspace）"><span class="ic">🗑</span><span class="lbl">清空</span></button>
     <div class="top-btn-sep"></div>
     <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl">坐标轴</span></button>
     <button class="top-btn" id="btn-grid" title="切换网格面显示"><span class="ic">🔲</span><span class="lbl">网格面</span></button>
@@ -949,7 +949,7 @@
     <span class="bb-arrow">▼</span>
   </div>
     <div class="bb-body">
-    <button class="view-btn touch-only" id="btn-boxselect" style="display:none;" title="框选模式：单指拖拽框选对象">▢ 框选</button>
+    <button class="view-btn touch-only" id="btn-boxselect" style="display:none;" title="框选模式：单指拖拽框选对象">框选</button>
     <button class="view-btn touch-only" id="btn-selectall" style="display:none;" title="全选所有对象">全选</button>
     <div class="bb-sep touch-only" style="display:none;"></div>
     <button class="view-btn" data-view="persp">透视</button>
@@ -5508,6 +5508,7 @@ async function newScene() {
   state.history = []; state.hIndex = -1;
   pushHistory();
   updateUndoRedoUI();
+  setView('persp'); // 新建场景后回到透视视角，并点亮“透视”按钮（相机移动后熄灭）
   toast('已新建空白场景');
 }
 // 截图导出 PNG：setSize(w,h,true) 同步 CSS 与 drawing buffer，保证视野与当前画面一致
@@ -5672,7 +5673,11 @@ if (boxSelBtn) {
   });
 }
 const selAllBtn = document.getElementById('btn-selectall');
-if (selAllBtn) selAllBtn.addEventListener('click', () => selectAll());
+if (selAllBtn) selAllBtn.addEventListener('click', () => {
+  selectAll();
+  selAllBtn.classList.add('active');
+  setTimeout(() => selAllBtn.classList.remove('active'), 220);
+});
 
 // 底栏：拖动 / 触摸横移以显示溢出按钮（隐藏滚动条，无额外滑动条）
 (function initBottomBarScroll() {
@@ -5697,6 +5702,20 @@ if (selAllBtn) selAllBtn.addEventListener('click', () => selectAll());
   });
   bbBody.addEventListener('pointercancel', () => { down = false; });
 })();
+// 视角蓝保持：点击视角后按钮变蓝，相机被移动后熄灭
+let viewLockPose = null;        // 锁定视角时的相机姿态
+let suppressViewChange = false; // 在 setView 内部临时屏蔽 change 检测
+function lockCurrentView() {
+  viewLockPose = { pos: camera.position.clone(), target: controls.target.clone() };
+}
+controls.addEventListener('change', () => {
+  if (suppressViewChange || !viewLockPose) return;
+  if (camera.position.distanceTo(viewLockPose.pos) > 0.03 ||
+      controls.target.distanceTo(viewLockPose.target) > 0.03) {
+    document.querySelectorAll('.view-btn[data-view]').forEach(b => b.classList.remove('active'));
+    viewLockPose = null;
+  }
+});
 function setView(v) {
   // 标记当前激活的视角按钮
   document.querySelectorAll('.view-btn').forEach(btn => {
@@ -5728,7 +5747,10 @@ function setView(v) {
     controls.target.copy(origin);
     camera.lookAt(origin);
     camera.updateProjectionMatrix();
+    suppressViewChange = true;
     controls.update();
+    suppressViewChange = false;
+    lockCurrentView();
     setTool(null); // 强制回到选择/变换模式
     return;
   }
@@ -5765,7 +5787,10 @@ function setView(v) {
     distance *= maxNDC / 0.88 * 1.02;
   }
   camera.updateProjectionMatrix();
+  suppressViewChange = true;
   controls.update();
+  suppressViewChange = false;
+  lockCurrentView();
   // 切换视角后强制回到选择/变换模式
   setTool(null);
 }
