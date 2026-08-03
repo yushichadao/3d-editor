@@ -871,9 +871,9 @@
       <div class="kbd-note">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
       <table class="kbd-table">
         <tr><th>按键</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角下/上平移</td></tr>
+        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角前/后平移</td></tr>
         <tr><td>→/←</td><td>沿Y轴+/−平移</td><td>视角右/左平移</td></tr>
-        <tr><td>PgUp/PgDn</td><td>沿Z轴+/−平移</td><td>—</td></tr>
+        <tr><td>PgUp/PgDn</td><td>沿Z轴+/−平移</td><td>视角上/下平移</td></tr>
         <tr><td>A/D</td><td>绕Z轴逆/顺旋转</td><td>视角左/右旋转</td></tr>
         <tr><td>W/S</td><td>绕Y轴逆/顺旋转</td><td>视角上/下旋转</td></tr>
         <tr><td>E/Q</td><td>绕X轴逆/顺旋转</td><td>—</td></tr>
@@ -3986,7 +3986,7 @@ function buildShapeGrid(containerId, shapes) {
       }
     });
     
-    // 指针拖拽生成幽灵对象
+    // 指针拖拽生成幽灵对象（鼠标拖出左栏外才显示幽灵和包围盒）
     btn.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
       e.preventDefault();
@@ -4013,37 +4013,58 @@ function buildShapeGrid(containerId, shapes) {
       dragGhost.userData.ghostCenter = new THREE.Vector3();
       geo.boundingBox.getCenter(dragGhost.userData.ghostCenter);
       dragGhost.userData.shapeKey = shapeKey;
-      dragGhost.visible = false;
+      dragGhost.visible = false; // 初始不显示，等鼠标拖出左栏外再显示
       scene.add(dragGhost);
-      
+
       // 记录拖拽起点，用于判断是否实际拖拽移动过（否则算click，留给click事件创建）
       const startX = e.clientX, startY = e.clientY;
       let moved = false;
-      
-      // 初始位置
-      const gp = pickGroundFromEvent(e);
-      if (gp) {
-        dragGhost.position.copy(gp).sub(dragGhost.userData.ghostCenter);
-        dragGhost.visible = true;
-      }
-      
+      // 是否已拖出左栏外（拖出后才显示幽灵对象并跟随）
+      let exitedPanel = false;
+      const leftPanel = document.getElementById('panel-left');
+
       const onMove = (ev) => {
         if (!moved) {
           const dx = ev.clientX - startX;
           const dy = ev.clientY - startY;
           if (dx * dx + dy * dy > 16) moved = true; // 超过4px判定为实际拖拽
         }
-        const gp2 = pickGroundFromEvent(ev);
-        if (gp2 && dragGhost) {
-          dragGhost.position.copy(gp2).sub(dragGhost.userData.ghostCenter);
-          if (!dragGhost.visible) dragGhost.visible = true;
+        // 判断是否拖出左栏外
+        if (!exitedPanel && leftPanel) {
+          const pr = leftPanel.getBoundingClientRect();
+          const collapsed = leftPanel.classList.contains('collapsed');
+          // 左栏收起时：认为已拖出，直接显示幽灵
+          // 左栏展开时：鼠标在左栏 rect 外视为已拖出
+          if (collapsed || ev.clientX < pr.left || ev.clientX > pr.right ||
+              ev.clientY < pr.top || ev.clientY > pr.bottom) {
+            exitedPanel = true;
+          }
+        }
+        // 只有拖出左栏外后才更新幽灵位置并显示
+        if (exitedPanel && dragGhost) {
+          const gp2 = pickGroundFromEvent(ev);
+          if (gp2) {
+            dragGhost.position.copy(gp2).sub(dragGhost.userData.ghostCenter);
+            if (!dragGhost.visible) dragGhost.visible = true;
+          }
         }
       };
-      
+
       const onUp = (ev) => {
         btn.classList.remove('dragging');
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
+
+        // 若从未拖出左栏外，直接取消（不显示也不创建）
+        if (!exitedPanel) {
+          if (dragGhost) {
+            dragGhost.geometry.dispose();
+            dragGhost.material.dispose();
+            scene.remove(dragGhost);
+            dragGhost = null;
+          }
+          return;
+        }
 
         // 松开指针时若不在画布上（在上栏/左栏/右栏/下栏），取消添加操作
         const target = document.elementFromPoint(ev.clientX, ev.clientY);
@@ -4066,15 +4087,15 @@ function buildShapeGrid(containerId, shapes) {
           dragGhost.material.dispose();
           scene.remove(dragGhost);
           dragGhost = null;
-          
+
           // 创建真实对象（使用对应类型的颜色记忆）
           const memKeyD = SHAPES_3D[shapeKey2] ? 'shape3d' : 'shape2d';
-          const o = createObject({ 
-            kind: SHAPES_3D[shapeKey2] ? '3d' : '2d', 
-            shape: shapeKey2, 
-            color: colorMemory[memKeyD], 
-            pos: [pos[0], 0, pos[2]], 
-            scale: 1 
+          const o = createObject({
+            kind: SHAPES_3D[shapeKey2] ? '3d' : '2d',
+            shape: shapeKey2,
+            color: colorMemory[memKeyD],
+            pos: [pos[0], 0, pos[2]],
+            scale: 1
           });
           if (o) {
             // 对齐到预览的中心位置（pos[1] = dragGhost.position.y，即预览时的中心Y）
@@ -4098,7 +4119,7 @@ function buildShapeGrid(containerId, shapes) {
           }
         }
       };
-      
+
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
     });
@@ -5618,30 +5639,15 @@ function setView(v) {
   document.querySelectorAll('.view-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.view === v);
   });
+  // 视野中心固定为原点（0,0,0），与网页中心重合
+  const origin = new THREE.Vector3(0, 0, 0);
   // 计算所有对象的包围盒
   const box = new THREE.Box3();
   let hasObjects = false;
   state.objects.forEach(o => {
     if (o.mesh) { box.expandByObject(o.mesh); hasObjects = true; }
   });
-  // 无对象时使用默认视角
-  if (!hasObjects || box.isEmpty()) {
-    const t = controls.target;
-    if (v === 'persp') camera.position.set(9, 8, 12);
-    else if (v === 'top') camera.position.set(t.x, 18, t.z + 0.01);
-    else if (v === 'bottom') camera.position.set(t.x, -18, t.z + 0.01);
-    else if (v === 'front') camera.position.set(t.x, t.y + 0.5, 18);
-    else if (v === 'back') camera.position.set(t.x, t.y + 0.5, -18);
-    else if (v === 'left') camera.position.set(-18, t.y + 0.5, t.z);
-    else if (v === 'right') camera.position.set(18, t.y + 0.5, t.z);
-    controls.update();
-    setTool(null); // 强制回到选择/变换模式
-    return;
-  }
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
-  const fov = camera.fov * Math.PI / 180;
-  // 相机方向（从中心指向相机的单位向量）
+  // 相机方向（从原点指向相机的单位向量，各按钮方向保持不变）
   let dir;
   if (v === 'persp') dir = new THREE.Vector3(0.5, 0.45, 0.6);
   else if (v === 'top') dir = new THREE.Vector3(0, 1, 0.0001);
@@ -5651,10 +5657,19 @@ function setView(v) {
   else if (v === 'left') dir = new THREE.Vector3(-1, 0, 0);
   else if (v === 'right') dir = new THREE.Vector3(1, 0, 0);
   dir.normalize();
-  // 初始距离估计（基于最大维度）
-  const maxDim = Math.max(size.x, size.y, size.z, 4);
-  let distance = (maxDim / 2 / Math.tan(fov / 2)) * 1.5;
-  controls.target.copy(center);
+  const fov = camera.fov * Math.PI / 180;
+  // 无对象时使用默认距离
+  if (!hasObjects || box.isEmpty()) {
+    const defaultDist = 18;
+    camera.position.copy(origin).add(dir.clone().multiplyScalar(defaultDist));
+    controls.target.copy(origin);
+    camera.lookAt(origin);
+    camera.updateProjectionMatrix();
+    controls.update();
+    setTool(null); // 强制回到选择/变换模式
+    return;
+  }
+  const size = box.getSize(new THREE.Vector3());
   // 包围盒8个角点
   const corners = [
     new THREE.Vector3(box.min.x, box.min.y, box.min.z),
@@ -5666,18 +5681,25 @@ function setView(v) {
     new THREE.Vector3(box.min.x, box.max.y, box.max.z),
     new THREE.Vector3(box.max.x, box.max.y, box.max.z),
   ];
-  // 迭代调整距离，确保所有角点都在视野内（NDC 在 [-1,1] 范围）
-  for (let iter = 0; iter < 5; iter++) {
-    camera.position.copy(center).add(dir.clone().multiplyScalar(distance));
-    camera.lookAt(center);
+  // 初始距离估计：基于原点到最远角的距离 + 包围盒最大维度
+  let maxRadius = 0;
+  corners.forEach(c => { maxRadius = Math.max(maxRadius, c.length()); });
+  const maxDim = Math.max(size.x, size.y, size.z, maxRadius, 4);
+  let distance = (maxDim / 2 / Math.tan(fov / 2)) * 1.5;
+  // 原点作为相机注视点（视野中心 = 原点 = 网页中心）
+  controls.target.copy(origin);
+  // 迭代调整距离，确保所有角点都在视野内（NDC 在 [-1,1] 范围，留约12%边距作为周围留空）
+  for (let iter = 0; iter < 10; iter++) {
+    camera.position.copy(origin).add(dir.clone().multiplyScalar(distance));
+    camera.lookAt(origin);
     camera.updateMatrixWorld();
     let maxNDC = 0;
     corners.forEach(c => {
       const p = c.clone().project(camera);
       maxNDC = Math.max(maxNDC, Math.abs(p.x), Math.abs(p.y));
     });
-    if (maxNDC <= 0.92) break; // 留8%边距
-    distance *= maxNDC / 0.92 * 1.02;
+    if (maxNDC <= 0.88) break; // 留约12%边距，确保最外围对象周围有留空
+    distance *= maxNDC / 0.88 * 1.02;
   }
   camera.updateProjectionMatrix();
   controls.update();
@@ -5812,75 +5834,54 @@ function startBrushStroke(groundPoint) {
   // 注意：不清除brushLockedPlane，因为它在getBrush3DHitPoint中已设置
   // 清除操作在endBrushStroke中执行
   
-  // 为3D画笔创建临时可视化mesh（实时预览平滑连接）
+  // 3D画笔：起点球头 + 终点球头（随指针移动），管段由 addBrushPoint3D 逐段追加
   if (state.tool === 'brush3d') {
     const r = brush.thickness / 2;
     const mat = createBrushMaterial();
-    const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat);
-    sphere.position.copy(groundPoint);
-    sphere.castShadow = true; sphere.receiveShadow = true;
-    sphere.userData.isPreview = true;
-    brush.previewMesh = sphere;
-    scene.add(sphere);
+    // 起点球头（永久留存）
+    const startCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat);
+    startCap.position.copy(groundPoint);
+    startCap.castShadow = true; startCap.receiveShadow = true;
+    startCap.userData.isPreview = true;
+    startCap.userData.isBrushCap = true;
+    brush.currentMeshes.push(startCap);
+    scene.add(startCap);
+    // 终点球头（预览，跟随指针）
+    brush.previewEndCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat);
+    brush.previewEndCap.position.copy(groundPoint);
+    brush.previewEndCap.castShadow = true; brush.previewEndCap.receiveShadow = true;
+    brush.previewEndCap.userData.isPreview = true;
+    scene.add(brush.previewEndCap);
   }
 }
 
-// 3D画笔：连续绘制，实时生成平滑TubeGeometry
-// 不进行任何优化：直接用原始点创建曲线，原地更新几何体避免闪烁
+// 3D画笔：分段管绘制，每两点间创建独立管段，已绘部分不闪不抖
 function addBrushPoint3D(groundPoint) {
   const pts = brush.currentPoints;
   const last = pts[pts.length - 1];
-  // 使用绝对值作为最小节点间距，不随画笔粗细变化
   const minDist = 0.02;
   if (last && last.distanceTo(groundPoint) < minDist) return;
 
+  // 在上一锚点与新锚点之间创建独立管段
+  if (pts.length >= 1) {
+    const r = brush.thickness / 2;
+    const curve = new THREE.LineCurve3(last.clone(), groundPoint.clone());
+    const segDist = curve.getLength();
+    const tubularSegments = Math.max(4, Math.ceil(segDist / 0.02));
+    const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 16, false, 1);
+    const mat = createBrushMaterial();
+    const segmentMesh = new THREE.Mesh(tubeGeo, mat);
+    segmentMesh.castShadow = true; segmentMesh.receiveShadow = true;
+    segmentMesh.userData.isPreview = true;
+    brush.currentMeshes.push(segmentMesh);
+    scene.add(segmentMesh);
+  }
+
   pts.push(groundPoint.clone());
 
-  // 实时预览：重建TubeGeometry显示平滑连接
-  if (pts.length >= 2) {
-    const r = brush.thickness / 2;
-    let curve;
-    if (pts.length === 2) {
-      curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
-    } else {
-      // 直接使用原始点，不进行细化优化
-      curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
-    }
-    const curveLength = curve.getLength();
-    const tubularSegments = Math.max(64, Math.min(400, Math.floor(curveLength / (r * 0.2))));
-    const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
-
-    // 原地更新几何体，避免mesh替换导致闪烁
-    if (brush.previewMesh) {
-      if (brush.previewMesh.geometry) brush.previewMesh.geometry.dispose();
-      brush.previewMesh.geometry = tubeGeo;
-      brush.previewMesh.position.set(0, 0, 0); // 重置位置（球体模式可能设置了位置）
-    } else {
-      // 第一次创建预览mesh
-      const mat = createBrushMaterial();
-      const newMesh = new THREE.Mesh(tubeGeo, mat);
-      newMesh.castShadow = true; newMesh.receiveShadow = true;
-      newMesh.userData.isPreview = true;
-      brush.previewMesh = newMesh;
-      scene.add(newMesh);
-    }
-  } else if (pts.length === 1) {
-    // 单点时创建或更新预览球
-    const r = brush.thickness / 2;
-    if (brush.previewMesh) {
-      if (brush.previewMesh.geometry) brush.previewMesh.geometry.dispose();
-      brush.previewMesh.geometry = new THREE.SphereGeometry(r * 0.8, 32, 24);
-      brush.previewMesh.position.copy(pts[0]);
-    } else {
-      const mat = createBrushMaterial();
-      const sphereRadius = r * 0.8;
-      const sphere = new THREE.Mesh(new THREE.SphereGeometry(sphereRadius, 32, 24), mat);
-      sphere.position.copy(pts[0]);
-      sphere.castShadow = true; sphere.receiveShadow = true;
-      sphere.userData.isPreview = true;
-      brush.previewMesh = sphere;
-      scene.add(sphere);
-    }
+  // 终点球头跟随指针移动
+  if (brush.previewEndCap) {
+    brush.previewEndCap.position.copy(groundPoint);
   }
 }
 
@@ -5892,11 +5893,11 @@ function endBrushStroke(cancel) {
   const is2D = state.tool === 'brush2d';
   let curvePoints; // 存储用于擦除/重建的点（细化后的点），在整个函数作用域中可用
 
-  // 清理临时预览mesh
-  if (brush.previewMesh) {
-    scene.remove(brush.previewMesh);
-    if (brush.previewMesh.geometry) brush.previewMesh.geometry.dispose();
-    brush.previewMesh = null;
+  // 清理预览终点球头（3D画笔指针指示器；2D无此预览）
+  if (brush.previewEndCap) {
+    scene.remove(brush.previewEndCap);
+    if (brush.previewEndCap.geometry) brush.previewEndCap.geometry.dispose();
+    brush.previewEndCap = null;
   }
 
   // 取消模式：直接丢弃当前笔画
@@ -5917,61 +5918,35 @@ function endBrushStroke(cancel) {
   }
 
   if (!is2D) {
-    // 3D画笔：使用单个TubeGeometry，不添加独立球体
+    // 3D画笔：段式管 + 球头已在绘制时创建完毕，仅需收尾
     const r = brush.thickness / 2;
     const mat = createBrushMaterial();
 
-    // 移除之前添加到scene的临时网格
-    brush.currentMeshes.forEach(m => scene.remove(m));
-    brush.currentMeshes = [];
+    // 清除所有预览标记
+    brush.currentMeshes.forEach(m => { m.userData.isPreview = false; });
 
     if (pts.length === 0) {
+      brush.currentMeshes.forEach(m => { scene.remove(m); if (m.geometry) m.geometry.dispose(); });
+      brush.currentMeshes = [];
       brush.currentPoints = [];
       state.brushLockedPlane = null;
       hideBrushRefPlane();
       return;
-    } else if (pts.length === 1) {
-      // 单点：创建一个球体
-      const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 24), mat);
-      sphere.position.copy(pts[0]);
-      sphere.castShadow = true; sphere.receiveShadow = true;
-      brush.currentMeshes.push(sphere);
+    }
+
+    if (pts.length === 1) {
+      // 单点：startCap 已在 currentMeshes 中，无需额外操作
     } else {
-      // 多点：直接使用原始点创建曲线，不进行细化优化
-      let curve;
-      if (pts.length === 2) {
-        curve = new THREE.LineCurve3(pts[0].clone(), pts[1].clone());
-      } else {
-        curve = new THREE.CatmullRomCurve3(pts.map(p => p.clone()), false, 'centripetal', 0.5);
-      }
-      curvePoints = pts.map(p => p.clone());
-
-      const curveLength = curve.getLength();
-      // 增加 tubularSegments 密度，确保笔迹连续平滑（每段至少4个分割）
-      const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (r * 0.05))));
-      const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, r, 24, false, 1);
-      const tubeMesh = new THREE.Mesh(tubeGeo, mat);
-      tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
-
-      // 存储曲线引用用于擦除功能（使用原始点）
-      tubeMesh.userData.brushCurve = curve;
-      tubeMesh.userData.brushCurvePoints = curvePoints;
-      tubeMesh.userData.brushRadius = r;
-
-      brush.currentMeshes.push(tubeMesh);
-
-      // 添加半球端帽形成胶囊形状（使用曲线端点确保无断裂）
-      const startPt = curve.getPointAt(0);
-      const endPt = curve.getPointAt(1);
-      const startCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
-      startCap.position.copy(startPt);
-      startCap.castShadow = true; startCap.receiveShadow = true;
-      brush.currentMeshes.push(startCap);
-
-      const endCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat.clone());
+      // 多点：在终点添加永久球头，构成胶囊形
+      const endPt = pts[pts.length - 1].clone();
+      const endCap = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), mat);
       endCap.position.copy(endPt);
       endCap.castShadow = true; endCap.receiveShadow = true;
+      endCap.userData.isBrushCap = true;
       brush.currentMeshes.push(endCap);
+
+      // 存储曲线数据用于擦除功能
+      curvePoints = pts.map(p => p.clone());
     }
   }
 
@@ -8323,6 +8298,8 @@ canvas.addEventListener('pointerdown', (e) => {
 });
 
 canvas.addEventListener('pointermove', (e) => {
+  // 触屏模式下，画笔/橡皮擦仅响应主指，多指同时触屏时禁止绘制防止异常
+  if (e.pointerType === 'touch' && e.isPrimary === false && (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser')) return;
   // 橡皮擦悬浮检测（非拖拽时）
   if (!state.pointerDown && state.tool === 'eraser') {
     setPointer(e);
@@ -8445,6 +8422,8 @@ canvas.addEventListener('pointermove', (e) => {
 });
 
 canvas.addEventListener('pointerup', (e) => {
+  // 触屏模式下，画笔/橡皮擦仅响应主指，防止副指抬起误结束绘制
+  if (e.pointerType === 'touch' && e.isPrimary === false && (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser')) return;
   // 触摸设备：恢复 OrbitControls（TransformControls 拖拽结束后）
   if (isTouch && !controls.enabled) controls.enabled = true;
   // 画笔/橡皮结束
@@ -9002,15 +8981,24 @@ function cloneSelected() {
 }
 
 // ============ 键盘快捷键 ============
-// 视角平移：沿相机屏幕空间的右/上轴同时移动相机与目标
-function panCamera(dx, dy) {
+// 视角平移：沿相机屏幕空间的右/上/前轴移动相机与目标
+function panCamera(dx, dy, dz) {
   const v = new THREE.Vector3();
-  v.setFromMatrixColumn(camera.matrix, 0); // 相机右轴
-  camera.position.addScaledVector(v, dx);
-  controls.target.addScaledVector(v, dx);
-  v.setFromMatrixColumn(camera.matrix, 1); // 相机上轴
-  camera.position.addScaledVector(v, dy);
-  controls.target.addScaledVector(v, dy);
+  if (dx) {
+    v.setFromMatrixColumn(camera.matrix, 0); // 相机右轴
+    camera.position.addScaledVector(v, dx);
+    controls.target.addScaledVector(v, dx);
+  }
+  if (dy) {
+    v.setFromMatrixColumn(camera.matrix, 1); // 相机上轴
+    camera.position.addScaledVector(v, dy);
+    controls.target.addScaledVector(v, dy);
+  }
+  if (dz) {
+    v.setFromMatrixColumn(camera.matrix, 2); // 相机前轴
+    camera.position.addScaledVector(v, dz);
+    controls.target.addScaledVector(v, dz);
+  }
 }
 // 在选中对象上施加旋转：多选时绕整体中心，单选时绕自身
 function rotateSelection(axis, deltaRad, objects) {
@@ -9101,11 +9089,13 @@ window.addEventListener('keydown', (e) => {
     const panDist = (shift ? 1 : 0.1) * GRID_UNIT;
     let camHandled = true;
     switch (e.key) {
-      // 平移视角：沿相机屏幕空间的右/上轴移动相机与目标
-      case 'ArrowLeft':  panCamera(-panDist, 0); break;
-      case 'ArrowRight': panCamera( panDist, 0); break;
-      case 'ArrowUp':    panCamera(0,  panDist); break;
-      case 'ArrowDown':  panCamera(0, -panDist); break;
+      // 平移视角：←/→ 右/左，↑/↓ 前/后，PgUp/PgDn 上/下
+      case 'ArrowLeft':  panCamera(-panDist, 0, 0); break;
+      case 'ArrowRight': panCamera( panDist, 0, 0); break;
+      case 'ArrowUp':    panCamera(0, 0,  panDist); break;
+      case 'ArrowDown':  panCamera(0, 0, -panDist); break;
+      case 'PageUp':     panCamera(0,  panDist, 0); break;
+      case 'PageDown':   panCamera(0, -panDist, 0); break;
       // 旋转视角
       case 'a': case 'A': controls.rotateCameraHorizontal(-camRotRad); break;
       case 'd': case 'D': controls.rotateCameraHorizontal( camRotRad); break;
@@ -9338,25 +9328,18 @@ function updateDynamicGrid() {
     _expandBoxByObject(bbox, { mesh: ghostMesh, data: {} });
     hasContent = true;
   }
-  // 3D画笔实时预览 mesh（笔画结束前的临时可视化）
-  if (brush.previewMesh && brush.drawing) {
-    const pm = brush.previewMesh;
-    if (pm.geometry) {
-      pm.updateMatrixWorld(true);
-      pm.geometry.computeBoundingBox();
-      const pbb = pm.geometry.boundingBox;
-      if (pbb && !pbb.isEmpty()) {
-        const gg = pm.matrixWorld.elements;
-        const mx = gg[12], my = gg[13], mz = gg[14];
-        const sx = Math.sqrt(gg[0]*gg[0] + gg[1]*gg[1] + gg[2]*gg[2]);
-        const sy = Math.sqrt(gg[4]*gg[4] + gg[5]*gg[5] + gg[6]*gg[6]);
-        const sz = Math.sqrt(gg[8]*gg[8] + gg[9]*gg[9] + gg[10]*gg[10]);
-        const th = brush.thickness || 0.5;
-        bbox.expandByPoint({ x: mx + pbb.min.x * sx - th, y: my + pbb.min.y * sy - th, z: mz + pbb.min.z * sz - th });
-        bbox.expandByPoint({ x: mx + pbb.max.x * sx + th, y: my + pbb.max.y * sy + th, z: mz + pbb.max.z * sz + th });
-        hasContent = true;
-      }
-    }
+  // 拖拽创建时的幽灵预览（从形状面板拖出），同样需参与网格动态扩展
+  if (dragGhost && dragGhost.visible !== false) {
+    _expandBoxByObject(bbox, { mesh: dragGhost, data: {} });
+    hasContent = true;
+  }
+  // 3D画笔终点球头预览（笔画结束前的指针指示器）
+  if (brush.previewEndCap && brush.drawing) {
+    const r = brush.thickness / 2;
+    const bp = brush.previewEndCap.position;
+    bbox.expandByPoint({ x: bp.x - r, y: bp.y - r, z: bp.z - r });
+    bbox.expandByPoint({ x: bp.x + r, y: bp.y + r, z: bp.z + r });
+    hasContent = true;
   }
   // 2D画笔：笔画过程中的临时子单元（圆形+连接段）已直接加入 scene 与 brush.currentMeshes
   if (brush.currentMeshes && brush.currentMeshes.length > 0) {
