@@ -2015,6 +2015,7 @@ const state = {
   brushThickness: 0.5,
   eraserSize: 0.30,
   eraserLocal2D: false,  // false = 全部删除对象模式, true = 2D笔迹局部擦除+其他删除对象
+  localErase3D: false,   // 灰度：3D笔迹局部擦除模式（仅灰度入口开启时生效）
   brushRefPlane: null,  // 3D画笔参考平面（锁定）
   brushRefPlaneMesh: null, // 3D画笔参考平面mesh
   brushLockedPlane: null,  // 笔画期间锁定的参考平面
@@ -5977,6 +5978,9 @@ function addBrushPoint3D(groundPoint) {
     const segmentMesh = new THREE.Mesh(tubeGeo, mat);
     segmentMesh.castShadow = true; segmentMesh.receiveShadow = true;
     segmentMesh.userData.isPreview = true;
+    segmentMesh.userData.brushCurve = curve;
+    segmentMesh.userData.brushCurvePoints = [last.clone(), groundPoint.clone()];
+    segmentMesh.userData.brushRadius = r;
     brush.currentMeshes.push(segmentMesh);
     scene.add(segmentMesh);
 
@@ -6898,6 +6902,114 @@ function _mergeSmallSegments(o, targetCount) {
   o._capsMapDirty = true;
   o._needsRecenter = true;
 }
+
+// ===== 灰度：3D 笔迹局部擦除 =====
+// 只删除擦除半径内命中的段（子网格）及其相邻球头/关节球，保留其余段；
+// 若全部段被删则删除整个对象。原整条删除行为由 state.localErase3D 控制，保持默认不变。
+function _erase3DBrushLocal(o, points, effR) {
+  o.mesh.updateMatrixWorld(true);
+  const toRemove = [];
+  for (const child of o.mesh.children) {
+    if (!child.isMesh || !child.geometry) continue;
+    if (!child.geometry.boundingSphere) child.geometry.computeBoundingSphere();
+    const bs = child.geometry.boundingSphere;
+    if (!bs) continue;
+    const bsCenter = bs.center.clone().applyMatrix4(child.matrixWorld);
+    const dMaxSq = (effR + bs.radius) * (effR + bs.radius);
+    let hit = false;
+    for (const pt of points) {
+      const dx = pt.x - bsCenter.x, dy = pt.y - bsCenter.y, dz = pt.z - bsCenter.z;
+      if (dx*dx + dy*dy + dz*dz <= dMaxSq) { hit = true; break; }
+    }
+    if (hit) toRemove.push(child);
+  }
+  if (toRemove.length === 0) return false;
+  for (const child of toRemove) {
+    // 段端点（世界坐标），用于联动删除相邻球头/关节球，避免残留孤立球
+    const endpoints = [];
+    if (child.userData.brushCurvePoints && child.userData.brushCurvePoints.length >= 2) {
+      const cp = child.userData.brushCurvePoints;
+      endpoints.push(cp[0].clone().applyMatrix4(child.matrixWorld));
+      endpoints.push(cp[cp.length - 1].clone().applyMatrix4(child.matrixWorld));
+    }
+    const br = (child.userData.brushRadius || o.data.brushRadius || 0.1) * 1.7;
+    o.mesh.remove(child);
+    if (child.geometry) child.geometry.dispose();
+    if (child.material) {
+      if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+      else child.material.dispose();
+    }
+    // 删除相邻球头/关节球（与段端点接近的 SphereGeometry）
+    for (const cap of [...o.mesh.children]) {
+      if (!cap.isMesh || !cap.geometry || cap.geometry.type !== 'SphereGeometry') continue;
+      const w = new THREE.Vector3(); cap.getWorldPosition(w);
+      let near = false;
+      for (const ep of endpoints) {
+        if (w.distanceTo(ep) < br) { near = true; break; }
+      }
+      if (near) {
+        o.mesh.remove(cap);
+        if (cap.geometry) cap.geometry.dispose();
+        if (cap.material) {
+          if (Array.isArray(cap.material)) cap.material.forEach(m => m.dispose());
+          else cap.material.dispose();
+        }
+      }
+    }
+  }
+  // 清理已删段的缓存与脏标记，避免后续擦除/预算控制读到失效段
+  if (o._tubeSampleCache) {
+    for (const key of [...o._tubeSampleCache.keys()]) {
+      if (!o.mesh.children.includes(key)) o._tubeSampleCache.delete(key);
+    }
+  }
+  o._groupBoundsDirty = true;
+  o._tubeSampleCacheDirty = true;
+  o._capsMapDirty = true;
+  // 全部段被删 → 删除整个对象
+  if (o.mesh.children.length === 0) {
+    scene.remove(o.mesh);
+    disposeObject(o);
+    const idx = state.objects.indexOf(o);
+    if (idx >= 0) state.objects.splice(idx, 1);
+  }
+  return true;
+}
+
+// ===== 灰度测试入口：3D 笔迹局部擦除 =====
+// 抽象、随机位置的测试按钮，仅在小比例随机放量或 ?beta_erase=1 时出现。
+(function initLocalEraseBeta() {
+  const forceOn = /[?&]beta_erase=1/.test(location.search);
+  const rollout = Math.random() < 0.08;   // 灰度随机放量比例
+  if (!forceOn && !rollout) return;
+  const btn = document.createElement('button');
+  btn.id = 'beta-local-erase';
+  btn.textContent = '⌖';                  // 抽象符号，无文字标签
+  btn.title = '3D 笔迹局部擦除（灰度测试 · 橡皮擦模式下生效）';
+  btn.style.cssText =
+    'position:fixed;z-index:9999;width:32px;height:32px;border-radius:50%;' +
+    'background:rgba(110,231,255,0.15);border:1px solid rgba(110,231,255,0.45);' +
+    'color:#bfefff;font-size:15px;line-height:1;cursor:pointer;' +
+    'display:flex;align-items:center;justify-content:center;' +
+    'backdrop-filter:blur(6px);opacity:0.5;user-select:none;' +
+    'box-shadow:0 0 0 1px rgba(0,0,0,0.25);transition:opacity .2s,background .2s;';
+  // 随机位置（避开顶栏与边缘）
+  const pad = 36, w = 32, h = 32;
+  const x = pad + Math.random() * Math.max(40, window.innerWidth - pad * 2 - w);
+  const y = 76 + Math.random() * Math.max(40, window.innerHeight - 76 - 60 - h);
+  btn.style.left = x + 'px';
+  btn.style.top = y + 'px';
+  btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; });
+  btn.addEventListener('mouseleave', () => { btn.style.opacity = state.localErase3D ? '0.9' : '0.5'; });
+  btn.addEventListener('click', () => {
+    state.localErase3D = !state.localErase3D;
+    toast(state.localErase3D ? '局部擦除（灰度）· 已开启' : '局部擦除（灰度）· 已关闭');
+    btn.style.background = state.localErase3D ? 'rgba(110,231,255,0.5)' : 'rgba(110,231,255,0.15)';
+    btn.style.opacity = state.localErase3D ? '0.9' : '0.5';
+  });
+  document.body.appendChild(btn);
+})();
+
 function _eraseAtSingle(points, brushObjectsParam) {
   // points: 擦除点数组（路径插值后的所有点），批量处理避免多次遍历子mesh
   if (!Array.isArray(points)) points = [points];
@@ -6969,7 +7081,7 @@ function _eraseAtSingle(points, brushObjectsParam) {
       if (!inRange) return;
     }
 
-    // === 3D画笔：局部擦除模式下改为全部删除（不做管段分裂） ===
+    // === 3D画笔：灰度 localErase3D 开启时局部擦除（只删命中段），否则整条删除（原行为） ===
     if (!isBrush2D) {
       o.mesh.updateMatrixWorld(false);
       const children3d = o.mesh.children;
@@ -6994,13 +7106,17 @@ function _eraseAtSingle(points, brushObjectsParam) {
         }
       }
       if (anyChildHit) {
-        scene.remove(o.mesh);
-        disposeObject(o);
-        const idx = state.objects.indexOf(o);
-        if (idx >= 0) state.objects.splice(idx, 1);
-        anyDeleted = true;
+        if (state.localErase3D) {
+          if (_erase3DBrushLocal(o, points, effR)) anyDeleted = true;
+        } else {
+          scene.remove(o.mesh);
+          disposeObject(o);
+          const idx = state.objects.indexOf(o);
+          if (idx >= 0) state.objects.splice(idx, 1);
+          anyDeleted = true;
+        }
       }
-      return; // 3D画笔不做后续局部擦除
+      return; // 3D画笔：灰度未开时整条删除；开启时由 _erase3DBrushLocal 局部擦除
     }
 
     const toDelete = [];
