@@ -2851,19 +2851,6 @@ function syncProps(obj) {
   document.getElementById('input-opacity').value = opacity;
   const vOpacity = document.getElementById('v-opacity');
   if (vOpacity) vOpacity.textContent = opacity.toFixed(2);
-  // 同步自定义颜色控件（圆形色块）
-  if (obj.data.color !== undefined) {
-    const objCS = document.getElementById('obj-custom-swatch');
-    const objCH = document.getElementById('obj-custom-hex');
-    if (obj.data.color === NO_COLOR) {
-      if (objCS) objCS.style.background = '#cccccc';
-      if (objCH) objCH.textContent = 'cccccc';
-    } else {
-      const hex = '#' + obj.data.color.toString(16).padStart(6, '0');
-      if (objCS) objCS.style.background = hex;
-      if (objCH) objCH.textContent = hex.substring(1);
-    }
-  }
 }
 function syncTextProps(obj) {
   if (obj.data.kind !== 'text') return;
@@ -4276,7 +4263,23 @@ COLORS.forEach(c => {
   colorRow.appendChild(dot);
 });
 
-// 更新颜色选择UI状态
+// 设置对象"自定义颜色"圆形色块（仅在取色器自定义/导入恢复时调用，
+// 不随预设颜色选择或选中对象切换而变化）
+function setObjCustomSwatch(colorVal) {
+  const objCS = document.getElementById('obj-custom-swatch');
+  const objCH = document.getElementById('obj-custom-hex');
+  if (!objCS) return;
+  if (colorVal === NO_COLOR) {
+    objCS.style.background = '#cccccc';
+    if (objCH) objCH.textContent = 'CCCCCC';
+  } else {
+    const hex = '#' + (colorVal >>> 0).toString(16).padStart(6, '0').toUpperCase();
+    objCS.style.background = hex;
+    if (objCH) objCH.textContent = hex.substring(1);
+  }
+}
+
+// 更新颜色选择UI状态（仅控制预设色块高亮，不改动自定义颜色块）
 function updateColorSelectionUI() {
   // 优先使用当前选中对象的颜色；无选中时使用 state.defaultColor
   let currentColor = state.defaultColor;
@@ -4287,17 +4290,6 @@ function updateColorSelectionUI() {
     const c = parseInt(d.dataset.c);
     d.classList.toggle('active', c === currentColor || (currentColor === NO_COLOR && c === NO_COLOR));
   });
-  // 同步自定义颜色控件（圆形色块）
-  const objCS = document.getElementById('obj-custom-swatch');
-  const objCH = document.getElementById('obj-custom-hex');
-  if (currentColor === NO_COLOR) {
-    if (objCS) objCS.style.background = '#cccccc';
-    if (objCH) objCH.textContent = 'CCCCCC';
-  } else {
-    const hex = '#' + currentColor.toString(16).padStart(6, '0').toUpperCase();
-    if (objCS) objCS.style.background = hex;
-    if (objCH) objCH.textContent = hex.substring(1);
-  }
 }
 
 // 缓存花纹按钮引用以便动态更新
@@ -4554,14 +4546,16 @@ document.getElementById('picker-eyedropper').addEventListener('click', async () 
 let pickerTarget = 'object'; // 'object' or 'brush'
 function openColorPicker(target) {
   pickerTarget = target || 'object';
-  // 初始化为当前选中对象的颜色或画笔颜色
+  // 初始化为当前自定义色块（对象）或画笔颜色，使"自定义颜色"独立于预设选择
   let c;
   if (pickerTarget === 'brush') {
     c = brush.color;
-  } else if (state.selectedList.length > 0) {
-    c = state.selectedList[0].data.color;
   } else {
-    c = state.defaultColor;
+    const sw = document.getElementById('obj-custom-swatch');
+    let rgb = sw ? hexToRgb(sw.style.background) : null;
+    if (!rgb) rgb = hexToRgb('#' + (state.defaultColor >>> 0).toString(16).padStart(6, '0'));
+    if (!rgb) rgb = [255, 255, 255];
+    c = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
   }
   const [h,s,v] = rgbToHsv((c>>16)&255, (c>>8)&255, c&255);
   pickerState.h = h; pickerState.s = s; pickerState.v = v;
@@ -4595,9 +4589,8 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
         applyAppearance(o);
       });
       pushHistory();
-      // 同步对象自定义颜色控件（圆形色块）
-      objCustomSwatch.style.background = hex;
-      objCustomHex.textContent = hex.substring(1).toUpperCase();
+      // 同步对象自定义颜色控件（圆形色块，仅在自定义时更新）
+      setObjCustomSwatch(colorVal);
       refreshProps(); // 重建面板：恢复透明度/花纹贴图栏并清除"无颜色"说明
       updateColorSelectionUI();
       // 更新花纹预览
@@ -5601,7 +5594,7 @@ document.getElementById('file-import').addEventListener('change', (e) => {
       // 恢复自定义颜色选择（默认对象色 / 画笔色）
       if (typeof json.defaultColor === 'number') {
         state.defaultColor = json.defaultColor;
-        updateColorSelectionUI();
+        setObjCustomSwatch(state.defaultColor);
       }
       if (typeof json.brushColor === 'number') {
         setBrushColor(json.brushColor);
