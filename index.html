@@ -448,7 +448,6 @@
     font-size: 14px; font-weight: 600; border-radius: 9px;
     font-family: inherit; pointer-events: auto; display: inline-flex;
     align-items: center; justify-content: center; transition: all .18s;
-    box-shadow: 0 4px 16px rgba(0,0,0,.5);
   }
   #screen-pick-overlay .sp-cancel {
     background: var(--bg-panel-solid); border: 1px solid var(--border); color: var(--text);
@@ -518,25 +517,30 @@
     display: flex; flex-direction: column; align-items: flex-start;
     transform: translate(-50%, -50%);
     pointer-events: auto;
+    animation: pop .2s ease;
   }
   .inline-text-wrap .inline-text-arrow {
-    width: 2px; height: 28px; background: var(--accent);
-    margin-top: -4px; opacity: 0.7;
+    width: 2px; height: 18px; border-radius: 2px;
+    background: var(--accent); opacity: 0.65;
+    margin-top: -2px;
+    transition: opacity .18s ease;
   }
   .inline-text-wrap .inline-text-input {
     min-width: 140px; min-height: 44px;
-    padding: 8px 12px; font-size: 16px; line-height: 1.4;
-    background: var(--inline-input-bg); color: var(--text);
-    border: 1.5px solid var(--accent); border-radius: 10px; outline: none;
-    font-family: inherit; resize: both; overflow: hidden;
-    box-shadow: 0 0 18px rgba(110, 231, 255, 0.25);
-    backdrop-filter: blur(4px);
+    padding: 10px 14px; font-size: 16px; line-height: 1.5;
+    background: var(--bg-panel-solid); color: var(--text);
+    border: 1.5px solid var(--border); border-radius: var(--radius); outline: none;
+    font-family: inherit; resize: none; overflow: hidden;
     white-space: pre;
+    transition: border-color .18s ease;
   }
-  .inline-text-wrap .inline-text-input:focus { border-color: var(--accent-2); box-shadow: 0 0 22px rgba(110, 231, 255, 0.4); }
+  .inline-text-wrap .inline-text-input:focus { border-color: var(--accent); }
   .inline-text-wrap .inline-text-hint {
     font-size: 11px; color: var(--text-dim); margin-top: 6px;
     white-space: nowrap;
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 4px 10px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
 
   /* 加载层 */
