@@ -414,18 +414,19 @@
     font-family: inherit;
   }
   #color-loupe .loupe-cv { display: block; width: 140px; height: 140px; image-rendering: pixelated; }
-  /* 放大镜底部信息条：与网页控件一致，实时显示 HEX 与 RGB（分行） */
+  /* 放大镜底部信息条：不透明主题底色，确保 HEX/RGB 清晰可读（分行居中） */
   #color-loupe .loupe-info {
     position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 6px 9px;
-    display: flex; flex-direction: column; gap: 2px; align-items: center;
-    background: color-mix(in srgb, var(--bg-panel-solid) 88%, transparent);
-    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-    color: var(--text); font-size: 11px; font-weight: 600; line-height: 15px;
-    font-variant-numeric: tabular-nums; letter-spacing: .3px;
+    padding: 7px 10px;
+    display: flex; flex-direction: column; gap: 3px; align-items: center;
+    background: var(--bg-panel-solid);
+    border-top: 1px solid var(--border);
+    color: var(--text); font-size: 12px; font-weight: 600; line-height: 16px;
+    font-variant-numeric: tabular-nums; letter-spacing: .4px;
   }
   #color-loupe .loupe-info .loupe-hex,
   #color-loupe .loupe-info .loupe-rgb { font-family: inherit; }
+  #color-loupe .loupe-info .loupe-rgb { opacity: .82; font-size: 11px; }
   /* 屏幕取色覆盖层：冻结画面，屏蔽页面交互 */
   #screen-pick-overlay {
     position: fixed; inset: 0; z-index: 99990;
@@ -439,22 +440,25 @@
     position: fixed; top: 14px; right: 14px; z-index: 99999;
     display: flex; gap: 8px; pointer-events: auto;
   }
-  /* 工具栏按钮：与页面 .top-btn 一致 */
+  /* 工具栏按钮：不透明主题底色 + 更大触控尺寸，确保清晰可读 */
+  #screen-pick-overlay .sp-toolbar { gap: 10px; }
   #screen-pick-overlay .sp-confirm,
   #screen-pick-overlay .sp-cancel {
-    cursor: pointer; height: 30px; padding: 0 14px; font-size: 13px; border-radius: 7px;
-    font-family: inherit; pointer-events: auto; display: inline-flex; align-items: center;
-    transition: all .18s;
+    cursor: pointer; height: 38px; min-width: 64px; padding: 0 18px;
+    font-size: 14px; font-weight: 600; border-radius: 9px;
+    font-family: inherit; pointer-events: auto; display: inline-flex;
+    align-items: center; justify-content: center; transition: all .18s;
+    box-shadow: 0 4px 16px rgba(0,0,0,.5);
   }
   #screen-pick-overlay .sp-cancel {
-    background: var(--control-bg); border: 1px solid var(--control-bg-hover); color: var(--text);
+    background: var(--bg-panel-solid); border: 1px solid var(--border); color: var(--text);
   }
   #screen-pick-overlay .sp-cancel:hover {
-    background: color-mix(in srgb, var(--accent) 14%, transparent); border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, var(--bg-panel-solid)); border-color: var(--accent);
   }
   #screen-pick-overlay .sp-confirm {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: var(--primary-btn-text); border: 1px solid transparent; font-weight: 600;
+    color: var(--primary-btn-text); border: 1px solid transparent;
   }
   #screen-pick-overlay .sp-confirm:hover { filter: brightness(1.06); }
   .modal-box {
@@ -4954,8 +4958,6 @@ function updateLoupe(clientX, clientY) {
   const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
   loupeHex.textContent = hex;
   loupeRgb.textContent = `${r}, ${g}, ${b}`;
-  const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-  loupeInfo.style.color = lum > 150 ? '#000' : 'var(--text)';
 }
 
 // 截屏：抓取整个屏幕（含网页外），取一帧后停止流以冻结画面
