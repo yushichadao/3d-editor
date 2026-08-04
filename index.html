@@ -467,6 +467,7 @@
     animation: pop .22s ease-out;
   }
   @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes popText { from { transform: translate(-50%, -50%) scale(.92); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
   .modal-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
   .modal-box textarea {
     width: 100%; min-height: 72px; padding: 10px; resize: vertical;
@@ -517,7 +518,7 @@
     display: flex; flex-direction: column; align-items: flex-start;
     transform: translate(-50%, -50%);
     pointer-events: auto;
-    animation: pop .2s ease;
+    animation: popText .2s ease;
   }
   .inline-text-wrap .inline-text-arrow {
     position: absolute; left: 50%; transform: translateX(-50%);
