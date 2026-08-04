@@ -169,6 +169,8 @@
   .no-color-dot { background-color: #f5f5f5; }
   .no-color-dot.active { border-color: var(--accent, #6ee7ff); }
   .custom-swatch { border:2px solid var(--border); border-radius:50%; cursor:pointer; }
+  .swatch-cell { width: calc((100% - 30px)/7); aspect-ratio: 1; }
+  .swatch-code { font-size:12px; color:var(--text-dim); font-variant-numeric: tabular-nums; }
 
   .pat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
   .pat-btn {
@@ -707,10 +709,11 @@
     <div class="ctrl-row" style="margin-top:8px;">
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <div style="width: calc((100% - 30px)/7); aspect-ratio:1;">
+        <div class="swatch-cell">
           <div id="obj-custom-swatch" class="color-dot custom-swatch" style="background:#ffffff;"></div>
         </div>
-        <span id="obj-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">FFFFFF</span>
+        <span id="obj-custom-hex" class="swatch-code">#FFFFFF</span>
+        <span id="obj-custom-rgb" class="swatch-code">RGB(255,255,255)</span>
         <button class="tool-btn" id="open-color-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
           <span>选取器</span>
@@ -799,10 +802,11 @@
     <div class="ctrl-row">
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div style="display:flex; align-items:center; gap:8px; flex:1;">
-        <div style="width: calc((100% - 30px)/7); aspect-ratio:1;">
+        <div class="swatch-cell">
           <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
         </div>
-        <span id="brush-custom-hex" style="font-size:12px;font-family:monospace;color:var(--text-dim);">000000</span>
+        <span id="brush-custom-hex" class="swatch-code">#000000</span>
+        <span id="brush-custom-rgb" class="swatch-code">RGB(0,0,0)</span>
         <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
           <span>选取器</span>
@@ -988,19 +992,19 @@
     <div class="modal-title">颜色选取器</div>
     <!-- 色相-饱和度选择面板 -->
     <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">色相 / 饱和度</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">饱和度 / 明度</div>
       <canvas id="picker-sv-canvas" width="360" height="200" style="width:100%; border-radius:8px; cursor:crosshair; display:block;"></canvas>
     </div>
     <!-- 色相条 -->
     <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">色相 (H)</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">色相</div>
       <canvas id="picker-hue-canvas" width="360" height="20" style="width:100%; border-radius:6px; cursor:pointer; display:block;"></canvas>
     </div>
     <!-- RGB/HEX输入 -->
     <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
       <div style="flex:1;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">色号 (HEX)</div>
-        <input type="text" id="picker-hex" value="#6EE7FF" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:monospace; text-transform:uppercase;">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">HEX 色值</div>
+        <input type="text" id="picker-hex" value="#6EE7FF" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; text-transform:uppercase;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">R</div>
@@ -1018,18 +1022,18 @@
     <!-- 预览 + 吸取 -->
     <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px;">
       <div>
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">预览</div>
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">颜色预览</div>
         <div id="picker-preview" style="width:50px; height:50px; border-radius:8px; border:2px solid var(--border); background:#6ee7ff;"></div>
       </div>
       <div style="display:flex; flex-direction:column; gap:4px; margin-left:auto;">
         <button class="top-btn" id="picker-eyedropper" style="font-size:11px; padding:4px 8px;" title="使用屏幕取色器">
-          <span>吸取</span>
+          <span>屏幕取色</span>
         </button>
       </div>
     </div>
     <div class="modal-actions">
       <button class="top-btn" id="color-picker-cancel">取消</button>
-      <button class="top-btn primary" id="color-picker-ok">确认使用</button>
+      <button class="top-btn primary" id="color-picker-ok">应用颜色</button>
     </div>
   </div>
 </div>
@@ -3864,14 +3868,7 @@ function setTool(t) {
   // 切换画笔工具时，从颜色记忆同步画笔颜色显示
   if (t === 'brush3d' || t === 'brush2d') {
     brush.color = colorMemory[t];
-    if (brush.color === NO_COLOR) {
-      brushCustomSwatch.style.background = '#cccccc';
-      brushCustomHex.textContent = 'CCCCCC';
-    } else {
-      const hex = '#' + brush.color.toString(16).padStart(6,'0').toUpperCase();
-      brushCustomSwatch.style.background = hex;
-      brushCustomHex.textContent = hex.substring(1);
-    }
+    setBrushCustomSwatch(brush.color);
     document.querySelectorAll('#brush-color-row .color-dot').forEach(d => {
       d.classList.toggle('active', parseInt(d.dataset.c) === brush.color);
     });
@@ -4271,14 +4268,18 @@ COLORS.forEach(c => {
 function setObjCustomSwatch(colorVal) {
   const objCS = document.getElementById('obj-custom-swatch');
   const objCH = document.getElementById('obj-custom-hex');
+  const objCR = document.getElementById('obj-custom-rgb');
   if (!objCS) return;
   if (colorVal === NO_COLOR) {
     objCS.style.background = '#cccccc';
-    if (objCH) objCH.textContent = 'CCCCCC';
+    if (objCH) objCH.textContent = '#CCCCCC';
+    if (objCR) objCR.textContent = 'RGB(204,204,204)';
   } else {
+    const r = (colorVal >> 16) & 255, g = (colorVal >> 8) & 255, b = colorVal & 255;
     const hex = '#' + (colorVal >>> 0).toString(16).padStart(6, '0').toUpperCase();
     objCS.style.background = hex;
-    if (objCH) objCH.textContent = hex.substring(1);
+    if (objCH) objCH.textContent = hex;
+    if (objCR) objCR.textContent = `RGB(${r},${g},${b})`;
   }
 }
 
@@ -4716,6 +4717,21 @@ document.getElementById('input-brush-gap').addEventListener('input', e => {
 const brushColorRow = document.getElementById('brush-color-row');
 const brushCustomSwatch = document.getElementById('brush-custom-swatch');
 const brushCustomHex = document.getElementById('brush-custom-hex');
+function setBrushCustomSwatch(numColor) {
+  if (!brushCustomSwatch) return;
+  const rg = document.getElementById('brush-custom-rgb');
+  if (numColor === NO_COLOR) {
+    brushCustomSwatch.style.background = '#cccccc';
+    brushCustomHex.textContent = '#CCCCCC';
+    if (rg) rg.textContent = 'RGB(204,204,204)';
+  } else {
+    const r = (numColor >> 16) & 255, g = (numColor >> 8) & 255, b = numColor & 255;
+    const hex = '#' + (numColor >>> 0).toString(16).padStart(6, '0').toUpperCase();
+    brushCustomSwatch.style.background = hex;
+    brushCustomHex.textContent = hex;
+    if (rg) rg.textContent = `RGB(${r},${g},${b})`;
+  }
+}
 function setBrushColor(numColor) {
   brush.color = numColor;
   // 记忆到对应画笔类型
@@ -4724,14 +4740,7 @@ function setBrushColor(numColor) {
   // 无颜色画笔：透明度由系统强制控制，隐藏透明度控件
   const brushOpacityRow = document.getElementById('row-brush-opacity');
   if (brushOpacityRow) brushOpacityRow.style.display = (numColor === NO_COLOR) ? 'none' : '';
-  if (numColor === NO_COLOR) {
-    brushCustomSwatch.style.background = '#ffffff';
-    brushCustomHex.textContent = 'FFFFFF';
-  } else {
-    const hex = '#' + numColor.toString(16).padStart(6,'0').toUpperCase();
-    brushCustomSwatch.style.background = hex;
-    brushCustomHex.textContent = hex.substring(1);
-  }
+  setBrushCustomSwatch(numColor);
   document.querySelectorAll('#brush-color-row .color-dot').forEach(d => {
     d.classList.toggle('active', parseInt(d.dataset.c) === numColor);
   });
