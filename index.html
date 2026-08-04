@@ -163,14 +163,15 @@
   .mode-btn.disabled, .lock-ratio.disabled { opacity: 0.35; pointer-events: none; filter: grayscale(0.6); }
 
   .color-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-  .swatch-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; align-items: center; }
-  .color-num { font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .color-dot { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all .15s; }
   .color-dot:hover { transform: scale(1.15); }
   .color-dot.active { border-color: white; transform: scale(1.15); }
   .no-color-dot { background-color: #f5f5f5; }
   .no-color-dot.active { border-color: var(--accent, #6ee7ff); }
-  .custom-swatch { border: 2px solid var(--border); border-radius: 50%; cursor: pointer; background-clip: padding-box; }
+  .custom-swatch { border:2px solid var(--border); border-radius:50%; cursor:pointer; }
+  /* 自定义颜色行：与预设颜色使用完全相同的 7 列 grid 规格，保证圆形块严格等大 */
+  .swatch-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; align-items: center; }
+  .color-code { font-size: 12px; color: var(--text-dim); font-family: inherit; font-variant-numeric: tabular-nums; }
 
   .pat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
   .pat-btn {
@@ -642,56 +643,56 @@
         <div class="ctrl-label"><span>横坐标 X</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>纵坐标 Y</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>竖坐标 Z</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-y" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-py" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-py" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>水平旋转</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-y" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-ry" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-ry" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>垂直旋转</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-x" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-rx" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-rx" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
         <div class="ctrl-label"><span>侧向旋转</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-z" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row" id="row-scale">
         <div class="ctrl-label"><span>等比缩放</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="s-c" min="0.1" max="5" step="0.01" value="1" style="flex:1;">
-          <input type="number" id="input-sc" step="0.01" value="1" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-sc" step="0.01" value="1" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row" id="row-opacity">
         <div class="ctrl-label"><span>透明度</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-opacity" min="0.1" max="1.0" step="0.01" value="1.0" style="flex:1;">
-          <input type="number" id="input-opacity" step="0.01" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+          <input type="number" id="input-opacity" step="0.01" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <!-- 图形参数区域（与属性合并显示） -->
@@ -710,14 +711,16 @@
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div class="swatch-row">
         <div id="obj-custom-swatch" class="color-dot custom-swatch" style="background:#ffffff;"></div>
-        <div style="display:flex; flex-direction:column; justify-content:center; gap:2px;">
-          <span id="obj-custom-hex" class="color-num">#FFFFFF</span>
-          <span id="obj-custom-rgb" class="color-num">RGB(255,255,255)</span>
+        <div style="grid-column: 2 / 8; display:flex; align-items:center; gap:10px; min-width:0;">
+          <div style="display:flex; flex-direction:column; gap:1px; line-height:1.25; min-width:0;">
+            <span id="obj-custom-hex" class="color-code">#FFFFFF</span>
+            <span id="obj-custom-rgb" class="color-code">RGB(255,255,255)</span>
+          </div>
+          <button class="tool-btn" id="open-color-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0; width:auto;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+            <span>选取器</span>
+          </button>
         </div>
-        <button class="tool-btn" id="open-color-picker" style="grid-column:span 5; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px; justify-self:end;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-          <span>选取器</span>
-        </button>
       </div>
     </div>
     </div>
@@ -766,7 +769,7 @@
       <div class="ctrl-label"><span>字号</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="t-size" min="24" max="220" step="2" value="80" style="flex:1;">
-        <input type="number" id="input-tsize" step="2" value="80" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        <input type="number" id="input-tsize" step="2" value="80" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <div class="ctrl-row">
@@ -803,35 +806,37 @@
       <div class="ctrl-label"><span>自定义颜色</span></div>
       <div class="swatch-row">
         <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
-        <div style="display:flex; flex-direction:column; justify-content:center; gap:2px;">
-          <span id="brush-custom-hex" class="color-num">#000000</span>
-          <span id="brush-custom-rgb" class="color-num">RGB(0,0,0)</span>
+        <div style="grid-column: 2 / 8; display:flex; align-items:center; gap:10px; min-width:0;">
+          <div style="display:flex; flex-direction:column; gap:1px; line-height:1.25; min-width:0;">
+            <span id="brush-custom-hex" class="color-code">#000000</span>
+            <span id="brush-custom-rgb" class="color-code">RGB(0,0,0)</span>
+          </div>
+          <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0; width:auto;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
+            <span>选取器</span>
+          </button>
         </div>
-        <button class="tool-btn" id="brush-open-picker" style="grid-column:span 5; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px; justify-self:end;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-          <span>选取器</span>
-        </button>
       </div>
     </div>
     <div class="ctrl-row">
       <div class="ctrl-label"><span>画笔粗细</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-thick" min="0.05" max="3" step="0.05" value="0.5" style="flex:1;">
-        <input type="number" id="input-brush-thick" step="0.05" value="0.5" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        <input type="number" id="input-brush-thick" step="0.05" value="0.5" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <div class="ctrl-row" id="row-brush-opacity">
       <div class="ctrl-label"><span>透明度</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-opacity" min="0.1" max="1" step="0.05" value="1.0" style="flex:1;">
-        <input type="number" id="input-brush-opacity" step="0.05" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        <input type="number" id="input-brush-opacity" step="0.05" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <div class="ctrl-row">
       <div class="ctrl-label"><span>最小间距</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-gap" min="0.02" max="0.5" step="0.01" value="0.15" style="flex:1;">
-        <input type="number" id="input-brush-gap" step="0.01" value="0.15" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        <input type="number" id="input-brush-gap" step="0.01" value="0.15" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     </div>
@@ -853,7 +858,7 @@
       <div class="ctrl-label"><span>橡皮擦大小</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="eraser-size" min="0.05" max="3" step="0.05" value="0.30" style="flex:1;">
-        <input type="number" id="input-eraser-size" step="0.05" value="0.30" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        <input type="number" id="input-eraser-size" step="0.05" value="0.30" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
       <!-- 橡皮擦模式（整体/局部）已移至上方"橡皮擦模式"栏 -->
@@ -1004,19 +1009,19 @@
     <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
       <div style="flex:1;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">HEX 色值</div>
-        <input type="text" id="picker-hex" value="#6EE7FF" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; font-variant-numeric:tabular-nums; text-transform:uppercase;">
+        <input type="text" id="picker-hex" value="#6EE7FF" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; text-transform:uppercase;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">R</div>
-        <input type="number" id="picker-r" min="0" max="255" value="110" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit; font-variant-numeric:tabular-nums;">
+        <input type="number" id="picker-r" min="0" max="255" value="110" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">G</div>
-        <input type="number" id="picker-g" min="0" max="255" value="231" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit; font-variant-numeric:tabular-nums;">
+        <input type="number" id="picker-g" min="0" max="255" value="231" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">B</div>
-        <input type="number" id="picker-b" min="0" max="255" value="255" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit; font-variant-numeric:tabular-nums;">
+        <input type="number" id="picker-b" min="0" max="255" value="255" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <!-- 预览 + 吸取 -->
@@ -3867,22 +3872,17 @@ function setTool(t) {
   elSecEraser.style.display = (t === 'eraser') ? '' : 'none';
   // 切换画笔工具时，从颜色记忆同步画笔颜色显示
   if (t === 'brush3d' || t === 'brush2d') {
-    const bc = colorMemory[t];
-    brush.color = bc;
-    if (bc === NO_COLOR) {
+    brush.color = colorMemory[t];
+    if (brush.color === NO_COLOR) {
       brushCustomSwatch.style.background = '#cccccc';
       brushCustomHex.textContent = '#CCCCCC';
-      const bRGB = document.getElementById('brush-custom-rgb');
-      if (bRGB) bRGB.textContent = 'RGB(204,204,204)';
+      if (brushCustomRgb) brushCustomRgb.textContent = 'RGB(204,204,204)';
     } else {
-      const r = (bc >> 16) & 0xff;
-      const g = (bc >> 8) & 0xff;
-      const b = bc & 0xff;
-      const hex = '#' + bc.toString(16).padStart(6,'0').toUpperCase();
+      const hex = '#' + brush.color.toString(16).padStart(6,'0').toUpperCase();
+      const r = (brush.color >> 16) & 255, g = (brush.color >> 8) & 255, b = brush.color & 255;
       brushCustomSwatch.style.background = hex;
       brushCustomHex.textContent = hex;
-      const bRGB = document.getElementById('brush-custom-rgb');
-      if (bRGB) bRGB.textContent = 'RGB(' + r + ',' + g + ',' + b + ')';
+      if (brushCustomRgb) brushCustomRgb.textContent = `RGB(${r},${g},${b})`;
     }
     document.querySelectorAll('#brush-color-row .color-dot').forEach(d => {
       d.classList.toggle('active', parseInt(d.dataset.c) === brush.color);
@@ -4290,13 +4290,11 @@ function setObjCustomSwatch(colorVal) {
     if (objCH) objCH.textContent = '#CCCCCC';
     if (objCR) objCR.textContent = 'RGB(204,204,204)';
   } else {
-    const r = (colorVal >> 16) & 0xff;
-    const g = (colorVal >> 8) & 0xff;
-    const b = colorVal & 0xff;
     const hex = '#' + (colorVal >>> 0).toString(16).padStart(6, '0').toUpperCase();
+    const r = (colorVal >> 16) & 255, g = (colorVal >> 8) & 255, b = colorVal & 255;
     objCS.style.background = hex;
     if (objCH) objCH.textContent = hex;
-    if (objCR) objCR.textContent = 'RGB(' + r + ',' + g + ',' + b + ')';
+    if (objCR) objCR.textContent = `RGB(${r},${g},${b})`;
   }
 }
 
@@ -4734,6 +4732,7 @@ document.getElementById('input-brush-gap').addEventListener('input', e => {
 const brushColorRow = document.getElementById('brush-color-row');
 const brushCustomSwatch = document.getElementById('brush-custom-swatch');
 const brushCustomHex = document.getElementById('brush-custom-hex');
+const brushCustomRgb = document.getElementById('brush-custom-rgb');
 function setBrushColor(numColor) {
   brush.color = numColor;
   // 记忆到对应画笔类型
@@ -4743,19 +4742,15 @@ function setBrushColor(numColor) {
   const brushOpacityRow = document.getElementById('row-brush-opacity');
   if (brushOpacityRow) brushOpacityRow.style.display = (numColor === NO_COLOR) ? 'none' : '';
   if (numColor === NO_COLOR) {
-    brushCustomSwatch.style.background = '#cccccc';
-    brushCustomHex.textContent = '#CCCCCC';
-    const brushCustomRGB = document.getElementById('brush-custom-rgb');
-    if (brushCustomRGB) brushCustomRGB.textContent = 'RGB(204,204,204)';
+    brushCustomSwatch.style.background = '#ffffff';
+    brushCustomHex.textContent = '#FFFFFF';
+    if (brushCustomRgb) brushCustomRgb.textContent = 'RGB(255,255,255)';
   } else {
-    const r = (numColor >> 16) & 0xff;
-    const g = (numColor >> 8) & 0xff;
-    const b = numColor & 0xff;
     const hex = '#' + numColor.toString(16).padStart(6,'0').toUpperCase();
+    const r = (numColor >> 16) & 255, g = (numColor >> 8) & 255, b = numColor & 255;
     brushCustomSwatch.style.background = hex;
     brushCustomHex.textContent = hex;
-    const brushCustomRGB = document.getElementById('brush-custom-rgb');
-    if (brushCustomRGB) brushCustomRGB.textContent = 'RGB(' + r + ',' + g + ',' + b + ')';
+    if (brushCustomRgb) brushCustomRgb.textContent = `RGB(${r},${g},${b})`;
   }
   document.querySelectorAll('#brush-color-row .color-dot').forEach(d => {
     d.classList.toggle('active', parseInt(d.dataset.c) === numColor);
@@ -7226,7 +7221,7 @@ function showShapeParams(obj) {
       <div class="ctrl-label"><span>${f.label}</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="sp-${f.key}" min="${f.min}" max="${f.max}" step="${f.step}" value="${val}" style="flex:1;">
-        <input type="number" id="input-sp-${f.key}" step="${f.step}" value="${val}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+        <input type="number" id="input-sp-${f.key}" step="${f.step}" value="${val}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     `;
     container.appendChild(row);
@@ -7283,7 +7278,7 @@ function showImageParams(obj) {
     <div class="ctrl-label"><span>长度 L</span></div>
     <div style="display:flex; gap:6px; align-items:center;">
       <input type="range" id="img-h" min="0.5" max="20" step="0.01" value="${h}" style="flex:1;">
-      <input type="number" id="input-imgh" step="0.01" value="${h}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+      <input type="number" id="input-imgh" step="0.01" value="${h}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
     </div>
   `;
   container.appendChild(hRow);
@@ -7296,7 +7291,7 @@ function showImageParams(obj) {
     <div class="ctrl-label"><span>宽度 W</span></div>
     <div style="display:flex; gap:6px; align-items:center;">
       <input type="range" id="img-w" min="0.5" max="20" step="0.01" value="${w}" style="flex:1;">
-      <input type="number" id="input-imgw" step="0.01" value="${w}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px;">
+      <input type="number" id="input-imgw" step="0.01" value="${w}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
     </div>
   `;
   container.appendChild(wRow);
