@@ -54,8 +54,8 @@ window.__packs['ja'] = {
 
   // Bottom bar
   boxSelect:'ボックス選択', selectAll:'すべて選択',
-  viewPersp:'透視', viewTop:'上面', viewBottom:'下面',
-  viewFront:'正面', viewBack:'背面', viewLeft:'左面', viewRight:'右面',
+  viewPersp:'透視図', viewTop:'上面図', viewBottom:'底面図',
+  viewFront:'正面図', viewBack:'背面図', viewLeft:'左面図', viewRight:'右面図',
 
   // Toast messages
   toastNewScene:'新規シーンを作成しました', toastImageExported:'画像をエクスポートしました',
