@@ -18,6 +18,18 @@
     --border: rgba(110, 231, 255, 0.18);
     --radius: 14px;
     --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+    /* 控件 & 组件基础色（暗色模式默认值，亮色主题会覆盖） */
+    --bg2: rgba(255,255,255,0.06);
+    --control-bg: rgba(255,255,255,0.05);
+    --control-bg-hover: rgba(255,255,255,0.08);
+    --slider-track: rgba(255,255,255,0.12);
+    --slider-thumb-border: #0c0e16;
+    --primary-btn-text: #0a0a14;
+    --input-bg: rgba(255,255,255,0.05);
+    --inline-input-bg: rgba(12, 14, 22, 0.92);
+    --section-border: rgba(255,255,255,0.05);
+    --bb-sep: rgba(255,255,255,0.18);
+    --modal-mask: rgba(8, 10, 18, 0.72);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -40,7 +52,7 @@
     position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 50;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 14px;
-    background: linear-gradient(180deg, rgba(12,14,22,0.92), rgba(12,14,22,0.45));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-deep) 92%, transparent), color-mix(in srgb, var(--bg-deep) 45%, transparent));
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
   }
@@ -59,18 +71,18 @@
   .top-actions::-webkit-scrollbar { display: none; }
   .top-btn {
     height: 30px; padding: 0 9px; font-size: 12px;
-    color: var(--text); background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07); border-radius: 7px;
+    color: var(--text); background: var(--control-bg);
+    border: 1px solid var(--control-bg-hover); border-radius: 7px;
     cursor: pointer; transition: all .18s; display:flex; align-items:center; gap:4px;
     white-space: nowrap; flex-shrink: 0;
   }
-  .top-btn:hover { background: rgba(110,231,255,0.12); border-color: var(--accent); }
+  .top-btn:hover { background: color-mix(in srgb, var(--accent) 14%, transparent); border-color: var(--accent); }
   .top-btn:disabled { opacity: .35; cursor: not-allowed; }
-  .top-btn:disabled:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.07); }
-  .top-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0a0a14; font-weight:600; border-color:transparent; }
+  .top-btn:disabled:hover { background: var(--control-bg); border-color: var(--control-bg-hover); }
+  .top-btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:var(--primary-btn-text); font-weight:600; border-color:transparent; }
   .top-btn .ic { font-size: 13px; line-height: 1; }
   /* 顶栏按钮分组分隔符 */
-  .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.15); margin: 0 3px; flex-shrink: 0; }
+  .top-btn-sep { width: 1px; height: 18px; background: var(--bb-sep); margin: 0 3px; flex-shrink: 0; }
 
   /* 面板通用 */
   .panel {
@@ -106,15 +118,26 @@
     padding: 12px 14px 6px; font-size: 11px; color: var(--text-dim);
     text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
   }
-  .panel-section { padding: 4px 12px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .panel-section { padding: 4px 12px 12px; border-bottom: 1px solid var(--section-border); }
   .panel-section:last-child { border-bottom: none; }
 
-  /* 可折叠面板 */
+  /* 可折叠面板（左右栏大栏目标题统一风格） */
   .collapsible-header {
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; padding: 6px 0; user-select: none;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; padding: 9px 4px; user-select: none;
   }
-  .collapsible-header h3 { padding: 0; margin: 0; flex: 1; }
+  .collapsible-header h3 {
+    flex: 1; margin: 0; padding: 0 0 0 11px; position: relative;
+    font-size: 12.5px; font-weight: 600; letter-spacing: .3px;
+    color: var(--text); text-transform: none; line-height: 1.25;
+  }
+  /* 统一的栏目标题强调竖条：左栏/右栏一致 */
+  .collapsible-header h3::before {
+    content: ''; position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 13px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  }
   .collapse-arrow {
     width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
     transition: transform .2s; color: var(--text-dim); font-size: 10px;
@@ -124,8 +147,8 @@
 
   .shape-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 3px; }
   .shape-btn {
-    aspect-ratio: 1; background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06); border-radius: 5px;
+    aspect-ratio: 1; background: var(--control-bg);
+    border: 1px solid var(--control-bg-hover); border-radius: 5px;
     cursor: grab; display:flex; align-items:center; justify-content:center;
     color: var(--text-dim); transition: all .18s; padding: 0;
   }
@@ -138,7 +161,7 @@
   .tool-btn {
     width: 100%; display:flex; align-items:center; gap:10px;
     padding: 10px 12px; font-size: 13px;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+    background: var(--control-bg); border: 1px solid var(--control-bg-hover);
     border-radius: 8px; cursor: pointer; color: var(--text); transition: all .18s;
   }
   .tool-btn:hover { border-color: var(--accent); background: rgba(110,231,255,0.08); }
@@ -147,14 +170,17 @@
 
   .transform-modes { display: flex; gap: 6px; }
   .mode-btn {
-    flex: 1; padding: 8px 6px; border-radius: 8px; border: 1.5px solid var(--border);
+    flex: 1; aspect-ratio: 1 / 1; border-radius: 8px; border: 1.5px solid var(--border);
     background: var(--bg2); color: var(--text); cursor: pointer;
-    font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
     transition: all .18s;
   }
   .mode-btn:hover { border-color: var(--accent); background: rgba(110,231,255,0.08); }
   .mode-btn.active { border-color: var(--accent); background: rgba(110,231,255,0.16); }
-  .mode-btn span { font-size: 18px; }
+  .mode-btn span:first-child { font-size: 18px; line-height: 1; }
+  .mode-btn span:last-child { font-size: 13px; line-height: 1; }
+  /* 橡皮擦模式：与变换模式同款，但无图标、长方形 */
+  .mode-btn-rect { flex: 1; aspect-ratio: auto; flex-direction: row; padding: 8px 10px; }
 
   .lock-ratio { display: flex; align-items: center; gap: 6px; margin-top: 10px; cursor: pointer; font-size: 13px; color: var(--text); user-select: none; }
   .lock-ratio input { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
@@ -193,14 +219,14 @@
   .ctrl-label span:last-child { color: var(--accent); font-variant-numeric: tabular-nums; }
   input[type="range"] {
     -webkit-appearance:none; appearance:none; width:100%; height:4px;
-    background: rgba(255,255,255,0.12); border-radius:2px; outline:none;
+    background: var(--slider-track); border-radius:2px; outline:none;
   }
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance:none; width:15px;height:15px;border-radius:50%;
-    background: var(--accent); cursor:pointer; border:2px solid #0c0e16;
+    background: var(--accent); cursor:pointer; border:2px solid var(--slider-thumb-border);
     box-shadow: 0 0 6px rgba(110,231,255,0.6);
   }
-  input[type="range"]::-moz-range-thumb { width:15px;height:15px;border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid #0c0e16; }
+  input[type="range"]::-moz-range-thumb { width:15px;height:15px;border-radius:50%; background:var(--accent); cursor:pointer; border:2px solid var(--slider-thumb-border); }
 
   .danger-btn {
     width:100%; padding:9px; font-size:13px; cursor:pointer;
@@ -222,7 +248,7 @@
   /* 文本控件 */
   .text-ctrl select {
     width: 100%; height: 30px; padding: 0 8px; font-size: 12px;
-    background: rgba(255,255,255,0.05); color: var(--text);
+    background: var(--input-bg); color: var(--text);
     border: 1px solid var(--border); border-radius: 6px; outline: none;
   }
   .text-ctrl select option { color: #000; background: #fff; }
@@ -230,7 +256,7 @@
   .toggle-row2 { display: flex; gap: 6px; }
   .toggle-btn {
     flex: 1; height: 30px; font-size: 12px; cursor: pointer;
-    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    background: var(--input-bg); border: 1px solid var(--border);
     border-radius: 6px; color: var(--text-dim); transition: all .15s;
   }
   .toggle-btn:hover { color: var(--text); }
@@ -297,7 +323,7 @@
   }
   .bottombar.collapsed { padding: 5px; border-radius: 50%; gap: 0; }
   /* 框选/全选 与 视角选择区 之间的竖线分隔 */
-  .bb-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.18); flex-shrink: 0; margin: 0 6px; }
+  .bb-sep { width: 1px; height: 20px; background: var(--bb-sep); flex-shrink: 0; margin: 0 6px; }
   .view-btn {
     height: 32px; padding: 0 13px; font-size: 12px; font-weight: 500;
     background: transparent; border: none; border-radius: 18px; outline: none;
@@ -377,9 +403,53 @@
   .modal-mask {
     position: fixed; inset: 0; z-index: 150; display: none;
     align-items: center; justify-content: center;
-    background: rgba(8, 10, 18, 0.72); backdrop-filter: blur(6px);
+    background: var(--modal-mask); backdrop-filter: blur(6px);
   }
   .modal-mask.show { display: flex; }
+  /* 屏幕取色放大镜 */
+  #color-loupe {
+    position: fixed; width: 140px; height: 140px; border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: 0 8px 28px rgba(0,0,0,.5);
+    overflow: hidden; pointer-events: none; z-index: 99999; background: var(--bg-panel-solid);
+    font-family: inherit;
+  }
+  #color-loupe .loupe-cv { display: block; width: 140px; height: 140px; image-rendering: pixelated; }
+  /* 放大镜底部信息条：与网页控件一致，实时显示 HEX 与 RGB */
+  #color-loupe .loupe-info {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 5px 9px; display: flex; justify-content: space-between; gap: 8px;
+    background: color-mix(in srgb, var(--bg-panel-solid) 88%, transparent);
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    color: var(--text); font-size: 11px; font-weight: 600; line-height: 15px;
+    font-variant-numeric: tabular-nums; letter-spacing: .3px;
+  }
+  #color-loupe .loupe-info .loupe-hex { font-family: var(--mono, ui-monospace, monospace); }
+  #color-loupe .loupe-info .loupe-rgb { font-family: var(--mono, ui-monospace, monospace); opacity: .92; }
+  /* 屏幕取色覆盖层：冻结画面，屏蔽页面交互 */
+  #screen-pick-overlay {
+    position: fixed; inset: 0; z-index: 99990;
+    cursor: none; background: #000; touch-action: none; user-select: none;
+  }
+  #screen-pick-overlay .sp-canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  }
+  /* 工具栏：右上角，确认(左) + 取消(右)；确认仅触屏长按模式出现 */
+  #screen-pick-overlay .sp-toolbar {
+    position: fixed; top: 14px; right: 14px; z-index: 99999;
+    display: flex; gap: 8px; pointer-events: auto;
+  }
+  #screen-pick-overlay .sp-confirm,
+  #screen-pick-overlay .sp-cancel {
+    cursor: pointer; padding: 9px 18px; font-size: 13px; border-radius: 9px;
+    font-family: inherit; pointer-events: auto;
+    border: 1px solid var(--border); background: var(--bg-panel-solid); color: var(--text);
+    box-shadow: 0 4px 16px rgba(0,0,0,.45);
+  }
+  #screen-pick-overlay .sp-confirm {
+    background: var(--accent); color: #06222a; border-color: var(--accent); font-weight: 600;
+  }
+  #screen-pick-overlay .sp-confirm:active { filter: brightness(.94); }
+  #screen-pick-overlay .sp-cancel:active { filter: brightness(.94); }
   .modal-box {
     width: min(420px, 90vw); max-height: 85vh; overflow-y: auto; padding: 18px;
     background: var(--bg-panel-solid); border: 1px solid var(--accent);
@@ -390,7 +460,7 @@
   .modal-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
   .modal-box textarea {
     width: 100%; min-height: 72px; padding: 10px; resize: vertical;
-    background: rgba(255,255,255,0.05); color: var(--text);
+    background: var(--input-bg); color: var(--text);
     border: 1px solid var(--border); border-radius: 8px; outline: none;
     font-size: 14px; font-family: inherit; user-select: text;
   }
@@ -416,8 +486,7 @@
   .theme-swatches { display:flex; gap:4px; justify-content:center; margin-bottom:7px; }
   .theme-sw { width:18px; height:18px; border-radius:50%; }
   .theme-name { font-size:11px; color:var(--text); }
-  .theme-follow { display:flex; align-items:center; gap:6px; margin-top:14px; font-size:13px; color:var(--text); cursor:pointer; }
-  .theme-follow input { accent-color:var(--accent); }
+
   .lang-list { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
   .lang-item { display:flex; align-items:center; justify-content:space-between; padding:11px 12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:13px; color:var(--text); transition:all .15s; }
   .lang-item:hover { border-color:var(--accent); }
@@ -446,7 +515,7 @@
   .inline-text-wrap .inline-text-input {
     min-width: 140px; min-height: 44px;
     padding: 8px 12px; font-size: 16px; line-height: 1.4;
-    background: rgba(12, 14, 22, 0.92); color: var(--text);
+    background: var(--inline-input-bg); color: var(--text);
     border: 1.5px solid var(--accent); border-radius: 10px; outline: none;
     font-family: inherit; resize: both; overflow: hidden;
     box-shadow: 0 0 18px rgba(110, 231, 255, 0.25);
@@ -500,7 +569,7 @@
     .top-actions > :first-child { margin-left: auto; }
     .top-actions::-webkit-scrollbar { display: none; }
     .top-btn { height: 30px; padding: 0 8px; font-size: 12px; flex-shrink: 0; }
-    .top-btn-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.2); flex-shrink: 0; margin: 0 2px; }
+    .top-btn-sep { width: 1px; height: 18px; background: var(--bb-sep); flex-shrink: 0; margin: 0 2px; }
     /* 面板保持固定宽度（见基础规则），窄屏不再收窄，仅调整高度与折叠按钮间距 */
     .panel { max-height: calc(100vh - 130px); }
     /* 面板折叠按钮移至顶栏下方，增加与面板的间距 */
@@ -537,13 +606,7 @@
   .hidden-input { display:none; }
 
   /* 触摸设备适配 */
-  .touch-device .top-btn,
-  .touch-device .view-btn,
-  .touch-device .panel-toggle,
-  .touch-device .bb-toggle { min-height: 36px; }
   .touch-device .kbd-row { padding: 2px 0; }
-  .touch-device .panel-toggle { width: 28px; }
-  .touch-device .shape-btn { min-width: 36px; min-height: 36px; }
   .touch-device input[type="range"] { height: 8px; }
   .touch-device input[type="range"]::-webkit-slider-thumb { width: 22px; height: 22px; }
   .touch-device input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; }
@@ -564,6 +627,10 @@
     .shape-grid { grid-template-columns: repeat(4, 1fr); }
   }
 </style>
+  <!-- 语言包：每语言独立文件，与简体中文（index.html 内 ZH_CN）分开存储；新增语言只需加文件并在此处引用 -->
+  <script src="language/zh-TW.js"></script>
+  <script src="language/en.js"></script>
+  <script src="language/ja.js"></script>
 </head>
 <body>
 
@@ -575,25 +642,25 @@
 
 <!-- 顶部栏 -->
 <header class="topbar">
-  <div class="brand"><div class="logo"></div><span>立方·三维设计工坊</span></div>
+  <div class="brand"><div class="logo"></div><span data-i18n="aboutName">立方·三维设计工坊</span></div>
   <div class="top-actions">
-    <button class="top-btn" id="btn-new" title="新建场景 (Ctrl+N)"><span class="ic">✨</span><span class="lbl" data-i18n="new">新建</span></button>
-    <button class="top-btn" id="btn-import" title="导入场景 JSON (Ctrl+O)"><span class="ic">📥</span><span class="lbl" data-i18n="import">导入</span></button>
-    <button class="top-btn" id="btn-export" title="导出场景 JSON (Ctrl+S)"><span class="ic">📤</span><span class="lbl" data-i18n="export">导出</span></button>
-    <button class="top-btn" id="btn-shot" title="导出图像 PNG (Ctrl+P)"><span class="ic">📷</span><span class="lbl" data-i18n="shot">截图</span></button>
+    <button class="top-btn" id="btn-new" data-i18n-title="titleNew"><span class="ic">✨</span><span class="lbl" data-i18n="new">新建</span></button>
+    <button class="top-btn" id="btn-import" data-i18n-title="titleImport"><span class="ic">📥</span><span class="lbl" data-i18n="import">导入</span></button>
+    <button class="top-btn" id="btn-export" data-i18n-title="titleExport"><span class="ic">📤</span><span class="lbl" data-i18n="export">导出</span></button>
+    <button class="top-btn" id="btn-shot" data-i18n-title="titleShot"><span class="ic">📷</span><span class="lbl" data-i18n="shot">截图</span></button>
     <div class="top-btn-sep"></div>
-    <button class="top-btn" id="btn-undo" title="撤销 (Ctrl+Z)"><span class="ic">↶</span><span class="lbl" data-i18n="undo">撤销</span></button>
-    <button class="top-btn" id="btn-redo" title="重做 (Ctrl+Y)"><span class="ic">↷</span><span class="lbl" data-i18n="redo">重做</span></button>
-    <button class="top-btn" id="btn-copy" title="复制 (Ctrl+C)"><span class="ic">⧉</span><span class="lbl" data-i18n="copy">复制</span></button>
-    <button class="top-btn" id="btn-paste" title="粘贴 (Ctrl+V)"><span class="ic">📋</span><span class="lbl" data-i18n="paste">粘贴</span></button>
-    <button class="top-btn" id="btn-dup" title="克隆 (Ctrl+D)"><span class="ic">⎘</span><span class="lbl" data-i18n="dup">克隆</span></button>
-    <button class="top-btn" id="btn-clear" title="清空场景（Ctrl+Del/Backspace）"><span class="ic">🗑</span><span class="lbl" data-i18n="clear">清空</span></button>
+    <button class="top-btn" id="btn-undo" data-i18n-title="titleUndo"><span class="ic">↶</span><span class="lbl" data-i18n="undo">撤销</span></button>
+    <button class="top-btn" id="btn-redo" data-i18n-title="titleRedo"><span class="ic">↷</span><span class="lbl" data-i18n="redo">重做</span></button>
+    <button class="top-btn" id="btn-copy" data-i18n-title="titleCopy"><span class="ic">⧉</span><span class="lbl" data-i18n="copy">复制</span></button>
+    <button class="top-btn" id="btn-paste" data-i18n-title="titlePaste"><span class="ic">📋</span><span class="lbl" data-i18n="paste">粘贴</span></button>
+    <button class="top-btn" id="btn-dup" data-i18n-title="titleDup"><span class="ic">⎘</span><span class="lbl" data-i18n="dup">克隆</span></button>
+    <button class="top-btn" id="btn-clear" data-i18n-title="titleClear"><span class="ic">🗑</span><span class="lbl" data-i18n="clear">清空</span></button>
     <div class="top-btn-sep"></div>
-    <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl" data-i18n="axes">坐标轴</span></button>
-    <button class="top-btn" id="btn-grid" title="切换网格面显示"><span class="ic">🔲</span><span class="lbl" data-i18n="grid">网格面</span></button>
+    <button class="top-btn" id="btn-axes" data-i18n-title="titleAxes"><span class="ic">📐</span><span class="lbl" data-i18n="axes">坐标轴</span></button>
+    <button class="top-btn" id="btn-grid" data-i18n-title="titleGrid"><span class="ic">🔲</span><span class="lbl" data-i18n="grid">网格面</span></button>
     <div class="top-btn-sep"></div>
-    <button class="top-btn" id="btn-settings" title="设置"><span class="ic">⚙</span><span class="lbl" data-i18n="settings">设置</span></button>
-    <button class="top-btn primary" id="btn-fs" title="全屏 (F11 / Esc)"><span class="ic">⛶</span><span class="lbl">全屏</span></button>
+    <button class="top-btn" id="btn-settings" data-i18n-title="titleSettings"><span class="ic">⚙</span><span class="lbl" data-i18n="settings">设置</span></button>
+    <button class="top-btn primary" id="btn-fs" data-i18n-title="titleFS"><span class="ic">⛶</span><span class="lbl">全屏</span></button>
   </div>
 </header>
 
@@ -604,7 +671,7 @@
 <aside class="panel panel-left" id="panel-left">
   <div class="panel-section collapsible" id="sec-3d">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>3D 图形</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="sec3D">3D 图形</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
       <div class="shape-grid" id="grid-3d"></div>
@@ -612,7 +679,7 @@
   </div>
   <div class="panel-section collapsible" id="sec-2d">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>2D 图形</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="sec2D">2D 图形</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
       <div class="shape-grid" id="grid-2d"></div>
@@ -620,48 +687,48 @@
   </div>
   <div class="panel-section collapsible" id="sec-tools">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>工具</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secTools">工具</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
       <button class="tool-btn" id="tool-select">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7 18 2-7 7-2z"/></svg>
-        <span>选择/变换</span>
+        <span data-i18n="toolNameSelect">选择/变换</span>
       </button>
       <button class="tool-btn" id="tool-brush3d" style="margin-top:6px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-        <span>3D 画笔</span>
+        <span data-i18n="toolNameBrush3D">3D 画笔</span>
       </button>
       <button class="tool-btn" id="tool-brush2d" style="margin-top:6px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c0-3 3-5 9-5s9 2 9 5"/><path d="M12 3v18"/><path d="M3 12h18"/><circle cx="12" cy="12" r="3"/></svg>
-        <span>2D 画笔</span>
+        <span data-i18n="toolNameBrush2D">2D 画笔</span>
       </button>
       <button class="tool-btn" id="tool-eraser" style="margin-top:6px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16c-1-1-1-3 0-4L14 1l9 9-10 10"/><path d="M14 1l9 9"/></svg>
-        <span>橡皮擦</span>
+        <span data-i18n="toolNameEraser">橡皮擦</span>
       </button>
       <button class="tool-btn" id="tool-text" style="margin-top:6px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
-        <span>添加文本</span>
+        <span data-i18n="toolNameAddText">添加文本</span>
       </button>
       <button class="tool-btn" id="tool-image" style="margin-top:6px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <span>添加图片</span>
+        <span data-i18n="toolNameAddImage">添加图片</span>
       </button>
     </div>
   </div>
   <div class="panel-section collapsible" id="sec-transform">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>变换模式</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secTransformMode">变换模式</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
       <div class="transform-modes">
-        <button class="mode-btn active" id="mode-translate" title="平移模式"><span>⇔</span>平移</button>
-        <button class="mode-btn" id="mode-rotate" title="旋转模式"><span>↻</span>旋转</button>
-        <button class="mode-btn" id="mode-scale" title="缩放模式"><span>⤢</span>缩放</button>
+        <button class="mode-btn active" id="mode-translate" data-i18n-title="titleTranslate"><span>⇔</span><span data-i18n="translate">平移</span></button>
+        <button class="mode-btn" id="mode-rotate" data-i18n-title="titleRotate"><span>↻</span><span data-i18n="rotate">旋转</span></button>
+        <button class="mode-btn" id="mode-scale" data-i18n-title="titleScale"><span>⤢</span><span data-i18n="scale">缩放</span></button>
       </div>
       <label class="lock-ratio">
         <input type="checkbox" id="lock-ratio" checked>
-        <span>等比缩放</span>
+        <span data-i18n="lockRatio">等比缩放</span>
       </label>
     </div>
   </div>
@@ -671,65 +738,65 @@
 <aside class="panel panel-right" id="panel-right">
   <div class="panel-section collapsible" id="sec-props">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>属性</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secProperties">属性</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
-      <div class="empty-hint" id="empty-hint">未选中对象。<br>从左侧选择图形，点击地面放置；或点击已有对象进行编辑。<br>Shift+点选可多选，多选时变换作为整体操作。</div>
+      <div class="empty-hint" id="empty-hint" data-i18n="emptyHint">未选中对象。<br>从左侧选择图形，点击地面放置；或点击已有对象进行编辑。<br>Shift+点选可多选，多选时变换作为整体操作。</div>
       <div id="props" style="display:none;">
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>横坐标 X</span></div>
+        <div class="ctrl-label"><span data-i18n="posX">横坐标 X</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-x" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-px" step="0.01" value="0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>纵坐标 Y</span></div>
+        <div class="ctrl-label"><span data-i18n="posZ">纵坐标 Y</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-z" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-pz" step="0.01" value="0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>竖坐标 Z</span></div>
+        <div class="ctrl-label"><span data-i18n="posY">竖坐标 Z</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-y" min="-50" max="50" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-py" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-py" step="0.01" value="0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>水平旋转</span></div>
+        <div class="ctrl-label"><span data-i18n="rotationHorizontal">水平旋转</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-y" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-ry" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-ry" step="0.01" value="0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>垂直旋转</span></div>
+        <div class="ctrl-label"><span data-i18n="rotationVertical">垂直旋转</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-x" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-rx" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-rx" step="0.01" value="0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>侧向旋转</span></div>
+        <div class="ctrl-label"><span data-i18n="rotationLateral">侧向旋转</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="r-z" min="-180" max="180" step="0.01" value="0" style="flex:1;">
-          <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-rz" step="0.01" value="0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row" id="row-scale">
-        <div class="ctrl-label"><span>等比缩放</span></div>
+        <div class="ctrl-label"><span data-i18n="uniformScale">等比缩放</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="s-c" min="0.1" max="5" step="0.01" value="1" style="flex:1;">
-          <input type="number" id="input-sc" step="0.01" value="1" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-sc" step="0.01" value="1" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row" id="row-opacity">
-        <div class="ctrl-label"><span>透明度</span></div>
+        <div class="ctrl-label"><span data-i18n="opacity">透明度</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-opacity" min="0.1" max="1.0" step="0.01" value="1.0" style="flex:1;">
-          <input type="number" id="input-opacity" step="0.01" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+          <input type="number" id="input-opacity" step="0.01" value="1.0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <!-- 图形参数区域（与属性合并显示） -->
@@ -739,13 +806,13 @@
   </div>
   <div class="panel-section collapsible" id="sec-color" style="display:none;">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>颜色</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secColor">颜色</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
-    <div class="ctrl-label" style="margin:4px 0 6px;"><span>预设颜色</span></div>
+    <div class="ctrl-label" style="margin:4px 0 6px;"><span data-i18n="presetColors">预设颜色</span></div>
     <div class="color-row" id="color-row"></div>
     <div class="ctrl-row" style="margin-top:8px;">
-      <div class="ctrl-label"><span>自定义颜色</span></div>
+      <div class="ctrl-label"><span data-i18n="customColor">自定义颜色</span></div>
       <div class="swatch-row">
         <div id="obj-custom-swatch" class="color-dot custom-swatch" style="background:#ffffff;"></div>
         <div style="grid-column: 2 / 8; display:flex; align-items:center; gap:10px; min-width:0;">
@@ -755,7 +822,7 @@
           </div>
           <button class="tool-btn" id="open-color-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0; width:auto;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-            <span>选取器</span>
+            <span data-i18n="colorPicker">选取器</span>
           </button>
         </div>
       </div>
@@ -764,83 +831,83 @@
   </div>
   <div class="panel-section collapsible" id="sec-pat" style="display:none;">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>花纹 / 贴图</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secPattern">花纹 / 贴图</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
       <div class="pat-grid" id="pat-grid"></div>
       <div id="sec-img-content" style="margin-top:8px;">
         <button class="tool-btn" id="apply-image">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          <span>上传图片贴图</span>
+          <span data-i18n="uploadImageTex">上传图片贴图</span>
         </button>
         <button class="tool-btn" id="clear-tex" style="margin-top:6px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-          <span>清除花纹/贴图</span>
+          <span data-i18n="clearPatternTex">清除花纹/贴图</span>
         </button>
         <button class="tool-btn" id="edit-text" style="margin-top:6px; display:none;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
-          <span>编辑文本内容</span>
+          <span data-i18n="editTextContent">编辑文本内容</span>
         </button>
       </div>
     </div>
   </div>
   <div class="panel-section text-ctrl collapsible" id="sec-text" style="display:none;">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>文本框</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secTextBox">文本框</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>字体</span></div>
+      <div class="ctrl-label"><span data-i18n="fontFamily">字体</span></div>
       <select id="t-font">
-        <option value='"Microsoft YaHei","PingFang SC",sans-serif'>雅黑</option>
-        <option value='SimSun,serif'>宋体</option>
-        <option value='KaiTi,serif'>楷体</option>
-        <option value='SimHei,sans-serif'>黑体</option>
-        <option value='FangSong,serif'>仿宋</option>
+        <option value='"Microsoft YaHei","PingFang SC",sans-serif' data-i18n="fontYaHei">雅黑</option>
+        <option value='SimSun,serif' data-i18n="fontSimSun">宋体</option>
+        <option value='KaiTi,serif' data-i18n="fontKaiTi">楷体</option>
+        <option value='SimHei,sans-serif' data-i18n="fontSimHei">黑体</option>
+        <option value='FangSong,serif' data-i18n="fontFangSong">仿宋</option>
         <option value='Arial,sans-serif'>Arial</option>
         <option value='"Times New Roman",serif'>Times</option>
         <option value='"Courier New",monospace'>Courier</option>
       </select>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>字号</span></div>
+      <div class="ctrl-label"><span data-i18n="fontSize">字号</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="t-size" min="24" max="220" step="2" value="80" style="flex:1;">
-        <input type="number" id="input-tsize" step="2" value="80" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="number" id="input-tsize" step="2" value="80" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>粗细</span></div>
+      <div class="ctrl-label"><span data-i18n="fontWeight">粗细</span></div>
       <div class="toggle-row2">
-        <button class="toggle-btn" data-bold="false">常规</button>
-        <button class="toggle-btn active" data-bold="true">粗体</button>
+        <button class="toggle-btn" data-bold="false" data-i18n="fontNormal">常规</button>
+        <button class="toggle-btn active" data-bold="true" data-i18n="fontBold">粗体</button>
       </div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>排列方向</span></div>
+      <div class="ctrl-label"><span data-i18n="textDirection">排列方向</span></div>
       <div class="toggle-row2">
-        <button class="toggle-btn active" data-dir="h">横排</button>
-        <button class="toggle-btn" data-dir="v">竖排</button>
+        <button class="toggle-btn active" data-dir="h" data-i18n="textHorizontal">横排</button>
+        <button class="toggle-btn" data-dir="v" data-i18n="textVertical">竖排</button>
       </div>
     </div>
     </div>
   </div>
   <div class="panel-section" id="sec-del" style="display:none;">
     <div class="multi-hint" id="multi-hint" style="display:none;"></div>
-    <button class="danger-btn" id="del-btn">删除选中对象（Del/Backspace）</button>
+    <button class="danger-btn" id="del-btn" data-i18n="deleteSelected">删除选中对象（Del/Backspace）</button>
   </div>
   <!-- 画笔属性（仅画笔模式时显示） -->
   <div class="panel-section collapsible" id="sec-brush" style="display:none;">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>画笔属性</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="brushProperties">画笔属性</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>预设颜色</span></div>
+      <div class="ctrl-label"><span data-i18n="presetColors">预设颜色</span></div>
       <div class="color-row" id="brush-color-row" style="pointer-events:auto;"></div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>自定义颜色</span></div>
+      <div class="ctrl-label"><span data-i18n="customColor">自定义颜色</span></div>
       <div class="swatch-row">
         <div id="brush-custom-swatch" class="color-dot custom-swatch" style="background:#000000;"></div>
         <div style="grid-column: 2 / 8; display:flex; align-items:center; gap:10px; min-width:0;">
@@ -850,30 +917,30 @@
           </div>
           <button class="tool-btn" id="brush-open-picker" style="margin-left:auto; height:26px; padding: 0 10px; font-size: 11px; display:flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0; width:auto;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>
-            <span>选取器</span>
+            <span data-i18n="colorPicker">选取器</span>
           </button>
         </div>
       </div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>画笔粗细</span></div>
+      <div class="ctrl-label"><span data-i18n="brushThickness">画笔粗细</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-thick" min="0.05" max="3" step="0.05" value="0.5" style="flex:1;">
-        <input type="number" id="input-brush-thick" step="0.05" value="0.5" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="number" id="input-brush-thick" step="0.05" value="0.5" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <div class="ctrl-row" id="row-brush-opacity">
-      <div class="ctrl-label"><span>透明度</span></div>
+      <div class="ctrl-label"><span data-i18n="opacity">透明度</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-opacity" min="0.1" max="1" step="0.05" value="1.0" style="flex:1;">
-        <input type="number" id="input-brush-opacity" step="0.05" value="1.0" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="number" id="input-brush-opacity" step="0.05" value="1.0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>最小间距</span></div>
+      <div class="ctrl-label"><span data-i18n="brushGap">最小间距</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-gap" min="0.02" max="0.5" step="0.01" value="0.15" style="flex:1;">
-        <input type="number" id="input-brush-gap" step="0.01" value="0.15" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="number" id="input-brush-gap" step="0.01" value="0.15" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     </div>
@@ -881,21 +948,21 @@
   <!-- 橡皮擦属性（仅橡皮擦模式时显示） -->
   <div class="panel-section collapsible" id="sec-eraser" style="display:none;">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>橡皮擦属性</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secEraser">橡皮擦属性</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>橡皮擦模式</span></div>
+      <div class="ctrl-label"><span data-i18n="eraserMode">橡皮擦模式</span></div>
       <div style="display:flex; gap:6px;">
-        <button type="button" id="eraser-mode-whole" style="padding:4px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--txt);cursor:pointer;">整体擦除</button>
-        <button type="button" id="eraser-mode-local" style="padding:4px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;">局部擦除</button>
+        <button type="button" class="mode-btn mode-btn-rect" id="eraser-mode-whole" data-i18n="eraserWhole">整体擦除</button>
+        <button type="button" class="mode-btn mode-btn-rect" id="eraser-mode-local" data-i18n="eraserLocal">局部擦除</button>
       </div>
     </div>
     <div class="ctrl-row">
-      <div class="ctrl-label"><span>橡皮擦大小</span></div>
+      <div class="ctrl-label"><span data-i18n="eraserSize">橡皮擦大小</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="eraser-size" min="0.05" max="3" step="0.05" value="0.30" style="flex:1;">
-        <input type="number" id="input-eraser-size" step="0.05" value="0.30" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="number" id="input-eraser-size" step="0.05" value="0.30" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
       <!-- 橡皮擦模式（整体/局部）已移至上方"橡皮擦模式"栏 -->
@@ -904,87 +971,115 @@
   <!-- 操作说明（鼠标/手势自动切换） -->
   <div class="panel-section collapsible" id="sec-mouse">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3 class="mouse-only">鼠标相关操作</h3>
-      <h3 class="touch-only" style="display:none;">手势操作</h3>
+      <h3 class="mouse-only" data-i18n="secMouse">鼠标相关操作</h3>
+      <h3 class="touch-only" style="display:none;" data-i18n="secTouch">手势操作</h3>
       <span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
     <div class="kbd mouse-only">
-      <div class="kbd-row"><b>单击左键</b><span>选择对象/控件</span></div>
-      <div class="kbd-row"><b>双击左键</b><span>编辑文本</span></div>
-      <div class="kbd-row"><b>长按左键</b><span>操作对象/控件</span></div>
-      <div class="kbd-row"><b>长按右键</b><span>视角旋转</span></div>
-      <div class="kbd-row"><b>长按滚轮</b><span>视角平移</span></div>
-      <div class="kbd-row"><b>滑动滚轮</b><span>视角缩放</span></div>
+      <div class="kbd-row"><b data-i18n="helpMouseClick">单击左键</b><span data-i18n="helpMouseClickDesc">选择对象/控件</span></div>
+      <div class="kbd-row"><b data-i18n="helpMouseDblClick">双击左键</b><span data-i18n="helpMouseDblClickDesc">编辑文本</span></div>
+      <div class="kbd-row"><b data-i18n="helpMouseHold">长按左键</b><span data-i18n="helpMouseHoldDesc">操作对象/控件</span></div>
+      <div class="kbd-row"><b data-i18n="helpMouseRhold">长按右键</b><span data-i18n="helpMouseRholdDesc">视角旋转</span></div>
+      <div class="kbd-row"><b data-i18n="helpMouseMidhold">长按滚轮</b><span data-i18n="helpMouseMidholdDesc">视角平移</span></div>
+      <div class="kbd-row"><b data-i18n="helpMouseWheel">滑动滚轮</b><span data-i18n="helpMouseWheelDesc">视角缩放</span></div>
     </div>
     <div class="kbd touch-only" style="display:none;">
-      <div class="kbd-row"><b>单指单击</b><span>选择对象/控件</span></div>
-      <div class="kbd-row"><b>单指双击</b><span>编辑文本</span></div>
-      <div class="kbd-row"><b>单指长按对象</b><span>加选/减选（等价 Shift 单击）</span></div>
-      <div class="kbd-row"><b>单指拖动对象</b><span>操作对象/控件</span></div>
-      <div class="kbd-row"><b>单指拖动空白</b><span>视角旋转</span></div>
-      <div class="kbd-row"><b>单指轻点空白</b><span>取消选择</span></div>
-      <div class="kbd-row"><b>「全选」按钮</b><span>选中所有对象</span></div>
-      <div class="kbd-row"><b>「框选」按钮</b><span>开启后单指拖拽框选对象</span></div>
-      <div class="kbd-row"><b>双指拖动</b><span>视角平移</span></div>
-      <div class="kbd-row"><b>双指捏合</b><span>视角缩放</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchTap">单指单击</b><span data-i18n="helpTouchTapDesc">选择对象/控件</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchDblTap">单指双击</b><span data-i18n="helpTouchDblTapDesc">编辑文本</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchLongObj">单指长按对象</b><span data-i18n="helpTouchLongObjDesc">加选/减选（等价 Shift 单击）</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchDragObj">单指拖动对象</b><span data-i18n="helpTouchDragObjDesc">操作对象/控件</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchDragBlank">单指拖动空白</b><span data-i18n="helpTouchDragBlankDesc">视角旋转</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchTapBlank">单指轻点空白</b><span data-i18n="helpTouchTapBlankDesc">取消选择</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchSelectAll">「全选」按钮</b><span data-i18n="helpTouchSelectAllDesc">选中所有对象</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchBoxSelect">「框选」按钮</b><span data-i18n="helpTouchBoxSelectDesc">开启后单指拖拽框选对象</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchTwoDrag">双指拖动</b><span data-i18n="helpTouchTwoDragDesc">视角平移</span></div>
+      <div class="kbd-row"><b data-i18n="helpTouchPinch">双指捏合</b><span data-i18n="helpTouchPinchDesc">视角缩放</span></div>
     </div>
     </div>
   </div>
   <!-- 键盘快捷键（常驻最底部） -->
   <div class="panel-section collapsible" id="sec-kbd">
     <div class="collapsible-header" onclick="this.parentElement.classList.toggle('collapsed')">
-      <h3>键盘快捷键</h3><span class="collapse-arrow">▼</span>
+      <h3 data-i18n="secKeyboard">键盘快捷键</h3><span class="collapse-arrow">▼</span>
     </div>
     <div class="collapsible-body">
     <div class="kbd">
-      <div class="kbd-title">基础按键</div>
-      <div class="kbd-note">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
+      <div class="kbd-title" data-i18n="kbdTitleBasic">基础按键</div>
+      <div class="kbd-note" data-i18n="kbdNoteBasic">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
       <table class="kbd-table">
-        <tr><th>按键</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑</td><td>沿X轴+/−平移</td><td>视角后/前平移</td></tr>
-        <tr><td>→/←</td><td>沿Y轴+/−平移</td><td>视角右/左平移</td></tr>
-        <tr><td>PgUp/PgDn</td><td>沿Z轴+/−平移</td><td>视角上/下平移</td></tr>
-        <tr><td>A/D</td><td>绕Z轴逆/顺旋转</td><td>视角左/右旋转</td></tr>
-        <tr><td>W/S</td><td>绕Y轴逆/顺旋转</td><td>视角上/下旋转</td></tr>
-        <tr><td>E/Q</td><td>绕X轴逆/顺旋转</td><td>—</td></tr>
-        <tr><td>+/-</td><td>放大/缩小5%</td><td>—</td></tr>
+        <tr><th data-i18n="kbdThKey">按键</th><th data-i18n="kbdThSelected">选取对象时</th><th data-i18n="kbdThUnselected">未选取时</th></tr>
+        <tr>
+          <td>↓/↑<br>→/←<br>PgUp/PgDn</td>
+          <td data-i18n="kbdBasicDirSel">沿X轴+/−平移<br>沿Y轴+/−平移<br>沿Z轴+/−平移</td>
+          <td data-i18n="kbdBasicDirUnsel">视角后/前平移<br>视角右/左平移<br>视角上/下平移</td>
+        </tr>
+        <tr>
+          <td>A/D<br>W/S<br>E/Q</td>
+          <td data-i18n="kbdBasicRotSel">绕Z轴逆/顺旋转<br>绕Y轴逆/顺旋转<br>绕X轴逆/顺旋转</td>
+          <td data-i18n="kbdBasicRotUnsel">视角左/右旋转<br>视角上/下旋转<br>—</td>
+        </tr>
+        <tr>
+          <td>+/-</td>
+          <td data-i18n="kbdBasicScaleSel">放大/缩小5%</td>
+          <td>—</td>
+        </tr>
       </table>
-      <div class="kbd-title">Shift 组合键</div>
-      <div class="kbd-note">选取对象时：平移1网格（1.5长度）/ 旋转90°<br>未选取时：视角平移1网格 / 旋转90°</div>
+      <div class="kbd-title" data-i18n="kbdTitleShift">Shift 组合键</div>
+      <div class="kbd-note" data-i18n="kbdNoteShift">选取对象时：平移1网格（1.5长度）/ 旋转90°<br>未选取时：视角平移1网格 / 旋转90°</div>
       <table class="kbd-table">
-        <tr><th>Shift+</th><th>选取对象时</th><th>未选取时</th></tr>
-        <tr><td>↓/↑/→/←</td><td>平移1网格</td><td>视角平移1网格</td></tr>
-        <tr><td>PgUp/PgDn</td><td>平移1网格</td><td>视角平移1网格</td></tr>
-        <tr><td>A/D/W/S/E/Q</td><td>旋转90°</td><td>视角旋转90°</td></tr>
-        <tr><td>+/-</td><td>放大×2/缩小×0.5</td><td>—</td></tr>
-        <tr><td>点击</td><td colspan="2">加选对象（多点选）</td></tr>
+        <tr><th data-i18n="kbdThShiftKey">Shift+</th><th data-i18n="kbdThSelected">选取对象时</th><th data-i18n="kbdThUnselected">未选取时</th></tr>
+        <tr>
+          <td>↓/↑/→/←<br>PgUp/PgDn</td>
+          <td data-i18n="kbdShiftPosSel">平移1网格<br>平移1网格</td>
+          <td data-i18n="kbdShiftPosUnsel">视角平移1网格<br>视角平移1网格</td>
+        </tr>
+        <tr>
+          <td>A/D/W/S/E/Q</td>
+          <td data-i18n="kbdShiftRotSel">旋转90°<br>旋转90°<br>旋转90°</td>
+          <td data-i18n="kbdShiftRotUnsel">视角旋转90°<br>视角旋转90°<br>视角旋转90°</td>
+        </tr>
+        <tr>
+          <td>+/-</td>
+          <td data-i18n="kbdShiftScaleSel">放大×2/缩小×0.5</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td data-i18n="helpMouseClick">点击</td>
+          <td colspan="2" data-i18n="kbdShiftClickSel">加选对象（多点选）</td>
+        </tr>
       </table>
-      <div class="kbd-title">滑动条 / 输入框</div>
-      <div class="kbd-note">聚焦滑动条或输入框时生效，原快捷键暂时失效</div>
+      <div class="kbd-title" data-i18n="kbdTitleSlider">滑动条 / 输入框</div>
+      <div class="kbd-note" data-i18n="kbdNoteSlider">聚焦滑动条或输入框时生效，原快捷键暂时失效</div>
       <table class="kbd-table">
-        <tr><th>按键</th><th>滑动条</th><th>输入框</th></tr>
-        <tr><td>→/←</td><td>减/增</td><td>移动光标</td></tr>
-        <tr><td>↑/↓</td><td>增/减</td><td>增/减</td></tr>
-        <tr><td>PgUp/PgDn</td><td>大幅增/减</td><td>滚动右栏</td></tr>
-        <tr><td>+/-</td><td>—</td><td>输入正/负号</td></tr>
+        <tr><th data-i18n="kbdThKey">按键</th><th data-i18n="kbdThSlider">滑动条</th><th data-i18n="kbdThInput">输入框</th></tr>
+        <tr>
+          <td>→/←<br>↑/↓<br>+/-</td>
+          <td data-i18n="kbdSliderSel">减/增<br>增/减<br>—</td>
+          <td data-i18n="kbdSliderInput">移动光标<br>增/减<br>输入正/负号</td>
+        </tr>
+        <tr>
+          <td>PgUp/PgDn</td>
+          <td data-i18n="kbdSliderPgSel">大幅增/减</td>
+          <td data-i18n="kbdSliderPgInput">滚动右栏</td>
+        </tr>
       </table>
-      <div class="kbd-title">功能键</div>
-      <div class="kbd-row"><b>Esc</b><span>取消操作/退出全屏</span></div>
-      <div class="kbd-row"><b>F11</b><span>全屏/退出全屏</span></div>
-      <div class="kbd-row"><b>Del/Backspace</b><span>删除选中对象</span></div>
-      <div class="kbd-title">Ctrl 组合键</div>
-      <div class="kbd-row"><b>Ctrl+A</b><span>全选</span></div>
-      <div class="kbd-row"><b>Ctrl+N</b><span>新建场景</span></div>
-      <div class="kbd-row"><b>Ctrl+O</b><span>导入场景</span></div>
-      <div class="kbd-row"><b>Ctrl+S</b><span>导出场景</span></div>
-      <div class="kbd-row"><b>Ctrl+P</b><span>截图导出图像</span></div>
-      <div class="kbd-row"><b>Ctrl+Z</b><span>撤销</span></div>
-      <div class="kbd-row"><b>Ctrl+Y</b><span>重做</span></div>
-      <div class="kbd-row"><b>Ctrl+C</b><span>复制</span></div>
-      <div class="kbd-row"><b>Ctrl+V</b><span>粘贴</span></div>
-      <div class="kbd-row"><b>Ctrl+D</b><span>克隆</span></div>
-      <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span>清空场景</span></div>
+      <div class="kbd-title" data-i18n="kbdTitleFunc">功能键</div>
+      <div class="kbd-row"><b>Esc</b><span data-i18n="kbdFuncEsc">取消操作/退出全屏</span></div>
+      <div class="kbd-row"><b>F11</b><span data-i18n="kbdFuncF11">全屏/退出全屏</span></div>
+      <div class="kbd-row"><b>Del/Backspace</b><span data-i18n="kbdFuncDel">删除选中对象</span></div>
+      <div class="kbd-title" data-i18n="kbdTitleCtrl">Ctrl 组合键</div>
+      <div class="kbd-row"><b>Ctrl+A</b><span data-i18n="kbdCtrlA">全选</span></div>
+      <div class="kbd-row"><b>Ctrl+N</b><span data-i18n="kbdCtrlN">新建场景</span></div>
+      <div class="kbd-row"><b>Ctrl+O</b><span data-i18n="kbdCtrlO">导入场景</span></div>
+      <div class="kbd-row"><b>Ctrl+S</b><span data-i18n="kbdCtrlS">导出场景</span></div>
+      <div class="kbd-row"><b>Ctrl+P</b><span data-i18n="kbdCtrlP">截图导出图像</span></div>
+      <div class="kbd-row"><b>Ctrl+Z</b><span data-i18n="kbdCtrlZ">撤销</span></div>
+      <div class="kbd-row"><b>Ctrl+Y</b><span data-i18n="kbdCtrlY">重做</span></div>
+      <div class="kbd-row"><b>Ctrl+C</b><span data-i18n="kbdCtrlC">复制</span></div>
+      <div class="kbd-row"><b>Ctrl+V</b><span data-i18n="kbdCtrlV">粘贴</span></div>
+      <div class="kbd-row"><b>Ctrl+D</b><span data-i18n="kbdCtrlD">克隆</span></div>
+      <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span data-i18n="kbdCtrlDel">清空场景</span></div>
     </div>
     </div>
   </div>
@@ -993,36 +1088,36 @@
 <!-- 声明 -->
 <div class="declaration">
   <div class="decl-header" onclick="this.parentElement.classList.toggle('collapsed')">
-    <strong>声明</strong>
+    <strong data-i18n="declaration">声明</strong>
     <span class="decl-arrow">▼</span>
   </div>
   <div class="decl-body">
-    本工具是一款基于 Three.js 的纯前端 3D/2D 场景编辑器，内置丰富的 3D/2D 参数化图形、
-    2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。
-    <br>所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。
-    场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。
-    <br><strong>作者</strong>：yushichadao
-    <br><strong>AI 辅助</strong>：使用 TRAE 工具的 AI 能力辅助生成
-    <br><strong>最后更新</strong>：2026-08-02
+    <span data-i18n="declBody1">本工具是一款基于 Three.js 的纯前端 3D/2D 场景编辑器，内置丰富的 3D/2D 参数化图形、</span>
+    <span data-i18n="declBody2">2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。</span>
+    <br><span data-i18n="declBody3">所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。</span>
+    <span data-i18n="declBody4">场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。</span>
+    <br><strong data-i18n="declAuthor">作者</strong>：yushichadao
+    <br><strong data-i18n="declAI">AI 辅助</strong>：<span data-i18n="declAIText">使用 TRAE 工具的 AI 能力辅助生成</span>
+    <br><strong data-i18n="declUpdate">最后更新</strong>：2026-08-02
   </div>
 </div>
 
 <!-- 底部状态 -->
 <div class="bottombar">
-  <div class="bb-toggle" onclick="this.parentElement.classList.toggle('collapsed')" title="展开/收起视角切换">
+  <div class="bb-toggle" onclick="this.parentElement.classList.toggle('collapsed')" data-i18n-title="titleBBToggle">
     <span class="bb-arrow">▼</span>
   </div>
     <div class="bb-body">
-    <button class="view-btn touch-only" id="btn-boxselect" style="display:none;" title="框选模式：单指拖拽框选对象">框选</button>
-    <button class="view-btn touch-only" id="btn-selectall" style="display:none;" title="全选所有对象">全选</button>
+    <button class="view-btn touch-only" id="btn-boxselect" style="display:none;" data-i18n-title="titleBoxSelect" data-i18n="boxSelect">框选</button>
+    <button class="view-btn touch-only" id="btn-selectall" style="display:none;" data-i18n-title="titleSelectAll" data-i18n="selectAll">全选</button>
     <div class="bb-sep touch-only" style="display:none;"></div>
-    <button class="view-btn" data-view="persp">透视</button>
-    <button class="view-btn" data-view="top">顶视</button>
-    <button class="view-btn" data-view="bottom">底视</button>
-    <button class="view-btn" data-view="front">正视</button>
-    <button class="view-btn" data-view="back">后视</button>
-    <button class="view-btn" data-view="left">左视</button>
-    <button class="view-btn" data-view="right">右视</button>
+    <button class="view-btn" data-view="persp" data-i18n="viewPersp">透视</button>
+    <button class="view-btn" data-view="top" data-i18n="viewTop">顶视</button>
+    <button class="view-btn" data-view="bottom" data-i18n="viewBottom">底视</button>
+    <button class="view-btn" data-view="front" data-i18n="viewFront">正视</button>
+    <button class="view-btn" data-view="back" data-i18n="viewBack">后视</button>
+    <button class="view-btn" data-view="left" data-i18n="viewLeft">左视</button>
+    <button class="view-btn" data-view="right" data-i18n="viewRight">右视</button>
   </div>
 </div>
 
@@ -1031,45 +1126,45 @@
 <!-- 颜色选取器弹窗 -->
 <div class="modal-mask" id="color-picker-modal">
   <div class="modal-box" style="width:460px; max-width:90vw;">
-    <div class="modal-title">颜色选取器</div>
+    <div class="modal-title" data-i18n="colorPickerTitle">颜色选取器</div>
     <!-- 色相-饱和度选择面板 -->
     <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">饱和度 / 明度</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;" data-i18n="saturationValue">饱和度 / 明度</div>
       <canvas id="picker-sv-canvas" width="360" height="200" style="width:100%; border-radius:8px; cursor:crosshair; display:block;"></canvas>
     </div>
     <!-- 色相条 -->
     <div style="margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">色相</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;" data-i18n="hue">色相</div>
       <canvas id="picker-hue-canvas" width="360" height="20" style="width:100%; border-radius:6px; cursor:pointer; display:block;"></canvas>
     </div>
     <!-- RGB/HEX输入 -->
     <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
       <div style="flex:1;">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">HEX 色值</div>
-        <input type="text" id="picker-hex" value="#6EE7FF" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; text-transform:uppercase;">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;" data-i18n="hexColor">HEX 色值</div>
+        <input type="text" id="picker-hex" value="#6EE7FF" style="width:100%; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; text-transform:uppercase;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">R</div>
-        <input type="number" id="picker-r" min="0" max="255" value="110" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
+        <input type="number" id="picker-r" min="0" max="255" value="110" style="width:100%; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">G</div>
-        <input type="number" id="picker-g" min="0" max="255" value="231" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
+        <input type="number" id="picker-g" min="0" max="255" value="231" style="width:100%; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
       </div>
       <div style="width:60px;">
         <div style="font-size:11px; color:var(--text-dim); margin-bottom:3px;">B</div>
-        <input type="number" id="picker-b" min="0" max="255" value="255" style="width:100%; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
+        <input type="number" id="picker-b" min="0" max="255" value="255" style="width:100%; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:4px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     <!-- 预览 + 吸取 -->
     <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px;">
       <div>
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">颜色预览</div>
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;" data-i18n="colorPreview">颜色预览</div>
         <div id="picker-preview" style="width:50px; height:50px; border-radius:8px; border:2px solid var(--border); background:#6ee7ff;"></div>
       </div>
       <div style="display:flex; flex-direction:column; gap:4px; margin-left:auto;">
-        <button class="top-btn" id="picker-eyedropper" style="font-size:11px; padding:4px 8px;" title="使用屏幕取色器">
-          <span>屏幕取色</span>
+        <button class="top-btn" id="picker-eyedropper" style="font-size:11px; padding:4px 8px;" data-i18n-title="titleEyedropper">
+          <span data-i18n="eyedropper">屏幕取色</span>
         </button>
       </div>
     </div>
@@ -1083,8 +1178,8 @@
 <!-- 文本输入弹窗 -->
 <div class="modal-mask" id="text-modal">
   <div class="modal-box">
-    <div class="modal-title" id="text-modal-title">输入文本</div>
-    <textarea id="text-modal-input" rows="3" placeholder="请输入文本内容..."></textarea>
+    <div class="modal-title" id="text-modal-title" data-i18n="enterText">输入文本</div>
+    <textarea id="text-modal-input" rows="3" data-i18n-placeholder="enterTextPlaceholder" placeholder="请输入文本内容..."></textarea>
     <div class="modal-actions">
       <button class="top-btn" id="text-modal-cancel" data-i18n="cancel">取消</button>
       <button class="top-btn primary" id="text-modal-ok" data-i18n="ok">确定</button>
@@ -1098,7 +1193,7 @@
 <!-- 确认弹窗（替代原生confirm，避免全屏退出） -->
 <div class="modal-mask" id="confirm-modal">
   <div class="modal-box" style="width:min(380px,90vw);">
-    <div class="modal-title" id="confirm-modal-title">确认</div>
+    <div class="modal-title" id="confirm-modal-title" data-i18n="confirm">确认</div>
     <div id="confirm-modal-msg" style="font-size:14px; color:var(--text); line-height:1.6; margin-bottom:4px;"></div>
     <div class="modal-actions">
       <button class="top-btn" id="confirm-modal-cancel" data-i18n="cancel">取消</button>
@@ -1112,7 +1207,7 @@
   <div class="modal-box" style="width:min(540px,92vw); padding:0;">
     <div class="settings-head">
       <div class="modal-title" data-i18n="settingsTitle">设置</div>
-      <button class="settings-close" id="settings-close" title="关闭">✕</button>
+      <button class="settings-close" id="settings-close" data-i18n-title="titleSettingsClose">✕</button>
     </div>
     <div class="settings-body">
       <div class="settings-tabs" id="settings-tabs">
@@ -1128,7 +1223,6 @@
         <div class="settings-pane" data-pane="theme" style="display:none;">
           <div class="ctrl-label"><span data-i18n="themeTitle">主题风格</span></div>
           <div class="theme-grid" id="theme-grid"></div>
-          <label class="theme-follow"><input type="checkbox" id="theme-follow"> <span data-i18n="themeFollow">跟随系统</span></label>
         </div>
         <div class="settings-pane" data-pane="lang" style="display:none;">
           <div class="ctrl-label"><span data-i18n="langTitle">语言切换</span></div>
@@ -1167,7 +1261,7 @@ window.addEventListener('error', function(e) {
   const loader = document.getElementById('loader');
   if (loader && !loader.classList.contains('hidden')) {
     loader.classList.add('hidden');
-    setTimeout(() => alert('页面加载出错：' + e.message + '\n\n请刷新页面或检查网络连接。'), 100);
+    setTimeout(() => alert('页面加载失败，请刷新重试：\n' + (e && e.message ? e.message : e)), 100);
   }
 });
 // 备用超时：3秒后强制隐藏 loader
@@ -1185,10 +1279,168 @@ setTimeout(function() {
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js?v=6';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
+// 简体中文作为内置默认与回退；其余语言存放在 language/ 目录下独立文件中（见 <head> 的 <script src> 引用）
+const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabHelp:'帮助', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', helpEmpty:'帮助内容即将上线，敬请期待。', themeTitle:'主题风格', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', aboutCopyright:'© 2026 立方工坊', cancel:'取消', confirm:'确认', ok:'确定', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏',
+ // 面板标题
+ sec3D:'3D 图形', sec2D:'2D 图形', secTransform:'变换', secMaterial:'材质', secColor:'颜色', secPattern:'花纹 / 贴图', secTextBox:'文本框', secEraser:'橡皮擦属性', secMouse:'鼠标相关操作', secTouch:'手势操作', secKeyboard:'键盘快捷键',
+ // Tab 按钮
+ tabBrush:'画笔',
+ // 控件标签
+ rotation:'旋转', scalePosition:'缩放 / 位置', objectSize:'物体尺寸', cornerRadius:'圆角', segments:'分段', verticalStretch:'竖直拉伸', shape:'形状', color:'颜色', noColor:'无颜色', metalness:'金属度', roughness:'粗糙度', opacity:'透明度', wireframe:'线框', textureLabel:'贴图', patternLabel:'花纹', rotationHorizontal:'水平旋转', rotationVertical:'垂直旋转', rotationLateral:'侧向旋转', uniformScale:'等比缩放', presetColors:'预设颜色', customColor:'自定义颜色', fontFamily:'字体', fontYaHei:'雅黑', fontSimSun:'宋体', fontKaiTi:'楷体', fontSimHei:'黑体', fontFangSong:'仿宋', fontSize:'字号', fontWeight:'粗细', textDirection:'排列方向', brushThickness:'画笔粗细', brushGap:'最小间距', eraserMode:'橡皮擦模式', eraserSize:'橡皮擦大小',
+ // 橡皮擦模式
+ eraserWhole:'整体擦除', eraserLocal:'局部擦除',
+ // 字体/文本选项
+ fontNormal:'常规', fontBold:'粗体', textHorizontal:'横排', textVertical:'竖排',
+ // 按钮
+ colorPicker:'选取器', uploadImageTex:'上传图片贴图', clearPatternTex:'清除花纹/贴图', editTextContent:'编辑文本内容', deleteSelected:'删除选中对象（Del/Backspace）', deleteSelectedTouch:'删除选中对象', eyedropper:'屏幕取色', bgTextDefault:'默认',
+ // 弹窗
+ colorPickerTitle:'颜色选取器', saturationValue:'饱和度 / 明度', hue:'色相', hexColor:'HEX 色值', colorPreview:'颜色预览', enterText:'输入文本', enterTextPlaceholder:'请输入文本内容…', confirm:'确认',
+ // 底部栏
+ boxSelect:'框选', selectAll:'全选', viewPersp:'透视', viewTop:'顶视', viewBottom:'底视', viewFront:'正视', viewBack:'后视', viewLeft:'左视', viewRight:'右视',
+ // Toast 消息
+ toastNewScene:'已新建空白场景', toastImageExported:'图像已导出', toastSceneExported:'场景已导出 JSON', toastSceneImported:'场景已导入', toastImportFailed:'导入失败',
+ // 快捷键标签
+ keyShortcut:'快捷键', keyAction:'操作',
+ // 面板 & 工具
+ sec2D:'2D 图形', secTools:'工具', secTransformMode:'变换模式', secProperties:'属性', secEraser:'橡皮擦属性', brushProperties:'画笔属性',
+ toolNameSelect:'选择/变换', toolNameBrush3D:'3D 画笔', toolNameBrush2D:'2D 画笔', toolNameEraser:'橡皮擦', toolNameAddText:'添加文本', toolNameAddImage:'添加图片',
+ translate:'平移', rotate:'旋转', scale:'缩放',
+ lockRatio:'等比缩放', posX:'横坐标 X', posY:'竖坐标 Z', posZ:'纵坐标 Y',
+ emptyHint:'未选中对象。\n从左侧选择图形，点击地面放置；或点击已有对象进行编辑。\nShift+点选可多选，多选时变换作为整体操作。',
+ declaration:'声明',
+ // 声明正文
+ declBody1:'本工具是一款基于 Three.js 的纯前端 3D/2D 场景编辑器，内置丰富的 3D/2D 参数化图形、',
+ declBody2:'2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。',
+ declBody3:'所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。',
+ declBody4:'场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。',
+ declAuthor:'作者', declAI:'AI 辅助', declAIText:'使用 TRAE 工具的 AI 能力辅助生成', declUpdate:'最后更新',
+ // 鼠标/触摸帮助
+ helpMouseClick:'单击左键', helpMouseClickDesc:'选择对象/控件',
+ helpMouseDblClick:'双击左键', helpMouseDblClickDesc:'编辑文本',
+ helpMouseHold:'长按左键', helpMouseHoldDesc:'操作对象/控件',
+ helpMouseRhold:'长按右键', helpMouseRholdDesc:'视角旋转',
+ helpMouseMidhold:'长按滚轮', helpMouseMidholdDesc:'视角平移',
+ helpMouseWheel:'滑动滚轮', helpMouseWheelDesc:'视角缩放',
+ helpTouchTap:'单指单击', helpTouchTapDesc:'选择对象/控件',
+ helpTouchDblTap:'单指双击', helpTouchDblTapDesc:'编辑文本',
+ helpTouchLongObj:'单指长按对象', helpTouchLongObjDesc:'加选/减选（等价 Shift 单击）',
+ helpTouchDragObj:'单指拖动对象', helpTouchDragObjDesc:'操作对象/控件',
+ helpTouchDragBlank:'单指拖动空白', helpTouchDragBlankDesc:'视角旋转',
+ helpTouchTapBlank:'单指轻点空白', helpTouchTapBlankDesc:'取消选择',
+ helpTouchSelectAll:'「全选」按钮', helpTouchSelectAllDesc:'选中所有对象',
+ helpTouchBoxSelect:'「框选」按钮', helpTouchBoxSelectDesc:'开启后单指拖拽框选对象',
+ helpTouchTwoDrag:'双指拖动', helpTouchTwoDragDesc:'视角平移',
+ helpTouchPinch:'双指捏合', helpTouchPinchDesc:'视角缩放',
+ // 键盘快捷键表
+ kbdTitleBasic:'基础按键', kbdTitleShift:'Shift 组合键', kbdTitleSlider:'滑动条 / 输入框', kbdTitleFunc:'功能键', kbdTitleCtrl:'Ctrl 组合键',
+ kbdNoteBasic:'选取对象时：平移0.1网格（0.15长度）/ 旋转5°{br}未选取时：视角平移0.1网格 / 旋转5°',
+ kbdNoteShift:'选取对象时：平移1网格（1.5长度）/ 旋转90°{br}未选取时：视角平移1网格 / 旋转90°',
+ kbdNoteSlider:'聚焦滑动条或输入框时生效，原快捷键暂时失效',
+ kbdThKey:'按键', kbdThSelected:'选取对象时', kbdThUnselected:'未选取时', kbdThShiftKey:'Shift+', kbdThSlider:'滑动条', kbdThInput:'输入框',
+ kbdBasicDirSel:'沿X轴+/−平移{br}沿Y轴+/−平移{br}沿Z轴+/−平移',
+ kbdBasicDirUnsel:'视角后/前平移{br}视角右/左平移{br}视角上/下平移',
+ kbdBasicRotSel:'绕Z轴逆/顺旋转{br}绕Y轴逆/顺旋转{br}绕X轴逆/顺旋转',
+ kbdBasicRotUnsel:'视角左/右旋转{br}视角上/下旋转{br}—',
+ kbdBasicScaleSel:'放大/缩小5%',
+ kbdShiftPosSel:'平移1网格{br}平移1网格', kbdShiftPosUnsel:'视角平移1网格{br}视角平移1网格',
+ kbdShiftRotSel:'旋转90°{br}旋转90°{br}旋转90°', kbdShiftRotUnsel:'视角旋转90°{br}视角旋转90°{br}视角旋转90°',
+ kbdShiftScaleSel:'放大×2/缩小×0.5', kbdShiftClickSel:'加选对象（多点选）',
+ kbdSliderSel:'增/减{br}增/减{br}—', kbdSliderInput:'移动光标{br}增/减{br}输入正/负号',
+ kbdSliderPgSel:'大幅增/减', kbdSliderPgInput:'滚动右栏',
+ kbdFuncEsc:'取消操作/退出全屏', kbdFuncF11:'全屏/退出全屏', kbdFuncDel:'删除选中对象',
+ kbdCtrlA:'全选', kbdCtrlN:'新建场景', kbdCtrlO:'导入场景', kbdCtrlS:'导出场景', kbdCtrlP:'截图导出图像',
+ kbdCtrlZ:'撤销', kbdCtrlY:'重做', kbdCtrlC:'复制', kbdCtrlV:'粘贴', kbdCtrlD:'克隆', kbdCtrlDel:'清空场景',
+ // Toast 消息模板（{0}{1}{2}为占位符，会被替换）
+ toastSelectAllN:'已全选 {0} 个对象', toastOldestState:'已是最早状态', toastUndone:'已撤销',
+ toastNewestState:'已是最新状态', toastRedone:'已重做', toastTextAdded:'已添加文本',
+ toastImageAdded:'已添加图片', toastPlacedLabel:'已放置 {0}', toastAddedLabel:'已添加{0}',
+ toastNoColorN:'已将 {0} 个对象设为无颜色 · 不支持透明度、花纹与贴图', toastNoColorOne:'已设为无颜色 · 不支持透明度、花纹与贴图', toastNoEyedropper:'当前浏览器不支持屏幕取色，请手动输入颜色值',
+ toastBrushColorSet:'画笔颜色已设置为 {0}', toastColorApplied:'已应用颜色 {0}',
+ toastEraserWholeHint:'整体擦除：将对象整条删除', toastEraserLocalHint:'局部擦除：仅擦除圈内笔迹（可分节）',
+ toastTransformMode:'变换模式：{0}', toastImageLoaded:'图片已载入，点击地面铺设',
+ toastDeletedN:'已删除 {0} 个对象', toastSelectFirst:'请先选择对象', toastImageTexApplied:'已应用图片贴图',
+ toastTexCleared:'已清除贴图', toastCleared:'已清空',
+ toastAxesShown:'坐标轴已显示', toastAxesHidden:'坐标轴已隐藏',
+ toastGridShown:'网格面已显示', toastGridHidden:'网格面已隐藏',
+ toastNewScene:'已新建空白场景', toastImageExportedWH:'图像已导出（{0}×{1}）',
+ toastSceneExported:'场景已导出 JSON', toastSceneImported:'场景已导入', toastImportFailed:'导入失败：{0}',
+ toastBoxSelectOn:'框选模式：单指拖拽框选对象', toastBoxSelectOff:'已退出框选模式',
+ toastPlacedScaleLabel:'已放置「{0}」(缩放 {1}x)', toastBoxSelectMiss:'框选未命中对象', toastBoxSelectedN:'已框选 {0} 个对象',
+ toastTextUpdated:'文本已更新', toastCantCopyTransform:'变换中无法复制', toastCopiedN:'已复制 {0} 个对象',
+ toastCantPasteTransform:'变换中无法粘贴', toastClipboardEmpty:'剪贴板为空', toastPastedN:'已粘贴 {0} 个对象',
+ toastTransformNoCopy:'变换进行中，无法复制', toastSelectToCopy:'请先选中对象再复制',
+ toastTransformNoClone:'变换进行中，无法克隆', toastSelectToClone:'请先选中对象再克隆',
+ toastTransformNoDelete:'变换进行中，无法删除', toastSelectToDelete:'请先选中对象再删除',
+ toastNoScaleMulti:'多选时禁止缩放操作', toastWelcome:'欢迎使用立方·三维设计工坊',
+  loadTimeout:'加载超时，请刷新页面',
+  // Theme names
+  themeNeon:'霓虹蓝紫', themeSunset:'日落暖橙', themeForest:'森林青绿', themeGray:'暗夜静灰', themeLight:'亮白',
+  // Tooltips
+  titleNew:'新建场景 (Ctrl+N)', titleImport:'导入场景 JSON (Ctrl+O)', titleExport:'导出场景 JSON (Ctrl+S)', titleShot:'导出图像 PNG (Ctrl+P)',
+  titleUndo:'撤销 (Ctrl+Z)', titleRedo:'重做 (Ctrl+Y)', titleCopy:'复制 (Ctrl+C)', titlePaste:'粘贴 (Ctrl+V)', titleDup:'克隆 (Ctrl+D)', titleClear:'清空场景（Ctrl+Del/Backspace）',
+  titleAxes:'切换坐标轴显示', titleGrid:'切换网格面显示', titleSettings:'设置', titleFS:'全屏 (F11 / Esc)',
+  titleTranslate:'平移模式', titleRotate:'旋转模式', titleScale:'缩放模式',
+  titleBBToggle:'展开/收起视角切换', titleBoxSelect:'框选模式：单指拖拽框选对象', titleSelectAll:'全选所有对象',
+  titleEyedropper:'使用屏幕取色器', titleSettingsClose:'关闭',
+  // Inline text hints
+  textHintPlaceholder:'输入文本... (Enter 确认 · Esc 取消)', textHintEnter:'Enter 确认 · Esc 取消 · Shift+Enter 换行',
+  loadFail:'加载失败',
+  // 形状名称
+  shapeBox:'立方体', shapeSphere:'球体', shapeCylinder:'圆柱', shapeCone:'圆锥', shapeTorus:'圆环',
+  shapeKnot:'纽结', shapeIcosa:'正二十面体', shapeOcta:'正八面体', shapeDodeca:'正十二面体', shapeCapsule:'胶囊',
+  shapePyramid:'正四棱锥', shapePrism:'正三棱柱', shapeTube:'管道', shapeLathe:'回转体', shapeTetra:'正四面体',
+  shapeBarrel:'桶状体', shapeDome:'半球', shapeHelix:'螺旋环', shapeOctaPrism:'正八棱柱', shapeStar3d:'立体星',
+  shapeSquare2:'正方形', shapeCircle2:'圆形', shapeTriangle:'正三角形', shapeStar:'星形', shapeHexagon:'正六边形',
+  shapeHeart:'心形', shapePentagon:'正五边形', shapeOctagon:'正八边形', shapeEllipse:'椭圆',
+  shapeParallelogram:'平行四边形', shapeTrapezoid:'梯形', shapeDiamond:'菱形',
+  shapeRightTri:'直角三角形', shapeArrow:'箭头', shapeCrescent:'月牙', shapeSemicircle:'半圆',
+  shapeRing2d:'圆环', shapeCross:'十字', shapeLightning:'闪电', shapeTeardrop:'水滴',
+  shapeBrush:'画笔笔迹', shapeText:'文本', shapeImage:'图片',
+  // 花纹
+  patSolid:'纯色', patGrid:'方格', patStripe:'条纹', patDot:'圆点', patGradient:'渐变', patBrick:'砖墙',
+  patDiagonal:'斜纹', patWave:'波浪', patDots:'点阵', patCross:'交叉', patMesh:'网格', patSpiral:'螺纹',
+  // 形状参数标签
+  pRadius:'半径', pHeight:'高度', pLength:'长度 L', pWidth:'宽度 W', pSegments:'分段',
+  pBase:'底边长', pOuterRadius:'外半径', pInnerRadius:'内半径', pPoints:'角数',
+  pScale:'缩放', pSkew:'倾斜', pTube:'管半径', pMainRadius:'主半径',
+  pTopWidth:'上底宽', pBottomWidth:'下底宽', pRadiusX:'X 半径', pRadiusY:'Y 半径',
+  // 多选提示
+  hintMultiSel:'已选中 {0} 个对象 · 变换将作为整体操作',
+  hintMultiBlockedPat:'当前包含"{0}"，已隐藏"花纹/贴图栏"（仅支持"图形对象"，解除操作：排除非图形对象后单选）',
+  hintMultiBlockedColor:'当前包含"图片或带贴图图形"，已隐藏"颜色栏"（仅支持"无贴图对象"，解除操作：清除贴图后单选）',
+  hintMultiAllNoColor:'当前{0}个对象"全部为无颜色"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：直接点选颜色重新上色）',
+  hintMultiSomeNoColor:'当前包含{0}个"无颜色对象"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为无颜色对象重新上色）',
+  hintMultiLockRatio:'当前为"多选模式"，已隐藏"等比缩放控件"（仅支持"单选模式"，解除操作：单选对象后操作）',
+  // 确认对话框
+  confirmClearScene:'确定清空场景？此操作可撤销。', confirmNewScene:'确定新建场景？当前场景将被清空。',
+  // 状态栏
+  statusReady:'就绪 · 左键选择/变换 · 右键平移 · 滚轮缩放',
+  statusText:'点击地面位置输入文本', statusImage:'点击地面添加图片',
+  statusShape:'拖拽放置或点击地面添加「{0}」 · 滚轮缩放',
+  statusBrush3d:'3D 画笔：按住左键在空间中绘制 · 右键平移视角 · 滚轮缩放',
+  statusBrush2d:'2D 画笔：按住左键在地面上绘制 · 右键平移视角 · 滚轮缩放',
+  statusEraser:'橡皮擦：拖拽或点击擦除 · 整体擦除=将对象整条删除；局部擦除=仅擦除圈内笔迹（可分节）· 右键平移视角',
+  appTitle:'3D 编辑器',
+};
+
+const __packs = window.I18N_PACKS || window.__packs || {};
+const I18N = { 'zh-CN': ZH_CN };
+Object.keys(__packs).forEach(code => { if (__packs[code]) I18N[code] = __packs[code].dict || __packs[code]; });
+const THEMES = {
+  neon:   { name:'themeNeon', vars:{ '--bg-deep':'#0c0e16','--bg-panel':'rgba(20,22,34,0.82)','--bg-panel-solid':'#14161f','--accent':'#6ee7ff','--accent-2':'#c084fc','--accent-3':'#fb7185','--warn':'#fbbf24','--text':'#e8e8f0','--text-dim':'#8b8ba0','--border':'rgba(110,231,255,0.18)' } },
+  sunset: { name:'themeSunset', vars:{ '--bg-deep':'#1a0f0a','--bg-panel':'rgba(34,20,14,0.82)','--bg-panel-solid':'#21140d','--accent':'#ffb454','--accent-2':'#ff7a59','--accent-3':'#ff5d8f','--warn':'#ffd166','--text':'#f5e9e0','--text-dim':'#b3998c','--border':'rgba(255,180,84,0.18)' } },
+  forest: { name:'themeForest', vars:{ '--bg-deep':'#08130d','--bg-panel':'rgba(14,28,20,0.82)','--bg-panel-solid':'#0e1c14','--accent':'#5eead4','--accent-2':'#86efac','--accent-3':'#fbbf24','--warn':'#fca5a5','--text':'#e6f5ec','--text-dim':'#8aa89a','--border':'rgba(94,234,212,0.18)' } },
+  gray:   { name:'themeGray', vars:{ '--bg-deep':'#0e0f12','--bg-panel':'rgba(26,27,32,0.82)','--bg-panel-solid':'#1a1b20','--accent':'#a1a1aa','--accent-2':'#cbd5e1','--accent-3':'#f472b6','--warn':'#fbbf24','--text':'#e5e7eb','--text-dim':'#9ca3af','--border':'rgba(161,161,170,0.18)' } },
+  light:  { name:'themeLight', vars:{ '--bg-deep':'#eef1f6','--bg-panel':'rgba(255,255,255,0.86)','--bg-panel-solid':'#ffffff','--accent':'#4f46e5','--accent-2':'#0ea5e9','--accent-3':'#ec4899','--warn':'#d97706','--text':'#1f2330','--text-dim':'#6b7280','--border':'rgba(79,70,229,0.18)','--bg2':'rgba(0,0,0,0.05)','--control-bg':'rgba(0,0,0,0.06)','--control-bg-hover':'rgba(0,0,0,0.10)','--slider-track':'rgba(0,0,0,0.15)','--slider-thumb-border':'#eef1f6','--primary-btn-text':'#ffffff','--input-bg':'rgba(0,0,0,0.05)','--inline-input-bg':'rgba(255,255,255,0.94)','--section-border':'rgba(0,0,0,0.06)','--bb-sep':'rgba(0,0,0,0.12)','--modal-mask':'rgba(220,222,230,0.72)' } },
+};
+const LANGS = { 'zh-CN': { label:'简体中文', dict: ZH_CN } };
+Object.keys(__packs).forEach(code => { if (__packs[code]) LANGS[code] = { label: __packs[code].label || __packs[code].lang || code, dict: __packs[code].dict || __packs[code] }; });
+let currentLang = localStorage.getItem('lang') || 'zh-CN';
+let currentTheme = localStorage.getItem('theme') || 'neon';
 
 // ============ 渲染器 / 场景 / 相机 ============
 const canvas = document.getElementById('three-canvas');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
@@ -1233,7 +1485,7 @@ controls.touches = {
 const FORCE_TOUCH = /[?&](touch|mobile)(=1)?\b/.test(location.search);
 const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || FORCE_TOUCH;
 // 触屏版删除按钮去掉键盘提示文案
-if (isTouch) { const _delBtn = document.getElementById('del-btn'); if (_delBtn) _delBtn.textContent = '删除选中对象'; }
+if (isTouch) { const _delBtn = document.getElementById('del-btn'); if (_delBtn) _delBtn.dataset.i18n = 'deleteSelectedTouch'; }
 // 触摸输入判断：真实触摸指针，或强制触屏模式下把鼠标当作手指
 function touchPointer(e) { return isTouch && (e.pointerType === 'touch' || FORCE_TOUCH); }
 // 移动端降低手势灵敏度：旋转/平移/缩放速度减半，避免视角变化过于剧烈
@@ -1509,6 +1761,7 @@ let _multiObjStart = [];
 const _touchNdc = new THREE.Vector2();
 const _touchRay = new THREE.Raycaster();
 canvas.addEventListener('pointerdown', (e) => {
+  if (pickingColor) return;
   if (!isTouch || e.pointerType !== 'touch' || !e.isPrimary) return;
   // 画笔/橡皮擦模式下：禁止一切视角操作，仅允许画笔/橡皮擦事件
   if (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser') {
@@ -2089,6 +2342,7 @@ const COLORS = [
 const NO_COLOR = -1; // 无颜色标记
 
 const PATTERNS = ['纯色', '方格', '条纹', '圆点', '渐变', '砖墙', '斜纹', '波浪', '点阵', '交叉', '网格', '螺纹'];
+const PATTERN_KEYS = { '纯色':'patSolid','方格':'patGrid','条纹':'patStripe','圆点':'patDot','渐变':'patGradient','砖墙':'patBrick','斜纹':'patDiagonal','波浪':'patWave','点阵':'patDots','交叉':'patCross','网格':'patMesh','螺纹':'patSpiral' };
 
 // ============ 状态 ============
 const state = {
@@ -2560,6 +2814,7 @@ const elSecText = document.getElementById('sec-text');
 const elSecDel = document.getElementById('sec-del');
 const elSecBrush = document.getElementById('sec-brush');
 const elSecEraser = document.getElementById('sec-eraser');
+const elSecTransform = document.getElementById('sec-transform');
 const elEditText = document.getElementById('edit-text');
 const elMultiHint = document.getElementById('multi-hint');
 
@@ -2693,7 +2948,7 @@ function selectAll() {
   rebuildSelBoxes();
   attachMultiTransform();
   refreshProps();
-  toast('已全选 ' + state.selectedList.length + ' 个对象');
+  toast(_t('toastSelectAllN', state.selectedList.length));
   updateShapeButtonStates();
 }
 // 屏幕拖框选区
@@ -2776,24 +3031,24 @@ function refreshProps() {
     // 无颜色对象：透明度/颜色/花纹/贴图均不可用
     const anyNoColorSolid = !noNoColorInSel;
     // 构建提示文字（统一模板：当前包含"特殊对象"，已隐藏"相关控件"（仅支持""解除操作"））
-    const hints = ['已选中 ' + sel.length + ' 个对象 · 变换将作为整体操作'];
+    const hints = [_t('hintMultiSel', sel.length)];
     if (hasBrush || hasText || hasImage) {
       const blocked = [];
-      if (hasBrush) blocked.push('画笔笔迹');
-      if (hasText) blocked.push('文本');
-      if (hasImage) blocked.push('图片');
-      hints.push('当前包含"' + blocked.join('、') + '"，已隐藏"花纹/贴图栏"（仅支持"图形对象"，解除操作：排除非图形对象后单选）');
+      if (hasBrush) blocked.push(_t('shapeBrush'));
+      if (hasText) blocked.push(_t('shapeText'));
+      if (hasImage) blocked.push(_t('shapeImage'));
+      hints.push(_t('hintMultiBlockedPat', blocked.join('、')));
     }
     if (hasImage || hasTexShape) {
-      hints.push('当前包含"图片或带贴图图形"，已隐藏"颜色栏"（仅支持"无贴图对象"，解除操作：清除贴图后单选）');
+      hints.push(_t('hintMultiBlockedColor'));
     }
     if (!noNoColorInSel) {
       const noColorCount = sel.filter(o => o.data.color === NO_COLOR).length;
       hints.push(noColorCount === sel.length
-        ? '当前' + sel.length + '个对象"全部为无颜色"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：直接点选颜色重新上色）'
-        : '当前包含' + noColorCount + '个"无颜色对象"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为无颜色对象重新上色）');
+        ? _t('hintMultiAllNoColor', sel.length)
+        : _t('hintMultiSomeNoColor', noColorCount));
     }
-    hints.push('当前为"多选模式"，已隐藏"等比缩放控件"（仅支持"单选模式"，解除操作：单选对象后操作）');
+    hints.push(_t('hintMultiLockRatio'));
     elMultiHint.style.display = '';
     elMultiHint.innerHTML = hints.join('<br>');
     elProps.style.display = 'block';
@@ -2863,6 +3118,8 @@ function refreshProps() {
     } else {
       hideShapeParams();
     }
+    // 动态构建的图形/图片参数控件在选中对象后才生成，需重新翻译以对齐当前语言
+    applyLang();
   }
 }
 function hideProps() {
@@ -3477,11 +3734,11 @@ function undo() {
     window._kbdHistoryTimer = null;
     pushHistory();
   }
-  if (state.hIndex <= 0) { toast('已是最早状态'); return; }
+  if (state.hIndex <= 0) { toast(_t('toastOldestState')); return; }
   state.hIndex--;
   restore(state.history[state.hIndex]);
   updateUndoRedoUI();
-  toast('已撤销');
+  toast(_t('toastUndone'));
 }
 function redo() {
   if (window._kbdHistoryTimer) {
@@ -3489,11 +3746,11 @@ function redo() {
     window._kbdHistoryTimer = null;
     pushHistory();
   }
-  if (state.hIndex >= state.history.length - 1) { toast('已是最新状态'); return; }
+  if (state.hIndex >= state.history.length - 1) { toast(_t('toastNewestState')); return; }
   state.hIndex++;
   restore(state.history[state.hIndex]);
   updateUndoRedoUI();
-  toast('已重做');
+  toast(_t('toastRedone'));
 }
 function updateUndoRedoUI() {
   document.getElementById('btn-undo').disabled = state.hIndex <= 0;
@@ -3729,7 +3986,7 @@ async function placeAt(point) {
     o.data.rotZ = 0;
     o.mesh.rotation.x = 0;
     o.mesh.rotation.z = 0;
-    selectOnly(o); pushHistory(); toast('已添加文本');
+    selectOnly(o); pushHistory(); toast(_t('toastTextAdded'));
     if (state._keepTextTool) {
       // 用户主动保持文本模式（点击添加文本按钮），不切换
       state._keepTextTool = false;
@@ -3763,7 +4020,7 @@ async function placeAt(point) {
         h = 4;
       }
       const o = createObject({ kind:'image', _tex: tex, image: state.toolImageDataURL, pos:[centerPoint.x, 0, centerPoint.z], scale:1, w, h });
-      selectOnly(o); setTool(null); setTransformMode('translate', true); pushHistory(); toast('已添加图片');
+      selectOnly(o); setTool(null); setTransformMode('translate', true); pushHistory(); toast(_t('toastImageAdded'));
     });
   }
 }
@@ -3810,12 +4067,12 @@ function showInlineTextInput(worldPos, defaultText = '') {
     const input = document.createElement('textarea');
     input.className = 'inline-text-input';
     input.value = defaultText;
-    input.placeholder = '输入文本... (Enter 确认 · Esc 取消)';
+    input.placeholder = _t('textHintPlaceholder');
     input.rows = 1;
 
     const hint = document.createElement('div');
     hint.className = 'inline-text-hint';
-    hint.textContent = 'Enter 确认 · Esc 取消 · Shift+Enter 换行';
+    hint.textContent = _t('textHintEnter');
 
     wrap.appendChild(arrow);
     wrap.appendChild(input);
@@ -3824,7 +4081,7 @@ function showInlineTextInput(worldPos, defaultText = '') {
 
     // 文本输入期间禁用变换控件与变换模式按钮（灰度显示无法点击）
     transformCtrl.detach();
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.add('disabled'));
+    document.querySelectorAll('.transform-modes .mode-btn').forEach(b => b.classList.add('disabled'));
     const lockRatioEl = document.getElementById('lock-ratio');
     if (lockRatioEl) lockRatioEl.classList.add('disabled');
     const lockRatioLabel = document.querySelector('label.lock-ratio');
@@ -3853,7 +4110,7 @@ function showInlineTextInput(worldPos, defaultText = '') {
       // 文本输入结束：恢复变换模式按钮状态（由当前工具决定是否保持禁用）
       const t = state.tool;
       const keepDisabled = (t === 'brush3d' || t === 'brush2d' || t === 'eraser' || t === 'text');
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('disabled', keepDisabled));
+      document.querySelectorAll('.transform-modes .mode-btn').forEach(b => b.classList.toggle('disabled', keepDisabled));
       if (lockRatioEl) lockRatioEl.classList.toggle('disabled', keepDisabled);
       if (lockRatioLabel) lockRatioLabel.classList.toggle('disabled', keepDisabled);
       resolve(val);
@@ -3949,6 +4206,8 @@ function setTool(t) {
   // 显示画笔属性（画笔模式）或橡皮擦属性（橡皮擦模式）
   elSecBrush.style.display = (t === 'brush3d' || t === 'brush2d') ? '' : 'none';
   elSecEraser.style.display = (t === 'eraser') ? '' : 'none';
+  // 画笔/橡皮擦/文本/图片添加模式下隐藏变换模式栏（此时变换模式按钮不可用，或文本/图片尚未添加成功）
+  if (elSecTransform) elSecTransform.style.display = (t === 'brush3d' || t === 'brush2d' || t === 'eraser' || t === 'text' || t === 'image') ? 'none' : '';
   // 切换画笔工具时，从颜色记忆同步画笔颜色显示
   if (t === 'brush3d' || t === 'brush2d') {
     brush.color = colorMemory[t];
@@ -3970,11 +4229,11 @@ function setTool(t) {
   
   updateShapeButtonStates();
   const statusMap = {
-    brush3d:'3D 画笔：按住左键在空间中绘制 · 右键平移视角 · 滚轮缩放',
-    brush2d:'2D 画笔：按住左键在地面上绘制 · 右键平移视角 · 滚轮缩放',
-    eraser:'橡皮擦：拖拽或点击擦除 · 整体擦除=将对象整条删除；局部擦除=仅擦除圈内笔迹（可分节）· 右键平移视角'
+    brush3d: _t('statusBrush3d'),
+    brush2d: _t('statusBrush2d'),
+    eraser: _t('statusEraser')
   };
-  setStatus(statusMap[t] || (t ? (t==='text'?'点击地面位置输入文本':t==='image'?'点击地面添加图片':`拖拽放置或点击地面添加「${labelOf(t)}」 · 滚轮缩放`) : '就绪 · 左键选择/变换 · 右键平移 · 滚轮缩放'));
+  setStatus(statusMap[t] || (t ? (t==='text' ? _t('statusText') : t==='image' ? _t('statusImage') : _t('statusShape', labelOf(t))) : _t('statusReady')));
   
   // 更新光标样式：画笔/橡皮擦使用场景内的3D光标，隐藏系统鼠标箭头
   if (t === 'brush3d' || t === 'brush2d' || t === 'eraser') {
@@ -4001,7 +4260,7 @@ function setTool(t) {
     controls.touches.ONE = null;
     controls.touches.TWO = THREE.TOUCH.DOLLY_PAN;
   }
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('disabled', disableTransform));
+  document.querySelectorAll('.transform-modes .mode-btn').forEach(b => b.classList.toggle('disabled', disableTransform));
   const lockRatioEl = document.getElementById('lock-ratio');
   if (lockRatioEl) lockRatioEl.classList.toggle('disabled', disableTransform);
   const lockRatioLabel = document.querySelector('label.lock-ratio');
@@ -4058,11 +4317,7 @@ function updateClearButtonState() {
   }
 }
 function labelOf(t) {
-  return ({box:'立方体',sphere:'球体',cylinder:'圆柱',cone:'圆锥',torus:'圆环',knot:'纽结',icosa:'正二十面体',octa:'正八面体',dodeca:'正十二面体',capsule:'胶囊',
-    pyramid:'正四棱锥',prism:'正三棱柱',tube:'管道',lathe:'回转体',tetra:'正四面体',barrel:'桶状体',dome:'半球',helix:'螺旋环',octaPrism:'正八棱柱',star3d:'立体星',
-    square2:'正方形',circle2:'圆形',triangle:'正三角形',star:'星形',hexagon:'正六边形',heart:'心形',
-    pentagon:'正五边形',octagon:'正八边形',ellipse:'椭圆',parallelogram:'平行四边形',trapezoid:'梯形',diamond:'菱形',
-    rightTri:'直角三角形',arrow:'箭头',crescent:'月牙',semicircle:'半圆',ring2d:'圆环',cross:'十字',lightning:'闪电',teardrop:'水滴'})[t] || t;
+  return _t('shape' + t.charAt(0).toUpperCase() + t.slice(1)) || t;
 }
 
 // ============ 构建 UI ============
@@ -4073,7 +4328,8 @@ function buildShapeGrid(containerId, shapes) {
   Object.keys(shapes).forEach(key => {
     const btn = document.createElement('button');
     btn.className = 'shape-btn'; btn.dataset.shape = key;
-    btn.innerHTML = ICONS[key]; btn.title = labelOf(key);
+    const lk = 'shape' + key.charAt(0).toUpperCase() + key.slice(1);
+    btn.innerHTML = ICONS[key]; btn.title = _t(lk); btn.dataset.i18nTitle = lk;
     btn.style.touchAction = 'none';
     
     // 点击：放置对象到视图中央
@@ -4226,7 +4482,7 @@ function buildShapeGrid(containerId, shapes) {
             selectOnly(o);
             setTransformMode('translate', true);
             pushHistory();
-            toast('已放置 ' + labelOf(shapeKey2));
+            toast(_t('toastPlacedLabel', labelOf(shapeKey2)));
           }
         } else {
           if (dragGhost) {
@@ -4293,7 +4549,7 @@ function placeObjectAt(shapeKey, point) {
     selectOnly(obj);
     setTransformMode('translate', true);
     pushHistory();
-    toast(`已添加${labelOf(shapeKey)}`);
+    toast(_t('toastAddedLabel', labelOf(shapeKey)));
   }
 }
 buildShapeGrid('grid-3d', SHAPES_3D);
@@ -4305,7 +4561,7 @@ const colorRow = document.getElementById('color-row');
 const noColorDot = document.createElement('div');
 noColorDot.className = 'color-dot no-color-dot';
 noColorDot.dataset.c = NO_COLOR;
-noColorDot.title = '无颜色';
+noColorDot.title = _t('noColor'); noColorDot.dataset.i18nTitle = 'noColor';
 noColorDot.style.background = 'linear-gradient(135deg, #fff 25%, #ccc 25%, #ccc 50%, #fff 50%, #fff 75%, #ccc 75%)';
 noColorDot.style.backgroundSize = '8px 8px';
 noColorDot.style.position = 'relative';
@@ -4329,8 +4585,8 @@ noColorDot.addEventListener('click', () => {
   updatePatternPreviews(0xcccccc);
   const _n = state.selectedList.length;
   toast(_n > 1
-    ? '已将 ' + _n + ' 个对象设为无颜色 · 不支持透明度、花纹与贴图'
-    : '已设为无颜色 · 不支持透明度、花纹与贴图');
+    ? _t('toastNoColorN', _n)
+    : _t('toastNoColorOne'));
 });
 colorRow.appendChild(noColorDot);
 // 添加预设颜色（无颜色之后）
@@ -4430,7 +4686,7 @@ PATTERNS.forEach(p => {
     tex.dispose();
   }
   patButtons.push(btn); // 缓存所有按钮引用（包括纯色）
-  btn.innerHTML = `<span>${p}</span>`;
+  btn.innerHTML = `<span data-i18n="${PATTERN_KEYS[p]}">${p}</span>`;
   btn.addEventListener('click', () => {
     if (state.selectedList.length === 0) return;
     let changed = false;
@@ -4622,23 +4878,264 @@ pickerHex.addEventListener('input', () => {
   });
 });
 
-// EyeDropper API（屏幕取色器）
-document.getElementById('picker-eyedropper').addEventListener('click', async () => {
-  if (window.EyeDropper) {
-    try {
-      const ed = new EyeDropper();
-      const result = await ed.open();
-      const rgb = hexToRgb(result.sRGBHex);
-      if (rgb) {
-        const [h,s,v] = rgbToHsv(rgb[0], rgb[1], rgb[2]);
-        pickerState.h = h; pickerState.s = s; pickerState.v = v;
-        updatePickerDisplay();
-      }
-    } catch(err) { /* 用户取消 */ }
-  } else {
-    toast('当前浏览器不支持屏幕取色，请手动输入颜色值');
+// ============ 屏幕取色（自定义取色器：可取自网页外、冻结画面）============
+// 桌面：放大镜跟随鼠标，左键取色 / 右键取消
+// 触屏：轻点直接取色（无放大镜）；长按弹出放大镜并实时显示 HEX/RGB，确认才取色
+let pickingColor = false;
+let sampleCanvas = null;          // 高分辨率采样源（截屏或 3D 画布）
+let loupeEl = null, loupeCtx = null, loupeHex = null, loupeRgb = null, loupeInfo = null;
+let spOverlay = null;            // 全屏冻结覆盖层
+let spStream = null;             // 屏幕共享流（取一帧后停止以冻结画面）
+let spConfirmBtn = null, spCancelBtn = null;
+let spLongTimer = null;          // 触屏长按计时器
+let spTouchId = null;            // 当前驱动长按的手指 pointerId（仅允许一根）
+let spLongActive = false;        // 触屏长按模式（放大镜 + 确认）是否已激活
+let spTouchStart = null;         // {x, y} 触屏按下起点，用于轻点判定
+let pickedColor = null;
+
+const SP_LONG_MS = 400;           // 长按阈值(ms)
+const SP_TAP_MOVE = 12;           // 轻点最大位移(px)
+
+function buildLoupe() {
+  loupeEl = document.createElement('div');
+  loupeEl.id = 'color-loupe';
+  const inner = document.createElement('canvas');
+  inner.width = 140; inner.height = 140; inner.className = 'loupe-cv';
+  loupeEl.appendChild(inner);
+  loupeCtx = inner.getContext('2d');
+  loupeInfo = document.createElement('div');
+  loupeInfo.className = 'loupe-info';
+  loupeHex = document.createElement('span'); loupeHex.className = 'loupe-hex';
+  loupeRgb = document.createElement('span'); loupeRgb.className = 'loupe-rgb';
+  loupeInfo.appendChild(loupeHex); loupeInfo.appendChild(loupeRgb);
+  loupeEl.appendChild(loupeInfo);
+}
+
+function sampleAt(sx, sy) {
+  const sctx = sampleCanvas.getContext('2d');
+  const x = Math.max(0, Math.min(sampleCanvas.width - 1, sx | 0));
+  const y = Math.max(0, Math.min(sampleCanvas.height - 1, sy | 0));
+  const d = sctx.getImageData(x, y, 1, 1).data;
+  return [d[0], d[1], d[2]];
+}
+
+// 视口坐标 -> 采样源像素坐标（覆盖层铺满视口，按长宽比映射）
+function viewToSource(clientX, clientY) {
+  return [
+    clientX * (sampleCanvas.width / window.innerWidth),
+    clientY * (sampleCanvas.height / window.innerHeight)
+  ];
+}
+
+function updateLoupe(clientX, clientY) {
+  const [sx, sy] = viewToSource(clientX, clientY);
+  loupeEl.style.left = (clientX + 18) + 'px';
+  loupeEl.style.top = (clientY + 18) + 'px';
+  const size = 140, zoom = 8, sw = size / zoom;
+  loupeCtx.imageSmoothingEnabled = false;
+  loupeCtx.clearRect(0, 0, size, size);
+  loupeCtx.drawImage(sampleCanvas, sx - sw / 2, sy - sw / 2, sw, sw, 0, 0, size, size);
+  // 中心十字标记
+  loupeCtx.strokeStyle = 'rgba(255,255,255,.9)';
+  loupeCtx.lineWidth = 1;
+  loupeCtx.beginPath();
+  loupeCtx.moveTo(size / 2, size / 2 - 8); loupeCtx.lineTo(size / 2, size / 2 + 8);
+  loupeCtx.moveTo(size / 2 - 8, size / 2); loupeCtx.lineTo(size / 2 + 8, size / 2);
+  loupeCtx.stroke();
+  const [r, g, b] = sampleAt(sx, sy);
+  pickedColor = (r << 16) | (g << 8) | b;
+  const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+  loupeHex.textContent = hex;
+  loupeRgb.textContent = `${r}, ${g}, ${b}`;
+  const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+  loupeInfo.style.color = lum > 150 ? '#000' : 'var(--text)';
+}
+
+// 截屏：抓取整个屏幕（含网页外），取一帧后停止流以冻结画面
+async function captureScreen() {
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) return false;
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 1 }, audio: false });
+    spStream = stream;
+    const video = document.createElement('video');
+    video.srcObject = stream; video.muted = true;
+    await video.play().catch(() => {});
+    await new Promise((res) => { if (video.videoWidth) res(); else video.onloadedmetadata = res; });
+    await new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
+    const vw = video.videoWidth, vh = video.videoHeight;
+    if (!vw || !vh) throw new Error('no frame');
+    const c = document.createElement('canvas');
+    c.width = vw; c.height = vh;
+    c.getContext('2d').drawImage(video, 0, 0, vw, vh);
+    stream.getTracks().forEach((t) => t.stop());
+    spStream = null;
+    sampleCanvas = c;
+    return true;
+  } catch (e) {
+    if (spStream) { spStream.getTracks().forEach((t) => t.stop()); spStream = null; }
+    return false;
   }
-});
+}
+
+// 回退：抓取当前 3D 画布帧（仅网页内，已开启 preserveDrawingBuffer）
+function captureCanvasFallback() {
+  try { renderer.render(scene, camera); } catch (e) {}
+  const w = renderer.domElement.width, h = renderer.domElement.height;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  try { c.getContext('2d').drawImage(renderer.domElement, 0, 0); } catch (e) { return false; }
+  sampleCanvas = c;
+  return true;
+}
+
+function buildOverlay() {
+  spOverlay = document.createElement('div');
+  spOverlay.id = 'screen-pick-overlay';
+  const img = document.createElement('canvas');
+  img.className = 'sp-canvas';
+  img.width = sampleCanvas.width; img.height = sampleCanvas.height;
+  img.getContext('2d').drawImage(sampleCanvas, 0, 0);
+  spOverlay.appendChild(img);
+  buildLoupe();
+  spOverlay.appendChild(loupeEl);
+  // 工具栏：确认(仅触屏长按出现) + 取消
+  const toolbar = document.createElement('div');
+  toolbar.className = 'sp-toolbar';
+  spConfirmBtn = document.createElement('button');
+  spConfirmBtn.className = 'sp-confirm';
+  spConfirmBtn.textContent = _t('confirm');
+  spConfirmBtn.style.display = 'none';
+  spConfirmBtn.addEventListener('click', () => { commitPicked(); });
+  spCancelBtn = document.createElement('button');
+  spCancelBtn.className = 'sp-cancel';
+  spCancelBtn.textContent = _t('cancel');
+  spCancelBtn.addEventListener('click', endScreenPick);
+  toolbar.appendChild(spConfirmBtn);
+  toolbar.appendChild(spCancelBtn);
+  spOverlay.appendChild(toolbar);
+  document.body.appendChild(spOverlay);
+}
+
+// 提交取色结果（左键 / 轻点 / 确认按钮共用）
+function commitPicked() {
+  if (pickedColor == null) return;
+  const [h, s, v] = rgbToHsv((pickedColor >> 16) & 255, (pickedColor >> 8) & 255, pickedColor & 255);
+  pickerState.h = h; pickerState.s = s; pickerState.v = v;
+  updatePickerDisplay();
+  endScreenPick();
+}
+
+function onPickMove(e) {
+  if (!pickingColor) return;
+  if (e.pointerType === 'mouse') {
+    if (loupeEl && loupeEl.style.display !== 'none') updateLoupe(e.clientX, e.clientY);
+    return;
+  }
+  // 触屏：仅长按激活且为当前驱动手指时，准星跟随移动
+  if (spLongActive && e.pointerId === spTouchId) updateLoupe(e.clientX, e.clientY);
+}
+function onPickDown(e) {
+  if (e.button === 2) { e.preventDefault(); endScreenPick(); return; } // 右键取消
+  if (e.target.closest && e.target.closest('.sp-toolbar')) return;     // 工具栏按钮自行处理
+  if (e.pointerType === 'mouse') {
+    if (e.button === 0) { // 桌面左键立即取色
+      e.preventDefault();
+      updateLoupe(e.clientX, e.clientY);
+      commitPicked();
+    }
+    return;
+  }
+  // 触屏
+  if (spLongActive) {
+    if (spTouchId != null && e.pointerId !== spTouchId) return; // 仅允许一根手指
+    e.preventDefault();
+    spTouchId = e.pointerId;
+    updateLoupe(e.clientX, e.clientY);
+    return;
+  }
+  if (spTouchId != null) return; // 已有手指在计时，忽略其它手指
+  e.preventDefault();
+  spTouchId = e.pointerId;
+  spTouchStart = { x: e.clientX, y: e.clientY };
+  spLongTimer = setTimeout(() => { // 长按 -> 弹出放大镜 + 确认
+    spLongActive = true;
+    loupeEl.style.display = '';
+    spConfirmBtn.style.display = '';
+    updateLoupe(spTouchStart.x, spTouchStart.y);
+  }, SP_LONG_MS);
+}
+function onPickUp(e) {
+  if (e.pointerType === 'mouse') return;
+  if (spLongActive) {
+    if (e.pointerId === spTouchId) spTouchId = null; // 松手不取色，放大镜保留，等待确认
+    return;
+  }
+  if (e.pointerId === spTouchId) {
+    clearTimeout(spLongTimer); spLongTimer = null;
+    const dx = e.clientX - spTouchStart.x, dy = e.clientY - spTouchStart.y;
+    spTouchId = null;
+    if (Math.hypot(dx, dy) < SP_TAP_MOVE) { // 轻点：直接取色，无放大镜
+      updateLoupe(e.clientX, e.clientY);
+      commitPicked();
+    }
+    // 位移过大但未达长按阈值 -> 视为滑动，忽略
+  }
+}
+function onPickCancel(e) {
+  if (e.pointerType === 'mouse') return;
+  clearTimeout(spLongTimer); spLongTimer = null;
+  if (spLongActive && e.pointerId === spTouchId) { spTouchId = null; return; }
+  if (e.pointerId === spTouchId) spTouchId = null;
+}
+function onPickKey(e) { if (e.key === 'Escape') { e.preventDefault(); endScreenPick(); } }
+
+function endScreenPick() {
+  if (!pickingColor) return;
+  pickingColor = false;
+  clearTimeout(spLongTimer); spLongTimer = null;
+  spLongActive = false; spTouchId = null; spTouchStart = null;
+  if (spStream) { spStream.getTracks().forEach((t) => t.stop()); spStream = null; }
+  if (spOverlay) { spOverlay.remove(); spOverlay = null; }
+  if (loupeEl) { loupeEl.remove(); loupeEl = null; }
+  spConfirmBtn = null; spCancelBtn = null;
+  window.removeEventListener('keydown', onPickKey);
+  sampleCanvas = null;
+  pickerModal.classList.add('show'); // 重新显示取色器弹窗并应用所选颜色
+}
+
+async function startScreenPick() {
+  if (pickingColor) return;
+  pickerModal.classList.remove('show'); // 先收起弹窗避免遮挡
+  pickingColor = true;
+  // 优先截屏（可取自网页外），失败则回退到 3D 画布（仅网页内）
+  const ok = await captureScreen();
+  if (!ok) captureCanvasFallback();
+  if (!sampleCanvas) { // 完全失败
+    pickingColor = false;
+    pickerModal.classList.add('show');
+    toast(_t('toastNoEyedropper'));
+    return;
+  }
+  buildOverlay(); // 全屏冻结覆盖层，屏蔽页面交互，对象不响应任何事件
+  const isTouch = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
+  if (isTouch) {
+    // 触屏：初始隐藏放大镜与确认按钮，等待轻点 / 长按
+    loupeEl.style.display = 'none';
+    spConfirmBtn.style.display = 'none';
+  } else {
+    // 桌面：放大镜跟随鼠标；确认按钮不出现
+    spConfirmBtn.style.display = 'none';
+    updateLoupe(window.innerWidth / 2, window.innerHeight / 2);
+  }
+  spOverlay.addEventListener('pointermove', onPickMove);
+  spOverlay.addEventListener('pointerdown', onPickDown, true);
+  spOverlay.addEventListener('pointerup', onPickUp);
+  spOverlay.addEventListener('pointercancel', onPickCancel);
+  spOverlay.addEventListener('contextmenu', (e) => { e.preventDefault(); endScreenPick(); });
+  window.addEventListener('keydown', onPickKey);
+}
+
+document.getElementById('picker-eyedropper').addEventListener('click', startScreenPick);
 
 // 打开/关闭颜色选取器
 let pickerTarget = 'object'; // 'object' or 'brush'
@@ -4695,7 +5192,7 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
     if (pickerTarget === 'brush') {
       setBrushColor(colorVal);
       brushCustomColorVal = colorVal;
-      toast('画笔颜色已设置为 ' + hex);
+      toast(_t('toastBrushColorSet', hex));
     } else {
       state.defaultColor = colorVal;
       state.selectedList.forEach(o => {
@@ -4710,7 +5207,7 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
       updateColorSelectionUI();
       // 更新花纹预览
       updatePatternPreviews(colorVal);
-      toast('已应用颜色 ' + hex);
+      toast(_t('toastColorApplied', hex));
     }
   }
   pickerModal.classList.remove('show');
@@ -4758,14 +5255,8 @@ const modeWhole = document.getElementById('eraser-mode-whole');
 const modeLocal = document.getElementById('eraser-mode-local');
 function updateEraserModeButtons() {
   const isLocal = state.eraserMode === 'local';
-  if (modeWhole) {
-    modeWhole.style.background = isLocal ? 'transparent' : 'var(--accent)';
-    modeWhole.style.color = isLocal ? 'var(--txt)' : '#fff';
-  }
-  if (modeLocal) {
-    modeLocal.style.background = isLocal ? 'var(--accent)' : 'transparent';
-    modeLocal.style.color = isLocal ? '#fff' : 'var(--txt)';
-  }
+  if (modeWhole) modeWhole.classList.toggle('active', !isLocal);
+  if (modeLocal) modeLocal.classList.toggle('active', isLocal);
 }
 if (modeWhole) modeWhole.addEventListener('click', () => {
   state.eraserMode = 'whole';
@@ -4773,7 +5264,7 @@ if (modeWhole) modeWhole.addEventListener('click', () => {
   clearEraserHighlight();
   updateEraserModeButtons();
   updateStatus();
-  toast('整体擦除：将对象整条删除');
+  toast(_t('toastEraserWholeHint'));
 });
 if (modeLocal) modeLocal.addEventListener('click', () => {
   state.eraserMode = 'local';
@@ -4781,7 +5272,7 @@ if (modeLocal) modeLocal.addEventListener('click', () => {
   clearEraserHighlight();
   updateEraserModeButtons();
   updateStatus();
-  toast('局部擦除：仅擦除圈内笔迹（可分节）');
+  toast(_t('toastEraserLocalHint'));
 });
 updateEraserModeButtons();
 document.getElementById('brush-opacity').addEventListener('input', e => {
@@ -4839,7 +5330,7 @@ function setBrushColor(numColor) {
 const brushNoColorDot = document.createElement('div');
 brushNoColorDot.className = 'color-dot no-color-dot';
 brushNoColorDot.dataset.c = NO_COLOR;
-brushNoColorDot.title = '无颜色';
+brushNoColorDot.title = _t('noColor'); brushNoColorDot.dataset.i18nTitle = 'noColor';
 brushNoColorDot.style.background = 'linear-gradient(135deg, #fff 25%, #ccc 25%, #ccc 50%, #fff 50%, #fff 75%, #ccc 75%)';
 brushNoColorDot.style.backgroundSize = '8px 8px';
 brushNoColorDot.style.position = 'relative';
@@ -4876,7 +5367,7 @@ if (brushPatRow) {
     const tex = patternTexture(p, 0x6ee7ff);
     btn.style.backgroundImage = `url(${tex.image.toDataURL()})`;
     tex.dispose();
-    btn.innerHTML = `<span>${p}</span>`;
+    btn.innerHTML = `<span data-i18n="${PATTERN_KEYS[p]}">${p}</span>`;
     if (idx === 0) btn.classList.add('active');
     btn.addEventListener('click', () => {
       brush.pattern = idx;
@@ -5134,17 +5625,17 @@ function setTransformMode(mode, silent) {
   // 多选时禁止进入缩放模式
   if (mode === 'scale' && state.selectedList.length > 1) return;
   transformCtrl.setMode(mode);
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.transform-modes .mode-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('mode-' + mode);
   if (btn) btn.classList.add('active');
-  if (!silent) toast('变换模式：' + ({translate:'平移', rotate:'旋转', scale:'缩放'}[mode]));
+  if (!silent) toast(_t('toastTransformMode', _t(mode)));
 }
 document.getElementById('mode-translate').addEventListener('click', () => setTransformMode('translate'));
 document.getElementById('mode-rotate').addEventListener('click', () => setTransformMode('rotate'));
 document.getElementById('mode-scale').addEventListener('click', () => setTransformMode('scale'));
 document.getElementById('file-imgtool').addEventListener('change', (e) => {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader(); r.onload = () => { state.toolImageDataURL = r.result; setTool('image'); toast('图片已载入，点击地面铺设'); };
+  const r = new FileReader(); r.onload = () => { state.toolImageDataURL = r.result; setTool('image'); toast(_t('toastImageLoaded')); };
   r.readAsDataURL(f); e.target.value = '';
 });
 
@@ -5498,13 +5989,13 @@ function deleteSelected() {
     }
     state.objects = state.objects.filter(x => x !== o);
   });
-  deselect(); pushHistory(); toast(`已删除 ${n} 个对象`);
+  deselect(); pushHistory(); toast(_t('toastDeletedN', n));
   updateClearButtonState();
 }
 
 // 贴图上传（批量应用到选中对象）
 document.getElementById('apply-image').addEventListener('click', () => {
-  if (state.selectedList.length === 0) { toast('请先选择对象'); return; }
+  if (state.selectedList.length === 0) { toast(_t('toastSelectFirst')); return; }
   document.getElementById('file-img').click();
 });
 document.getElementById('file-img').addEventListener('change', (e) => {
@@ -5516,7 +6007,7 @@ document.getElementById('file-img').addEventListener('change', (e) => {
       o.data.image = r.result; o.data.pattern = '纯色';
       applyAppearance(o);
     });
-    pushHistory(); toast('已应用图片贴图');
+    pushHistory(); toast(_t('toastImageTexApplied'));
     refreshProps(); // 立即更新属性面板
   };
   r.readAsDataURL(f); e.target.value = '';
@@ -5529,7 +6020,7 @@ document.getElementById('clear-tex').addEventListener('click', () => {
     o.data.image = null; o.data.pattern = '纯色';
     applyAppearance(o);
   });
-  pushHistory(); toast('已清除贴图');
+  pushHistory(); toast(_t('toastTexCleared'));
   refreshProps(); // 立即更新属性面板
 });
 // 编辑文本（仅主选中文本）
@@ -5551,12 +6042,12 @@ document.getElementById('btn-paste').addEventListener('click', () => pasteClipbo
 document.getElementById('btn-dup').addEventListener('click', cloneSelected);
 document.getElementById('btn-clear').addEventListener('click', async () => {
   if (!state.objects.length) return;
-  if (!await showConfirm('确定清空场景？此操作可撤销。')) return;
+  if (!await showConfirm(_t('confirmClearScene'))) return;
   select(null);
   state.objects.forEach(disposeObject);
   state.objects = [];
   updateClearButtonState();
-  pushHistory(); toast('已清空');
+  pushHistory(); toast(_t('toastCleared'));
   setPanelCollapsed('left', true);
   setPanelCollapsed('right', true);
 });
@@ -5564,7 +6055,7 @@ document.getElementById('btn-axes').addEventListener('click', () => {
   axesVisible = !axesVisible;
   axesGroup.visible = axesVisible;
   updateRefPlanesVisibility();
-  toast(axesVisible ? '坐标轴已显示' : '坐标轴已隐藏');
+  toast(axesVisible ? _t('toastAxesShown') : _t('toastAxesHidden'));
 });
 document.getElementById('btn-grid').addEventListener('click', () => {
   gridVisible = !gridVisible;
@@ -5572,11 +6063,11 @@ document.getElementById('btn-grid').addEventListener('click', () => {
   gridXZ.visible = gridVisible;
   gridYZ.visible = gridVisible;
   updateRefPlanesVisibility();
-  toast(gridVisible ? '网格面已显示' : '网格面已隐藏');
+  toast(gridVisible ? _t('toastGridShown') : _t('toastGridHidden'));
 });
 // 新建场景
 async function newScene() {
-  if (state.objects.length > 0 && !await showConfirm('确定新建场景？当前场景将被清空。')) return;
+  if (state.objects.length > 0 && !await showConfirm(_t('confirmNewScene'))) return;
   // 清空所有对象
   state.objects.forEach(disposeObject);
   state.objects = [];
@@ -5601,7 +6092,7 @@ async function newScene() {
   setView('persp'); // 新建场景后回到透视视角，并点亮"透视"按钮（相机移动后熄灭）
   setPanelCollapsed('left', true);
   setPanelCollapsed('right', true);
-  toast('已新建空白场景');
+  toast(_t('toastNewScene'));
 }
 // 截图导出 PNG：setSize(w,h,true) 同步 CSS 与 drawing buffer，保证视野与当前画面一致
 function captureScreenshot() {
@@ -5637,7 +6128,7 @@ function captureScreenshot() {
 
   const a = document.createElement('a');
   a.href = canvas.toDataURL('image/png'); a.download = 'cube3d-' + Date.now() + '.png'; a.click();
-  toast('图像已导出（' + w + '×' + h + '）');
+  toast(_t('toastImageExportedWH', w, h));
 
   // 恢复隐藏的无色对象
   hiddenMeshes.forEach(m => { m.visible = true; });
@@ -5669,37 +6160,39 @@ document.addEventListener('fullscreenchange', () => {
 });
 
 /* ===== 多语言 / 主题 / 设置页 ===== */
-const I18N = {
-  'zh-CN': { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabHelp:'帮助', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', helpEmpty:'帮助内容即将上线，敬请期待。', themeTitle:'主题风格', themeFollow:'跟随系统', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', aboutCopyright:'© 2026 立方工坊', cancel:'取消', ok:'确定', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏' },
-  'zh-TW': { new:'新建', import:'匯入', export:'匯出', shot:'截圖', undo:'復原', redo:'重做', copy:'複製', paste:'貼上', dup:'複製', clear:'清空', axes:'座標軸', grid:'網格面', settings:'設定', settingsTitle:'設定', tabHelp:'說明', tabTheme:'主題風格', tabLang:'語言切換', tabAbout:'關於', helpEmpty:'說明內容即將上線，敬請期待。', themeTitle:'主題風格', themeFollow:'跟隨系統', langTitle:'語言切換', aboutName:'立方·三維圖形設計工坊', aboutDesc:'基於 Three.js 的網頁端三維圖形設計與編輯工具。', aboutStack:'技術架構：Three.js / WebGL', aboutRepo:'GitHub 儲存庫', aboutCopyright:'© 2026 立方工坊', cancel:'取消', ok:'確定', apply:'套用顏色', fs:'全螢幕', fsExit:'退出全螢幕' },
-  'en': { new:'New', import:'Import', export:'Export', shot:'Snapshot', undo:'Undo', redo:'Redo', copy:'Copy', paste:'Paste', dup:'Duplicate', clear:'Clear', axes:'Axes', grid:'Grid', settings:'Settings', settingsTitle:'Settings', tabHelp:'Help', tabTheme:'Theme', tabLang:'Language', tabAbout:'About', helpEmpty:'Help content coming soon.', themeTitle:'Theme', themeFollow:'Follow system', langTitle:'Language', aboutName:'Cube · 3D Design Studio', aboutDesc:'A web-based 3D graphics design and editing tool built on Three.js.', aboutStack:'Tech: Three.js / WebGL', aboutRepo:'GitHub Repository', aboutCopyright:'© 2026 Cube Studio', cancel:'Cancel', ok:'OK', apply:'Apply Color', fs:'Fullscreen', fsExit:'Exit Fullscreen' },
-  'ja': { new:'新規', import:'インポート', export:'エクスポート', shot:'スナップショット', undo:'元に戻す', redo:'やり直す', copy:'コピー', paste:'貼り付け', dup:'複製', clear:'クリア', axes:'軸', grid:'グリッド', settings:'設定', settingsTitle:'設定', tabHelp:'ヘルプ', tabTheme:'テーマ', tabLang:'言語', tabAbout:'情報', helpEmpty:'ヘルプは近日公開予定です。', themeTitle:'テーマ', themeFollow:'システムに合わせる', langTitle:'言語', aboutName:'Cube・3Dデザインスタジオ', aboutDesc:'Three.js ベースのウェブ型 3D グラフィック作成・編集ツール。', aboutStack:'技術: Three.js / WebGL', aboutRepo:'GitHub リポジトリ', aboutCopyright:'© 2026 Cube Studio', cancel:'キャンセル', ok:'OK', apply:'色を適用', fs:'全画面', fsExit:'全画面を終了' },
-};
-const THEMES = {
-  neon:   { name:'霓虹蓝紫', vars:{ '--bg-deep':'#0c0e16','--bg-panel':'rgba(20,22,34,0.82)','--bg-panel-solid':'#14161f','--accent':'#6ee7ff','--accent-2':'#c084fc','--accent-3':'#fb7185','--warn':'#fbbf24','--text':'#e8e8f0','--text-dim':'#8b8ba0','--border':'rgba(110,231,255,0.18)' } },
-  sunset: { name:'日落暖橙', vars:{ '--bg-deep':'#1a0f0a','--bg-panel':'rgba(34,20,14,0.82)','--bg-panel-solid':'#21140d','--accent':'#ffb454','--accent-2':'#ff7a59','--accent-3':'#ff5d8f','--warn':'#ffd166','--text':'#f5e9e0','--text-dim':'#b3998c','--border':'rgba(255,180,84,0.18)' } },
-  forest: { name:'森林青绿', vars:{ '--bg-deep':'#08130d','--bg-panel':'rgba(14,28,20,0.82)','--bg-panel-solid':'#0e1c14','--accent':'#5eead4','--accent-2':'#86efac','--accent-3':'#fbbf24','--warn':'#fca5a5','--text':'#e6f5ec','--text-dim':'#8aa89a','--border':'rgba(94,234,212,0.18)' } },
-  gray:   { name:'暗夜静灰', vars:{ '--bg-deep':'#0e0f12','--bg-panel':'rgba(26,27,32,0.82)','--bg-panel-solid':'#1a1b20','--accent':'#a1a1aa','--accent-2':'#cbd5e1','--accent-3':'#f472b6','--warn':'#fbbf24','--text':'#e5e7eb','--text-dim':'#9ca3af','--border':'rgba(161,161,170,0.18)' } },
-  light:  { name:'亮白', vars:{ '--bg-deep':'#eef1f6','--bg-panel':'rgba(255,255,255,0.86)','--bg-panel-solid':'#ffffff','--accent':'#4f46e5','--accent-2':'#0ea5e9','--accent-3':'#ec4899','--warn':'#d97706','--text':'#1f2330','--text-dim':'#6b7280','--border':'rgba(79,70,229,0.18)' } },
-};
-const LANGS = {
-  'zh-CN': { label:'简体中文', dict: I18N['zh-CN'] },
-  'zh-TW': { label:'繁體中文', dict: I18N['zh-TW'] },
-  'en':    { label:'English',  dict: I18N['en'] },
-  'ja':    { label:'日本語',    dict: I18N['ja'] },
-};
-let currentLang = localStorage.getItem('lang') || 'zh-CN';
-let currentTheme = localStorage.getItem('theme') || 'neon';
-let followSystem = localStorage.getItem('themeFollow') === '1';
 
 function applyLang() {
   const dict = I18N[currentLang] || I18N['zh-CN'];
+  const fallback = I18N['zh-CN'];
+  // 页面标题
+  document.title = dict.appTitle || fallback.appTitle || document.title;
+  // 文本内容替换
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.dataset.i18n;
-    if (dict[k] !== undefined) el.textContent = dict[k];
+    const v = dict[k] !== undefined ? dict[k] : fallback[k];
+    if (v !== undefined) {
+      if (v.indexOf('{br}') !== -1) el.innerHTML = v.replace(/\{br\}/g, '<br>');
+      else el.textContent = v;
+    }
+  });
+  // title 属性替换
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const k = el.dataset.i18nTitle;
+    const v = dict[k] !== undefined ? dict[k] : fallback[k];
+    if (v !== undefined) el.title = v;
+  });
+  // placeholder 属性替换
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const k = el.dataset.i18nPlaceholder;
+    const v = dict[k] !== undefined ? dict[k] : fallback[k];
+    if (v !== undefined) el.placeholder = v;
   });
   const fsBtn = document.getElementById('btn-fs');
-  if (fsBtn) fsBtn.querySelector('.lbl').textContent = document.fullscreenElement ? dict.fsExit : dict.fs;
+  if (fsBtn) {
+    const fsKey = document.fullscreenElement ? 'fsExit' : 'fs';
+    const fsTxt = dict[fsKey] !== undefined ? dict[fsKey] : fallback[fsKey];
+    if (fsTxt !== undefined) fsBtn.querySelector('.lbl').textContent = fsTxt;
+  }
   document.documentElement.lang = currentLang;
 }
 function applyThemeObj(obj) {
@@ -5707,7 +6200,6 @@ function applyThemeObj(obj) {
   for (const k in obj.vars) root.style.setProperty(k, obj.vars[k]);
 }
 function effectiveTheme() {
-  if (followSystem && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
   return THEMES[currentTheme] ? currentTheme : 'neon';
 }
 function refreshTheme() { const t = effectiveTheme(); if (THEMES[t]) applyThemeObj(THEMES[t]); return t; }
@@ -5730,10 +6222,9 @@ const themeGrid = document.getElementById('theme-grid');
 Object.entries(THEMES).forEach(([key, th]) => {
   const card = document.createElement('div');
   card.className = 'theme-card'; card.dataset.theme = key;
-  card.innerHTML = '<div class="theme-swatches"><span class="theme-sw" style="background:'+th.vars['--accent']+'"></span><span class="theme-sw" style="background:'+th.vars['--accent-2']+'"></span><span class="theme-sw" style="background:'+th.vars['--accent-3']+'"></span></div><div class="theme-name">'+th.name+'</div>';
+  card.innerHTML = '<div class="theme-swatches"><span class="theme-sw" style="background:'+th.vars['--accent']+'"></span><span class="theme-sw" style="background:'+th.vars['--accent-2']+'"></span><span class="theme-sw" style="background:'+th.vars['--accent-3']+'"></span><span class="theme-sw" style="background:'+th.vars['--warn']+'"></span><span class="theme-sw" style="background:'+th.vars['--text']+'"></span></div><div class="theme-name" data-i18n="'+th.name+'"></div>';
   card.addEventListener('click', () => {
-    followSystem = false; document.getElementById('theme-follow').checked = false;
-    currentTheme = key; localStorage.setItem('theme', key); localStorage.setItem('themeFollow','0');
+    currentTheme = key; localStorage.setItem('theme', key);
     applyThemeObj(THEMES[key]); updateThemeActive();
   });
   themeGrid.appendChild(card);
@@ -5742,14 +6233,6 @@ function updateThemeActive() {
   const eff = effectiveTheme();
   themeGrid.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('active', c.dataset.theme === eff));
 }
-const themeFollowEl = document.getElementById('theme-follow');
-themeFollowEl.checked = followSystem;
-themeFollowEl.addEventListener('change', () => {
-  followSystem = themeFollowEl.checked;
-  localStorage.setItem('themeFollow', followSystem ? '1' : '0');
-  refreshTheme(); updateThemeActive();
-});
-if (window.matchMedia) window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (followSystem) { refreshTheme(); updateThemeActive(); } });
 
 const langList = document.getElementById('lang-list');
 Object.entries(LANGS).forEach(([code, l]) => {
@@ -5783,7 +6266,7 @@ function exportScene() {
   const blob = new Blob([data], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = 'cube3d-scene-' + Date.now() + '.json'; a.click();
-  toast('场景已导出 JSON');
+  toast(_t('toastSceneExported'));
 }
 document.getElementById('btn-export').addEventListener('click', exportScene);
 // 导入场景 JSON
@@ -5848,8 +6331,8 @@ document.getElementById('file-import').addEventListener('change', (e) => {
       }
       state.history = []; state.hIndex = -1;
       setTimeout(()=>{ pushHistory(); }, 300);
-      toast('场景已导入');
-    } catch(err) { toast('导入失败：' + err.message); }
+      toast(_t('toastSceneImported'));
+    } catch(err) { toast(_t('toastImportFailed', err.message)); }
   };
   r.readAsText(f); e.target.value = '';
 });
@@ -5873,7 +6356,7 @@ if (boxSelBtn) {
     boxSelBtn.classList.toggle('active', state.boxSelectMode);
     if (!state.boxSelectMode && !controls.enabled) controls.enabled = true;
     boxSelBtn.blur(); // 立即失焦，避免残留焦点/hover 态
-    toast(state.boxSelectMode ? '框选模式：单指拖拽框选对象' : '已退出框选模式');
+    toast(_t(state.boxSelectMode ? 'toastBoxSelectOn' : 'toastBoxSelectOff'));
   });
 }
 const selAllBtn = document.getElementById('btn-selectall');
@@ -7398,10 +7881,10 @@ function showShapeParams(obj) {
     row.className = 'ctrl-row';
     const val = obj.data[f.key] ?? 1;
     row.innerHTML = `
-      <div class="ctrl-label"><span>${f.label}</span></div>
+      <div class="ctrl-label"><span data-i18n="${PARAM_LABEL_MAP[f.label] || f.label}">${f.label}</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="sp-${f.key}" min="${f.min}" max="${f.max}" step="${f.step}" value="${val}" style="flex:1;">
-        <input type="number" id="input-sp-${f.key}" step="${f.step}" value="${val}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="number" id="input-sp-${f.key}" step="${f.step}" value="${val}" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     `;
     container.appendChild(row);
@@ -7445,6 +7928,15 @@ function hideShapeParams() {
   if (container) container.innerHTML = '';
 }
 
+// 形状参数字段标签 → i18n 键名映射
+const PARAM_LABEL_MAP = {
+  '半径':'pRadius','高度':'pHeight','长度 L':'pLength','宽度 W':'pWidth',
+  '分段':'pSegments','底边长':'pBase','外半径':'pOuterRadius','内半径':'pInnerRadius',
+  '角数':'pPoints','缩放':'pScale','倾斜':'pSkew','管半径':'pTube','主半径':'pMainRadius',
+  '上底宽':'pTopWidth','下底宽':'pBottomWidth','X 半径':'pRadiusX','Y 半径':'pRadiusY',
+  '高':'pHeight'
+};
+
 function showImageParams(obj) {
   const container = document.getElementById('shape-params-content');
   if (!container) return;
@@ -7455,10 +7947,10 @@ function showImageParams(obj) {
   const hRow = document.createElement('div');
   hRow.className = 'ctrl-row';
   hRow.innerHTML = `
-    <div class="ctrl-label"><span>长度 L</span></div>
+    <div class="ctrl-label"><span data-i18n="pLength">长度 L</span></div>
     <div style="display:flex; gap:6px; align-items:center;">
       <input type="range" id="img-h" min="0.5" max="20" step="0.01" value="${h}" style="flex:1;">
-      <input type="number" id="input-imgh" step="0.01" value="${h}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+      <input type="number" id="input-imgh" step="0.01" value="${h}" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
     </div>
   `;
   container.appendChild(hRow);
@@ -7468,10 +7960,10 @@ function showImageParams(obj) {
   const wRow = document.createElement('div');
   wRow.className = 'ctrl-row';
   wRow.innerHTML = `
-    <div class="ctrl-label"><span>宽度 W</span></div>
+    <div class="ctrl-label"><span data-i18n="pWidth">宽度 W</span></div>
     <div style="display:flex; gap:6px; align-items:center;">
       <input type="range" id="img-w" min="0.5" max="20" step="0.01" value="${w}" style="flex:1;">
-      <input type="number" id="input-imgw" step="0.01" value="${w}" style="width:70px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+      <input type="number" id="input-imgw" step="0.01" value="${w}" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
     </div>
   `;
   container.appendChild(wRow);
@@ -7886,6 +8378,7 @@ function buildParametricGeo2D(type, data) {
 }
 
 canvas.addEventListener('pointerdown', (e) => {
+  if (pickingColor) return; // 屏幕取色进行中，不触发选择/变换
   if (e.button !== 0) return; // 仅左键
   // 触摸设备：非主指（第二指）交给 OrbitControls 处理双指手势
   if (e.pointerType === 'touch' && e.isPrimary === false) return;
@@ -8228,7 +8721,7 @@ canvas.addEventListener('pointerup', (e) => {
       setTool(null);
       setTransformMode('translate', true);
       pushHistory();
-      toast('已放置「' + labelOf(shapeKey) + '」(缩放 ' + scale.toFixed(1) + 'x)');
+      toast(_t('toastPlacedScaleLabel', labelOf(shapeKey), scale.toFixed(1)));
     }
     state.pointerDown = false;
     return;
@@ -8285,8 +8778,8 @@ canvas.addEventListener('pointerup', (e) => {
     const x1 = e.clientX, y1 = e.clientY;
     if (Math.abs(x1 - x0) > 4 || Math.abs(y1 - y0) > 4) {
       selectWithinBox(x0, y0, x1, y1);
-      if (state.selectedList.length === 0) toast('框选未命中对象');
-      else { toast('已框选 ' + state.selectedList.length + ' 个对象'); pushHistory(); }
+      if (state.selectedList.length === 0) toast(_t('toastBoxSelectMiss'));
+      else { toast(_t('toastBoxSelectedN', state.selectedList.length)); pushHistory(); }
       // 框选完成后退出框选模式：按钮蓝色消失，再次框选需重新点击
       if (state.boxSelectMode) {
         state.boxSelectMode = false;
@@ -8310,6 +8803,7 @@ canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 // 触摸设备双击检测：部分移动浏览器对 dblclick 支持不稳定
 let _lastTapTime = 0, _lastTapX = 0, _lastTapY = 0;
 canvas.addEventListener('pointerdown', (e) => {
+  if (pickingColor) return;
   if (e.pointerType !== 'touch' || !e.isPrimary) return;
   const now = Date.now();
   const dt = now - _lastTapTime;
@@ -8340,12 +8834,12 @@ canvas.addEventListener('dblclick', async (e) => {
   if (t === null) return;
   p.data.text = t.trim() || ' ';
   rebuildText(p); updateSelBoxes(); pushHistory();
-  toast('文本已更新');
+  toast(_t('toastTextUpdated'));
 });
 
 // ============ 复制 / 粘贴 / 克隆 ============
 function copySelected() {
-  if (transformActive) { toast('变换中无法复制'); return; }
+  if (transformActive) { toast(_t('toastCantCopyTransform')); return; }
   if (state.selectedList.length === 0) return;
   state.clipboard = state.selectedList.map(o => {
     // 保存 mesh 的实际世界位置（不再用 baseY 格式，避免 rebuildShape 后 halfH 变化导致 baseY 错误）
@@ -8427,7 +8921,7 @@ function copySelected() {
       worldScale: [o.mesh.scale.x, o.mesh.scale.y, o.mesh.scale.z]
     };
   });
-  toast('已复制 ' + state.clipboard.length + ' 个对象');
+  toast(_t('toastCopiedN', state.clipboard.length));
   updatePasteButtonState();
 }
 // 计算3D笔迹 group 的几何中心相对 group.position 的偏移
@@ -8462,8 +8956,8 @@ function getViewCenterOnGround() {
   return ray.ray.intersectPlane(groundMathPlane, out) ? out : controls.target.clone();
 }
 function pasteClipboard(offset = 0.2, useViewCenter = false) {
-  if (transformActive) { toast('变换中无法粘贴'); return; }
-  if (state.clipboard.length === 0) { toast('剪贴板为空'); return; }
+  if (transformActive) { toast(_t('toastCantPasteTransform')); return; }
+  if (state.clipboard.length === 0) { toast(_t('toastClipboardEmpty')); return; }
   // 计算粘贴偏移量：useViewCenter 时移到视图中心，否则用 offset 微偏移
   let pasteDelta = new THREE.Vector3(offset, 0, offset);
   if (useViewCenter) {
@@ -8727,7 +9221,7 @@ function pasteClipboard(offset = 0.2, useViewCenter = false) {
       setTransformMode('translate', true);
     }
     pushHistory();
-    toast('已粘贴 ' + newOnes.length + ' 个对象');
+    toast(_t('toastPastedN', newOnes.length));
   });
 }
 function cloneSelected() {
@@ -8789,15 +9283,15 @@ window.addEventListener('keydown', (e) => {
     if (k === 'y' || (shift && k === 'z')) { e.preventDefault(); redo(); return; }
     if (k === 'c') {
       e.preventDefault();
-      if (transformActive) { toast('变换进行中，无法复制'); return; }
-      if (sel.length === 0) { toast('请先选中对象再复制'); return; }
+      if (transformActive) { toast(_t('toastTransformNoCopy')); return; }
+      if (sel.length === 0) { toast(_t('toastSelectToCopy')); return; }
       copySelected(); return;
     }
     if (k === 'v') { e.preventDefault(); pasteClipboard(0.2, true); return; }
     if (k === 'd') {
       e.preventDefault();
-      if (transformActive) { toast('变换进行中，无法克隆'); return; }
-      if (sel.length === 0) { toast('请先选中对象再克隆'); return; }
+      if (transformActive) { toast(_t('toastTransformNoClone')); return; }
+      if (sel.length === 0) { toast(_t('toastSelectToClone')); return; }
       cloneSelected(); return;
     }
     if (k === 'a') {
@@ -8823,9 +9317,9 @@ window.addEventListener('keydown', (e) => {
     setTool(null); deselect(); return;
   }
   if (e.key === 'Delete' || e.key === 'Backspace') {
-    if (transformActive) { toast('变换进行中，无法删除'); return; }
+    if (transformActive) { toast(_t('toastTransformNoDelete')); return; }
     if (sel.length) { e.preventDefault(); deleteSelected(); }
-    else { toast('请先选中对象再删除'); }
+    else { toast(_t('toastSelectToDelete')); }
     return;
   }
 
@@ -8862,7 +9356,7 @@ window.addEventListener('keydown', (e) => {
       e.preventDefault();
       controls.update();
     } else {
-      toast('请先选中对象');
+      toast(_t('toastSelectFirst'));
     }
     return;
   }
@@ -8891,11 +9385,11 @@ window.addEventListener('keydown', (e) => {
     case 'e': case 'E': rotateSelection('z', -rotRad, objectsToModify); break;
     // 缩放：5%，Shift 时 ×2 / ×0.5（多选时禁止）
     case '+': case '=':
-      if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
+      if (objectsToModify.length > 1) { toast(_t('toastNoScaleMulti')); break; }
       objectsToModify.forEach(o => o.mesh.scale.setScalar(o.mesh.scale.x * (shift ? 2 : 1.05)));
       break;
     case '-': case '_':
-      if (objectsToModify.length > 1) { toast('多选时禁止缩放操作'); break; }
+      if (objectsToModify.length > 1) { toast(_t('toastNoScaleMulti')); break; }
       objectsToModify.forEach(o => o.mesh.scale.setScalar(o.mesh.scale.x * (shift ? 0.5 : 0.95)));
       break;
     default: handled = false;
@@ -8930,6 +9424,13 @@ canvas.addEventListener('drop', (e) => {
 
 // ============ 提示 ============
 let toastTimer;
+function _t(key, ...args) {
+  const dict = I18N[currentLang] || I18N['zh-CN'];
+  const fallback = I18N['zh-CN'];
+  let tpl = dict[key] !== undefined ? dict[key] : (fallback[key] || key);
+  for (let i = 0; i < args.length; i++) tpl = tpl.replace('{' + i + '}', args[i] !== undefined ? args[i] : '');
+  return tpl;
+}
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
@@ -8939,7 +9440,7 @@ function toast(msg) {
 function setStatus(s) { /* status bar removed - text no longer displayed */ }
 
 // 确认弹窗（替代原生confirm，避免全屏模式退出）
-function showConfirm(msg, title = '确认') {
+function showConfirm(msg, title = _t('confirm')) {
   return new Promise(resolve => {
     const mask = document.getElementById('confirm-modal');
     const titleEl = document.getElementById('confirm-modal-title');
@@ -9335,7 +9836,7 @@ updateClearButtonState(); // 无对象，灰度禁用清空
 pushHistory(); // 初始空状态
 setTimeout(() => {
   document.getElementById('loader').classList.add('hidden');
-  toast('欢迎使用立方·三维设计工坊');
+  toast(_t('toastWelcome'));
 }, 500);
 
 // 调试导出（供控制台诊断；发布前可移除）
