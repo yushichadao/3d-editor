@@ -3,7 +3,7 @@
 > 一个纯前端的 3D / 2D 场景编辑器，基于 HTML / CSS / JavaScript 与 Three.js 构建，无需后端依赖即可在浏览器中完成三维建模、二维绘图与场景编排。
 
 - **作者**：yushichadao
-- **AI 辅助**：使用 [TRAE](https://trae.ai/) 工具的 AI 能力辅助生成
+- **AI 辅助**：使用 [TRAE](https://trae.ai/) 与 [CodeBuddy](https://www.codebuddy.ai/) 工具的 AI 能力辅助生成
 - **最后更新**：2026-08-02
 - **技术栈**：纯前端 HTML / CSS / JavaScript + Three.js
 - **本地服务器**：Node.js（`server.js`，端口 `8090`）
@@ -94,18 +94,29 @@
 ```
 3d-editor/
 ├── index.html              # 主文件（包含 HTML / CSS / JS，约 9500 行）
-├── server.js               # Node.js 本地服务器（端口 8090）
-├── package.json            # 项目配置
 ├── three/                  # Three.js 库文件
-│   ├── three.module.js             # Three.js 核心库
-│   └── examples/
-│       └── jsm/
-│           └── controls/
-│               ├── OrbitControls.js    # 轨道控制器
-│               └── TransformControls.js
-├── LICENSE
-├── vercel.json
-├── .nojekyll
+│   ├── three.module.js
+│   └── examples/jsm/controls/   # OrbitControls / TransformControls
+├── language/               # 多语言包（简中内联于 index.html，另含英 / 日 / 繁）
+│   ├── en.js
+│   ├── ja.js
+│   └── zh-TW.js
+├── docs/                   # 项目文档
+│   ├── 函数表.md
+│   ├── 结构分析.md
+│   └── 使用说明书.md
+├── scripts/                # 开发辅助脚本（i18n 校验、代码提取等）
+│   ├── _check.mjs
+│   ├── _gen.mjs
+│   ├── _hardcode.mjs
+│   ├── _i18ncheck.mjs
+│   ├── _move.mjs
+│   ├── _v.mjs
+│   ├── _verify.mjs
+│   └── _verify2.mjs
+├── server.js               # Node.js 本地服务器（端口 8090，已被 .gitignore 忽略）
+├── package.json            # 项目配置
+├── vercel.json             # Vercel 部署配置
 └── .gitignore
 ```
 

@@ -13,3 +13,5 @@ desktop.ini
 
 # 本地服务器（开发用，无需部署）
 server.js
+server.ps1
+server.err

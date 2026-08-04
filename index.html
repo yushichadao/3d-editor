@@ -345,50 +345,6 @@
     color: var(--accent); font-weight: 600;
   }
 
-  /* 声明 */
-  .declaration {
-    position: fixed; bottom: 60px; left: 14px; z-index: 25;
-    max-width: 270px;
-    background: var(--bg-panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--border); border-radius: 12px;
-    font-size: 10.5px; color: var(--text-dim); line-height: 1.6;
-    overflow: hidden;
-    transition: max-width .28s ease, border-radius .28s ease;
-  }
-  .declaration > .decl-header {
-    padding: 7px 11px; display: flex; align-items: center; gap: 6px;
-    cursor: pointer; user-select: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color .25s, padding .28s ease;
-  }
-  .declaration:not(.collapsed) > .decl-header {
-    border-bottom-color: rgba(110,231,255,0.12);
-  }
-  .declaration > .decl-header strong { color: var(--accent); flex: 1; font-weight: 600; transition: font-size .28s ease; }
-  .declaration > .decl-header .decl-arrow {
-    transition: transform .28s ease; font-size: 10px; color: var(--text-dim);
-  }
-  .declaration.collapsed > .decl-header .decl-arrow { transform: rotate(-90deg); }
-  .declaration > .decl-body {
-    padding: 0 12px 10px 12px;
-    max-height: 500px; opacity: 1;
-    transition: max-height .32s ease, opacity .24s ease .04s, padding .28s ease;
-    overflow: hidden;
-  }
-  .declaration.collapsed > .decl-body {
-    max-height: 0; opacity: 0;
-    padding-top: 0; padding-bottom: 0;
-    transition: max-height .28s ease, opacity .18s ease, padding .24s ease;
-  }
-  /* 收缩后变为紧凑药丸样式，减少占屏面积 */
-  .declaration.collapsed {
-    max-width: 70px; border-radius: 20px;
-  }
-  .declaration.collapsed > .decl-header {
-    padding: 4px 10px; gap: 3px;
-  }
-  .declaration.collapsed > .decl-header strong { font-size: 10px; }
-
   /* 提示 */
   .toast {
     position: fixed; top: 56px; left: 50%; transform: translateX(-50%) translateY(-16px);
@@ -524,11 +480,14 @@
   }
   .about-card:hover { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, var(--bg-panel)); }
   .about-card:active { transform:scale(.99); }
-  .about-card-ico { color:var(--accent); font-size:15px; width:20px; text-align:center; }
+  .about-card-ico { color:var(--accent); width:20px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
   .about-card-title { flex:1; font-weight:600; }
   .about-card-arrow { color:var(--text-dim); font-size:14px; }
   /* 条款详情弹窗（站内卡片式查看，不建独立网页） */
   .terms-box { width:min(560px,92vw); }
+  /* 设置及子页面（条款弹窗）不加阴影 */
+  #settings-modal .modal-box,
+  #terms-modal .modal-box { box-shadow: none; }
   .terms-body {
     font-size:13px; line-height:1.85; color:var(--text-dim);
     max-height:62vh; overflow-y:auto; padding-right:4px;
@@ -619,8 +578,6 @@
     .panel-toggle { top: 56px; }
     .panel-toggle.left.collapsed { left: 8px; }
     .panel-toggle.right.collapsed { right: 8px; }
-    /* 声明保持卡片样式，不全宽拉伸 */
-    .declaration { bottom: 64px; left: 8px; max-width: 240px; font-size: 10px; }
     .bottombar {
       bottom: 10px; padding: 4px 6px; gap: 3px;
       max-width: calc(100vw - 16px); overflow: visible;
@@ -641,7 +598,6 @@
   @media (max-width: 460px) {
     .top-btn { padding: 0 7px; }
     .view-btn { padding: 0 7px; font-size: 10.5px; }
-    .declaration { max-width: 200px; }
     .top-actions { -webkit-overflow-scrolling: touch; }
   }
 
@@ -1128,23 +1084,6 @@
   </div>
 </aside>
 
-<!-- 声明 -->
-<div class="declaration">
-  <div class="decl-header" onclick="this.parentElement.classList.toggle('collapsed')">
-    <strong data-i18n="declaration">声明</strong>
-    <span class="decl-arrow">▼</span>
-  </div>
-  <div class="decl-body">
-    <span data-i18n="declBody1">本工具是一款基于 Three.js 的纯前端 3D/2D 场景编辑器，内置丰富的 3D/2D 参数化图形、</span>
-    <span data-i18n="declBody2">2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。</span>
-    <br><span data-i18n="declBody3">所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。</span>
-    <span data-i18n="declBody4">场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。</span>
-    <br><strong data-i18n="declAuthor">作者</strong>：Yushichadao
-    <br><strong data-i18n="declAI">AI 辅助</strong>：<span data-i18n="declAIText">使用 TRAE 工具的 AI 能力辅助生成</span>
-    <br><strong data-i18n="declUpdate">最后更新</strong>：2026-08-02
-  </div>
-</div>
-
 <!-- 底部状态 -->
 <div class="bottombar">
   <div class="bb-toggle" onclick="this.parentElement.classList.toggle('collapsed')" data-i18n-title="titleBBToggle">
@@ -1282,17 +1221,17 @@
             <a class="about-link" id="about-repo" href="https://github.com/yushichadao/3d-editor" target="_blank" rel="noopener" data-i18n="aboutRepo">GitHub 仓库</a>
             <div class="about-terms">
               <button type="button" class="about-card" data-term="tos">
-                <span class="about-card-ico">§</span>
+                <span class="about-card-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8M8 9h2"/></svg></span>
                 <span class="about-card-title" data-i18n="tosLink">服务协议</span>
                 <span class="about-card-arrow">›</span>
               </button>
               <button type="button" class="about-card" data-term="disclaimer">
-                <span class="about-card-ico">⚠</span>
+                <span class="about-card-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                 <span class="about-card-title" data-i18n="disclaimerLink">免责声明</span>
                 <span class="about-card-arrow">›</span>
               </button>
               <button type="button" class="about-card" data-term="privacy">
-                <span class="about-card-ico">⛨</span>
+                <span class="about-card-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
                 <span class="about-card-title" data-i18n="privacyLink">隐私政策</span>
                 <span class="about-card-arrow">›</span>
               </button>
@@ -1380,15 +1319,8 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
  toolNameSelect:'选择/变换', toolNameBrush3D:'3D 画笔', toolNameBrush2D:'2D 画笔', toolNameEraser:'橡皮擦', toolNameAddText:'添加文本', toolNameAddImage:'添加图片',
  translate:'平移', rotate:'旋转', scale:'缩放',
  lockRatio:'等比缩放', posX:'横坐标 X', posY:'竖坐标 Z', posZ:'纵坐标 Y',
- emptyHint:'未选中对象。\n从左侧选择图形，点击地面放置；或点击已有对象进行编辑。\nShift+点选可多选，多选时变换作为整体操作。',
- declaration:'声明',
- // 声明正文
- declBody1:'本工具是一款基于 Three.js 的纯前端 3D/2D 场景编辑器，内置丰富的 3D/2D 参数化图形、',
- declBody2:'2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。',
- declBody3:'所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。',
- declBody4:'场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。',
- declAuthor:'作者', declAI:'AI 辅助', declAIText:'本网站由 TRAE 与 CodeBuddy 工具 AI 辅助生成', declUpdate:'最后更新',
- // 鼠标/触摸帮助
+  emptyHint:'未选中对象。\n从左侧选择图形，点击地面放置；或点击已有对象进行编辑。\nShift+点选可多选，多选时变换作为整体操作。',
+  // 鼠标/触摸帮助
  helpMouseClick:'单击左键', helpMouseClickDesc:'选择对象/控件',
  helpMouseDblClick:'双击左键', helpMouseDblClickDesc:'编辑文本',
  helpMouseHold:'长按左键', helpMouseHoldDesc:'操作对象/控件',

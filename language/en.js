@@ -72,13 +72,6 @@ window.__packs['en'] = {
   lockRatio:'Uniform Scale',
   posX:'Position X', posY:'Position Z', posZ:'Position Y',
   emptyHint:'No object selected.\nPick a shape from the left panel, click the ground to place; or click an existing object to edit.\nShift+click for multi-select; transforms apply to all selected objects.',
-  declaration:'Declaration',
-  // Declaration body
-  declBody1:'This tool is a pure frontend 3D/2D scene editor based on Three.js, with built-in parametric 3D/2D shapes,',
-  declBody2:'2D/3D brushes, text/image/texture/pattern support, precise translate/rotate/scale, undo/redo history, and JSON import/export.',
-  declBody3:'All 3D models, textures, text, and images are rendered locally in the browser in real time, free for personal learning and creative design.',
-  declBody4:'Scene data can be exported and saved locally as JSON files. No user information is uploaded to any server.',
-  declAuthor:'Author', declAI:'AI Assisted', declAIText:'Generated with AI assistance from TRAE and CodeBuddy tools', declUpdate:'Last Updated',
 
   // Mouse/Touch help
   helpMouseClick:'Left Click', helpMouseClickDesc:'Select object / control',

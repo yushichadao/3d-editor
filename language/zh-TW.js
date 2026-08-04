@@ -73,13 +73,6 @@ window.__packs['zh-TW'] = {
   lockRatio:'等比縮放',
   posX:'橫坐標 X', posY:'豎坐標 Z', posZ:'縱坐標 Y',
   emptyHint:'未選中物件。\n從左側選擇圖形，點擊地面放置；或點擊已有物件進行編輯。\nShift+點選可多選，多選時變換作為整體操作。',
-  declaration:'聲明',
-  // Declaration body
-  declBody1:'本工具是基於 Three.js 的純前端 3D/2D 場景編輯器，內建參數化 3D/2D 圖形、',
-  declBody2:'2D/3D 畫筆、文字/圖片/紋理/圖案支援、精確平移/旋轉/縮放、撤銷/重做歷史記錄以及 JSON 匯入/匯出。',
-  declBody3:'所有 3D 模型、紋理、文字和圖片均在瀏覽器本地端即時渲染，免費供個人學習和創意設計使用。',
-  declBody4:'場景資料可匯出為 JSON 檔案儲存於本地。不會將使用者資訊上傳至任何伺服器。',
-  declAuthor:'作者', declAI:'AI 輔助', declAIText:'使用 TRAE 與 CodeBuddy 工具的 AI 能力輔助生成', declUpdate:'最後更新',
 
   // Mouse/Touch help
   helpMouseClick:'左鍵點擊', helpMouseClickDesc:'選取物件 / 控制項',
