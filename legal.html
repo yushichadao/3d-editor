@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>法律条款</title>
+<style>
+  :root{
+    --bg-deep:#0c0e16; --bg-panel:rgba(20,22,34,0.82); --bg-panel-solid:#14161f;
+    --accent:#6ee7ff; --accent-2:#c084fc; --accent-3:#fb7185;
+    --text:#e8e8f0; --text-dim:#8b8ba0; --border:rgba(110,231,255,0.18); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100%;background:var(--bg-deep);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.6;}
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .legal-top{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 20px;border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,color-mix(in srgb,var(--bg-deep) 92%,transparent),color-mix(in srgb,var(--bg-deep) 55%,transparent));
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:10;}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;letter-spacing:.5px;}
+  .brand .logo{width:24px;height:24px;border-radius:6px;
+    background:conic-gradient(from 0deg,var(--accent),var(--accent-2),var(--accent-3),var(--accent));}
+  .legal-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .legal-back{font-size:13px;color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:8px;white-space:nowrap;}
+  .legal-back:hover{border-color:var(--accent);text-decoration:none;color:var(--accent);}
+  .legal-lang{display:flex;gap:4px;}
+  .legal-lang-btn{font-size:12px;padding:5px 9px;border-radius:7px;border:1px solid var(--border);
+    background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;}
+  .legal-lang-btn:hover{color:var(--text);border-color:var(--accent);}
+  .legal-lang-btn.active{color:var(--accent);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);}
+  .legal-nav{display:flex;gap:8px;justify-content:center;padding:18px 20px 6px;flex-wrap:wrap;}
+  .legal-tab{font-size:13px;padding:8px 18px;border-radius:999px;border:1px solid var(--border);
+    background:var(--bg-panel);color:var(--text);cursor:pointer;transition:all .18s;font-weight:600;}
+  .legal-tab:hover{border-color:var(--accent);color:var(--accent);}
+  .legal-tab.active{border-color:transparent;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#0c0e16;}
+  .legal-main{max-width:760px;margin:0 auto;padding:8px 20px 40px;}
+  .legal-main h1{font-size:22px;text-align:center;margin:14px 0 22px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .legal-body h2{font-size:15px;margin:22px 0 8px;color:var(--text);padding-left:11px;position:relative;}
+  .legal-body h2::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+    width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,var(--accent),var(--accent-2));}
+  .legal-body p{font-size:13.5px;color:var(--text-dim);margin:0 0 6px;}
+  .legal-foot{max-width:760px;margin:0 auto;padding:22px 20px 48px;border-top:1px solid var(--border);text-align:center;}
+  .legal-ai{font-size:12px;color:var(--text-dim);margin:0 0 10px;}
+  .legal-repo{display:inline-block;font-size:13px;margin-bottom:10px;}
+  .legal-copy{font-size:12px;color:var(--text-dim);margin:0;}
+  @media(max-width:560px){.legal-top{flex-direction:column;align-items:flex-start;}.legal-actions{width:100%;justify-content:space-between;}}
+</style>
+</head>
+<body>
+  <header class="legal-top">
+    <div class="brand"><span class="logo"></span><span>立方·三维图形设计工坊</span></div>
+    <div class="legal-actions">
+      <a class="legal-back" href="index.html">返回编辑器</a>
+      <div class="legal-lang" id="legal-lang"></div>
+    </div>
+  </header>
+  <nav class="legal-nav" id="legal-nav"></nav>
+  <main class="legal-main">
+    <h1 id="legal-title"></h1>
+    <div class="legal-body" id="legal-body"></div>
+  </main>
+  <footer class="legal-foot">
+    <p class="legal-ai" id="legal-ai"></p>
+    <a class="legal-repo" id="legal-repo" href="https://github.com/yushichadao/3d-editor" target="_blank" rel="noopener"></a>
+    <p class="legal-copy" id="legal-copy"></p>
+  </footer>
+<script>
+  const TYPES = ['terms','disclaimer','privacy'];
+  const LANGS = [
+    {key:'zh', label:'简体'},
+    {key:'en', label:'EN'},
+    {key:'ja', label:'日本語'},
+    {key:'zh-tw', label:'繁體'}
+  ];
+  const DATA = {
+    'zh': {
+      back:'返回编辑器', repo:'GitHub 仓库',
+      ai:'本站使用 TRAE 与 CodeBuddy 工具的 AI 能力辅助生成。',
+      copyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.',
+      types:{
+        terms:{ label:'服务协议', sections:[
+          {h:'1. 条款的接受', p:'访问或使用本网站（立方·三维图形设计工坊，以下简称"本工具"）即表示您已阅读、理解并同意本服务协议的全部条款。若您不同意，请勿使用本工具。'},
+          {h:'2. 使用范围与限制', p:'本工具为基于 Three.js 的纯前端网页应用，仅供个人学习、创意设计与非商业用途。您不得将其用于任何违法、侵权或商业牟利活动，亦不得对本工具进行逆向工程、破解或二次分发牟利。'},
+          {h:'3. 用户内容与知识产权', p:'您在本工具中创建、导入或导出的所有模型、文本、图像及场景数据，其知识产权归您或相关权利人所有。本工具本身的软件著作权、名称、标识及界面设计归作者 Yushichadao 所有。'},
+          {h:'4. 无账户与费用', p:'本工具无需注册账户，不收取任何费用。您以访客身份直接使用全部本地功能。'},
+          {h:'5. 服务的变更与终止', p:'作者保留在不另行通知的情况下，随时修改、暂停或终止本工具及其部分功能的权力。'},
+          {h:'6. 适用法律', p:'本协议的订立、效力、解释及争议解决均适用相关司法管辖区的现行法律法规。'}
+        ]},
+        disclaimer:{ label:'免责声明', sections:[
+          {h:'1. 「现状」提供', p:'本工具按「现状」提供，不对其可用性、准确性、完整性或适用性作任何明示或暗示的担保。'},
+          {h:'2. 责任限制', p:'在任何情况下，作者均不对因使用或无法使用本工具而产生的任何直接、间接、附带或后果性损失承担责任。'},
+          {h:'3. 第三方资源', p:'本工具可能包含指向第三方网站（如 GitHub）的链接，此类链接的内容与隐私实践由第三方负责，作者不予置评亦不承担责任。'},
+          {h:'4. 用户内容责任', p:'您应对使用本工具创建或上传的内容负完全责任，确保其不侵犯任何第三方的合法权益。'}
+        ]},
+        privacy:{ label:'隐私政策', sections:[
+          {h:'1. 不收集个人信息', p:'本工具不会收集、记录或存储您的任何个人信息。'},
+          {h:'2. 纯前端本地处理', p:'本工具为纯前端应用，所有三维模型、文本、图像及场景均在您的浏览器本地实时渲染与处理。'},
+          {h:'3. 不上传服务器', p:'本工具不会将您的任何场景数据、文件或用户信息上传至任何服务器。'},
+          {h:'4. 无追踪分析', p:'本工具不植入任何追踪、统计或广告 Cookie，亦不进行分析行为分析。'},
+          {h:'5. 第三方链接', p:'如您通过本工具访问第三方链接（如 GitHub），请参照该第三方的隐私政策。'},
+          {h:'6. 联系方式', p:'如对本隐私政策有疑问，可通过项目 GitHub 仓库与作者 Yushichadao 联系。'}
+        ]}
+      }
+    },
+    'en': {
+      back:'Back to Editor', repo:'GitHub Repository',
+      ai:'This site was generated with AI assistance using the TRAE and CodeBuddy tools.',
+      copyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.',
+      types:{
+        terms:{ label:'Terms of Service', sections:[
+          {h:'1. Acceptance', p:'By accessing or using this website (Cube · 3D Graphic Design Studio, hereinafter "the Tool"), you acknowledge that you have read, understood and agree to all terms of this Agreement. If you do not agree, please do not use the Tool.'},
+          {h:'2. Scope and Restrictions', p:'The Tool is a pure front-end web application built on Three.js, provided solely for personal learning, creative design and non-commercial use. You may not use it for any unlawful, infringing or commercial purposes, nor reverse-engineer, crack or redistribute it for profit.'},
+          {h:'3. User Content and IP', p:'All models, text, images and scene data you create, import or export belong to you or their respective rightful owners. The software copyright, name, logo and UI design of the Tool belong to the author, Yushichadao.'},
+          {h:'4. No Account or Fees', p:'The Tool requires no registration and charges no fees. You use all local features directly as a guest.'},
+          {h:'5. Changes and Termination', p:'The author reserves the right to modify, suspend or terminate the Tool or any of its features at any time without prior notice.'},
+          {h:'6. Governing Law', p:'The formation, validity, interpretation and dispute resolution of this Agreement shall be governed by the applicable laws of the relevant jurisdiction.'}
+        ]},
+        disclaimer:{ label:'Disclaimer', sections:[
+          {h:'1. "As Is"', p:'The Tool is provided "as is" without any express or implied warranty of availability, accuracy, completeness or fitness for a particular purpose.'},
+          {h:'2. Limitation of Liability', p:'Under no circumstances shall the author be liable for any direct, indirect, incidental or consequential damages arising from the use of or inability to use the Tool.'},
+          {h:'3. Third-Party Resources', p:'The Tool may contain links to third-party websites (e.g. GitHub). Such content and privacy practices are the responsibility of those third parties; the author makes no endorsement and assumes no liability.'},
+          {h:'4. User Content Responsibility', p:'You are solely responsible for any content you create or upload using the Tool, and must ensure it does not infringe any third party\'s lawful rights.'}
+        ]},
+        privacy:{ label:'Privacy Policy', sections:[
+          {h:'1. No Personal Data Collected', p:'The Tool does not collect, record or store any of your personal information.'},
+          {h:'2. Pure Front-End, Local Processing', p:'The Tool is a pure front-end application; all 3D models, text, images and scenes are rendered and processed locally in your browser in real time.'},
+          {h:'3. No Server Uploads', p:'The Tool never uploads any of your scene data, files or user information to any server.'},
+          {h:'4. No Tracking or Analytics', p:'The Tool does not set any tracking, analytics or advertising cookies, nor does it perform behavioral analytics.'},
+          {h:'5. Third-Party Links', p:'If you access third-party links (e.g. GitHub) via the Tool, please refer to that third party\'s privacy policy.'},
+          {h:'6. Contact', p:'For any questions about this Privacy Policy, contact the author Yushichadao via the project\'s GitHub repository.'}
+        ]}
+      }
+    },
+    'ja': {
+      back:'エディタに戻る', repo:'GitHub リポジトリ',
+      ai:'本サイトは TRAE と CodeBuddy のツールによる AI 支援で生成されました。',
+      copyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.',
+      types:{
+        terms:{ label:'利用規約', sections:[
+          {h:'1. 規約の同意', p:'本ウェブサイト（立方・3D グラフィックデザイン工房、以下「本ツール」）にアクセスまたは利用することで、お客様は本規約のすべてを読み、理解し、同意したものとみなします。同意されない場合はご利用をお控えください。'},
+          {h:'2. 利用範囲と制限', p:'本ツールは Three.js ベースの純粋なフロントエンド Web アプリケーションであり、個人の学習・クリエイティブ制作・非商用目的のみに提供されます。違法・権利侵害・営利目的での利用、リバースエンジニアリング、クラック、営利目的の再配布は禁止します。'},
+          {h:'3. 利用者のコンテンツと知的財産', p:'お客様が作成・インポート・エクスポートしたすべてのモデル・テキスト・画像・シーンデータの知的財産権は、お客様または正当な権利者に帰属します。本ツール自体の著作権・名称・ロゴ・UI デザインは作者 Yushichadao に帰属します。'},
+          {h:'4. アカウント・料金なし', p:'本ツールは登録不要・無料です。ゲストとしてすべてのローカル機能を直接ご利用いただけます。'},
+          {h:'5. サービスの変更・終了', p:'作者は事前の通知なく、本ツールまたはその一部の機能をいつでも変更・停止・終了する権利を有します。'},
+          {h:'6. 準拠法', p:'本規約の成立・効力・解釈および紛争解決には、関係法域の現行法が適用されます。'}
+        ]},
+        disclaimer:{ label:'免責事項', sections:[
+          {h:'1. 「現状有姿」での提供', p:'本ツールは「現状有姿」で提供され、可用性・正確性・完全性・特定目的への適合性についていかなる明示的または黙示的な保証もいたしません。'},
+          {h:'2. 責任の制限', p:'いかなる場合においても、本ツールの利用または利用不能に伴い生じた直接的・間接的・付随的・結果的な損害について、作者は一切の責任を負いません。'},
+          {h:'3. 第三者リソース', p:'本ツールには GitHub などの第三者サイトへのリンクが含まれる場合があります。当該コンテンツとプライバシー実践は第三者の責任であり、作者は推奨も責任も負いません。'},
+          {h:'4. 利用者コンテンツの責任', p:'お客様は本ツールで作成またはアップロードしたコンテンツについて全責任を負い、第三者の正当な権利を侵害しないことを保証するものとします。'}
+        ]},
+        privacy:{ label:'プライバシーポリシー', sections:[
+          {h:'1. 個人データの非収集', p:'本ツールはお客様の個人情報を収集・記録・保存することはありません。'},
+          {h:'2. 純フロントエンド・ローカル処理', p:'本ツールは純粋なフロントエンドアプリケーションであり、すべての 3D モデル・テキスト・画像・シーンはお客様のブラウザ内でローカルにリアルタイム処理されます。'},
+          {h:'3. サーバーへの送信なし', p:'本ツールはお客様のシーンデータ・ファイル・ユーザー情報をいかなるサーバーにも送信しません。'},
+          {h:'4. トラッキング・分析なし', p:'本ツールは追跡・分析・広告用 Cookie を一切設定せず、行動分析も行いません。'},
+          {h:'5. 第三者リンク', p:'本ツールから GitHub などの第三者リンクへアクセスする場合は、各社のプライバシーポリシーをご参照ください。'},
+          {h:'6. お問い合わせ', p:'本プライバシーポリシーに関するご質問は、プロジェクトの GitHub リポジトリを通じて作者 Yushichadao までお問い合わせください。'}
+        ]}
+      }
+    },
+    'zh-tw': {
+      back:'返回編輯器', repo:'GitHub 倉庫',
+      ai:'本站使用 TRAE 與 CodeBuddy 工具的 AI 能力輔助生成。',
+      copyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.',
+      types:{
+        terms:{ label:'服務條款', sections:[
+          {h:'1. 條款的接受', p:'存取或使用本網站（立方·三維圖形設計工坊，以下簡稱「本工具」）即表示您已閱讀、理解並同意本服務協議的全部條款。若您不同意，請勿使用本工具。'},
+          {h:'2. 使用範圍與限制', p:'本工具為基於 Three.js 的純前端網頁應用，僅供個人學習、創意設計與非商業用途。您不得將其用於任何違法、侵權或商業牟利活動，亦不得對本工具進行逆向工程、破解或二次分發牟利。'},
+          {h:'3. 使用者內容與智慧財產權', p:'您在本工具中建立、匯入或匯出的所有模型、文字、圖像及場景資料，其智慧財產權歸您或相關權利人所有。本工具本身的軟體著作權、名稱、標識及介面設計歸作者 Yushichadao 所有。'},
+          {h:'4. 無帳號與費用', p:'本工具無需註冊帳號，不收取任何費用。您以訪客身分直接使用全部本機功能。'},
+          {h:'5. 服務的變更與終止', p:'作者保留在不另行通知的情況下，隨時修改、暫停或終止本工具及其部分功能的權利。'},
+          {h:'6. 適用法律', p:'本協議的訂立、效力、解釋及爭議解決均適用相關司法管轄區的現行法律法規。'}
+        ]},
+        disclaimer:{ label:'免責聲明', sections:[
+          {h:'1. 「現狀」提供', p:'本工具按「現狀」提供，不對其可用性、準確性、完整性或適用性作任何明示或暗示的擔保。'},
+          {h:'2. 責任限制', p:'在任何情況下，作者均不對因使用或無法使用本工具而產生的任何直接、間接、附帶或結果性損失承擔責任。'},
+          {h:'3. 第三方資源', p:'本工具可能包含指向第三方網站（如 GitHub）的連結，此類連結的內容與隱私實踐由第三方負責，作者不予置評亦不承擔責任。'},
+          {h:'4. 使用者內容責任', p:'您應對使用本工具建立或上傳的內容負完全責任，確保其不侵犯任何第三方的合法權益。'}
+        ]},
+        privacy:{ label:'隱私權政策', sections:[
+          {h:'1. 不收集個人資訊', p:'本工具不會收集、記錄或儲存您的任何個人資訊。'},
+          {h:'2. 純前端本機處理', p:'本工具為純前端應用，所有三維模型、文字、圖像及場景均在您的瀏覽器本機即時渲染與處理。'},
+          {h:'3. 不上傳伺服器', p:'本工具不會將您的任何場景資料、檔案或使用者資訊上傳至任何伺服器。'},
+          {h:'4. 無追蹤分析', p:'本工具不植入任何追蹤、統計或廣告 Cookie，亦不進行行為分析。'},
+          {h:'5. 第三方連結', p:'如您透過本工具存取第三方連結（如 GitHub），請參照該第三方的隱私權政策。'},
+          {h:'6. 聯絡方式', p:'如對本隱私權政策有疑問，可透過專案 GitHub 倉庫與作者 Yushichadao 聯繫。'}
+        ]}
+      }
+    }
+  };
+
+  function getParam(name, def){ const p = new URLSearchParams(location.search); const v = p.get(name); return v || def; }
+  function currentType(){ const t = getParam('type','terms'); return TYPES.includes(t) ? t : 'terms'; }
+  function currentLang(){ const l = getParam('lang','zh'); return DATA[l] ? l : 'zh'; }
+  function go(param, value){ const u = new URL(location.href); u.searchParams.set(param, value); location.href = u.toString(); }
+
+  function render(){
+    const lang = currentLang(), type = currentType(), d = DATA[lang];
+    document.documentElement.lang = (lang === 'zh-tw') ? 'zh-tw' : lang;
+    document.title = d.types[type].label;
+
+    // 顶部返回文字
+    document.querySelector('.legal-back').textContent = d.back;
+
+    // 语言切换
+    const langBox = document.getElementById('legal-lang');
+    langBox.innerHTML = '';
+    LANGS.forEach(L => {
+      const b = document.createElement('button');
+      b.className = 'legal-lang-btn' + (L.key === lang ? ' active' : '');
+      b.textContent = L.label;
+      b.onclick = () => go('lang', L.key);
+      langBox.appendChild(b);
+    });
+
+    // 类型导航
+    const nav = document.getElementById('legal-nav');
+    nav.innerHTML = '';
+    TYPES.forEach(tp => {
+      const a = document.createElement('button');
+      a.className = 'legal-tab' + (tp === type ? ' active' : '');
+      a.textContent = d.types[tp].label;
+      a.onclick = () => go('type', tp);
+      nav.appendChild(a);
+    });
+
+    // 标题与正文
+    document.getElementById('legal-title').textContent = d.types[type].label;
+    const body = document.getElementById('legal-body');
+    body.innerHTML = '';
+    d.types[type].sections.forEach(s => {
+      const h = document.createElement('h2'); h.textContent = s.h;
+      const p = document.createElement('p'); p.textContent = s.p;
+      body.appendChild(h); body.appendChild(p);
+    });
+
+    // 页脚
+    document.getElementById('legal-ai').textContent = d.ai;
+    const repo = document.getElementById('legal-repo');
+    repo.textContent = d.repo;
+    document.getElementById('legal-copy').textContent = d.copyright;
+  }
+  render();
+</script>
+</body>
+</html>

@@ -514,13 +514,8 @@
   .about-author { font-size:13px; color:var(--text-dim); margin:8px 0; }
   .about-author span { color:var(--text); font-weight:600; }
   .about-terms { margin:14px 0 4px; display:flex; flex-direction:column; gap:8px; text-align:left; }
-  .about-term { border:1px solid var(--border); border-radius:8px; background:var(--bg-panel); overflow:hidden; transition:border-color .18s; }
-  .about-term[open] { border-color:var(--accent); }
-  .about-term summary { cursor:pointer; list-style:none; padding:10px 12px; font-size:13px; font-weight:600; color:var(--text); user-select:none; display:flex; align-items:center; justify-content:space-between; }
-  .about-term summary::-webkit-details-marker { display:none; }
-  .about-term summary::after { content:'▸'; color:var(--text-dim); transition:transform .2s; font-size:11px; }
-  .about-term[open] summary::after { transform:rotate(90deg); }
-  .about-term p { margin:0; padding:0 12px 12px; font-size:12px; line-height:1.7; color:var(--text-dim); }
+  .about-term-link { display:block; text-align:center; padding:11px 12px; font-size:13px; font-weight:600; color:var(--text); text-decoration:none; border:1px solid var(--border); border-radius:10px; background:var(--bg-panel); transition:border-color .18s, background .18s, color .18s; }
+  .about-term-link:hover { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--accent); text-decoration:none; }
 
   /* 内联文本输入 */
   .inline-text-wrap {
@@ -1261,20 +1256,12 @@
             <p data-i18n="aboutDesc">基于 Three.js 的网页端三维图形设计与编辑工具。</p>
             <p class="about-dim" data-i18n="aboutStack">技术栈：Three.js / WebGL</p>
             <p class="about-author"><span data-i18n="aboutAuthor">作者</span>：Yushichadao</p>
+            <p class="about-author"><span data-i18n="aboutAI">AI 辅助</span>：<span data-i18n="aboutAIText">使用 TRAE 与 CodeBuddy 工具的 AI 能力辅助生成</span></p>
             <a class="about-link" id="about-repo" href="https://github.com/yushichadao/3d-editor" target="_blank" rel="noopener" data-i18n="aboutRepo">GitHub 仓库</a>
             <div class="about-terms">
-              <details class="about-term">
-                <summary data-i18n="tosLink">服务协议</summary>
-                <p data-i18n="tosBody"></p>
-              </details>
-              <details class="about-term">
-                <summary data-i18n="disclaimerLink">免责声明</summary>
-                <p data-i18n="disclaimerBody"></p>
-              </details>
-              <details class="about-term">
-                <summary data-i18n="privacyLink">隐私政策</summary>
-                <p data-i18n="privacyBody"></p>
-              </details>
+              <a class="about-term-link" href="legal.html?type=terms" target="_blank" rel="noopener" data-i18n="tosLink">服务协议</a>
+              <a class="about-term-link" href="legal.html?type=disclaimer" target="_blank" rel="noopener" data-i18n="disclaimerLink">免责声明</a>
+              <a class="about-term-link" href="legal.html?type=privacy" target="_blank" rel="noopener" data-i18n="privacyLink">隐私政策</a>
             </div>
             <p class="about-copy" data-i18n="aboutCopyright">Copyright © 2026-Present Yushichadao. All Rights Reserved.</p>
           </div>
@@ -1321,7 +1308,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js?v=6';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 // 简体中文作为内置默认与回退；其余语言存放在 language/ 目录下独立文件中（见 <head> 的 <script src> 引用）
-const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabHelp:'帮助', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', helpEmpty:'帮助内容即将上线，敬请期待。', themeTitle:'主题风格', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', tosLink:'服务协议', disclaimerLink:'免责声明', privacyLink:'隐私政策', tosBody:'使用本工具即表示您同意以下条款：本工具仅供个人学习、创意设计与非商业用途；您需对自身上传或创作的素材内容负责，确保其不侵犯任何第三方权利；我们保留在不另行通知的情况下修改或停止服务的权利。请合理使用，遵守当地法律法规。', disclaimerBody:'本工具按「现状」提供，不对其可用性、准确性或适用性作任何明示或暗示担保。使用者因使用本工具而产生的任何直接或间接损失，开发者不承担任何责任。工具内置的 AI 辅助功能生成内容仅供参照，不构成专业建议。', privacyBody:'我们高度重视您的隐私。本工具为纯前端应用，所有三维模型、文本、图像及场景数据均在您的浏览器本地处理与保存，不会上传至任何服务器。我们不会收集、存储或共享您的个人信息。如您使用第三方链接（如 GitHub），请参照其相应隐私政策。', cancel:'取消', confirm:'确认', ok:'确定', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏',
+const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabHelp:'帮助', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', helpEmpty:'帮助内容即将上线，敬请期待。', themeTitle:'主题风格', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', aboutAI:'AI 辅助', aboutAIText:'使用 TRAE 与 CodeBuddy 工具的 AI 能力辅助生成', tosLink:'服务协议', disclaimerLink:'免责声明', privacyLink:'隐私政策', tosBody:'使用本工具即表示您同意以下条款：本工具仅供个人学习、创意设计与非商业用途；您需对自身上传或创作的素材内容负责，确保其不侵犯任何第三方权利；我们保留在不另行通知的情况下修改或停止服务的权利。请合理使用，遵守当地法律法规。', disclaimerBody:'本工具按「现状」提供，不对其可用性、准确性或适用性作任何明示或暗示担保。使用者因使用本工具而产生的任何直接或间接损失，开发者不承担任何责任。', privacyBody:'我们高度重视您的隐私。本工具为纯前端应用，所有三维模型、文本、图像及场景数据均在您的浏览器本地处理与保存，不会上传至任何服务器。我们不会收集、存储或共享您的个人信息。如您使用第三方链接（如 GitHub），请参照其相应隐私政策。', cancel:'取消', confirm:'确认', ok:'确定', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏',
  // 面板标题
  sec3D:'3D 图形', sec2D:'2D 图形', secTransform:'变换', secMaterial:'材质', secColor:'颜色', secPattern:'花纹 / 贴图', secTextBox:'文本框', secEraser:'橡皮擦属性', secMouse:'鼠标相关操作', secTouch:'手势操作', secKeyboard:'键盘快捷键',
  // Tab 按钮
@@ -1354,7 +1341,7 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
  declBody2:'2D/3D 画笔、文本/图片/贴图/花纹、精确的平移/旋转/缩放、历史撤销重做与 JSON 场景导入导出。',
  declBody3:'所有三维模型、纹理、文本与图像均在浏览器本地实时渲染生成，支持自由用于个人学习与创意设计。',
  declBody4:'场景数据可导出为 JSON 文件本地保存，不上传任何用户信息至服务器。',
- declAuthor:'作者', declAI:'AI 辅助', declAIText:'使用 TRAE 工具的 AI 能力辅助生成', declUpdate:'最后更新',
+ declAuthor:'作者', declAI:'AI 辅助', declAIText:'使用 TRAE 与 CodeBuddy 工具的 AI 能力辅助生成', declUpdate:'最后更新',
  // 鼠标/触摸帮助
  helpMouseClick:'单击左键', helpMouseClickDesc:'选择对象/控件',
  helpMouseDblClick:'双击左键', helpMouseDblClickDesc:'编辑文本',
