@@ -5114,8 +5114,10 @@ async function startScreenPick() {
   if (pickingColor) return;
   pickerModal.classList.remove('show'); // 先收起弹窗避免遮挡
   pickingColor = true;
-  // 优先截屏（可取自网页外），失败则回退到 3D 画布（仅网页内）
-  const ok = await captureScreen();
+  const isTouch = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
+  // 桌面端优先截屏（可取自网页外）；触屏端跳过共享屏幕这类高危操作，直接在页面(3D 画布)中取色
+  let ok = false;
+  if (!isTouch) ok = await captureScreen();
   if (!ok) captureCanvasFallback();
   if (!sampleCanvas) { // 完全失败
     pickingColor = false;
@@ -5124,7 +5126,6 @@ async function startScreenPick() {
     return;
   }
   buildOverlay(); // 全屏冻结覆盖层，屏蔽页面交互，对象不响应任何事件
-  const isTouch = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
   if (isTouch) {
     // 触屏：初始隐藏放大镜与确认按钮，等待轻点 / 长按
     loupeEl.style.display = 'none';
