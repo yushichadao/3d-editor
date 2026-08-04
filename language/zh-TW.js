@@ -10,8 +10,8 @@ window.__packs['zh-TW'] = {
   themeTitle:'主題風格', langTitle:'語言切換',
   aboutName:'立方·三維圖形設計工坊', aboutDesc:'基於 Three.js 的網頁端三維圖形設計與編輯工具。',
   aboutStack:'技術棧：Three.js / WebGL', aboutRepo:'GitHub 倉庫',
-  aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', aboutAI:'AI 輔助', aboutAIText:'使用 TRAE 與 CodeBuddy 工具的 AI 能力輔助生成', tosLink:'服務條款', disclaimerLink:'免責聲明', privacyLink:'隱私權政策', tosBody:'使用本工具即表示您同意以下條款：本工具僅供個人學習、創意設計與非商業用途；您需對自身上傳或創作的素材內容負責，確保其不侵犯任何第三方權利；我們保留在不另行通知的情況下修改或停止服務的權利。請合理使用，遵守當地法律法規。', disclaimerBody:'本工具按「現狀」提供，不對其可用性、準確性或適用性作任何明示或暗示擔保。使用者因使用本工具而產生的任何直接或間接損失，開發者不承擔任何責任。工具內建的 AI 輔助功能生成內容僅供參照，不構成專業建議。', privacyBody:'我們高度重視您的隱私。本工具為純前端應用，所有三維模型、文字、圖像及場景資料均在您的瀏覽器本機處理與保存，不會上傳至任何伺服器。我們不會收集、儲存或共享您的個人資訊。如您使用第三方連結（如 GitHub），請參照其相應隱私權政策。',
-  cancel:'取消', confirm:'確認', ok:'確定', apply:'套用顏色',
+  aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', aboutAI:'本網站由 TRAE 與 CodeBuddy 工具 AI 輔助生成', tosLink:'服務條款', disclaimerLink:'免責聲明', privacyLink:'隱私權政策', tosBody:'使用本工具即表示您同意以下條款：本工具僅供個人學習、創意設計與非商業用途；您需對自身上傳或創作的素材內容負責，確保其不侵犯任何第三方權利；我們保留在不另行通知的情況下修改或停止服務的權利。請合理使用，遵守當地法律法規。', disclaimerBody:'本工具按「現狀」提供，不對其可用性、準確性或適用性作任何明示或暗示擔保。使用者因使用本工具而產生的任何直接或間接損失，開發者不承擔任何責任。', privacyBody:'我們高度重視您的隱私。本工具為純前端應用，所有三維模型、文字、圖像及場景資料均在您的瀏覽器本機處理與保存，不會上傳至任何伺服器。我們不會收集、儲存或共享您的個人資訊。如您使用第三方連結（如 GitHub），請參照其相應隱私權政策。',
+  cancel:'取消', confirm:'確認', ok:'確定', close:'關閉', apply:'套用顏色',
   fs:'全螢幕', fsExit:'退出全螢幕',
 
   // Panel headers
