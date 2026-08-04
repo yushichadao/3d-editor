@@ -397,6 +397,41 @@
   .modal-box textarea:focus { border-color: var(--accent); }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
 
+  /* 设置弹窗 */
+  .settings-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); }
+  .settings-close { background:transparent; border:none; color:var(--text-dim); font-size:15px; cursor:pointer; line-height:1; padding:4px 8px; border-radius:6px; }
+  .settings-close:hover { color:var(--text); background:color-mix(in srgb, var(--accent) 14%, transparent); }
+  .settings-body { display:flex; min-height:300px; }
+  .settings-tabs { width:118px; flex-shrink:0; border-right:1px solid var(--border); padding:8px; display:flex; flex-direction:column; gap:4px; }
+  .settings-tab { text-align:left; padding:9px 10px; border-radius:8px; background:transparent; border:none; color:var(--text-dim); cursor:pointer; font-size:13px; transition:all .15s; }
+  .settings-tab:hover { background:color-mix(in srgb, var(--accent) 10%, transparent); color:var(--text); }
+  .settings-tab.active { background:color-mix(in srgb, var(--accent) 18%, transparent); color:var(--accent); font-weight:600; }
+  .settings-content { flex:1; padding:16px; overflow-y:auto; }
+  .settings-pane { animation: fade .2s ease; }
+  .settings-empty { color:var(--text-dim); font-size:13px; line-height:1.8; }
+  .theme-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:10px; margin-top:8px; }
+  .theme-card { border:1px solid var(--border); border-radius:10px; padding:10px 6px; cursor:pointer; transition:all .15s; text-align:center; }
+  .theme-card:hover { border-color:var(--accent); }
+  .theme-card.active { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
+  .theme-swatches { display:flex; gap:4px; justify-content:center; margin-bottom:7px; }
+  .theme-sw { width:18px; height:18px; border-radius:50%; }
+  .theme-name { font-size:11px; color:var(--text); }
+  .theme-follow { display:flex; align-items:center; gap:6px; margin-top:14px; font-size:13px; color:var(--text); cursor:pointer; }
+  .theme-follow input { accent-color:var(--accent); }
+  .lang-list { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .lang-item { display:flex; align-items:center; justify-content:space-between; padding:11px 12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:13px; color:var(--text); transition:all .15s; }
+  .lang-item:hover { border-color:var(--accent); }
+  .lang-item.active { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
+  .lang-check { color:var(--accent); opacity:0; }
+  .lang-item.active .lang-check { opacity:1; }
+  .about-box { text-align:center; padding:12px 4px; }
+  .about-logo { width:48px; height:48px; border-radius:14px; margin:0 auto 14px; background:conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent)); }
+  .about-box h2 { font-size:16px; margin-bottom:10px; color:var(--text); }
+  .about-box p { font-size:13px; color:var(--text-dim); line-height:1.7; margin-bottom:6px; }
+  .about-link { display:inline-block; margin:10px 0 6px; color:var(--accent); font-size:13px; text-decoration:none; }
+  .about-link:hover { text-decoration:underline; }
+  .about-copy { font-size:12px; color:var(--text-dim); }
+
   /* 内联文本输入 */
   .inline-text-wrap {
     position: fixed; z-index: 160;
@@ -542,20 +577,22 @@
 <header class="topbar">
   <div class="brand"><div class="logo"></div><span>立方·三维设计工坊</span></div>
   <div class="top-actions">
-    <button class="top-btn" id="btn-new" title="新建场景 (Ctrl+N)"><span class="ic">✨</span><span class="lbl">新建</span></button>
-    <button class="top-btn" id="btn-import" title="导入场景 JSON (Ctrl+O)"><span class="ic">📥</span><span class="lbl">导入</span></button>
-    <button class="top-btn" id="btn-export" title="导出场景 JSON (Ctrl+S)"><span class="ic">📤</span><span class="lbl">导出</span></button>
-    <button class="top-btn" id="btn-shot" title="导出图像 PNG (Ctrl+P)"><span class="ic">📷</span><span class="lbl">截图</span></button>
+    <button class="top-btn" id="btn-new" title="新建场景 (Ctrl+N)"><span class="ic">✨</span><span class="lbl" data-i18n="new">新建</span></button>
+    <button class="top-btn" id="btn-import" title="导入场景 JSON (Ctrl+O)"><span class="ic">📥</span><span class="lbl" data-i18n="import">导入</span></button>
+    <button class="top-btn" id="btn-export" title="导出场景 JSON (Ctrl+S)"><span class="ic">📤</span><span class="lbl" data-i18n="export">导出</span></button>
+    <button class="top-btn" id="btn-shot" title="导出图像 PNG (Ctrl+P)"><span class="ic">📷</span><span class="lbl" data-i18n="shot">截图</span></button>
     <div class="top-btn-sep"></div>
-    <button class="top-btn" id="btn-undo" title="撤销 (Ctrl+Z)"><span class="ic">↶</span><span class="lbl">撤销</span></button>
-    <button class="top-btn" id="btn-redo" title="重做 (Ctrl+Y)"><span class="ic">↷</span><span class="lbl">重做</span></button>
-    <button class="top-btn" id="btn-copy" title="复制 (Ctrl+C)"><span class="ic">⧉</span><span class="lbl">复制</span></button>
-    <button class="top-btn" id="btn-paste" title="粘贴 (Ctrl+V)"><span class="ic">📋</span><span class="lbl">粘贴</span></button>
-    <button class="top-btn" id="btn-dup" title="克隆 (Ctrl+D)"><span class="ic">⎘</span><span class="lbl">克隆</span></button>
-    <button class="top-btn" id="btn-clear" title="清空场景（Ctrl+Del/Backspace）"><span class="ic">🗑</span><span class="lbl">清空</span></button>
+    <button class="top-btn" id="btn-undo" title="撤销 (Ctrl+Z)"><span class="ic">↶</span><span class="lbl" data-i18n="undo">撤销</span></button>
+    <button class="top-btn" id="btn-redo" title="重做 (Ctrl+Y)"><span class="ic">↷</span><span class="lbl" data-i18n="redo">重做</span></button>
+    <button class="top-btn" id="btn-copy" title="复制 (Ctrl+C)"><span class="ic">⧉</span><span class="lbl" data-i18n="copy">复制</span></button>
+    <button class="top-btn" id="btn-paste" title="粘贴 (Ctrl+V)"><span class="ic">📋</span><span class="lbl" data-i18n="paste">粘贴</span></button>
+    <button class="top-btn" id="btn-dup" title="克隆 (Ctrl+D)"><span class="ic">⎘</span><span class="lbl" data-i18n="dup">克隆</span></button>
+    <button class="top-btn" id="btn-clear" title="清空场景（Ctrl+Del/Backspace）"><span class="ic">🗑</span><span class="lbl" data-i18n="clear">清空</span></button>
     <div class="top-btn-sep"></div>
-    <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl">坐标轴</span></button>
-    <button class="top-btn" id="btn-grid" title="切换网格面显示"><span class="ic">🔲</span><span class="lbl">网格面</span></button>
+    <button class="top-btn" id="btn-axes" title="切换坐标轴显示"><span class="ic">📐</span><span class="lbl" data-i18n="axes">坐标轴</span></button>
+    <button class="top-btn" id="btn-grid" title="切换网格面显示"><span class="ic">🔲</span><span class="lbl" data-i18n="grid">网格面</span></button>
+    <div class="top-btn-sep"></div>
+    <button class="top-btn" id="btn-settings" title="设置"><span class="ic">⚙</span><span class="lbl" data-i18n="settings">设置</span></button>
     <button class="top-btn primary" id="btn-fs" title="全屏 (F11 / Esc)"><span class="ic">⛶</span><span class="lbl">全屏</span></button>
   </div>
 </header>
@@ -1037,8 +1074,8 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button class="top-btn" id="color-picker-cancel">取消</button>
-      <button class="top-btn primary" id="color-picker-ok">应用颜色</button>
+      <button class="top-btn" id="color-picker-cancel" data-i18n="cancel">取消</button>
+      <button class="top-btn primary" id="color-picker-ok" data-i18n="apply">应用颜色</button>
     </div>
   </div>
 </div>
@@ -1049,8 +1086,8 @@
     <div class="modal-title" id="text-modal-title">输入文本</div>
     <textarea id="text-modal-input" rows="3" placeholder="请输入文本内容..."></textarea>
     <div class="modal-actions">
-      <button class="top-btn" id="text-modal-cancel">取消</button>
-      <button class="top-btn primary" id="text-modal-ok">确定</button>
+      <button class="top-btn" id="text-modal-cancel" data-i18n="cancel">取消</button>
+      <button class="top-btn primary" id="text-modal-ok" data-i18n="ok">确定</button>
     </div>
   </div>
 </div>
@@ -1064,8 +1101,50 @@
     <div class="modal-title" id="confirm-modal-title">确认</div>
     <div id="confirm-modal-msg" style="font-size:14px; color:var(--text); line-height:1.6; margin-bottom:4px;"></div>
     <div class="modal-actions">
-      <button class="top-btn" id="confirm-modal-cancel">取消</button>
-      <button class="top-btn primary" id="confirm-modal-ok">确定</button>
+      <button class="top-btn" id="confirm-modal-cancel" data-i18n="cancel">取消</button>
+      <button class="top-btn primary" id="confirm-modal-ok" data-i18n="ok">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置弹窗 -->
+<div class="modal-mask" id="settings-modal">
+  <div class="modal-box" style="width:min(540px,92vw); padding:0;">
+    <div class="settings-head">
+      <div class="modal-title" data-i18n="settingsTitle">设置</div>
+      <button class="settings-close" id="settings-close" title="关闭">✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="settings-tabs" id="settings-tabs">
+        <button class="settings-tab active" data-tab="help"><span data-i18n="tabHelp">帮助</span></button>
+        <button class="settings-tab" data-tab="theme"><span data-i18n="tabTheme">主题风格</span></button>
+        <button class="settings-tab" data-tab="lang"><span data-i18n="tabLang">语言切换</span></button>
+        <button class="settings-tab" data-tab="about"><span data-i18n="tabAbout">关于</span></button>
+      </div>
+      <div class="settings-content">
+        <div class="settings-pane" data-pane="help">
+          <p class="settings-empty" data-i18n="helpEmpty">帮助内容即将上线，敬请期待。</p>
+        </div>
+        <div class="settings-pane" data-pane="theme" style="display:none;">
+          <div class="ctrl-label"><span data-i18n="themeTitle">主题风格</span></div>
+          <div class="theme-grid" id="theme-grid"></div>
+          <label class="theme-follow"><input type="checkbox" id="theme-follow"> <span data-i18n="themeFollow">跟随系统</span></label>
+        </div>
+        <div class="settings-pane" data-pane="lang" style="display:none;">
+          <div class="ctrl-label"><span data-i18n="langTitle">语言切换</span></div>
+          <div class="lang-list" id="lang-list"></div>
+        </div>
+        <div class="settings-pane" data-pane="about" style="display:none;">
+          <div class="about-box">
+            <div class="about-logo"></div>
+            <h2 data-i18n="aboutName">立方·三维图形设计工坊</h2>
+            <p data-i18n="aboutDesc">基于 Three.js 的网页端三维图形设计与编辑工具。</p>
+            <p class="about-dim" data-i18n="aboutStack">技术栈：Three.js / WebGL</p>
+            <a class="about-link" id="about-repo" href="https://github.com/yushichadao/3d-editor" target="_blank" rel="noopener" data-i18n="aboutRepo">GitHub 仓库</a>
+            <p class="about-copy" data-i18n="aboutCopyright">© 2026 立方工坊</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -5577,16 +5656,117 @@ document.getElementById('btn-fs').addEventListener('click', () => {
 });
 document.addEventListener('fullscreenchange', () => {
   const btn = document.getElementById('btn-fs');
+  const d = (LANGS[currentLang] || LANGS['zh-CN']).dict;
   if (document.fullscreenElement) {
     btn.querySelector('.ic').textContent = '⤢';
-    btn.querySelector('.lbl').textContent = '退出全屏';
-    btn.title = '退出全屏 (F11 / Esc)';
+    btn.querySelector('.lbl').textContent = d.fsExit;
+    btn.title = d.fsExit + ' (F11 / Esc)';
   } else {
     btn.querySelector('.ic').textContent = '⛶';
-    btn.querySelector('.lbl').textContent = '全屏';
-    btn.title = '全屏 (F11 / Esc)';
+    btn.querySelector('.lbl').textContent = d.fs;
+    btn.title = d.fs + ' (F11 / Esc)';
   }
 });
+
+/* ===== 多语言 / 主题 / 设置页 ===== */
+const I18N = {
+  'zh-CN': { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabHelp:'帮助', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', helpEmpty:'帮助内容即将上线，敬请期待。', themeTitle:'主题风格', themeFollow:'跟随系统', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', aboutCopyright:'© 2026 立方工坊', cancel:'取消', ok:'确定', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏' },
+  'zh-TW': { new:'新建', import:'匯入', export:'匯出', shot:'截圖', undo:'復原', redo:'重做', copy:'複製', paste:'貼上', dup:'複製', clear:'清空', axes:'座標軸', grid:'網格面', settings:'設定', settingsTitle:'設定', tabHelp:'說明', tabTheme:'主題風格', tabLang:'語言切換', tabAbout:'關於', helpEmpty:'說明內容即將上線，敬請期待。', themeTitle:'主題風格', themeFollow:'跟隨系統', langTitle:'語言切換', aboutName:'立方·三維圖形設計工坊', aboutDesc:'基於 Three.js 的網頁端三維圖形設計與編輯工具。', aboutStack:'技術架構：Three.js / WebGL', aboutRepo:'GitHub 儲存庫', aboutCopyright:'© 2026 立方工坊', cancel:'取消', ok:'確定', apply:'套用顏色', fs:'全螢幕', fsExit:'退出全螢幕' },
+  'en': { new:'New', import:'Import', export:'Export', shot:'Snapshot', undo:'Undo', redo:'Redo', copy:'Copy', paste:'Paste', dup:'Duplicate', clear:'Clear', axes:'Axes', grid:'Grid', settings:'Settings', settingsTitle:'Settings', tabHelp:'Help', tabTheme:'Theme', tabLang:'Language', tabAbout:'About', helpEmpty:'Help content coming soon.', themeTitle:'Theme', themeFollow:'Follow system', langTitle:'Language', aboutName:'Cube · 3D Design Studio', aboutDesc:'A web-based 3D graphics design and editing tool built on Three.js.', aboutStack:'Tech: Three.js / WebGL', aboutRepo:'GitHub Repository', aboutCopyright:'© 2026 Cube Studio', cancel:'Cancel', ok:'OK', apply:'Apply Color', fs:'Fullscreen', fsExit:'Exit Fullscreen' },
+  'ja': { new:'新規', import:'インポート', export:'エクスポート', shot:'スナップショット', undo:'元に戻す', redo:'やり直す', copy:'コピー', paste:'貼り付け', dup:'複製', clear:'クリア', axes:'軸', grid:'グリッド', settings:'設定', settingsTitle:'設定', tabHelp:'ヘルプ', tabTheme:'テーマ', tabLang:'言語', tabAbout:'情報', helpEmpty:'ヘルプは近日公開予定です。', themeTitle:'テーマ', themeFollow:'システムに合わせる', langTitle:'言語', aboutName:'Cube・3Dデザインスタジオ', aboutDesc:'Three.js ベースのウェブ型 3D グラフィック作成・編集ツール。', aboutStack:'技術: Three.js / WebGL', aboutRepo:'GitHub リポジトリ', aboutCopyright:'© 2026 Cube Studio', cancel:'キャンセル', ok:'OK', apply:'色を適用', fs:'全画面', fsExit:'全画面を終了' },
+};
+const THEMES = {
+  neon:   { name:'霓虹蓝紫', vars:{ '--bg-deep':'#0c0e16','--bg-panel':'rgba(20,22,34,0.82)','--bg-panel-solid':'#14161f','--accent':'#6ee7ff','--accent-2':'#c084fc','--accent-3':'#fb7185','--warn':'#fbbf24','--text':'#e8e8f0','--text-dim':'#8b8ba0','--border':'rgba(110,231,255,0.18)' } },
+  sunset: { name:'日落暖橙', vars:{ '--bg-deep':'#1a0f0a','--bg-panel':'rgba(34,20,14,0.82)','--bg-panel-solid':'#21140d','--accent':'#ffb454','--accent-2':'#ff7a59','--accent-3':'#ff5d8f','--warn':'#ffd166','--text':'#f5e9e0','--text-dim':'#b3998c','--border':'rgba(255,180,84,0.18)' } },
+  forest: { name:'森林青绿', vars:{ '--bg-deep':'#08130d','--bg-panel':'rgba(14,28,20,0.82)','--bg-panel-solid':'#0e1c14','--accent':'#5eead4','--accent-2':'#86efac','--accent-3':'#fbbf24','--warn':'#fca5a5','--text':'#e6f5ec','--text-dim':'#8aa89a','--border':'rgba(94,234,212,0.18)' } },
+  gray:   { name:'暗夜静灰', vars:{ '--bg-deep':'#0e0f12','--bg-panel':'rgba(26,27,32,0.82)','--bg-panel-solid':'#1a1b20','--accent':'#a1a1aa','--accent-2':'#cbd5e1','--accent-3':'#f472b6','--warn':'#fbbf24','--text':'#e5e7eb','--text-dim':'#9ca3af','--border':'rgba(161,161,170,0.18)' } },
+  light:  { name:'亮白', vars:{ '--bg-deep':'#eef1f6','--bg-panel':'rgba(255,255,255,0.86)','--bg-panel-solid':'#ffffff','--accent':'#4f46e5','--accent-2':'#0ea5e9','--accent-3':'#ec4899','--warn':'#d97706','--text':'#1f2330','--text-dim':'#6b7280','--border':'rgba(79,70,229,0.18)' } },
+};
+const LANGS = {
+  'zh-CN': { label:'简体中文', dict: I18N['zh-CN'] },
+  'zh-TW': { label:'繁體中文', dict: I18N['zh-TW'] },
+  'en':    { label:'English',  dict: I18N['en'] },
+  'ja':    { label:'日本語',    dict: I18N['ja'] },
+};
+let currentLang = localStorage.getItem('lang') || 'zh-CN';
+let currentTheme = localStorage.getItem('theme') || 'neon';
+let followSystem = localStorage.getItem('themeFollow') === '1';
+
+function applyLang() {
+  const dict = I18N[currentLang] || I18N['zh-CN'];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (dict[k] !== undefined) el.textContent = dict[k];
+  });
+  const fsBtn = document.getElementById('btn-fs');
+  if (fsBtn) fsBtn.querySelector('.lbl').textContent = document.fullscreenElement ? dict.fsExit : dict.fs;
+  document.documentElement.lang = currentLang;
+}
+function applyThemeObj(obj) {
+  const root = document.documentElement;
+  for (const k in obj.vars) root.style.setProperty(k, obj.vars[k]);
+}
+function effectiveTheme() {
+  if (followSystem && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return THEMES[currentTheme] ? currentTheme : 'neon';
+}
+function refreshTheme() { const t = effectiveTheme(); if (THEMES[t]) applyThemeObj(THEMES[t]); return t; }
+
+const settingsModal = document.getElementById('settings-modal');
+const settingsTabs = document.getElementById('settings-tabs');
+document.getElementById('btn-settings').addEventListener('click', () => settingsModal.classList.add('show'));
+document.getElementById('settings-close').addEventListener('click', () => settingsModal.classList.remove('show'));
+settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('show'); });
+settingsTabs.querySelectorAll('.settings-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    settingsTabs.querySelectorAll('.settings-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.settings-pane').forEach(p => p.style.display = (p.dataset.pane === tab) ? '' : 'none');
+  });
+});
+
+const themeGrid = document.getElementById('theme-grid');
+Object.entries(THEMES).forEach(([key, th]) => {
+  const card = document.createElement('div');
+  card.className = 'theme-card'; card.dataset.theme = key;
+  card.innerHTML = '<div class="theme-swatches"><span class="theme-sw" style="background:'+th.vars['--accent']+'"></span><span class="theme-sw" style="background:'+th.vars['--accent-2']+'"></span><span class="theme-sw" style="background:'+th.vars['--accent-3']+'"></span></div><div class="theme-name">'+th.name+'</div>';
+  card.addEventListener('click', () => {
+    followSystem = false; document.getElementById('theme-follow').checked = false;
+    currentTheme = key; localStorage.setItem('theme', key); localStorage.setItem('themeFollow','0');
+    applyThemeObj(THEMES[key]); updateThemeActive();
+  });
+  themeGrid.appendChild(card);
+});
+function updateThemeActive() {
+  const eff = effectiveTheme();
+  themeGrid.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('active', c.dataset.theme === eff));
+}
+const themeFollowEl = document.getElementById('theme-follow');
+themeFollowEl.checked = followSystem;
+themeFollowEl.addEventListener('change', () => {
+  followSystem = themeFollowEl.checked;
+  localStorage.setItem('themeFollow', followSystem ? '1' : '0');
+  refreshTheme(); updateThemeActive();
+});
+if (window.matchMedia) window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (followSystem) { refreshTheme(); updateThemeActive(); } });
+
+const langList = document.getElementById('lang-list');
+Object.entries(LANGS).forEach(([code, l]) => {
+  const item = document.createElement('div');
+  item.className = 'lang-item'; item.dataset.lang = code;
+  item.innerHTML = '<span>'+l.label+'</span><span class="lang-check">✓</span>';
+  item.addEventListener('click', () => {
+    currentLang = code; localStorage.setItem('lang', code); applyLang(); updateLangActive();
+  });
+  langList.appendChild(item);
+});
+function updateLangActive() {
+  langList.querySelectorAll('.lang-item').forEach(i => i.classList.toggle('active', i.dataset.lang === currentLang));
+}
+
+refreshTheme(); updateThemeActive();
+applyLang(); updateLangActive();
 // 导出场景 JSON
 function exportScene() {
   // 保存相机视角参数
