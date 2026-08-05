@@ -182,5 +182,5 @@ window.__packs['zh-TW'] = {
   statusEraser:'橡皮擦：拖曳或點擊擦除 · 整體擦除=將物件整條刪除；局部擦除=僅擦除圈內筆跡（可分節）· 右鍵拖曳平移視角',
   appTitle:'3D 編輯器',
   // 說明書閱讀器
-  tabManual:'說明書', manTitle:'使用說明書', manToc:'目錄', manLine:'行', manGotoPh:'輸入行號', manGoto:'跳轉', manSearchPh:'搜尋…', manNote:'筆記', manHi:'高亮', manCopy:'複製', manCopyAll:'複製全文', manZoomIn:'放大', manZoomOut:'縮小', manClose:'關閉', manLoading:'載入中…', manLoadFail:'說明書載入失敗，請檢查網路', manCurLine:'當前行', manNoNote:'暫無筆記', manNotePh:'輸入筆記…', manSave:'儲存', manDelete:'刪除', manJump:'跳轉', manOpenExt:'在 GitHub 開啟', manAdded:'已新增筆記', manDeleted:'已刪除筆記', manCopied:'已複製', manNext:'下一個', manNoteAt:'行 {0}', manUnHl:'已取消高亮',
+  tabGuide:'操作指南', tabManual:'說明書', manTitle:'使用說明書', manToc:'目錄', manLine:'行', manGotoPh:'輸入行號', manGoto:'跳轉', manSearchPh:'搜尋…', manNote:'筆記', manHi:'高亮', manCopy:'複製', manCopyAll:'複製全文', manZoomIn:'放大', manZoomOut:'縮小', manClose:'關閉', manLoading:'載入中…', manLoadFail:'說明書載入失敗，請檢查網路', manCurLine:'當前行', manNoNote:'暫無筆記', manNotePh:'輸入筆記…', manSave:'儲存', manDelete:'刪除', manJump:'跳轉', manOpenExt:'在 GitHub 開啟', manAdded:'已新增筆記', manDeleted:'已刪除筆記', manCopied:'已複製', manNext:'下一個', manNoteAt:'行 {0}', manUnHl:'已取消高亮',
 };

@@ -183,5 +183,5 @@ window.__packs['ja'] = {
   statusEraser:'消しゴム: ドラッグまたはクリックで消去 · 全体消去=オブジェクトごと削除；局所消去=円内のストロークのみ消去（ストローク分割可）· 右ドラッグで視点移動',
   appTitle:'3Dエディタ',
   // 説明書リーダー
-  tabManual:'説明書', manTitle:'ユーザーマニュアル', manToc:'目次', manLine:'行', manGotoPh:'行を指定', manGoto:'移動', manSearchPh:'検索…', manNote:'ノート', manHi:'ハイライト', manCopy:'コピー', manCopyAll:'全文コピー', manZoomIn:'拡大', manZoomOut:'縮小', manClose:'閉じる', manLoading:'読み込み中…', manLoadFail:'説明書の読み込みに失敗しました。ネットワークを確認してください。', manCurLine:'現在の行', manNoNote:'ノートはありません', manNotePh:'メモ…', manSave:'保存', manDelete:'削除', manJump:'移動', manOpenExt:'GitHub で開く', manAdded:'ノートを追加しました', manDeleted:'ノートを削除しました', manCopied:'コピーしました', manNext:'次へ', manNoteAt:'行 {0}', manUnHl:'ハイライトを解除',
+  tabGuide:'ガイド', tabManual:'説明書', manTitle:'ユーザーマニュアル', manToc:'目次', manLine:'行', manGotoPh:'行を指定', manGoto:'移動', manSearchPh:'検索…', manNote:'ノート', manHi:'ハイライト', manCopy:'コピー', manCopyAll:'全文コピー', manZoomIn:'拡大', manZoomOut:'縮小', manClose:'閉じる', manLoading:'読み込み中…', manLoadFail:'説明書の読み込みに失敗しました。ネットワークを確認してください。', manCurLine:'現在の行', manNoNote:'ノートはありません', manNotePh:'メモ…', manSave:'保存', manDelete:'削除', manJump:'移動', manOpenExt:'GitHub で開く', manAdded:'ノートを追加しました', manDeleted:'ノートを削除しました', manCopied:'コピーしました', manNext:'次へ', manNoteAt:'行 {0}', manUnHl:'ハイライトを解除',
 };

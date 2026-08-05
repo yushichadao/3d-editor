@@ -634,6 +634,9 @@
   border-radius: 16px; box-shadow: none; display: flex; flex-direction: column;
   position: relative; overflow: hidden; animation: pop .22s ease-out;
 }
+/* ===== 操作指南（只读卡片，无阴影，无目录/搜索/笔记） ===== */
+#guide-modal { z-index: 300; }
+.guide-doc { flex:1; overflow-y:auto; padding:22px 28px; line-height:1.85; font-size:15px; user-select:text; -webkit-user-select:text; }
 .manual-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); }
 .manual-bar-title { font-weight:600; color:var(--accent); font-size:15px; }
 .manual-bar-actions { display:flex; gap:6px; }
@@ -677,7 +680,7 @@
 /* ===== 手机版阅读器优化 ===== */
 .manual-toc-toggle { display:inline-block; }
 @media (max-width: 768px) {
-  #manual-modal .manual-card { width:100vw; height:100vh; height:100dvh; max-width:none; border-radius:0; border:none; }
+  #manual-modal .manual-card, #guide-modal .manual-card { width:100vw; height:100vh; height:100dvh; max-width:none; border-radius:0; border:none; }
   .manual-bar { padding:8px 10px; }
   .manual-bar-actions .manual-btn { padding:6px 10px; font-size:13px; }
   .manual-toc-toggle { display:inline-block; }
@@ -1275,6 +1278,7 @@
       <div class="settings-tabs" id="settings-tabs">
         <button class="settings-tab active" data-tab="theme"><span data-i18n="tabTheme">主题风格</span></button>
         <button class="settings-tab" data-tab="lang"><span data-i18n="tabLang">语言切换</span></button>
+        <button class="settings-tab" data-tab="guide"><span data-i18n="tabGuide">操作指南</span></button>
         <button class="settings-tab" data-tab="manual"><span data-i18n="tabManual">说明书</span></button>
         <button class="settings-tab" data-tab="about"><span data-i18n="tabAbout">关于</span></button>
       </div>
@@ -1505,7 +1509,7 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   statusEraser:'橡皮擦：拖拽或点击擦除 · 整体擦除=将对象整条删除；局部擦除=仅擦除圈内笔迹（可分节）· 右键平移视角',
   appTitle:'3D 编辑器',
   // 说明书阅读器
-  tabManual:'说明书', manTitle:'使用说明书', manToc:'目录', manLine:'行', manGotoPh:'输入行号', manGoto:'跳转', manSearchPh:'搜索…', manNote:'笔记', manHi:'高亮', manCopy:'复制', manCopyAll:'复制全文', manZoomIn:'放大', manZoomOut:'缩小', manClose:'关闭', manLoading:'加载中…', manLoadFail:'说明书加载失败，请检查网络后重试', manCurLine:'当前行', manNoNote:'暂无笔记', manNotePh:'输入笔记…', manSave:'保存', manDelete:'删除', manJump:'跳转', manOpenExt:'在 GitHub 打开', manAdded:'已添加笔记', manDeleted:'已删除笔记', manCopied:'已复制', manNext:'下一个', manNoteAt:'行 {0}', manUnHl:'已取消高亮',
+  tabGuide:'操作指南', tabManual:'说明书', manTitle:'使用说明书', manToc:'目录', manLine:'行', manGotoPh:'输入行号', manGoto:'跳转', manSearchPh:'搜索…', manNote:'笔记', manHi:'高亮', manCopy:'复制', manCopyAll:'复制全文', manZoomIn:'放大', manZoomOut:'缩小', manClose:'关闭', manLoading:'加载中…', manLoadFail:'说明书加载失败，请检查网络后重试', manCurLine:'当前行', manNoNote:'暂无笔记', manNotePh:'输入笔记…', manSave:'保存', manDelete:'删除', manJump:'跳转', manOpenExt:'在 GitHub 打开', manAdded:'已添加笔记', manDeleted:'已删除笔记', manCopied:'已复制', manNext:'下一个', manNoteAt:'行 {0}', manUnHl:'已取消高亮',
 };
 
 const __packs = window.I18N_PACKS || window.__packs || {};
@@ -6328,6 +6332,11 @@ settingsTabs.querySelectorAll('.settings-tab').forEach(t => {
       openManual();
       return;
     }
+    if (tab === 'guide') {
+      settingsModal.classList.remove('show');
+      openGuide();
+      return;
+    }
     settingsTabs.querySelectorAll('.settings-tab').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     document.querySelectorAll('.settings-pane').forEach(p => p.style.display = (p.dataset.pane === tab) ? '' : 'none');
@@ -10186,6 +10195,109 @@ function openManual(){
   }
   function buildToc(){ const heads=Array.from(docEl.querySelectorAll('.md-block[data-type="heading"]')); tocEl.innerHTML=heads.map(h=>'<a class="lvl'+h.dataset.level+'" data-line="'+h.dataset.line+'">'+mdEscape((h.textContent||'').trim())+'</a>').join(''); tocEl.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{ const ln=parseInt(a.dataset.line,10); jumpToLine(ln); if(window.innerWidth<=768) tocEl.classList.remove('open'); })); }
 }
+
+/* ===================== 操作指南（只读，无目录 / 搜索 / 笔记，无阴影卡片） ===================== */
+const GUIDE_MD = `# 操作指南
+
+本指南汇总编辑器在电脑端与手机端下的鼠标 / 手势操作，以及通用键盘快捷键。内容仅供查阅，不可编辑。
+
+## 电脑端（鼠标操作）
+
+| 操作 | 作用 |
+| --- | --- |
+| 单击左键 | 选择对象 / 控件 |
+| 双击左键 | 编辑文本 |
+| 长按左键 | 操作对象 / 控件 |
+| 长按右键 | 视角旋转 |
+| 长按滚轮 | 视角平移 |
+| 滑动滚轮 | 视角缩放 |
+
+## 手机端（手势操作）
+
+| 操作 | 作用 |
+| --- | --- |
+| 单指单击 | 选择对象 / 控件 |
+| 单指双击 | 编辑文本 |
+| 单指长按对象 | 加选 / 减选（等价 Shift 单击） |
+| 单指拖动对象 | 操作对象 / 控件 |
+| 单指拖动空白 | 视角旋转 |
+| 单指轻点空白 | 取消选择 |
+| 「全选」按钮 | 选中所有对象 |
+| 「框选」按钮 | 开启后单指拖拽框选对象 |
+| 双指拖动 | 视角平移 |
+| 双指捏合 | 视角缩放 |
+
+## 键盘快捷键
+
+> 选取对象时与未选取对象时，方向键与字母键的作用不同：选取对象时变换对象，未选取时变换视角。
+
+### 基础按键
+
+| 按键 | 选取对象时 | 未选取时 |
+| --- | --- | --- |
+| ↓ / ↑、→ / ←、PgUp / PgDn | 沿 X 轴 +/− 平移、沿 Y 轴 +/− 平移、沿 Z 轴 +/− 平移 | 视角后 / 前平移、视角右 / 左平移、视角上 / 下平移 |
+| A / D、W / S、E / Q | 绕 Z 轴逆 / 顺旋转、绕 Y 轴逆 / 顺旋转、绕 X 轴逆 / 顺旋转 | 视角左 / 右旋转、视角上 / 下旋转、— |
+| + / − | 放大 / 缩小 5% | — |
+
+### Shift 组合键
+
+| Shift + | 选取对象时 | 未选取时 |
+| --- | --- | --- |
+| ↓ / ↑ / → / ←、PgUp / PgDn | 平移 1 网格 | 视角平移 1 网格 |
+| A / D / W / S / E / Q | 旋转 90° | 视角旋转 90° |
+| + / − | 放大 ×2 / 缩小 ×0.5 | — |
+| 点击 | 加选对象（多点选） | — |
+
+### 滑动条 / 输入框
+
+聚焦滑动条或输入框时，下列快捷键在原控件内生效，场景快捷键暂时失效。
+
+| 按键 | 滑动条 | 输入框 |
+| --- | --- | --- |
+| → / ←、↑ / ↓、+ / − | 减 / 增、增 / 减、— | 移动光标、增 / 减、输入正 / 负号 |
+| PgUp / PgDn | 大幅增 / 减 | 滚动右栏 |
+
+### 功能键
+
+| 按键 | 作用 |
+| --- | --- |
+| Esc | 取消操作 / 退出全屏 |
+| F11 | 全屏 / 退出全屏 |
+| Del / Backspace | 删除选中对象 |
+
+### Ctrl 组合键
+
+| 按键 | 作用 |
+| --- | --- |
+| Ctrl + A | 全选 |
+| Ctrl + N | 新建场景 |
+| Ctrl + O | 导入场景 |
+| Ctrl + S | 导出场景 |
+| Ctrl + P | 截图导出图像 |
+| Ctrl + Z | 撤销 |
+| Ctrl + Y | 重做 |
+| Ctrl + C | 复制 |
+| Ctrl + V | 粘贴 |
+| Ctrl + D | 克隆 |
+| Ctrl + Del / Backspace | 清空场景 |
+`;
+function openGuide(){
+  const T = k => ((I18N[currentLang] && I18N[currentLang][k]) || ZH_CN[k] || k);
+  const modal = document.getElementById('guide-modal');
+  const docEl = document.getElementById('guide-doc');
+  const titleEl = document.getElementById('guide-title');
+  titleEl.textContent = T('tabGuide') || '操作指南';
+  if(!openGuide._built){
+    openGuide._built = true;
+    document.getElementById('guide-close').addEventListener('click', ()=>modal.classList.remove('show'));
+    modal.addEventListener('click', e=>{ if(e.target===modal) modal.classList.remove('show'); });
+  }
+  if(!openGuide._rendered){
+    openGuide._rendered = true;
+    docEl.innerHTML = parseBlocks(GUIDE_MD).map(renderBlock).join('');
+  }
+  modal.classList.add('show');
+}
 </script>
 
 <div class="modal-mask" id="manual-modal">
@@ -10229,6 +10341,17 @@ function openManual(){
     <button id="manual-float-note">笔记</button>
     <button id="manual-float-hi">高亮</button>
     <button id="manual-float-copy">复制</button>
+  </div>
+</div>
+<div class="modal-mask" id="guide-modal">
+  <div class="manual-card">
+    <div class="manual-bar">
+      <div class="manual-bar-title" id="guide-title">操作指南</div>
+      <div class="manual-bar-actions">
+        <button class="manual-btn" id="guide-close">✕</button>
+      </div>
+    </div>
+    <div class="guide-doc" id="guide-doc"></div>
   </div>
 </div>
 </body>
