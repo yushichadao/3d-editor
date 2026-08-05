@@ -658,9 +658,6 @@
 @keyframes mdFlash { 0%{background:color-mix(in srgb,var(--accent) 28%,transparent);} 100%{background:transparent;} }
 .manual-doc mark.md-hl { background: var(--warn); color:#1a1a1a; border-radius:3px; padding:0 1px; }
 .md-block.search-hit { background: color-mix(in srgb, var(--accent-2) 16%, transparent); }
-.manual-hbar { display:flex; align-items:center; gap:10px; padding:6px 12px; border-top:1px solid var(--border); }
-.manual-scroll { flex:1; accent-color: var(--accent); }
-.manual-curline { font-size:12px; color:var(--text-dim); white-space:nowrap; }
 .manual-note { width:264px; flex-shrink:0; border-left:1px solid var(--border); display:none; flex-direction:column; }
 .manual-note.open { display:flex; }
 .manual-note-head { padding:8px 10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600; color:var(--text); }
@@ -10094,9 +10091,6 @@ function openManual(){
   const docEl = document.getElementById('manual-doc');
   const tocEl = document.getElementById('manual-toc');
   const readEl = document.getElementById('manual-read');
-  const scrollEl = document.getElementById('manual-scroll');
-  const curLineEl = document.getElementById('manual-curline');
-  const lineInput = document.getElementById('manual-line-input');
   const searchInput = document.getElementById('manual-search');
   const noteListEl = document.getElementById('manual-note-list');
   const notePanel = document.getElementById('manual-note-panel');
@@ -10114,13 +10108,10 @@ function openManual(){
     document.getElementById('manual-copy-all').addEventListener('click', ()=>copyText(getPlainDoc()));
     document.getElementById('manual-toggle-note').addEventListener('click', ()=>notePanel.classList.toggle('open'));
     document.getElementById('manual-note-close').addEventListener('click', ()=>notePanel.classList.remove('open'));
-    document.getElementById('manual-line-go').addEventListener('click', ()=>gotoLine());
-    lineInput.addEventListener('keydown', e=>{ if(e.key==='Enter') gotoLine(); });
     document.getElementById('manual-search-btn').addEventListener('click', ()=>doSearch(false));
     document.getElementById('manual-search-next').addEventListener('click', ()=>doSearch(true));
     searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') doSearch(false); });
-    scrollEl.addEventListener('input', ()=>{ const max=docEl.scrollHeight-readEl.clientHeight; readEl.scrollTop=max>0?(scrollEl.value/1000)*max:0; updateCurLine(); });
-    readEl.addEventListener('scroll', ()=>{ const max=docEl.scrollHeight-readEl.clientHeight; scrollEl.value=max>0?Math.round((readEl.scrollTop/max)*1000):0; updateCurLine(); scheduleSaveScroll(); });
+    readEl.addEventListener('scroll', ()=>{ scheduleSaveScroll(); });
     floatEl.addEventListener('mousedown', e=>e.preventDefault());
     document.addEventListener('selectionchange', onSelectionChange);
     document.getElementById('manual-float-note').addEventListener('click', addNoteFromSelection);
@@ -10144,14 +10135,12 @@ function openManual(){
   function zoomDoc(f){ const cur=parseFloat(docEl.dataset.zoom||'15'); let next=Math.min(28, Math.max(11, cur*f)); docEl.dataset.zoom=next; docEl.style.fontSize=next+'px'; saveStore('zoom', next); }
   function blocks(){ return Array.from(docEl.querySelectorAll('.md-block')); }
   function blockLineOf(node){ let el=node.nodeType===3?node.parentElement:node; while(el && el!==docEl){ if(el.classList && el.classList.contains('md-block')) return parseInt(el.dataset.line,10); el=el.parentElement; } return 0; }
-  function gotoLine(){ const n=parseInt(lineInput.value,10); if(isNaN(n)) return; const bs=blocks(); let target=bs[0]; for(const b of bs){ if(parseInt(b.dataset.line,10)<=n) target=b; else break; } if(target){ target.scrollIntoView({behavior:'smooth',block:'start'}); flash(target); } }
   function jumpToLine(n){ const bs=blocks(); let target=null; for(const b of bs){ if(parseInt(b.dataset.line,10)<=n) target=b; else break; } if(target){ target.scrollIntoView({behavior:'smooth',block:'start'}); flash(target); notePanel.classList.add('open'); } }
   function doSearch(next){ const q=searchInput.value.trim(); if(!q) return; const bs=blocks(); let hits=openManual._hits; if(!next || !hits){ hits=bs.filter(b=>(b.textContent||'').toLowerCase().includes(q.toLowerCase())); openManual._hits=hits; openManual._hitIdx=-1; } if(!hits.length){ toast('× ' + T('manSearchPh')); return; } openManual._hitIdx=(openManual._hitIdx+1)%hits.length; const b=hits[openManual._hitIdx]; b.scrollIntoView({behavior:'smooth',block:'center'}); flash(b); }
-  function updateCurLine(){ const top=readEl.scrollTop; const bs=blocks(); let cur=bs.length?parseInt(bs[0].dataset.line,10):1; for(const b of bs){ if(b.offsetTop-readEl.offsetTop<=top+8) cur=parseInt(b.dataset.line,10); else break; } curLineEl.textContent=T('manCurLine')+' '+cur; }
   function flash(b){ b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); }
   function scheduleSaveScroll(){ clearTimeout(openManual._saveT); openManual._saveT=setTimeout(saveScroll,400); }
   function saveScroll(){ if(openManual._lang) saveStore('scroll', readEl.scrollTop); }
-  function restoreScroll(){ const s=loadStore('scroll', null); if(s!=null) readEl.scrollTop=s; const z=loadStore('zoom',15); docEl.dataset.zoom=z; docEl.style.fontSize=z+'px'; updateCurLine(); }
+  function restoreScroll(){ const s=loadStore('scroll', null); if(s!=null) readEl.scrollTop=s; const z=loadStore('zoom',15); docEl.dataset.zoom=z; docEl.style.fontSize=z+'px'; }
   function notes(){ return loadStore('notes', []); }
   function renderNotes(){ const arr=notes(); if(!arr.length){ noteListEl.innerHTML='<div class="manual-note-empty">'+T('manNoNote')+'</div>'; return; } noteListEl.innerHTML=arr.map((n,i)=>'<div class="manual-note-item" data-i="'+i+'"><div class="note-line" data-jump="'+n.line+'">'+T('manNoteAt').replace('{0}', n.line)+'</div><div class="note-quote">'+mdEscape(n.quote||'')+'</div><div class="note-text">'+mdEscape(n.note||'')+'</div><div class="note-actions"><button class="manual-btn" data-del="'+i+'">'+T('manDelete')+'</button></div></div>').join(''); noteListEl.querySelectorAll('[data-jump]').forEach(el=>el.addEventListener('click', ()=>{ const n=parseInt(el.dataset.jump,10); jumpToLine(n); })); noteListEl.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click', ()=>{ const a2=notes(); a2.splice(parseInt(el.dataset.del,10),1); saveStore('notes', a2); renderNotes(); })); }
   function addNoteFromSelection(){ const txt=getSelectionText(); const line=blockLineOf((window.getSelection().anchorNode)||docEl); if(!txt) return; const note=prompt(T('manNotePh'),''); if(note===null){ floatEl.style.display='none'; return; } const arr=notes(); arr.push({line, quote:txt, note}); saveStore('notes', arr); renderNotes(); floatEl.style.display='none'; toast(T('manAdded')); }
@@ -10186,17 +10175,11 @@ function openManual(){
       <aside class="manual-toc" id="manual-toc"></aside>
       <main class="manual-read" id="manual-read">
         <div class="manual-toolbar">
-          <input class="manual-input" id="manual-line-input" type="number" min="1" placeholder="行号">
-          <button class="manual-btn" id="manual-line-go">跳转</button>
           <input class="manual-input" id="manual-search" type="text" placeholder="搜索…">
           <button class="manual-btn" id="manual-search-btn">搜索</button>
           <button class="manual-btn" id="manual-search-next">下一个</button>
         </div>
         <div class="manual-doc" id="manual-doc"></div>
-        <div class="manual-hbar">
-          <input class="manual-scroll" id="manual-scroll" type="range" min="0" max="1000" value="0">
-          <span class="manual-curline" id="manual-curline">当前行 1</span>
-        </div>
       </main>
       <aside class="manual-note" id="manual-note-panel">
         <div class="manual-note-head"><span>笔记</span><button class="manual-btn" id="manual-note-close">✕</button></div>
