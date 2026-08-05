@@ -180,4 +180,6 @@ window.__packs['en'] = {
   statusBrush2d:'2D Brush: Hold left button to draw on ground · Right‑drag to Pan · Scroll to Zoom',
   statusEraser:'Eraser: Drag or click to erase · Whole Erase deletes the entire object; Local Erase removes only strokes within the circle (can split strokes) · Right‑drag to Pan',
   appTitle:'3D Editor',
+  // Manual reader
+  tabManual:'Manual', manTitle:'User Manual', manToc:'Contents', manLine:'Line', manGotoPh:'Go to line', manGoto:'Go', manSearchPh:'Search…', manNote:'Notes', manHi:'Highlight', manCopy:'Copy', manCopyAll:'Copy All', manZoomIn:'Zoom In', manZoomOut:'Zoom Out', manClose:'Close', manLoading:'Loading…', manLoadFail:'Failed to load the manual. Please check your network.', manCurLine:'Current line', manNoNote:'No notes', manNotePh:'Note…', manSave:'Save', manDelete:'Delete', manJump:'Jump', manOpenExt:'Open on GitHub', manAdded:'Note added', manDeleted:'Note deleted', manCopied:'Copied', manNext:'Next', manNoteAt:'Line {0}',
 };
