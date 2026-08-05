@@ -1503,7 +1503,7 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   statusEraser:'橡皮擦：拖拽或点击擦除 · 整体擦除=将对象整条删除；局部擦除=仅擦除圈内笔迹（可分节）· 右键平移视角',
   appTitle:'3D 编辑器',
   // 说明书阅读器
-  tabManual:'说明书', manTitle:'使用说明书', manToc:'目录', manLine:'行', manGotoPh:'输入行号', manGoto:'跳转', manSearchPh:'搜索…', manNote:'笔记', manHi:'高亮', manCopy:'复制', manCopyAll:'复制全文', manZoomIn:'放大', manZoomOut:'缩小', manClose:'关闭', manLoading:'加载中…', manLoadFail:'说明书加载失败，请检查网络后重试', manCurLine:'当前行', manNoNote:'暂无笔记', manNotePh:'输入笔记…', manSave:'保存', manDelete:'删除', manJump:'跳转', manOpenExt:'在 GitHub 打开', manAdded:'已添加笔记', manDeleted:'已删除笔记', manCopied:'已复制', manNext:'下一个', manNoteAt:'行 {0}',
+  tabManual:'说明书', manTitle:'使用说明书', manToc:'目录', manLine:'行', manGotoPh:'输入行号', manGoto:'跳转', manSearchPh:'搜索…', manNote:'笔记', manHi:'高亮', manCopy:'复制', manCopyAll:'复制全文', manZoomIn:'放大', manZoomOut:'缩小', manClose:'关闭', manLoading:'加载中…', manLoadFail:'说明书加载失败，请检查网络后重试', manCurLine:'当前行', manNoNote:'暂无笔记', manNotePh:'输入笔记…', manSave:'保存', manDelete:'删除', manJump:'跳转', manOpenExt:'在 GitHub 打开', manAdded:'已添加笔记', manDeleted:'已删除笔记', manCopied:'已复制', manNext:'下一个', manNoteAt:'行 {0}', manUnHl:'已取消高亮',
 };
 
 const __packs = window.I18N_PACKS || window.__packs || {};
@@ -10134,12 +10134,13 @@ function openManual(){
     readEl.addEventListener('scroll', ()=>{ scheduleSaveScroll(); });
     floatEl.addEventListener('mousedown', e=>e.preventDefault());
     document.getElementById('manual-toc-toggle').addEventListener('click', ()=>tocEl.classList.toggle('open'));
+    docEl.addEventListener('click', e=>{ const mark=e.target.closest && e.target.closest('mark.md-hl'); if(mark){ const text=mark.textContent; const arr=hilites(); const idx=arr.findIndex(h=>h.text===text); if(idx>=0){ arr.splice(idx,1); saveStore('hilites', arr); applyHighlights(); toast(T('manUnHl')); } } });
     document.addEventListener('selectionchange', onSelectionChange);
     document.getElementById('manual-float-note').addEventListener('click', ()=>startNoteFromSelection());
     document.getElementById('manual-note-save').addEventListener('click', saveNoteFromEditor);
     document.getElementById('manual-note-cancel').addEventListener('click', closeNoteEditor);
     document.getElementById('manual-float-hi').addEventListener('click', addHlFromSelection);
-    document.getElementById('manual-float-copy').addEventListener('click', ()=>{ copyText(getSelectionText()); floatEl.style.display='none'; });
+    document.getElementById('manual-float-copy').addEventListener('click', ()=>{ const s=openManual._sel; copyText(s?s.text:getSelectionText()); floatEl.style.display='none'; });
   }
 
   if(openManual._lang !== lang){ openManual._lang = lang; loadManual(lang); }
@@ -10166,14 +10167,14 @@ function openManual(){
   function restoreScroll(){ const s=loadStore('scroll', null); if(s!=null) readEl.scrollTop=s; const z=loadStore('zoom',15); docEl.dataset.zoom=z; docEl.style.fontSize=z+'px'; }
   function notes(){ return loadStore('notes', []); }
   function renderNotes(){ const arr=notes(); if(!arr.length){ noteListEl.innerHTML='<div class="manual-note-empty">'+T('manNoNote')+'</div>'; return; } noteListEl.innerHTML=arr.map((n,i)=>'<div class="manual-note-item" data-i="'+i+'"><div class="note-line" data-jump="'+n.line+'">'+T('manNoteAt').replace('{0}', n.line)+'</div><div class="note-quote">'+mdEscape(n.quote||'')+'</div><div class="note-text">'+mdEscape(n.note||'')+'</div><div class="note-actions"><button class="manual-btn" data-del="'+i+'">'+T('manDelete')+'</button></div></div>').join(''); noteListEl.querySelectorAll('[data-jump]').forEach(el=>el.addEventListener('click', ()=>{ const n=parseInt(el.dataset.jump,10); jumpToLine(n); })); noteListEl.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click', ()=>{ const a2=notes(); a2.splice(parseInt(el.dataset.del,10),1); saveStore('notes', a2); renderNotes(); })); }
-  function startNoteFromSelection(){ const txt=getSelectionText(); if(!txt) return; openManual._pendingNote={ line:blockLineOf((window.getSelection().anchorNode)||docEl), quote:txt }; openNoteEditor(); floatEl.style.display='none'; }
+  function startNoteFromSelection(){ const s=openManual._sel; if(!s || !s.text) return; openManual._pendingNote={ line:s.line, quote:s.text }; openNoteEditor(); floatEl.style.display='none'; }
   function openNoteEditor(){ notePanel.classList.add('open'); const ed=document.getElementById('manual-note-edit'); ed.classList.add('open'); const lineEl=document.getElementById('manual-note-edit-line'); const area=document.getElementById('manual-note-area'); const p=openManual._pendingNote||{line:0,quote:''}; lineEl.textContent=T('manNoteAt').replace('{0}', p.line); area.value=''; area.placeholder=T('manNotePh'); setTimeout(()=>area.focus(), 30); }
   function closeNoteEditor(){ document.getElementById('manual-note-edit').classList.remove('open'); openManual._pendingNote=null; }
   function saveNoteFromEditor(){ const p=openManual._pendingNote; if(!p) return; const area=document.getElementById('manual-note-area'); const note=area.value.trim(); if(!note){ area.focus(); return; } const arr=notes(); arr.push({line:p.line, quote:p.quote, note}); saveStore('notes', arr); renderNotes(); closeNoteEditor(); toast(T('manAdded')); }
   function hilites(){ return loadStore('hilites', []); }
   function applyHighlights(){ unwrapHighlights(docEl); hilites().forEach(h=>wrapText(docEl, h.text)); }
-  function addHlFromSelection(){ const txt=getSelectionText(); if(!txt) return; const arr=hilites(); arr.push({line:blockLineOf((window.getSelection().anchorNode)||docEl), text:txt}); saveStore('hilites', arr); applyHighlights(); floatEl.style.display='none'; toast(T('manHi')); }
-  function onSelectionChange(){ const sel=window.getSelection(); if(!sel || sel.isCollapsed || sel.rangeCount===0){ floatEl.style.display='none'; return; } const range=sel.getRangeAt(0); if(!docEl.contains(range.commonAncestorContainer)){ floatEl.style.display='none'; return; } floatEl.style.display='flex'; if(window.innerWidth<=768){ floatEl.classList.add('float-bottom'); return; } floatEl.classList.remove('float-bottom'); const rect=range.getBoundingClientRect(); const mrect=modal.getBoundingClientRect(); floatEl.style.left=Math.max(8, rect.left+rect.width/2-mrect.left-60)+'px'; floatEl.style.top=Math.max(8, rect.top-mrect.top-38)+'px'; }
+  function addHlFromSelection(){ const s=openManual._sel; if(!s || !s.text) return; const arr=hilites(); arr.push({line:s.line, text:s.text}); saveStore('hilites', arr); applyHighlights(); floatEl.style.display='none'; toast(T('manHi')); }
+  function onSelectionChange(){ const sel=window.getSelection(); if(!sel || sel.isCollapsed || sel.rangeCount===0){ floatEl.style.display='none'; openManual._sel=null; return; } const range=sel.getRangeAt(0); if(!docEl.contains(range.commonAncestorContainer)){ floatEl.style.display='none'; openManual._sel=null; return; } openManual._sel={ text: sel.toString(), line: blockLineOf((sel.anchorNode)||docEl) }; floatEl.style.display='flex'; if(window.innerWidth<=768){ floatEl.classList.add('float-bottom'); return; } floatEl.classList.remove('float-bottom'); const rect=range.getBoundingClientRect(); const mrect=modal.getBoundingClientRect(); floatEl.style.left=Math.max(8, rect.left+rect.width/2-mrect.left-60)+'px'; floatEl.style.top=Math.max(8, rect.top-mrect.top-38)+'px'; }
   async function loadManual(lang){
     const file=fileMap[lang]||fileMap['zh-CN'];
     const url='https://raw.githubusercontent.com/yushichadao/3d-editor/main/docs/'+encodeURIComponent(file);
