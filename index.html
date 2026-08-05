@@ -520,10 +520,11 @@
     border: 1px solid var(--border); border-radius: var(--radius); outline: none;
     font-family: inherit; resize: both; overflow: hidden;
     white-space: pre; transition: border-color .18s ease;
+    text-align: center;
   }
   .inline-text-wrap .inline-text-input:focus { border-color: var(--accent); }
   .inline-text-wrap .inline-text-hint {
-    position: absolute; left: 0; top: 100%; margin-top: 6px;
+    position: absolute; left: 50%; transform: translateX(-50%); top: 100%; margin-top: 6px;
     font-size: 11px; color: var(--text-dim);
     white-space: nowrap; padding: 4px 10px;
     background: var(--bg-panel); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -787,12 +788,12 @@
       <div class="ctrl-row" id="row-scale">
         <div class="ctrl-label"><span data-i18n="uniformScale">等比缩放</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
-          <input type="range" id="s-c" min="0.1" max="5" step="0.01" value="1" style="flex:1;">
-          <input type="number" id="input-sc" step="0.01" value="1" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
+        <input type="range" id="s-c" min="-1" max="1" step="0.01" value="0" style="flex:1;">
+        <input type="number" id="input-sc" min="0.1" max="10" step="0.01" value="1" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
         </div>
       </div>
       <div class="ctrl-row" id="row-opacity">
-        <div class="ctrl-label"><span data-i18n="opacity">透明度</span></div>
+        <div class="ctrl-label"><span data-i18n="opacity">不透明度</span></div>
         <div style="display:flex; gap:6px; align-items:center;">
           <input type="range" id="p-opacity" min="0.1" max="1.0" step="0.01" value="1.0" style="flex:1;">
           <input type="number" id="input-opacity" step="0.01" value="1.0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
@@ -929,17 +930,10 @@
       </div>
     </div>
     <div class="ctrl-row" id="row-brush-opacity">
-      <div class="ctrl-label"><span data-i18n="opacity">透明度</span></div>
+      <div class="ctrl-label"><span data-i18n="opacity">不透明度</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-opacity" min="0.1" max="1" step="0.05" value="1.0" style="flex:1;">
         <input type="number" id="input-brush-opacity" step="0.05" value="1.0" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
-      </div>
-    </div>
-    <div class="ctrl-row">
-      <div class="ctrl-label"><span data-i18n="brushGap">最小间距</span></div>
-      <div style="display:flex; gap:6px; align-items:center;">
-        <input type="range" id="brush-gap" min="0.02" max="0.5" step="0.01" value="0.15" style="flex:1;">
-        <input type="number" id="input-brush-gap" step="0.01" value="0.15" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
     </div>
@@ -1193,16 +1187,12 @@
     </div>
     <div class="settings-body">
       <div class="settings-tabs" id="settings-tabs">
-        <button class="settings-tab active" data-tab="help"><span data-i18n="tabHelp">帮助</span></button>
-        <button class="settings-tab" data-tab="theme"><span data-i18n="tabTheme">主题风格</span></button>
+        <button class="settings-tab active" data-tab="theme"><span data-i18n="tabTheme">主题风格</span></button>
         <button class="settings-tab" data-tab="lang"><span data-i18n="tabLang">语言切换</span></button>
         <button class="settings-tab" data-tab="about"><span data-i18n="tabAbout">关于</span></button>
       </div>
       <div class="settings-content">
-        <div class="settings-pane" data-pane="help">
-          <p class="settings-empty" data-i18n="helpEmpty">帮助内容即将上线，敬请期待。</p>
-        </div>
-        <div class="settings-pane" data-pane="theme" style="display:none;">
+        <div class="settings-pane" data-pane="theme">
           <div class="ctrl-label"><span data-i18n="themeTitle">主题风格</span></div>
           <div class="theme-grid" id="theme-grid"></div>
         </div>
@@ -1219,6 +1209,7 @@
             <p class="about-author"><span data-i18n="aboutAuthor">作者</span>：Yushichadao</p>
             <p class="about-ai" data-i18n="aboutAI">本网站由 TRAE 与 CodeBuddy 工具 AI 辅助生成</p>
             <a class="about-link" id="about-repo" href="https://github.com/yushichadao/3d-editor" target="_blank" rel="noopener" data-i18n="aboutRepo">GitHub 仓库</a>
+            <a class="about-link" id="about-manual" href="https://github.com/yushichadao/3d-editor/blob/main/docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.md" target="_blank" rel="noopener" data-i18n="manualLink">使用说明书</a>
             <div class="about-terms">
               <button type="button" class="about-card" data-term="tos">
                 <span class="about-card-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8M8 9h2"/></svg></span>
@@ -1293,13 +1284,13 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js?v=6';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 // 简体中文作为内置默认与回退；其余语言存放在 language/ 目录下独立文件中（见 <head> 的 <script src> 引用）
-const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabHelp:'帮助', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', helpEmpty:'帮助内容即将上线，敬请期待。', themeTitle:'主题风格', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', aboutAI:'本网站由 TRAE 与 CodeBuddy 工具 AI 辅助生成', tosLink:'服务协议', disclaimerLink:'免责声明', privacyLink:'隐私政策', tosBody:'<h4>1. 条款的接受</h4><p>本《服务协议》（下称「本协议」）系由本网站（下称「本工具」或「本服务」）的运营者（下称「我们」）与使用者（下称「您」）就本工具的使用所订立的具有法律约束力的协议。当您访问、浏览或使用本工具时，即视为您已充分阅读、理解并同意接受本协议的全部条款与条件。若您不同意本协议的任何内容，请勿使用本工具。</p><h4>2. 使用范围与限制</h4><p>本工具为基于 Three.js 的纯前端三维 / 二维图形设计与编辑工具，仅供个人学习、创意设计、教学演示与非商业用途使用。您承诺：不以任何方式将本工具或其输出用于商业盈利、再分发或提供商业性服务；不利用本工具从事任何违反国家法律、法规或公序良俗的活动；不试图反向工程、反编译、破解或干扰本工具的正常运行。您应对自身上传、导入或创作的素材内容（包括文本、图像、模型等）享有合法权利或已获合法授权，并保证该等内容不侵犯任何第三方的知识产权、肖像权、名誉权或其他合法权益。</p><h4>3. 用户内容与知识产权</h4><p>本工具本身的全部著作权、商标权及其他知识产权归作者 Yushichadao 所有（Copyright © 2026-Present Yushichadao. All Rights Reserved.）。您在使用本工具过程中自行创建、上传或导入的素材及所生成场景文件的知识产权，归您本人所有；您授予我们一项非独占、全球范围、免费、可撤销的许可，仅用于在您使用本工具期间为提供与改进服务之目的而对该等内容进行必要的技术处理（如本地渲染、缓存）。我们不会因您使用本工具而取得您内容的任何权利。</p><h4>4. 账户、费用与第三方资源</h4><p>本工具为纯前端应用，不要求注册账户，亦不收取任何费用。本工具可能在界面中提供指向第三方网站（如 GitHub 开源仓库）的链接，该等链接仅供方便而设，我们对其内容、安全性及隐私实践不承担责任。您访问第三方资源应受其各自条款与政策的约束。</p><h4>5. 服务的变更、中断与终止</h4><p>我们保留在不另行通知的情况下，随时修改、暂停或终止本工具部分或全部功能的权利。对于因维护、升级、网络或不可抗力等原因导致的服务中断或数据丢失，我们不承担任何责任。</p><h4>6. 责任限制</h4><p>在法律允许的最大范围内，对于因使用或无法使用本工具所导致的任何间接、偶然、特殊或后果性损害，我们不承担任何赔偿责任。本工具按「现状」提供，详见《免责声明》。</p><h4>7. 适用法律与争议解决</h4><p>本协议的订立、效力、解释及争议解决均适用中华人民共和国法律（不含冲突规范）。因本协议产生的或与之相关的任何争议，双方应友好协商解决；协商不成的，任何一方均可向作者所在地有管辖权的人民法院提起诉讼。</p><h4>8. 联系我们</h4><p>如您对本协议有任何疑问，可通过本工具的 GitHub 仓库（github.com/yushichadao/3d-editor）与我们联系。本协议内容如发生变更，将以修订后的版本在站内公示，修订后继续使用即视为接受变更。</p>', disclaimerBody:'<h4>1. 一般声明</h4><p>本工具系按「现状」（AS IS）及「可用」（AS AVAILABLE）基础提供，我们不作任何明示或暗示的担保，包括但不限于对适销性、特定用途适用性、不侵权、准确性、可靠性或持续可用的担保。我们不保证本工具在任何时间、任何设备上均能无误运行，亦不保证缺陷必将被修正。</p><h4>2. 技术说明</h4><p>本工具为纯前端 Web 应用，依托浏览器（WebGL / Three.js）在您本地设备实时渲染三维与二维图形。其功能受您的设备性能、浏览器兼容性及网络环境等因素影响，渲染结果可能因设备与浏览器差异而略有不同。</p><h4>3. 责任限制</h4><p>在法律允许的最大范围内，对于因使用、误用或无法使用本工具，或因依赖本工具输出结果所导致的任何直接、间接、偶然、特殊、惩罚性或后果性损失（包括但不限于数据丢失、设备损耗、利润或业务中断），我们及作者 Yushichadao 均不承担任何责任，即使已被告知该等损害的可能性。</p><h4>4. 用户内容责任</h4><p>您应对使用本工具创建、上传或导入的全部内容独立承担全部责任。您确认本工具不构成任何专业设计、法律、财务或工程建议；任何基于此产生的成果之合规性、安全性与适用性，由您自行判断并负责。</p><h4>5. 第三方资源免责</h4><p>本工具可能包含指向第三方网站、仓库或资源的链接（如 GitHub）。该等第三方资源由其各自运营者负责，我们对其内容、可用性、安全性及隐私实践不作任何担保或承担责任。您与第三方之间的任何交易或交互，风险由您自行承担。</p><h4>6. 无 AI 功能声明</h4><p>本网站及本工具本身不包含任何由运营者提供的生成式人工智能（AI）功能或模型；页面与代码的生成系借助 TRAE 与 CodeBuddy 等开发工具辅助完成，该等工具不参与本工具运行时的功能提供。本《免责声明》所称「本工具」仅指本网站所提供的编辑功能本身。</p><h4>7. 条款变更</h4><p>我们保留随时修改本声明的权利，修订后的声明将在本工具内公示，您继续使用即视为接受修订内容。</p>', privacyBody:'<h4>1. 我们如何对待您的信息</h4><p>我们高度重视并严格保护您的隐私。本工具为纯前端（client-side）应用：所有三维模型、文本、图像、贴图及场景数据均在您的浏览器本地进行处理、渲染与保存，不会上传至任何远程服务器，我们亦无法访问您的任何内容。</p><h4>2. 我们收集的信息</h4><p>我们不会主动收集、存储或传输您的个人信息（如姓名、邮箱、位置等）。本工具不要求注册账户，亦不设置任何服务器端数据库。您在本工具内的全部操作均发生在您的本地设备。</p><h4>3. 本地存储</h4><p>为提升使用体验，本工具可能使用浏览器本地存储（如 localStorage）记录您的偏好设置（如界面语言、主题等）以及您主动导出的场景数据。该等信息仅保存在您自己的设备中，不会离开您的浏览器。您可随时通过清除浏览器数据予以删除。</p><h4>4. 分析与追踪</h4><p>本工具不集成任何第三方统计分析、广告或用户行为追踪脚本，不会对您进行跨站跟踪或画像。</p><h4>5. 第三方链接</h4><p>本工具可能在界面中提供指向第三方网站（如 GitHub）的链接。当您离开本工具访问第三方资源时，其隐私实践由该第三方负责，本《隐私政策》不再适用，请参照其相应政策。</p><h4>6. 儿童隐私</h4><p>本工具不面向未满 13 周岁的儿童，我们不会在知情的情况下收集其个人信息。</p><h4>7. 联系与变更</h4><p>如您对本政策有任何疑问，可通过 GitHub 仓库（github.com/yushichadao/3d-editor）联系我们。本政策如有变更，将以修订版本在站内公示。</p>', cancel:'取消', confirm:'确认', ok:'确定', close:'关闭', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏',
+const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', themeTitle:'主题风格', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', manualLink:'使用说明书', aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', aboutAI:'本网站由 TRAE 与 CodeBuddy 工具 AI 辅助生成', tosLink:'服务协议', disclaimerLink:'免责声明', privacyLink:'隐私政策', tosBody:'<h4>1. 条款的接受</h4><p>本《服务协议》（下称「本协议」）系由本网站（下称「本工具」或「本服务」）的运营者（下称「我们」）与使用者（下称「您」）就本工具的使用所订立的具有法律约束力的协议。当您访问、浏览或使用本工具时，即视为您已充分阅读、理解并同意接受本协议的全部条款与条件。若您不同意本协议的任何内容，请勿使用本工具。</p><h4>2. 使用范围与限制</h4><p>本工具为基于 Three.js 的纯前端三维 / 二维图形设计与编辑工具，仅供个人学习、创意设计、教学演示与非商业用途使用。您承诺：不以任何方式将本工具或其输出用于商业盈利、再分发或提供商业性服务；不利用本工具从事任何违反国家法律、法规或公序良俗的活动；不试图反向工程、反编译、破解或干扰本工具的正常运行。您应对自身上传、导入或创作的素材内容（包括文本、图像、模型等）享有合法权利或已获合法授权，并保证该等内容不侵犯任何第三方的知识产权、肖像权、名誉权或其他合法权益。</p><h4>3. 用户内容与知识产权</h4><p>本工具本身的全部著作权、商标权及其他知识产权归作者 Yushichadao 所有（Copyright © 2026-Present Yushichadao. All Rights Reserved.）。您在使用本工具过程中自行创建、上传或导入的素材及所生成场景文件的知识产权，归您本人所有；您授予我们一项非独占、全球范围、免费、可撤销的许可，仅用于在您使用本工具期间为提供与改进服务之目的而对该等内容进行必要的技术处理（如本地渲染、缓存）。我们不会因您使用本工具而取得您内容的任何权利。</p><h4>4. 账户、费用与第三方资源</h4><p>本工具为纯前端应用，不要求注册账户，亦不收取任何费用。本工具可能在界面中提供指向第三方网站（如 GitHub 开源仓库）的链接，该等链接仅供方便而设，我们对其内容、安全性及隐私实践不承担责任。您访问第三方资源应受其各自条款与政策的约束。</p><h4>5. 服务的变更、中断与终止</h4><p>我们保留在不另行通知的情况下，随时修改、暂停或终止本工具部分或全部功能的权利。对于因维护、升级、网络或不可抗力等原因导致的服务中断或数据丢失，我们不承担任何责任。</p><h4>6. 责任限制</h4><p>在法律允许的最大范围内，对于因使用或无法使用本工具所导致的任何间接、偶然、特殊或后果性损害，我们不承担任何赔偿责任。本工具按「现状」提供，详见《免责声明》。</p><h4>7. 适用法律与争议解决</h4><p>本协议的订立、效力、解释及争议解决均适用中华人民共和国法律（不含冲突规范）。因本协议产生的或与之相关的任何争议，双方应友好协商解决；协商不成的，任何一方均可向作者所在地有管辖权的人民法院提起诉讼。</p><h4>8. 联系我们</h4><p>如您对本协议有任何疑问，可通过本工具的 GitHub 仓库（github.com/yushichadao/3d-editor）与我们联系。本协议内容如发生变更，将以修订后的版本在站内公示，修订后继续使用即视为接受变更。</p>', disclaimerBody:'<h4>1. 一般声明</h4><p>本工具系按「现状」（AS IS）及「可用」（AS AVAILABLE）基础提供，我们不作任何明示或暗示的担保，包括但不限于对适销性、特定用途适用性、不侵权、准确性、可靠性或持续可用的担保。我们不保证本工具在任何时间、任何设备上均能无误运行，亦不保证缺陷必将被修正。</p><h4>2. 技术说明</h4><p>本工具为纯前端 Web 应用，依托浏览器（WebGL / Three.js）在您本地设备实时渲染三维与二维图形。其功能受您的设备性能、浏览器兼容性及网络环境等因素影响，渲染结果可能因设备与浏览器差异而略有不同。</p><h4>3. 责任限制</h4><p>在法律允许的最大范围内，对于因使用、误用或无法使用本工具，或因依赖本工具输出结果所导致的任何直接、间接、偶然、特殊、惩罚性或后果性损失（包括但不限于数据丢失、设备损耗、利润或业务中断），我们及作者 Yushichadao 均不承担任何责任，即使已被告知该等损害的可能性。</p><h4>4. 用户内容责任</h4><p>您应对使用本工具创建、上传或导入的全部内容独立承担全部责任。您确认本工具不构成任何专业设计、法律、财务或工程建议；任何基于此产生的成果之合规性、安全性与适用性，由您自行判断并负责。</p><h4>5. 第三方资源免责</h4><p>本工具可能包含指向第三方网站、仓库或资源的链接（如 GitHub）。该等第三方资源由其各自运营者负责，我们对其内容、可用性、安全性及隐私实践不作任何担保或承担责任。您与第三方之间的任何交易或交互，风险由您自行承担。</p><h4>6. 无 AI 功能声明</h4><p>本网站及本工具本身不包含任何由运营者提供的生成式人工智能（AI）功能或模型；页面与代码的生成系借助 TRAE 与 CodeBuddy 等开发工具辅助完成，该等工具不参与本工具运行时的功能提供。本《免责声明》所称「本工具」仅指本网站所提供的编辑功能本身。</p><h4>7. 条款变更</h4><p>我们保留随时修改本声明的权利，修订后的声明将在本工具内公示，您继续使用即视为接受修订内容。</p>', privacyBody:'<h4>1. 我们如何对待您的信息</h4><p>我们高度重视并严格保护您的隐私。本工具为纯前端（client-side）应用：所有三维模型、文本、图像、贴图及场景数据均在您的浏览器本地进行处理、渲染与保存，不会上传至任何远程服务器，我们亦无法访问您的任何内容。</p><h4>2. 我们收集的信息</h4><p>我们不会主动收集、存储或传输您的个人信息（如姓名、邮箱、位置等）。本工具不要求注册账户，亦不设置任何服务器端数据库。您在本工具内的全部操作均发生在您的本地设备。</p><h4>3. 本地存储</h4><p>为提升使用体验，本工具可能使用浏览器本地存储（如 localStorage）记录您的偏好设置（如界面语言、主题等）以及您主动导出的场景数据。该等信息仅保存在您自己的设备中，不会离开您的浏览器。您可随时通过清除浏览器数据予以删除。</p><h4>4. 分析与追踪</h4><p>本工具不集成任何第三方统计分析、广告或用户行为追踪脚本，不会对您进行跨站跟踪或画像。</p><h4>5. 第三方链接</h4><p>本工具可能在界面中提供指向第三方网站（如 GitHub）的链接。当您离开本工具访问第三方资源时，其隐私实践由该第三方负责，本《隐私政策》不再适用，请参照其相应政策。</p><h4>6. 儿童隐私</h4><p>本工具不面向未满 13 周岁的儿童，我们不会在知情的情况下收集其个人信息。</p><h4>7. 联系与变更</h4><p>如您对本政策有任何疑问，可通过 GitHub 仓库（github.com/yushichadao/3d-editor）联系我们。本政策如有变更，将以修订版本在站内公示。</p>', cancel:'取消', confirm:'确认', ok:'确定', close:'关闭', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏',
  // 面板标题
  sec3D:'3D 图形', sec2D:'2D 图形', secTransform:'变换', secMaterial:'材质', secColor:'颜色', secPattern:'花纹 / 贴图', secTextBox:'文本框', secEraser:'橡皮擦属性', secMouse:'鼠标相关操作', secTouch:'手势操作', secKeyboard:'键盘快捷键',
  // Tab 按钮
  tabBrush:'画笔',
  // 控件标签
- rotation:'旋转', scalePosition:'缩放 / 位置', objectSize:'物体尺寸', cornerRadius:'圆角', segments:'分段', verticalStretch:'竖直拉伸', shape:'形状', color:'颜色', noColor:'无颜色', metalness:'金属度', roughness:'粗糙度', opacity:'透明度', wireframe:'线框', textureLabel:'贴图', patternLabel:'花纹', rotationHorizontal:'水平旋转', rotationVertical:'垂直旋转', rotationLateral:'侧向旋转', uniformScale:'等比缩放', presetColors:'预设颜色', customColor:'自定义颜色', fontFamily:'字体', fontYaHei:'雅黑', fontSimSun:'宋体', fontKaiTi:'楷体', fontSimHei:'黑体', fontFangSong:'仿宋', fontSize:'字号', fontWeight:'粗细', textDirection:'排列方向', brushThickness:'画笔粗细', brushGap:'最小间距', eraserMode:'橡皮擦模式', eraserSize:'橡皮擦大小',
+ rotation:'旋转', shape:'形状', color:'颜色', noColor:'无颜色', opacity:'不透明度', wireframe:'线框', textureLabel:'贴图', patternLabel:'花纹', rotationHorizontal:'水平旋转', rotationVertical:'垂直旋转', rotationLateral:'侧向旋转', uniformScale:'等比缩放', presetColors:'预设颜色', customColor:'自定义颜色', fontFamily:'字体', fontYaHei:'雅黑', fontSimSun:'宋体', fontKaiTi:'楷体', fontSimHei:'黑体', fontFangSong:'仿宋', fontSize:'字号', fontWeight:'粗细', textDirection:'排列方向', brushThickness:'画笔粗细', brushGap:'最小间距', eraserMode:'橡皮擦模式', eraserSize:'橡皮擦大小',
  // 橡皮擦模式
  eraserWhole:'整体擦除', eraserLocal:'局部擦除',
  // 字体/文本选项
@@ -1360,7 +1351,7 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
  toastSelectAllN:'已全选 {0} 个对象', toastOldestState:'已是最早状态', toastUndone:'已撤销',
  toastNewestState:'已是最新状态', toastRedone:'已重做', toastTextAdded:'已添加文本',
  toastImageAdded:'已添加图片', toastPlacedLabel:'已放置 {0}', toastAddedLabel:'已添加{0}',
- toastNoColorN:'已将 {0} 个对象设为无颜色 · 不支持透明度、花纹与贴图', toastNoColorOne:'已设为无颜色 · 不支持透明度、花纹与贴图', toastNoEyedropper:'当前浏览器不支持屏幕取色，请手动输入颜色值',
+ toastNoColorN:'已将 {0} 个对象设为无颜色 · 不支持不透明度、花纹与贴图', toastNoColorOne:'已设为无颜色 · 不支持不透明度、花纹与贴图', toastNoEyedropper:'当前浏览器不支持屏幕取色，请手动输入颜色值',
  toastBrushColorSet:'画笔颜色已设置为 {0}', toastColorApplied:'已应用颜色 {0}',
  toastEraserWholeHint:'整体擦除：将对象整条删除', toastEraserLocalHint:'局部擦除：仅擦除圈内笔迹（可分节）',
  toastTransformMode:'变换模式：{0}', toastImageLoaded:'图片已载入，点击地面铺设',
@@ -1389,7 +1380,7 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   titleBBToggle:'展开/收起视角切换', titleBoxSelect:'框选模式：单指拖拽框选对象', titleSelectAll:'全选所有对象',
   titleEyedropper:'使用屏幕取色器', titleSettingsClose:'关闭',
   // Inline text hints
-  textHintPlaceholder:'输入文本... (Enter 确认 · Esc 取消)', textHintEnter:'Enter 确认 · Esc 取消 · Shift+Enter 换行',
+  textHintPlaceholder:'输入文本······', textHintEnter:'Enter 确认 · Esc 取消 · Shift+Enter 换行',
   loadFail:'加载失败',
   // 形状名称
   shapeBox:'立方体', shapeSphere:'球体', shapeCylinder:'圆柱', shapeCone:'圆锥', shapeTorus:'圆环',
@@ -1414,8 +1405,8 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   hintMultiSel:'已选中 {0} 个对象 · 变换将作为整体操作',
   hintMultiBlockedPat:'当前包含"{0}"，已隐藏"花纹/贴图栏"（仅支持"图形对象"，解除操作：排除非图形对象后单选）',
   hintMultiBlockedColor:'当前包含"图片或带贴图图形"，已隐藏"颜色栏"（仅支持"无贴图对象"，解除操作：清除贴图后单选）',
-  hintMultiAllNoColor:'当前{0}个对象"全部为无颜色"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：直接点选颜色重新上色）',
-  hintMultiSomeNoColor:'当前包含{0}个"无颜色对象"，已隐藏"透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为无颜色对象重新上色）',
+  hintMultiAllNoColor:'当前{0}个对象"全部为无颜色"，已隐藏"不透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：直接点选颜色重新上色）',
+  hintMultiSomeNoColor:'当前包含{0}个"无颜色对象"，已隐藏"不透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为无颜色对象重新上色）',
   hintMultiLockRatio:'当前为"多选模式"，已隐藏"等比缩放控件"（仅支持"单选模式"，解除操作：单选对象后操作）',
   // 确认对话框
   confirmClearScene:'确定清空场景？此操作可撤销。', confirmNewScene:'确定新建场景？当前场景将被清空。',
@@ -1509,11 +1500,11 @@ const LONG_PRESS_MS = 450;
 
 // ============ 光照 ============
 // 环境光提供基础亮度（暗面），方向光提供明暗层次与阴影（亮面）
-// 总光强 = ambient + directional = 0.3 + 0.7 = 1.0，使亮面颜色与选定颜色一致（不过曝）
+// 总光强 = ambient + directional = 1.0 + 2.6；MeshStandardMaterial 漫反射按 1/π 衰减。降低环境光比例以恢复顶/正/侧三个面的明暗层次：顶面可达纯白，正/侧面转中灰形成区分
 // 方向光从无限远处射向原点，形成稳定的光照方向
 // 使用非对称角度(5000,12000,6000)使顶/前/右三个可见面亮度不同，靠明暗区分边缘
-scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-const sun = new THREE.DirectionalLight(0xffffff, 0.7);
+scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+const sun = new THREE.DirectionalLight(0xffffff, 2.6);
 // 位置设在极远处，方向指向原点（与透视视角中由无限远处射向原点一致）
 // 非对称角度：顶面最亮(NdotL=0.85)、前面中等(NdotL=0.42)、右面较暗(NdotL=0.35)
 sun.position.set(5000, 12000, 6000);
@@ -1601,9 +1592,9 @@ function makeAxisLabel(text, color) {
   sp.scale.set(1.2, 0.6, 1);
   return sp;
 }
-const xLabel = makeAxisLabel('X', axisColors.x);
-const yLabel = makeAxisLabel('Y', axisColors.y);
-const zLabel = makeAxisLabel('Z', axisColors.z);
+const xLabel = makeAxisLabel('Y', axisColors.x);
+const yLabel = makeAxisLabel('Z', axisColors.y);
+const zLabel = makeAxisLabel('X', axisColors.z);
 // 标签放在正半轴箭头尖端附近，紧贴箭头
 xLabel.position.set(AXIS_LEN + 0.6, 0, 0);
 yLabel.position.set(0, AXIS_LEN + 0.6, 0);
@@ -1680,7 +1671,7 @@ let ghostDragging = false;  // 正在拖拽预览（缩放）
 let ghostDragStart = new THREE.Vector3();
 const GHOST_COLOR = 0x6ee7ff;  // 兜底色（仅在无颜色记忆时使用）
 
-// 获取幽灵预览色：与待生成实体对象颜色一致，仅透明度较浅
+// 获取幽灵预览色：与待生成实体对象颜色一致，仅不透明度较浅
 function getGhostColor(shapeKey) {
   const is3D = !!SHAPES_3D[shapeKey];
   const memKey = is3D ? 'shape3d' : 'shape2d';
@@ -1694,12 +1685,12 @@ function startGhostPreview(shapeKey) {
   ghostShape = shapeKey;
   const is3D = !!SHAPES_3D[shapeKey];
   const geo = is3D ? SHAPES_3D[shapeKey]() : SHAPES_2D[shapeKey]();
-  // 幽灵颜色与待生成实体对象颜色一致，仅透明度较浅
+  // 幽灵颜色与待生成实体对象颜色一致，仅不透明度较浅
   const ghostColor = getGhostColor(shapeKey);
   const mat = new THREE.MeshStandardMaterial({
     color: ghostColor, transparent: true, opacity: 0.4,
     depthWrite: false, side: THREE.DoubleSide,
-    roughness: 0.85, metalness: 0.05, flatShading: false
+    roughness: 0.6, metalness: 0.0, flatShading: false
   });
   ghostMesh = new THREE.Mesh(geo, mat);
   geo.computeBoundingBox();
@@ -2717,8 +2708,8 @@ function createObject(spec) {
       transparent: opacity < 1,
       opacity: opacity,
       depthWrite: opacity >= 1,
-      roughness: 0.85,
-      metalness: 0.05,
+      roughness: 0.6,
+      metalness: 0.0,
       flatShading: false
     });
     if (spec.pattern && spec.pattern !== '纯色') {
@@ -3034,7 +3025,7 @@ function refreshProps() {
     });
     // 预计算多选特殊状态
     const noNoColorInSel = !sel.some(o => o.data.color === NO_COLOR);
-    // 无颜色对象：透明度/颜色/花纹/贴图均不可用
+    // 无颜色对象：不透明度/颜色/花纹/贴图均不可用
     const anyNoColorSolid = !noNoColorInSel;
     // 构建提示文字（统一模板：当前包含"特殊对象"，已隐藏"相关控件"（仅支持""解除操作"））
     const hints = [_t('hintMultiSel', sel.length)];
@@ -3064,7 +3055,7 @@ function refreshProps() {
     elSecImg.style.display = 'none'; // 多选时不显示贴图按钮
     elSecText.style.display = 'none';
     elEditText.style.display = 'none';
-    // 多选时若有任一对象为 NO_COLOR，隐藏透明度控件
+    // 多选时若有任一对象为 NO_COLOR，隐藏不透明度控件
     document.getElementById('row-opacity').style.display = anyNoColorSolid ? 'none' : '';
     // 多选时隐藏等比缩放控件和锁定比例，禁用缩放模式按钮
     document.getElementById('row-scale').style.display = 'none';
@@ -3092,13 +3083,13 @@ function refreshProps() {
     elSecImg.style.display = canTexture ? '' : 'none';
     elSecText.style.display = isText ? '' : 'none';
     elEditText.style.display = isText ? '' : 'none';
-    // 无颜色对象（NO_COLOR + 纯色，无贴图）：透明度由系统强制控制，隐藏透明度控件
+    // 无颜色对象（NO_COLOR + 纯色，无贴图）：不透明度由系统强制控制，隐藏不透明度控件
     const isNoColorBrushSolid = (primary.data.isBrush === true) && (primary.data.color === NO_COLOR) && !primary.data.pattern;
     const isNoColorShapeSolid = (isShape) && (primary.data.color === NO_COLOR) &&
       (!primary.data.pattern || primary.data.pattern === '纯色') && !primary.data.image;
     document.getElementById('row-opacity').style.display = (isNoColorBrushSolid || isNoColorShapeSolid) ? 'none' : '';
-    // 单选时恢复等比缩放控件和锁定比例，启用缩放模式按钮
-    document.getElementById('row-scale').style.display = '';
+    // 单选时根据锁定比例显示等比缩放控件，并重置基准为当前缩放
+    refreshUniformScale();
     const _lr2 = document.querySelector('label.lock-ratio');
     if (_lr2) _lr2.style.display = '';
     const _ms2 = document.getElementById('mode-scale');
@@ -3137,9 +3128,8 @@ function hideProps() {
   elSecText.style.display = 'none';
   elSecDel.style.display = 'none';
   elMultiHint.style.display = 'none';
-  // 无选中时恢复等比缩放控件和锁定比例，启用缩放模式按钮
-  const _rs = document.getElementById('row-scale');
-  if (_rs) _rs.style.display = '';
+  // 无选中时隐藏等比缩放控件
+  refreshUniformScale();
   const _lr3 = document.querySelector('label.lock-ratio');
   if (_lr3) _lr3.style.display = '';
   const _ms3 = document.getElementById('mode-scale');
@@ -3199,8 +3189,6 @@ function syncProps(obj) {
   document.getElementById('input-rx').value = rotX;
   document.getElementById('r-z').value = rotZ;
   document.getElementById('input-rz').value = rotZ;
-  document.getElementById('s-c').value = sc;
-  document.getElementById('input-sc').value = sc;
   document.getElementById('p-opacity').value = opacity;
   document.getElementById('input-opacity').value = opacity;
   const vOpacity = document.getElementById('v-opacity');
@@ -4381,12 +4369,12 @@ function buildShapeGrid(containerId, shapes) {
       const shapeKey = key;
       const is3D = !!SHAPES_3D[shapeKey];
       const geo = is3D ? SHAPES_3D[shapeKey]() : SHAPES_2D[shapeKey]();
-      // 幽灵颜色与待生成实体对象颜色一致，仅透明度较浅
+      // 幽灵颜色与待生成实体对象颜色一致，仅不透明度较浅
       const ghostColor = getGhostColor(shapeKey);
       const mat = new THREE.MeshStandardMaterial({
         color: ghostColor, transparent: true, opacity: 0.4,
         depthWrite: false, side: THREE.DoubleSide,
-        roughness: 0.85, metalness: 0.05, flatShading: false
+        roughness: 0.6, metalness: 0.0, flatShading: false
       });
       dragGhost = new THREE.Mesh(geo, mat);
       geo.computeBoundingBox();
@@ -4585,7 +4573,7 @@ noColorDot.addEventListener('click', () => {
     if (mk) colorMemory[mk] = NO_COLOR;
   });
   pushHistory();
-  // 立即重建属性面板：隐藏透明度/花纹贴图栏，并刷新多选说明文字
+  // 立即重建属性面板：隐藏不透明度/花纹贴图栏，并刷新多选说明文字
   refreshProps();
   updateColorSelectionUI();
   updatePatternPreviews(0xcccccc);
@@ -4611,7 +4599,7 @@ COLORS.forEach(c => {
       if (mk) colorMemory[mk] = c;
     });
     pushHistory();
-    // 重建属性面板：恢复透明度/花纹贴图栏并清除"无颜色"说明
+    // 重建属性面板：恢复不透明度/花纹贴图栏并清除"无颜色"说明
     refreshProps();
     updateColorSelectionUI();
     updatePatternPreviews(c);
@@ -5208,7 +5196,7 @@ document.getElementById('color-picker-ok').addEventListener('click', () => {
       // 同步对象自定义颜色控件（圆形色块，仅在自定义时更新）
       setObjCustomSwatch(colorVal);
       objCustomColorVal = colorVal;
-      refreshProps(); // 重建面板：恢复透明度/花纹贴图栏并清除"无颜色"说明
+      refreshProps(); // 重建面板：恢复不透明度/花纹贴图栏并清除"无颜色"说明
       updateColorSelectionUI();
       // 更新花纹预览
       updatePatternPreviews(colorVal);
@@ -5291,18 +5279,6 @@ document.getElementById('input-brush-opacity').addEventListener('input', e => {
     document.getElementById('brush-opacity').value = v;
   }
 });
-document.getElementById('brush-gap').addEventListener('input', e => {
-  brush.gap = parseFloat(e.target.value);
-  document.getElementById('input-brush-gap').value = brush.gap.toFixed(2);
-});
-document.getElementById('input-brush-gap').addEventListener('input', e => {
-  const v = parseFloat(e.target.value);
-  if (!isNaN(v)) {
-    brush.gap = v;
-    document.getElementById('brush-gap').value = v;
-  }
-});
-
 // 画笔颜色选择 - 在画笔属性面板中独立显示
 const brushColorRow = document.getElementById('brush-color-row');
 const brushCustomSwatch = document.getElementById('brush-custom-swatch');
@@ -5313,7 +5289,7 @@ function setBrushColor(numColor) {
   // 记忆到对应画笔类型
   const memKey = state.tool === 'brush3d' ? 'brush3d' : 'brush2d';
   colorMemory[memKey] = numColor;
-  // 无颜色画笔：透明度由系统强制控制，隐藏透明度控件
+  // 无颜色画笔：不透明度由系统强制控制，隐藏不透明度控件
   const brushOpacityRow = document.getElementById('row-brush-opacity');
   if (brushOpacityRow) brushOpacityRow.style.display = (numColor === NO_COLOR) ? 'none' : '';
   if (numColor === NO_COLOR) {
@@ -5398,7 +5374,7 @@ function applyAppearance(o) {
   const applyToMesh = (mesh) => {
     if (o.data.kind === 'text') {
       rebuildText(o);
-      // 文本对象：应用透明度
+      // 文本对象：应用不透明度
       const opacity = o.data.opacity ?? 1;
       mesh.material.opacity = opacity;
       mesh.material.transparent = true; // 文本始终需要透明（canvas纹理有透明区域）
@@ -5431,7 +5407,7 @@ function applyAppearance(o) {
     }
     
     if (o.data.isBrush) {
-      // 画笔：处理颜色、花纹和透明度
+      // 画笔：处理颜色、花纹和不透明度
       const opacity = o.data.opacity ?? 1;
       const isNoColor = o.data.color === NO_COLOR;
       const hasPat = o.data.pattern && o.data.pattern !== '纯色';
@@ -5444,7 +5420,7 @@ function applyAppearance(o) {
         mesh.material.color.set(0xffffff);
         mesh.material.opacity = opacity;
         mesh.material.transparent = opacity < 1;
-        mesh.material.depthWrite = true; // 画笔子对象重叠时透明度不叠加
+        mesh.material.depthWrite = true; // 画笔子对象重叠时不透明度不叠加
       } else if (isNoColor) {
         // 无颜色：白色半透明效果（可见但不突出）
         if (mesh.material.map) { mesh.material.map.dispose(); mesh.material.map = null; }
@@ -5458,7 +5434,7 @@ function applyAppearance(o) {
         mesh.material.color.set(o.data.color);
         mesh.material.opacity = opacity;
         mesh.material.transparent = opacity < 1;
-        mesh.material.depthWrite = true; // 画笔子对象重叠时透明度不叠加
+        mesh.material.depthWrite = true; // 画笔子对象重叠时不透明度不叠加
       }
       mesh.material.needsUpdate = true;
       return;
@@ -5531,7 +5507,7 @@ function applyAppearance(o) {
   if (wasSelected && !hasAsyncTexture(o)) {
     applySelectionVisual(o, true);
   }
-  // 如果修改的是当前选中对象，立即更新透明度控件可见性（NO_COLOR切换时联动）
+  // 如果修改的是当前选中对象，立即更新不透明度控件可见性（NO_COLOR切换时联动）
   if (state.selectedList.length > 0 && state.selectedList[0] === o) {
     const isNoColorBrush = (o.data.isBrush === true) && (o.data.color === NO_COLOR) && !o.data.pattern;
     const isNoColorShape = (o.data.kind === '3d' || o.data.kind === '2d') && (o.data.color === NO_COLOR) &&
@@ -5713,8 +5689,50 @@ bindTransform('p-y','v-py',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh=
 bindTransform('r-y','v-ry',(m,v)=>m.rotation.y=v*Math.PI/180, v=>Math.round(v)+'°');
 bindTransform('r-x','v-rx',(m,v)=>m.rotation.x=v*Math.PI/180, v=>Math.round(v)+'°');
 bindTransform('r-z','v-rz',(m,v)=>m.rotation.z=v*Math.PI/180, v=>Math.round(v)+'°');
-bindTransform('s-c','v-sc',(m,v)=>m.scale.setScalar(v), v=>v.toFixed(2));
-// 透明度辅助函数：统一设置对象透明度，处理Group和选中状态
+// 等比缩放：以选中时的缩放为基准（基准=1），滑块按对数映射、1 居中；仅在 lock-ratio(等比缩放) 勾选时显示
+const scaleBase = new THREE.Vector3(1,1,1);
+function refreshUniformScale() {
+  const lr = document.getElementById('lock-ratio');
+  const row = document.getElementById('row-scale');
+  if (!row) return;
+  const show = state.selectedList.length === 1 && lr && lr.checked;
+  row.style.display = show ? '' : 'none';
+  if (show) {
+    scaleBase.copy(state.selectedList[0].mesh.scale);
+    const sl = document.getElementById('s-c'), val = document.getElementById('input-sc');
+    sl.value = 0; val.value = 1;   // 归一到基准 1
+  }
+}
+(function bindUniformScale(){
+  const sl = document.getElementById('s-c'), val = document.getElementById('input-sc');
+  if (!sl || !val) return;
+  const apply = (mult) => {
+    if (state.selectedList.length !== 1) return;
+    const m = state.selectedList[0].mesh;
+    m.scale.set(scaleBase.x*mult, scaleBase.y*mult, scaleBase.z*mult);
+    updateSelBoxes();
+  };
+  sl.addEventListener('input', () => {
+    const mult = Math.pow(10, parseFloat(sl.value));
+    val.value = mult.toFixed(2);
+    apply(mult);
+  });
+  sl.addEventListener('change', () => { if (state.selectedList.length) pushHistory(); });
+  val.addEventListener('input', () => {
+    let mult = parseFloat(val.value);
+    if (isNaN(mult)) return;
+    mult = Math.max(0.1, Math.min(10, mult));
+    sl.value = Math.log10(mult);
+    apply(mult);
+  });
+  val.addEventListener('change', () => { if (state.selectedList.length) pushHistory(); });
+})();
+// 拖拽 gizmo 缩放结束后，把当前缩放同步为新基准，避免后续滑块跳变
+transformCtrl.addEventListener('dragging-changed', (e) => {
+  if (!e.value && state.selectedList.length === 1) scaleBase.copy(state.selectedList[0].mesh.scale);
+});
+document.getElementById('lock-ratio').addEventListener('change', refreshUniformScale);
+// 不透明度辅助函数：统一设置对象不透明度，处理Group和选中状态
 function applyOpacityToObject(obj, v) {
   if (!obj) return;
   obj.data.opacity = v;
@@ -5762,7 +5780,7 @@ function applyOpacityToObject(obj, v) {
   }
 }
 
-// 透明度控制
+// 不透明度控制
 bindTransform('p-opacity','v-opacity',(m,v)=>{
   const o = state.selectedList.find(s=>s.mesh===m);
   applyOpacityToObject(o, v);
@@ -5913,7 +5931,7 @@ bindNumberInput('input-py','p-y',(m,v)=>{ const o = state.selectedList.find(s=>s
 bindNumberInput('input-ry','r-y',(m,v)=>m.rotation.y=v*Math.PI/180);
 bindNumberInput('input-rx','r-x',(m,v)=>{ const o = state.selectedList.find(s=>s.mesh===m); if(o && o.data.kind === 'image'){ m.rotation.x = v*Math.PI/180; } else { m.rotation.x=v*Math.PI/180; } });
 bindNumberInput('input-rz','r-z',(m,v)=>m.rotation.z=v*Math.PI/180);
-bindNumberInput('input-sc','s-c',(m,v)=>m.scale.setScalar(v));
+
 bindNumberInput('input-opacity','p-opacity',(m,v)=>{
   const o = state.selectedList.find(s=>s.mesh===m);
   applyOpacityToObject(o, v);
@@ -6199,6 +6217,17 @@ function applyLang() {
     if (fsTxt !== undefined) fsBtn.querySelector('.lbl').textContent = fsTxt;
   }
   document.documentElement.lang = currentLang;
+  // 使用说明书链接：按当前语言指向对应语言的手册
+  const manualLink = document.getElementById('about-manual');
+  if (manualLink) {
+    const manualMap = {
+      'zh-CN': 'https://github.com/yushichadao/3d-editor/blob/main/docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.md',
+      'en':    'https://github.com/yushichadao/3d-editor/blob/main/docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6_en.md',
+      'ja':    'https://github.com/yushichadao/3d-editor/blob/main/docs/%E4%BD%BF%E7%94%A8%E8%AA%AC%E6%98%8E%E6%9B%B8_ja.md',
+      'zh-TW': 'https://github.com/yushichadao/3d-editor/blob/main/docs/%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E%E6%9B%B8_zh-TW.md',
+    };
+    manualLink.href = manualMap[currentLang] || manualMap['zh-CN'];
+  }
 }
 function applyThemeObj(obj) {
   const root = document.documentElement;
@@ -7808,7 +7837,7 @@ const SHAPE_PARAMS = {
   },
   heart: {
     label: '心形',
-    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+    fields: []
   },
   parallelogram: {
     label: '平行四边形',
@@ -7869,11 +7898,11 @@ const SHAPE_PARAMS = {
   },
   arrow: {
     label: '箭头',
-    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+    fields: []
   },
   crescent: {
     label: '月牙',
-    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+    fields: []
   },
   semicircle: {
     label: '半圆',
@@ -7888,11 +7917,11 @@ const SHAPE_PARAMS = {
   },
   cross: {
     label: '十字',
-    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+    fields: []
   },
   lightning: {
     label: '闪电',
-    fields: [{ key: 'scale', label: '缩放', min: 0.2, max: 5, step: 0.1 }]
+    fields: []
   }
 };
 
@@ -9011,7 +9040,7 @@ function pasteClipboard(offset = 0.2, useViewCenter = false) {
         color: data.color !== undefined ? data.color : 0x000000,
         transparent: (data.opacity || 1) < 1,
         opacity: data.opacity || 1,
-        depthWrite: true, // 画笔子对象重叠时透明度不叠加
+        depthWrite: true, // 画笔子对象重叠时不透明度不叠加
       });
       if (data.pattern && data.pattern !== '纯色') {
         const patColor = (data.color !== undefined && data.color !== NO_COLOR) ? data.color : 0xffffff;
