@@ -155,30 +155,25 @@ Traditional 3D software like Blender or Maya is powerful, but its installer is h
 
 ## Chapter 2 · Preparing the Tool: Opening This Tool
 
-### 2.1 System requirements
+### 2.1 How to enter (public web access)
 
-This tool is a pure front-end web app with low device requirements.
+This tool is a web app deployed online; **no installation, no source download** — just open the public URL below in any browser:
+
+> 🌐 **Online address**: https://yushichadao.github.io/3d-editor/
+
+Copy the URL into your browser's address bar and press Enter to enter the main screen. Phone, tablet, or computer — anything with internet and a browser works.
+
+💡 The first load takes a very short moment (3D engine initialization); once the loading layer disappears you are in the main screen.
+
+### 2.2 System requirements
+
+This tool is a pure front-end web app with low device requirements:
 
 - Any modern browser (recent Chrome, Edge, Firefox, Safari);
 - Supports WebGL (almost all devices in recent years do);
-- Core features work offline (language packs etc. load with the page).
+- Just open the public URL above — nothing needs to be installed locally.
 
 ⚠️ **Caution**: If the page is blank after opening, first open the console with `F12` (top-right) and check for red errors. Trying another browser usually solves it.
-
-### 2.2 Running locally (for developers; general readers may skip)
-
-If you have the source-code folder, you need to start a local static server (`index.html` opened by double-click is blocked by the browser from loading modules).
-
-```bash
-# either one
-python -m http.server 8080
-# or
-npx serve .
-```
-
-Then open `http://localhost:8080` in the browser.
-
-💡 The first load takes a very short moment (3D engine initialization); once the loading layer disappears you are in the main screen.
 
 ### 2.3 Where to look first
 

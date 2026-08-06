@@ -1,4 +1,16 @@
-﻿$port = 8090
+﻿# 自动解除执行策略限制（PowerShell 默认 Restricted 会禁止运行脚本）
+if ($PSVersionTable.PSVersion.Major -ge 3) {
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+}
+
+# 若非管理员，自动请求管理员权限重新运行本脚本（HttpListener 绑定 +:port 需要管理员）
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host '需要管理员权限以绑定端口，正在请求提权...' -ForegroundColor Yellow
+    Start-Process -FilePath 'powershell.exe' -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    exit
+}
+
+$port = 8090
 $listener = New-Object System.Net.HttpListener
 
 # 注册 URL 保留，使 +:port 可绑定到所有网卡（首次运行需管理员权限）
