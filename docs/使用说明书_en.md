@@ -75,9 +75,9 @@
 
 **Part 8 · Efficiency**
 - Ch29 Why Learn Shortcuts: The Compound Interest of Efficiency
-- Ch30 Global and Function Keys
-- Ch31 Camera Shortcuts
-- Ch32 Object Shortcuts
+- Ch30 Mouse & Gesture Operations: for both desktop and mobile
+- Ch31 Single Keys & Shift Combos
+- Ch32 Slider/Input & Ctrl Combos
 
 **Part 9 · Transform**
 - Ch33 First Transform Controls: Three "Gripping Tools"
@@ -1256,184 +1256,114 @@ Memorize this table and every later chapter just "composes sentences" from it.
 
 ---
 
-## Chapter 30 · Global and Function Keys: "common moves" that work anywhere
+## Chapter 30 · Mouse & Gesture Operations: for both desktop and mobile
 
-The following keys work **regardless of whether an object is selected** — the most frequent "lifeline / efficiency" keys.
+The tool's "quick operations" **switch automatically by device**: mouse on desktop, gestures on phone/tablet. The two tables below are **identical** to the "Mouse operations" and "Gesture operations" shown in `Settings → Quick Operations` in the app — read the one that matches your device.
 
-### 30.1 Undo and redo — your regret medicine
+### 30.1 Mouse operations (desktop)
 
-| Key | Action |
-| --- | --- |
-| `Ctrl + Z` | undo one step |
-| `Ctrl + Y` or `Ctrl + Shift + Z` | redo (reverse of undo) |
+| Operation | Description |
+|---|---|
+| Left Click | Select object / control |
+| Double Left Click | Edit text |
+| Long Press Left | Manipulate object / control |
+| Long Press Right | Orbit view |
+| Long Press Middle | Pan view |
+| Scroll Wheel | Zoom view |
 
-The top toolbar also has ↶ undo and ↷ redo buttons, but the keyboard is faster.
+### 30.2 Gesture operations (mobile / tablet)
 
-✏️ **Practice**: place a sphere → `↑` to move it forward → `Ctrl+Z` to revert → `Ctrl+Y` to move forward again. Feel the "history stack" intuitively.
+| Operation | Description |
+|---|---|
+| Single Tap | Select object / control |
+| Double Tap | Edit text |
+| Long Press Object | Toggle add/remove selection (Shift+click equivalent) |
+| Drag Object | Manipulate object / control |
+| Drag Blank Area | Orbit view |
+| Tap Blank Area | Deselect all |
+| "Select All" Button | Select all objects |
+| "Box Select" Button | Enable single-finger drag to box-select objects |
+| Two-Finger Drag | Pan view |
+| Pinch Gesture | Zoom view |
 
-💡 Tip: keyboard moves enter history "one step at a time", so undo is smooth. Slider drags are continuous, so undo "jumps". Prefer the keyboard for precise control.
-
-### 30.2 Delete and clear all
-
-| Key | Action |
-| --- | --- |
-| `Del` or `Backspace` | delete the **currently selected** object |
-| `Ctrl + Del` (or `Ctrl + Backspace`) | **clear the whole scene** (one click, everything gone — careful!) |
-
-⚠️ `Ctrl + Del` is a "nuclear" operation — deletes all objects at once with **no confirmation dialog**. One of the easiest mis-taps for beginners. Back up with `Ctrl + S` before clearing.
-
-### 30.3 Copy · Paste · Clone — three postures of mass production
-
-| Key | Action | Difference from "copy" |
-| --- | --- | --- |
-| `Ctrl + C` | copy selected object to clipboard | — |
-| `Ctrl + V` | paste (near original position) | from clipboard |
-| `Ctrl + D` | **clone** (copy in place with a slight offset) | one step, not clipboard-dependent |
-
-💡 For repeated placement like "a row of street lamps" or "a row of books", `Ctrl + D` is a godsend. Clone one → arrow key to next spot → clone again → move again… a row fills in a few tries. 10× faster than dragging from the panel repeatedly.
-
-### 30.4 Select and select all
-
-| Key | Action |
-| --- | --- |
-| `Ctrl + A` | **select all** objects in the scene |
-| `Shift` + click object | **add/remove** from selection (for multi-select) |
-
-🖱️ Mouse note: single-click empty space = deselect; drag to box-select (or on touch, turn on "box select" and drag) = select a swath at once.
-
-✏️ **Practice**: place 3 different shapes → `Ctrl + A` to select all → `Shift`-click one to remove it → now 2 selected. Press `↑` and confirm the 2 move forward together.
-
-### 30.5 New · Import · Export · Screenshot
-
-| Key | Action |
-| --- | --- |
-| `Ctrl + N` | new blank scene |
-| `Ctrl + O` | load scene (read back a previously saved JSON) |
-| `Ctrl + S` | export scene (save as JSON) |
-| `Ctrl + P` | export screenshot image (PNG) |
-
-💡 Workflow: `Ctrl + S` to save at each milestone; `Ctrl + P` to shoot the "finished image" you hand to others. The two shortcuts have separate roles — don't mix them.
-
-### 30.6 Fullscreen and cancel
-
-| Key | Action |
-| --- | --- |
-| `F11` | toggle fullscreen (hide browser frame, bigger canvas) |
-| `Esc` | cancel current tool/selection; **in fullscreen, first leaves fullscreen** |
-
-⚠️ In fullscreen, `Esc` is interpreted as "leave fullscreen first", not deselect — intentional, so a single `Esc` doesn't lose your hard-won selection. To deselect, leave fullscreen then press `Esc` again.
+💡 Gesture operations map one-to-one to mouse operations: Single Tap = Left Click, Drag Object = Long Press Left to manipulate, Pinch = Scroll Wheel to zoom… just a different "input organ". With no keyboard on a phone, these gestures are your "quick operations".
 
 ---
 
-## Chapter 31 · Camera Shortcuts: with nothing selected, you "roll your eyes"
+## Chapter 31 · Single Keys & Shift Combos
 
-**With no object selected**, the arrow keys and `A D W S` all become "camera control" — you don't move, the lens moves.
+Keyboard shortcuts follow one core rule: **check whether an object is selected**. The two tables below are **identical** to "Single Keys" and "Shift Combos" in `Settings → Quick Operations` in the app — use them directly.
 
-### 31.1 Camera pan (move the lens, keep its direction)
+### 31.1 Single keys
 
-| Key | Lens movement (feel on screen) |
-| --- | --- |
-| `↑` / `↓` | pan **back / forward** (farther / closer) |
-| `←` / `→` | pan **right / left** (slide sideways) |
-| `PgUp` / `PgDn` | pan **up / down** (rise / crouch) |
+> With selection: translate 0.1 grid (0.15 units) / rotate 5°{br}No selection: pan view 0.1 grid / rotate 5°
 
-💡 Pan differs from "rotate": in pan the lens **direction stays the same**, only position moves — like holding the camera and stepping sideways, or crouching and standing, but always looking straight ahead.
+| Key | With Selection | Without Selection |
+|---|---|---|
+| `↓` / `↑` | Move along X +/− | View back / forward |
+| `→` / `←` | Move along Y +/− | View right / left |
+| `PgUp` / `PgDn` | Move along Z +/− | View up / down |
+| `A` / `D` | Rotate Z CW/CCW | Orbit left / right |
+| `W` / `S` | Rotate Y CW/CCW | Orbit up / down |
+| `E` / `Q` | Rotate X CW/CCW | — |
+| `+` / `-` | Scale up/down 5% | — |
+| `Esc` | Cancel | Exit Fullscreen |
+| `F11` | Fullscreen / Exit fullscreen | (same as left) |
+| `Del` / `Backspace` | Delete selected objects | — |
 
-### 31.2 Camera rotate (turn the lens, change the viewing angle)
+✏️ **Practice**: place a cube → select it and press `↑` to watch it "move forward"; clear selection (click empty space) and press `↑` again — now the lens moves forward. Same key, two identities.
 
-| Key | How the lens turns |
-| --- | --- |
-| `A` / `D` | rotate **left / right** (around the vertical axis, like turning your head in place) |
-| `W` / `S` | rotate **up / down** (lift / drop your face) |
-| `E` / `Q` | **disabled** (resting in camera mode) |
+### 31.2 Shift combos
 
-✏️ **Practice**: clear selection (click empty space) → press `A` a few times and the scene turns around you like a turntable? Press `W` a few times and it starts "looking up / down"? That's the "rolling eyes" feel.
+> With selection: translate 1 grid (1.5 units) / rotate 90°{br}No selection: pan view 1 grid / rotate 90°
 
-### 31.3 Combine with the bottom "view" buttons
+| `Shift` + Key | With Selection | Without Selection |
+|---|---|---|
+| `↓` / `↑`, `→` / `←`, `PgUp` / `PgDn` | Translate 1 grid | Pan 1 grid |
+| `A` / `D`, `W` / `S`, `E` / `Q` | Rotate 90° | Orbit 90° |
+| `+` / `-` | Scale ×2 / ×0.5 | — |
+| Left Click | Add to selection (click) | (same as left) |
 
-The bottom bar has 7 view buttons: Perspective / Top / Bottom / Front / Back / Left / Right. They "teleport" the lens to a standard orientation; keyboard rotation is the "fine adjustment".
-
-💡 Battle pattern: first "Front" button to square the object → `A`/`D` a few degrees to find the best oblique angle → `Ctrl + P` to screenshot. Far faster than mouse-drag alone, and reproducible.
-
-### 31.4 Touch gestures (by the way)
-
-On a keyboard-less tablet/phone: one finger drag on empty space = rotate view, two-finger drag = pan view, two-finger pinch = zoom. Same principle as keyboard camera control, just a different "input organ".
+💡 Mantra: **normal keys to get close, Shift to arrive**. First tap arrows to roughly align, then `Shift`+arrow for a 1-grid leap that snaps into place; same for rotation: `A` for 5° to get the feel, then `Shift+A` to fill up to 90° and square it.
 
 ---
 
-## Chapter 32 · Object Shortcuts: with an object selected, you "carry things"
+## Chapter 32 · Slider/Input & Ctrl Combos
 
-Once an object is selected (click it, selection frame appears), the arrow keys and `A D W S` immediately "take over" that object — you operate it directly, not the lens.
+### 32.1 Slider / Input
 
-### 32.1 Move: slide the object along an axis
+When the cursor is on a slider or numeric input box, the keys below "change that box's number" instead of operating the object — the original shortcuts are **temporarily disabled**. This table is **identical** to "Slider / Input" in `Settings → Quick Operations`.
 
-Review the "screen-label axis": X = front/back (blue), Y = left/right (red), Z = height (green, up positive).
+| Key | Slider | Input |
+|---|---|---|
+| `→` / `←` | Increase / Decrease | Move cursor |
+| `↑` / `↓` | Increase / Decrease | Increase / Decrease |
+| `+` / `-` | — | Input sign (+/−) |
+| `PgUp` / `PgDn` | Large step up/down | Scroll right panel up/down |
 
-| Key | Which axis the object slides, and where |
-| --- | --- |
-| `↑` / `↓` | along **X (front/back)** + / − |
-| `←` / `→` | along **Y (left/right)** + / − |
-| `PgUp` / `PgDn` | along **Z (height)** + / − (rise / sink) |
+⚠️ To use object shortcuts, first click empty space or the object to move focus off the input box.
 
-Plainly:
-- `↑`/`↓` move the object "forward / backward" (depth);
-- `←`/`→` move it "left / right" (sideways);
-- `PgUp`/`PgDn` make it "rise / sink" (up/down).
+### 32.2 Ctrl combos
 
-✏️ **Practice**: place a cube, select it, press `PgUp` a few times and watch it "grow taller" and leave the ground. Then `↓` a few times to retreat into the screen's depth. Try all three moves to build muscle memory.
+| `Ctrl` + Key | Combination |
+|---|---|
+| `A` | Select All |
+| `N` | New Scene |
+| `O` | Import Scene |
+| `S` | Export Scene |
+| `P` | Screenshot |
+| `Z` | Undo |
+| `Y` | Redo |
+| `C` | Copy |
+| `V` | Paste |
+| `D` | Clone |
+| `Del` | Clear Scene |
 
-💡 Default step is **0.1 grid (= 0.15 length units)**; 10 presses = exactly 1 grid. This "integer step" is ideal for arrays, alignment, and even spacing — far more accurate than a slider.
+⚠️ `Ctrl + Del` is a "nuclear" operation — deletes all objects at once with **no confirmation dialog**. Back up with `Ctrl + S` before clearing.
 
-### 32.2 Rotate: spin the object around an axis
+### 32.3 Comprehensive practice: build a "little lighthouse" purely by keyboard
 
-Rotation is "spin around an axis", not "everything tumbles". The three axes mean the same as above.
-
-| Key | Axis the object spins (screen label) | Feel analogy |
-| --- | --- | --- |
-| `A` / `D` | **Z axis (height/vertical)** reverse / forward | turns in place like a **turntable, spinning top** |
-| `W` / `S` | **Y axis (left/right)** reverse / forward | **forward tumble / lean back** (somersault direction) |
-| `E` / `Q` | **X axis (front/back)** reverse / forward | **topple left / topple right** (roll over) |
-
-✏️ **Practice**: place an object with a clear "front" (a text box, or a textured block), select it and press `A` (around vertical axis, front slowly turns to the side), `W` (around left/right axis, front flips up/down), `E` (around front/back axis, tilts to one side). Each rotation maps to one "tumble"; memorize these three analogies and they won't mix.
-
-❓ **Think**: Why use `A/D`, `W/S`, `E/Q` (6 letters) for rotation instead of the arrow keys? — Because the arrow keys already "own" movement (front/back/left/right/up/down). Rotation is a different action, so it needs a different key set, or they'd collide. The letter keys settle into "AD horizontal, WS vertical, EQ diagonal" feel, hard to mistype even blind.
-
-### 32.3 Scale: enlarge / shrink
-
-| Key | Action |
-| --- | --- |
-| `+` (or `=`) | enlarge **5%** (×1.05) |
-| `-` (or `_`) | shrink **5%** (×0.95) |
-
-⚠️ **Scaling with `+`/`-` is forbidden when multiple are selected** — pressing `+`/`-` with several objects selected shows "can't scale in multi-select". This prevents weird results from force-uniform-scaling objects of different sizes. To scale uniformly, first `Ctrl + A` then handle individually, or use the "uniform scale" slider.
-
-### 32.4 The Shift key: from "fine-tune" to "big stride"
-
-Holding **Shift** with the above keys instantly enlarges the step.
-
-| Normal press | Step | `Shift` + same key | Step |
-| --- | --- | --- | --- |
-| Arrow move | 0.1 grid (0.15) | `Shift` + arrow | **1 grid (1.5)** |
-| `A/D/W/S/E/Q` rotate | 5° | `Shift` + same | **90°** |
-| `+`/`-` scale | ×1.05 / ×0.95 | `Shift`+`+`/`-` | **×2 / ×0.5** (double / half) |
-
-💡 Trick: **first normal keys to "get close", then Shift to "arrive"**. E.g. to snap a far object exactly onto a grid line: first tap arrows to roughly align, then `Shift`+arrow for a 1-grid leap that snaps it into place. Same for rotation: `A` for 5° to get the feel, then `Shift+A` to fill up to 90° and square it.
-
-✏️ **Practice**: select a cube, press `Shift + A` once — it snaps a clean 90°. That's the most-used move when building right-angle arrays.
-
-### 32.5 A very easy trap: when focus is in an input box, shortcuts "don't work"
-
-⚠️ When the cursor is **on a slider or numeric input box** (the right panel's "font size", "opacity" boxes, etc.), the arrow keys and `+`/`-` **change that box's number** and shortcuts are **temporarily disabled**.
-
-This prevents the object from suddenly flying away when you only wanted to adjust a number. So:
-- To use object shortcuts, **first click empty space or the object** to move focus off the input box;
-- The help panel also notes this (shortcuts are disabled when focus is on a slider/input, and the original shortcut temporarily doesn't fire).
-
-💡 Troubleshooting list: arrow keys unresponsive? First ① is nothing selected (then you're moving the camera) ② is the cursor in some input box (then you're changing a number) ③ is a transform control mode open and a control selected. If any holds, arrow keys "don't carry the object".
-
-### 32.6 Comprehensive practice: build a "little lighthouse" purely by keyboard
-
-Let's chain this part's lessons into one flow:
+Chain this part's lessons into one flow:
 
 1. Drag a **cylinder** from the panel into the scene (only this uses mouse drag — accept it);
 2. Select it, press `Shift + PgUp` a few times to raise it to a good "tall" position;
@@ -2345,53 +2275,86 @@ A vocabulary list for quick lookup. Entries with `*` are terms specific to this 
 > All shortcuts are **case-insensitive**; `Ctrl` on Mac is `Cmd`.
 > Note: as long as the cursor is in an input/dropdown box, shortcuts fail — this is browser behavior, not a bug (§32.5).
 
-### 47.1 Global / Ctrl combinations (any context)
+### 47.1 Mouse operations (desktop)
 
-| Shortcut | Action |
+| Operation | Description |
 |---|---|
-| `Ctrl + N` | new scene (clear current) |
-| `Ctrl + O` | import scene (read `.json` project) |
-| `Ctrl + S` | export scene as `.json` project |
-| `Ctrl + P` | screenshot export PNG |
-| `Ctrl + Z` | undo |
-| `Ctrl + Y` or `Ctrl + Shift + Z` | redo |
-| `Ctrl + C` | copy selected object |
-| `Ctrl + V` | paste (placed with a slight offset) |
-| `Ctrl + D` | clone selected object |
-| `Ctrl + A` | select all; if in brush, first exit brush tool |
+| Left Click | Select object / control |
+| Double Left Click | Edit text |
+| Long Press Left | Manipulate object / control |
+| Long Press Right | Orbit view |
+| Long Press Middle | Pan view |
+| Scroll Wheel | Zoom view |
 
-### 47.2 Function keys
+### 47.2 Gesture operations (mobile / tablet)
 
-| Shortcut | Action |
+| Operation | Description |
 |---|---|
-| `F11` | enter / exit fullscreen |
-| `Esc` | in fullscreen first exit fullscreen; otherwise cancel current tool and selection |
-| `Delete` / `Backspace` | delete selected object (disabled when transform controls active) |
+| Single Tap | Select object / control |
+| Double Tap | Edit text |
+| Long Press Object | Toggle add/remove selection (Shift+click equivalent) |
+| Drag Object | Manipulate object / control |
+| Drag Blank Area | Orbit view |
+| Tap Blank Area | Deselect all |
+| "Select All" Button | Select all objects |
+| "Box Select" Button | Enable single-finger drag to box-select objects |
+| Two-Finger Drag | Pan view |
+| Pinch Gesture | Zoom view |
 
-### 47.3 Camera shortcuts (when no object selected)
+### 47.3 Single keys
 
-| Shortcut | Action | Step |
+> With selection: translate 0.1 grid (0.15 units) / rotate 5°{br}No selection: pan view 0.1 grid / rotate 5°
+
+| Key | With Selection | Without Selection |
 |---|---|---|
-| `←` `→` `↑` `↓` | pan view (left/right/front/back) | 0.1 cell; `Shift`=1 cell |
-| `PgUp` `PgDn` | view up / down pan | same as above |
-| `A` `D` | rotate view (horizontal left / right) | 5°; `Shift`=90° |
-| `W` `S` | rotate view (vertical up / down) | 5°; `Shift`=90° |
+| `↓` / `↑` | Move along X +/− | View back / forward |
+| `→` / `←` | Move along Y +/− | View right / left |
+| `PgUp` / `PgDn` | Move along Z +/− | View up / down |
+| `A` / `D` | Rotate Z CW/CCW | Orbit left / right |
+| `W` / `S` | Rotate Y CW/CCW | Orbit up / down |
+| `E` / `Q` | Rotate X CW/CCW | — |
+| `+` / `-` | Scale up/down 5% | — |
+| `Esc` | Cancel | Exit Fullscreen |
+| `F11` | Fullscreen / Exit fullscreen | (same as left) |
+| `Del` / `Backspace` | Delete selected objects | — |
 
-### 47.4 Object shortcuts (when an object is selected)
+### 47.4 Shift combos
 
-| Shortcut | Action | Step |
+> With selection: translate 1 grid (1.5 units) / rotate 90°{br}No selection: pan view 1 grid / rotate 90°
+
+| `Shift` + Key | With Selection | Without Selection |
 |---|---|---|
-| `←` `→` `↑` `↓` | move object (X / Z plane) | 0.1 cell; `Shift`=1 cell |
-| `PgUp` `PgDn` | object rise / fall (Y axis, on ground / off ground) | same as above |
-| `A` `D` | rotate around Y(UI) axis | 5°; `Shift`=90° |
-| `W` `S` | rotate around X axis | 5°; `Shift`=90° |
-| `Q` `E` | rotate around Z(UI) axis | 5°; `Shift`=90° |
-| `+` / `=` | enlarge | 5%; `Shift`=×2 (disabled in multi-select) |
-| `−` / `_` | shrink | 5%; `Shift`=×0.5 (disabled in multi-select) |
+| `↓` / `↑`, `→` / `←`, `PgUp` / `PgDn` | Translate 1 grid | Pan 1 grid |
+| `A` / `D`, `W` / `S`, `E` / `Q` | Rotate 90° | Orbit 90° |
+| `+` / `-` | Scale ×2 / ×0.5 | — |
+| Left Click | Add to selection (click) | (same as left) |
 
-⚠️ **Don't mix up the axes**: in object rotation `A/D` is around Y, `W/S` is around X, `Q/E` is around Z — exactly matching Ch34/35/36 "the ring decides which axis". Can't remember? Press against this table, or `Shift`+arrow for big angles.
+### 47.5 Slider / Input
 
-💡 **Efficiency mantra** (Ch29): left hand `Ctrl` manages "project" (save/load/shoot/undo/clone), right hand arrow keys manage "move", the six letters `A D W S Q E` manage "rotate", `+/−` manage "scale".
+> Effective when slider or input is focused; arrow keys are temporarily remapped.
+
+| Key | Slider | Input |
+|---|---|---|
+| `→` / `←` | Increase / Decrease | Move cursor |
+| `↑` / `↓` | Increase / Decrease | Increase / Decrease |
+| `+` / `-` | — | Input sign (+/−) |
+| `PgUp` / `PgDn` | Large step up/down | Scroll right panel up/down |
+
+### 47.6 Ctrl combos
+
+| `Ctrl` + Key | Combination |
+|---|---|
+| `A` | Select All |
+| `N` | New Scene |
+| `O` | Import Scene |
+| `S` | Export Scene |
+| `P` | Screenshot |
+| `Z` | Undo |
+| `Y` | Redo |
+| `C` | Copy |
+| `V` | Paste |
+| `D` | Clone |
+| `Del` | Clear Scene |
 
 ---
 

@@ -80,7 +80,7 @@ window.__packs['zh-TW'] = {
   helpMouseMidhold:'中鍵長按', helpMouseMidholdDesc:'平移視角',
   helpMouseWheel:'滾輪', helpMouseWheelDesc:'縮放視角',
   helpTouchTap:'單指點擊', helpTouchTapDesc:'選取物件 / 控制項',
-  helpTouchDblTap:'雙指點擊', helpTouchDblTapDesc:'編輯文字',
+  helpTouchDblTap:'單指雙擊', helpTouchDblTapDesc:'編輯文字',
   helpTouchLongObj:'長按物件', helpTouchLongObjDesc:'切換加入/移除選取（等同 Shift+點選）',
   helpTouchDragObj:'拖曳物件', helpTouchDragObjDesc:'操作物件 / 控制項',
   helpTouchDragBlank:'拖曳空白處', helpTouchDragBlankDesc:'旋轉視角',
