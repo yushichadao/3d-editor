@@ -20,7 +20,7 @@
 | Reading advice | Read the first four Parts in order; the remaining eight Parts can be consulted on demand. Be sure to do the "Think" and "Practice" at the end of every chapter |
 | Online address | https://yushichadao.github.io/3d-editor/ (open the page and start practicing) |
 | Project repo | https://github.com/yushichadao/3d-editor (source code and this document are both here) |
-| Goal | From beginner to mastery, covering everything — about 250,000 words |
+| Goal | From beginner to mastery, leaving nothing out — about 23,000 words |
 
 **Notation**
 - 💡 Tip: time-saving experience
