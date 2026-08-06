@@ -924,13 +924,13 @@
 .touch-device .manual-doc h1 { font-size:23px; line-height:1.3; } .touch-device .manual-doc h2 { font-size:20px; line-height:1.35; }
 .touch-device .manual-doc h3 { font-size:17px; } .touch-device .manual-doc p, .touch-device .manual-doc li { font-size:15.5px; }
 .touch-device .manual-doc pre { font-size:13px; white-space:pre-wrap; overflow-wrap:break-word; word-break:break-word; overflow-x:hidden; } .touch-device .manual-doc code { font-size:13px; }
-.touch-device .manual-doc table { display:table; width:100%; overflow:hidden; white-space:normal; table-layout:fixed; }
+.touch-device .manual-doc table { display:table; width:100%; table-layout:fixed; border-collapse:collapse; font-size:11px; }
 .touch-device .manual-doc .kbd-table,
-.touch-device .manual-doc .kbd-help-table { font-size:10px; }
-.touch-device .manual-doc .kbd-table th,
-.touch-device .manual-doc .kbd-table td,
-.touch-device .manual-doc .kbd-help-table th,
-.touch-device .manual-doc .kbd-help-table td { white-space:normal; word-break:break-word; }
+.touch-device .manual-doc .kbd-help-table { font-size:11px; }
+.touch-device .manual-doc table,
+.touch-device .manual-doc th,
+.touch-device .manual-doc td,
+.touch-device .manual-doc .kbd-key { white-space:normal !important; overflow-wrap:anywhere !important; word-break:break-word !important; overflow:visible !important; }
 .touch-device .manual-doc img { border-radius:8px; max-width:100%; height:auto; display:block; }
 /* 操作指南（快捷操作）弹窗：手机版同样禁止横向滚动，表格换行自适应 */
 .touch-device .guide-doc { overflow-x:hidden; touch-action:pan-y; overscroll-behavior-x:contain; overflow-wrap:break-word; word-break:break-word; padding:16px calc(16px + env(safe-area-inset-right)) 16px calc(16px + env(safe-area-inset-left)); }
@@ -938,10 +938,10 @@
 .touch-device .guide-doc pre { white-space:pre-wrap; overflow-wrap:break-word; word-break:break-word; overflow-x:hidden; }
 .touch-device .guide-doc .kbd-table,
 .touch-device .guide-doc .kbd-help-table { font-size:11px; table-layout:fixed; width:100%; }
-.touch-device .guide-doc .kbd-table th,
-.touch-device .guide-doc .kbd-table td,
-.touch-device .guide-doc .kbd-help-table th,
-.touch-device .guide-doc .kbd-help-table td { white-space:normal; word-break:break-word; }
+.touch-device .guide-doc table,
+.touch-device .guide-doc th,
+.touch-device .guide-doc td,
+.touch-device .guide-doc .kbd-key { white-space:normal !important; overflow-wrap:anywhere !important; word-break:break-word !important; overflow:visible !important; }
 .touch-device .manual-float.float-bottom { left:0 !important; right:0 !important; top:auto !important; bottom:0 !important; transform:none !important; justify-content:center; border-radius:0; padding:10px calc(10px + env(safe-area-inset-bottom)); gap:12px; background:var(--bg-panel-solid); border-top:1px solid var(--border); }
 .touch-device .manual-bottombar {
   display:flex; align-items:stretch; justify-content:space-around; gap:2px;
