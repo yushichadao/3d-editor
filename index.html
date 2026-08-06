@@ -40,6 +40,24 @@
     -webkit-font-smoothing: antialiased;
     user-select: none;
   }
+  /* 文字选择高亮：跟随主题，暗色下不再刺眼；统一外观避免"不一样大" */
+  ::selection { background: color-mix(in srgb, var(--accent) 42%, var(--control-bg)); color: var(--text); }
+  ::-moz-selection { background: color-mix(in srgb, var(--accent) 42%, var(--control-bg)); color: var(--text); }
+  /* 选中文字在内侧描边，弱化原生白框观感 */
+  .manual-doc ::selection,
+  .guide-doc ::selection,
+  .manual-note-text ::selection,
+  .sticky-area ::selection {
+    background: color-mix(in srgb, var(--accent) 45%, var(--control-bg));
+    color: var(--text);
+  }
+  .manual-doc ::-moz-selection,
+  .guide-doc ::-moz-selection,
+  .manual-note-text ::-moz-selection,
+  .sticky-area ::-moz-selection {
+    background: color-mix(in srgb, var(--accent) 45%, var(--control-bg));
+    color: var(--text);
+  }
 
   /* 画布 */
   #canvas-wrap { position: fixed; inset: 0; z-index: 1; }
@@ -264,19 +282,29 @@
   .multi-hint { font-size: 11px; color: var(--accent-2); padding: 4px 2px; }
   .kbd { font-size: 10px; color: var(--text-dim); line-height: 1.5; padding: 4px 2px; }
   .kbd b { color: var(--accent); font-weight: 600; white-space: nowrap; }
-  .kbd-title { color: var(--accent-2); font-size: 10px; font-weight: 700; margin-top: 6px; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid var(--border); }
+  .kbd-title { color: var(--accent-2); font-size: 10px; font-weight: 700; margin-top: 6px; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid var(--border); text-align: center; }
   .kbd-title:first-child { margin-top: 0; }
   .kbd-row { display: flex; gap: 6px; align-items: baseline; padding: 1px 0; }
   .kbd-row > b { flex: 0 0 auto; min-width: 42px; }
   .kbd-row > span { flex: 1 1 auto; word-break: break-all; }
   .kbd-table { width: 100%; border-collapse: collapse; font-size: 9px; margin: 2px 0 4px; table-layout: fixed; }
-  .kbd-table th { color: var(--accent-2); font-weight: 700; padding: 2px 1px; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; overflow: hidden; }
+  .kbd-table th { color: var(--accent-2); font-weight: 700; padding: 2px 1px; border-bottom: 1px solid var(--border); border-right: 1px solid rgba(128,128,128,0.18); text-align: center; white-space: nowrap; overflow: hidden; }
   .kbd-table th:first-child { width: 28%; }
   .kbd-table th:not(:first-child) { width: 36%; }
-  .kbd-table td { padding: 1px 2px; border-bottom: 1px solid rgba(128,128,128,0.1); vertical-align: top; word-break: break-all; }
-  .kbd-table td:first-child { color: var(--accent); font-weight: 600; text-align: left; }
+  .kbd-table th:last-child { border-right: none; }
+  .kbd-table td { padding: 1px 2px; border-bottom: 1px solid rgba(128,128,128,0.1); border-right: 1px solid rgba(128,128,128,0.18); vertical-align: top; word-break: break-all; }
+  .kbd-table td:first-child { color: var(--accent); font-weight: 600; text-align: center; }
   .kbd-table td:not(:first-child) { color: var(--text-dim); text-align: center; }
+  .kbd-table td:last-child { border-right: none; }
+  .kbd-key { display: inline-block; background: var(--control-bg); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; margin: 0 1px; font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--accent); white-space: nowrap; line-height: 1.35; }
   .kbd-note { font-size: 9px; color: var(--text-dim); line-height: 1.4; padding: 1px 2px 3px; }
+  .kbd-help-table { width: 100%; border-collapse: collapse; font-size: 9px; margin: 2px 0 6px; table-layout: fixed; }
+  .kbd-help-table th { color: var(--accent-2); font-weight: 700; padding: 2px 4px; border-bottom: 1px solid var(--border); border-right: 1px solid rgba(128,128,128,0.18); text-align: center; white-space: nowrap; overflow: hidden; }
+  .kbd-help-table th:last-child { border-right: none; }
+  .kbd-help-table td { padding: 1px 4px; border-bottom: 1px solid rgba(128,128,128,0.1); border-right: 1px solid rgba(128,128,128,0.18); vertical-align: top; word-break: break-all; }
+  .kbd-help-table td:last-child { border-right: none; }
+  .kbd-help-table td:first-child { color: var(--accent); font-weight: 600; text-align: center; white-space: nowrap; }
+  .kbd-help-table td:not(:first-child) { color: var(--text-dim); text-align: left; }
 
   /* 底部状态条 */
   .bottombar {
@@ -361,6 +389,8 @@
     align-items: center; justify-content: center;
     background: var(--modal-mask); backdrop-filter: blur(6px);
   }
+  /* 确认弹窗需悬浮在所有交互层之上：说明书/指南(300)、便签层(4000) 等，但不高于加载遮罩(99990+) */
+  #confirm-modal { z-index: 5000; }
   .modal-mask.show { display: flex; }
   /* 屏幕取色放大镜 */
   #color-loupe {
@@ -628,15 +658,100 @@
   }
 /* ===== 说明书阅读器 ===== */
 #manual-modal { z-index: 300; }
-#manual-modal .manual-card {
+  #manual-modal .manual-card {
   width: min(1120px, 95vw); height: min(88vh, 920px);
-  background: var(--bg-panel-solid); border: 1px solid var(--accent);
+  background: var(--bg-manual); border: 1px solid var(--border);
   border-radius: 16px; box-shadow: none; display: flex; flex-direction: column;
   position: relative; overflow: hidden; animation: pop .22s ease-out;
 }
-/* ===== 操作指南（只读卡片，无阴影，无目录/搜索/笔记） ===== */
+/* ===== 操作指南（只读卡片，无阴影，无目录/搜索/便签） ===== */
 #guide-modal { z-index: 300; }
+  #guide-modal .manual-card {
+  width: min(1120px, 95vw); height: min(88vh, 920px);
+  background: var(--bg-manual); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: none; display: flex; flex-direction: column;
+  position: relative; overflow: hidden; animation: pop .22s ease-out;
+}
 .guide-doc { flex:1; overflow-y:auto; padding:22px 28px; line-height:1.85; font-size:15px; user-select:text; -webkit-user-select:text; }
+/* 操作指南：照搬右栏内容，放大以适配大卡片，并为键名加灰框 */
+.guide-doc .panel-section { border-bottom:1px solid var(--section-border); padding:14px 2px 20px; }
+.guide-doc .panel-section:last-child { border-bottom:none; }
+/* 大标题：键盘快捷键 / 鼠标相关操作 —— 必须明显大于子标题 */
+.guide-doc .collapsible-header {
+  cursor:pointer; margin-bottom:8px; padding-bottom:10px;
+  border-bottom:1px solid var(--section-border);
+}
+.guide-doc .collapsible-header h3 {
+  font-size:19px; font-weight:700; color:var(--text); letter-spacing:.4px;
+  padding:0 0 0 14px;
+}
+.guide-doc .collapsible-header h3::before { width:4px; height:18px; border-radius:2px; }
+.guide-doc .collapse-arrow { font-size:12px; }
+.guide-doc .kbd { font-size:14px; color:var(--text-dim); line-height:1.95; padding:8px 2px; }
+.guide-doc .kbd b { color:var(--text); font-weight:600; }
+
+/* 美化操作指南滚动条：细窄、强调色滑块，替代丑陋的默认滚动条 */
+.guide-doc { scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+.guide-doc::-webkit-scrollbar { width:10px; }
+.guide-doc::-webkit-scrollbar-track { background:transparent; margin:4px 0; }
+.guide-doc::-webkit-scrollbar-thumb {
+  background:var(--border); border-radius:6px;
+  border:3px solid transparent; background-clip:padding-box;
+}
+.guide-doc::-webkit-scrollbar-thumb:hover { background:var(--text-dim); background-clip:padding-box; }
+
+/* 子标题：单键操作 / Shift 组合键 / 滑动条·输入框 / 功能键 —— 顶部/底部加明显分隔线，作为表格间的边界 */
+.guide-doc .kbd-title {
+  font-size:14px; font-weight:700; color:var(--accent); letter-spacing:.3px;
+  text-align:center; margin:18px 0 6px; padding:8px 0;
+  border-top:1px solid rgba(110,231,255,0.4); border-bottom:1px solid rgba(110,231,255,0.4);
+  background:rgba(110,231,255,0.08);
+}
+
+/* 说明框 */
+.guide-doc .kbd-note {
+  font-size:12.5px; color:var(--text-dim); line-height:1.6;
+  background:var(--control-bg); border:1px solid var(--border);
+  border-left:3px solid var(--accent-2);
+  border-radius:6px; padding:7px 12px; margin:0 0 10px;
+}
+
+/* 统一鼠标表与键盘表外观：每张表加明显外框，合并表与非合并表边界清晰可见 */
+.guide-doc .kbd-table, .guide-doc .kbd-help-table {
+  width:100%; border-collapse:separate; border-spacing:0;
+  font-size:13px; margin:8px 0 16px;
+  border:1px solid rgba(110,231,255,0.4); border-radius:9px; overflow:hidden;
+}
+.guide-doc .kbd-table th, .guide-doc .kbd-help-table th {
+  font-size:12.5px; font-weight:600; color:var(--accent-2);
+  background:rgba(110,231,255,0.06);
+  border-bottom:1.5px solid rgba(110,231,255,0.45); padding:9px 12px;
+}
+.guide-doc .kbd-table th:first-child, .guide-doc .kbd-help-table th:first-child { border-top-left-radius:8px; }
+.guide-doc .kbd-table th:last-child, .guide-doc .kbd-help-table th:last-child { border-top-right-radius:8px; }
+.guide-doc .kbd-table td, .guide-doc .kbd-help-table td {
+  padding:9px 12px; font-size:13px; color:var(--text-dim); vertical-align:middle;
+  border-bottom:1px solid rgba(110,231,255,0.28);
+  border-right:1px solid rgba(110,231,255,0.28);
+  border-left:1px solid rgba(110,231,255,0.28);
+}
+.guide-doc .kbd-table tr:last-child td, .guide-doc .kbd-help-table tr:last-child td { border-bottom:none; }
+.guide-doc .kbd-table td:first-child, .guide-doc .kbd-help-table td:first-child {
+  color:var(--text); font-weight:500; text-align:center; white-space:nowrap;
+  border-left:none;
+}
+/* 表格所有内容居中 */
+.guide-doc .kbd-table td, .guide-doc .kbd-help-table td { text-align:center; }
+
+/* 键帽 */
+.guide-doc .kbd-key {
+  display:inline-block; background:var(--control-bg);
+  border:1px solid var(--border); border-bottom-width:2px;
+  border-radius:6px; padding:2px 8px; margin:1px 1px;
+  font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px;
+  color:var(--text); white-space:nowrap; line-height:1.5;
+  box-shadow:0 1px 0 rgba(0,0,0,.18);
+}
 .manual-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); }
 .manual-bar-title { font-weight:600; color:var(--accent); font-size:15px; }
 .manual-bar-actions { display:flex; gap:6px; }
@@ -661,22 +776,104 @@
 .md-block.flash { animation: mdFlash 1.2s ease-out; }
 @keyframes mdFlash { 0%{background:color-mix(in srgb,var(--accent) 28%,transparent);} 100%{background:transparent;} }
 .manual-doc mark.md-hl { background: var(--warn); color:#1a1a1a; border-radius:3px; padding:0 1px; }
+.manual-doc mark.md-jump { background: var(--accent); color:#fff; border-radius:3px; padding:0 1px; animation: mdJumpPulse 1.6s ease-out; }
+@keyframes mdJumpPulse { 0%,50%,100%{ filter:brightness(1);} 25%,75%{ filter:brightness(1.6);} }
 .md-block.search-hit { background: color-mix(in srgb, var(--accent-2) 16%, transparent); }
+/* 说明书内容排版适配亮色/暗色 */
+.manual-doc h1,.manual-doc h2,.manual-doc h3,.manual-doc h4,.manual-doc h5,.manual-doc h6 { color:var(--text); margin:0.65em 0 0.35em; line-height:1.35; }
+.manual-doc h1 { font-size:1.7em; border-bottom:1px solid var(--border); padding-bottom:0.3em; }
+.manual-doc h2 { font-size:1.35em; border-bottom:1px solid var(--border); padding-bottom:0.25em; }
+.manual-doc h3 { font-size:1.15em; }
+.manual-doc p { margin:0.45em 0; }
+.manual-doc a { color:var(--accent); text-decoration:none; }
+.manual-doc a:hover { text-decoration:underline; }
+.manual-doc hr { border:none; border-top:1px solid var(--border); margin:1em 0; }
+.manual-doc code { background:var(--control-bg); padding:1px 5px; border-radius:4px; font-size:0.92em; font-family:ui-monospace,Menlo,Consolas,monospace; }
+.manual-doc pre.md-code { background:var(--control-bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; overflow-x:auto; line-height:1.6; }
+.manual-doc pre.md-code code { background:transparent; padding:0; }
+/* 教材/说明类引用卡片（> 类型）：暗色下不再是刺眼白框，跟随主题且文字清晰 */
+.manual-doc blockquote,
+.guide-doc blockquote {
+  margin:0.8em 0; padding:12px 16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  border-left:4px solid var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, var(--control-bg));
+  color:var(--text);
+}
+.manual-doc blockquote p,
+.guide-doc blockquote p { margin:0.35em 0; color:inherit; }
+.manual-doc table.md-table { border-collapse:collapse; width:100%; margin:0.6em 0; }
+.manual-doc table.md-table th,.manual-doc table.md-table td { border:1px solid var(--border); padding:6px 12px; text-align:left; }
+.manual-doc table.md-table th { background:var(--control-bg); font-weight:600; }
+.manual-doc table.md-table tr:nth-child(even) td { background:var(--bg2); }
+.manual-doc ul,.manual-doc ol { padding-left:1.4em; margin:0.4em 0; }
+.manual-doc li { margin:0.15em 0; }
+.manual-doc img { max-width:100%; border-radius:6px; }
+/* 说明书区滚动条美化 */
+.manual-doc, .manual-toc, .manual-note-list { scrollbar-width:thin; scrollbar-color:color-mix(in srgb, var(--text-dim) 45%, transparent) transparent; }
+.manual-doc::-webkit-scrollbar, .manual-toc::-webkit-scrollbar, .manual-note-list::-webkit-scrollbar { width:7px; height:7px; }
+.manual-doc::-webkit-scrollbar-track, .manual-toc::-webkit-scrollbar-track, .manual-note-list::-webkit-scrollbar-track { background:transparent; }
+.manual-doc::-webkit-scrollbar-thumb, .manual-toc::-webkit-scrollbar-thumb, .manual-note-list::-webkit-scrollbar-thumb { background:color-mix(in srgb, var(--text-dim) 40%, transparent); border-radius:4px; border:1.5px solid transparent; background-clip:padding-box; }
+.manual-doc::-webkit-scrollbar-thumb:hover, .manual-toc::-webkit-scrollbar-thumb:hover, .manual-note-list::-webkit-scrollbar-thumb:hover { background:color-mix(in srgb, var(--accent) 45%, transparent); background-clip:padding-box; }
 .manual-note { width:264px; flex-shrink:0; border-left:1px solid var(--border); display:none; flex-direction:column; }
 .manual-note.open { display:flex; }
 .manual-note-head { padding:8px 10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600; color:var(--text); }
 .manual-note-list { flex:1; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:8px; }
-.manual-note-item { border:1px solid var(--border); border-radius:8px; padding:8px; font-size:12px; background:var(--control-bg); }
+.manual-note-item { border:1px solid var(--border); border-left:4px solid var(--border); border-radius:8px; padding:8px; font-size:12px; background:var(--control-bg); }
+.manual-note-item[data-color="yellow"] { border-left-color:#ffe9a3; }
+.manual-note-item[data-color="green"]  { border-left-color:#cdeeb0; }
+.manual-note-item[data-color="blue"]   { border-left-color:#b9dcf7; }
+.manual-note-item[data-color="pink"]   { border-left-color:#ffc9d8; }
+.manual-note-item[data-color="purple"] { border-left-color:#dcc9f7; }
 .manual-note-item .note-line { color:var(--accent); cursor:pointer; font-weight:600; }
 .manual-note-item .note-quote { color:var(--text-dim); margin:4px 0; font-style:italic; word-break:break-all; }
-.manual-note-item .note-text { color:var(--text); }
-.manual-note-item .note-actions { display:flex; gap:6px; margin-top:6px; }
+.manual-note-item .note-text { color:var(--text); cursor:pointer; white-space:pre-wrap; word-break:break-word; }
+.manual-note-item .note-actions { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
 .manual-note-empty { color:var(--text-dim); font-size:12px; padding:12px; text-align:center; }
+.manual-note-head { display:flex; align-items:center; gap:8px; padding:8px 10px; border-bottom:1px solid var(--border); font-weight:600; }
+.manual-note-head-actions { margin-left:auto; display:flex; gap:4px; }
+.manual-note-tools { display:flex; align-items:center; gap:8px; padding:6px 10px; border-bottom:1px solid var(--border); font-size:12px; }
+.manual-note-selall { display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none; -webkit-user-select:none; }
+.manual-note-selall input[type=checkbox] { width:15px; height:15px; margin:0; accent-color:var(--accent); cursor:pointer; }
+.manual-note-count { margin-left:auto; color:var(--text-dim); }
+.manual-note-item { padding:8px 24px 8px 8px; position:relative; }
+.manual-note-item .note-check { position:absolute; top:9px; right:9px; width:15px; height:15px; cursor:pointer; accent-color:var(--accent); }
+.manual-note-item .note-text { color:var(--text); cursor:pointer; white-space:pre-wrap; word-break:break-word; max-height:3.4em; overflow:hidden; }
+.sticky-area[readonly] { background:rgba(0,0,0,.06); cursor:default; }
 .manual-note-edit { border-top:1px solid var(--border); padding:10px; display:none; flex-direction:column; gap:8px; }
 .manual-note-edit.open { display:flex; }
 .manual-note-edit-line { font-size:12px; color:var(--accent); font-weight:600; }
 .manual-note-area { width:100%; min-height:72px; resize:vertical; background:var(--input-bg); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:8px; font-size:12.5px; font-family:inherit; line-height:1.5; }
 .manual-note-edit-actions { display:flex; gap:6px; justify-content:flex-end; }
+/* ===== 便签浮窗（多便签） ===== */
+.sticky-layer { position:fixed; inset:0; pointer-events:none; z-index:4000; }
+.sticky-note { position:absolute; pointer-events:auto; display:flex; flex-direction:column; width:300px; height:250px; min-width:210px; min-height:150px; border-radius:10px; border:1px solid rgba(0,0,0,.22); overflow:hidden; color:#1c1c1c; --sfs:13px; }
+.sticky-note[data-color="yellow"] { background:#ffe9a3; }
+.sticky-note[data-color="green"]  { background:#cdeeb0; }
+.sticky-note[data-color="blue"]   { background:#b9dcf7; }
+.sticky-note[data-color="pink"]   { background:#ffc9d8; }
+.sticky-note[data-color="purple"] { background:#dcc9f7; }
+.sticky-note.pinned { box-shadow:0 0 0 2px var(--accent); }
+.sticky-head { display:flex; align-items:center; gap:3px; padding:5px 7px; background:rgba(0,0,0,.09); cursor:move; user-select:none; -webkit-user-select:none; touch-action:none; }
+.sticky-title { flex:1; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sticky-ico { background:transparent; border:none; color:#1c1c1c; cursor:pointer; font-size:12px; line-height:1; padding:3px 5px; border-radius:5px; font-family:inherit; }
+.sticky-ico:hover { background:rgba(255,255,255,.65); }
+.sticky-quote { font-size:11.5px; font-style:italic; color:rgba(0,0,0,.62); padding:5px 8px; max-height:70px; overflow:auto; border-bottom:1px dashed rgba(0,0,0,.22); word-break:break-word; cursor:pointer; }
+.sticky-quote.hide { display:none; }
+.sticky-area { flex:1; min-height:0; border:none; outline:none; resize:none; background:transparent; color:#161616; padding:8px; font-size:var(--sfs); line-height:1.6; font-family:inherit; user-select:text; -webkit-user-select:text; }
+.sticky-foot { display:flex; align-items:center; gap:4px; padding:5px 6px; background:rgba(0,0,0,.07); }
+.sticky-btn { background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.18); color:#1c1c1c; border-radius:6px; padding:3px 8px; font-size:11.5px; cursor:pointer; font-family:inherit; white-space:nowrap; }
+.sticky-btn:hover { background:#fff; }
+.sticky-colors { display:flex; gap:3px; margin-left:auto; }
+.sticky-dot { width:13px; height:13px; border-radius:50%; border:1px solid rgba(0,0,0,.3); cursor:pointer; }
+.sticky-dot.on { outline:2px solid rgba(0,0,0,.55); outline-offset:1px; }
+.sticky-resize { position:absolute; right:0; bottom:0; width:16px; height:16px; cursor:nwse-resize; touch-action:none; }
+.sticky-resize::after { content:''; position:absolute; right:3px; bottom:3px; width:7px; height:7px; border-right:2px solid rgba(0,0,0,.32); border-bottom:2px solid rgba(0,0,0,.32); border-bottom-right-radius:2px; }
+.sticky-note textarea, .sticky-quote { scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.28) transparent; }
+.sticky-note textarea::-webkit-scrollbar, .sticky-quote::-webkit-scrollbar { width:6px; height:6px; }
+.sticky-note textarea::-webkit-scrollbar-thumb, .sticky-quote::-webkit-scrollbar-thumb { background:rgba(0,0,0,.25); border-radius:4px; }
+.sticky-dirty .sticky-title::after { content:' •'; color:#c0392b; }
 /* ===== 手机版阅读器优化 ===== */
 .manual-toc-toggle { display:inline-block; }
 @media (max-width: 768px) {
@@ -692,6 +889,7 @@
   .manual-toolbar { gap:8px; }
   .manual-doc { padding:14px 16px; }
   .manual-note-edit-actions .manual-btn { flex:1; text-align:center; }
+  .sticky-note { width:min(94vw,340px) !important; max-height:70vh; }
 }
 .manual-float { position:absolute; display:none; gap:4px; background:var(--bg-panel-solid); border:1px solid var(--border); border-radius:8px; padding:4px; box-shadow:none; z-index:20; }
 .manual-float button { background:transparent; border:none; color:var(--text); padding:4px 9px; cursor:pointer; font-size:12px; border-radius:5px; font-family:inherit; }
@@ -705,7 +903,7 @@
 .md-table th { background:var(--control-bg); color:var(--text); }
 .md-table td { color:var(--text-dim); }
 .md-code { background:var(--control-bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; overflow-x:auto; font-size:13px; font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--text); }
-.md-quote { border-left:3px solid var(--accent); padding:6px 14px; color:var(--text-dim); margin:8px 0; background:var(--control-bg); }
+.md-quote { border-left:4px solid var(--accent); padding:10px 16px; color:var(--text); margin:8px 0; border-radius:8px; border:1px solid var(--border); background:color-mix(in srgb, var(--accent) 10%, var(--control-bg)); }
 .md-block h1 { font-size:22px; margin:16px 0 8px; color:var(--text); }
 .md-block h2 { font-size:18px; margin:13px 0 6px; color:var(--text); }
 .md-block h3 { font-size:15px; margin:10px 0 5px; color:var(--text); }
@@ -1018,7 +1216,8 @@
         <input type="number" id="input-brush-thick" step="0.05" value="0.5" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
       </div>
     </div>
-    <div class="ctrl-row" id="row-brush-opacity">
+    <!-- 画笔笔迹不透明度恒为 1，不提供调节入口 -->
+    <div class="ctrl-row" id="row-brush-opacity" style="display:none;">
       <div class="ctrl-label"><span data-i18n="opacity">不透明度</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
         <input type="range" id="brush-opacity" min="0.1" max="1" step="0.05" value="1.0" style="flex:1;">
@@ -1059,24 +1258,30 @@
     </div>
     <div class="collapsible-body">
     <div class="kbd mouse-only">
-      <div class="kbd-row"><b data-i18n="helpMouseClick">单击左键</b><span data-i18n="helpMouseClickDesc">选择对象/控件</span></div>
-      <div class="kbd-row"><b data-i18n="helpMouseDblClick">双击左键</b><span data-i18n="helpMouseDblClickDesc">编辑文本</span></div>
-      <div class="kbd-row"><b data-i18n="helpMouseHold">长按左键</b><span data-i18n="helpMouseHoldDesc">操作对象/控件</span></div>
-      <div class="kbd-row"><b data-i18n="helpMouseRhold">长按右键</b><span data-i18n="helpMouseRholdDesc">视角旋转</span></div>
-      <div class="kbd-row"><b data-i18n="helpMouseMidhold">长按滚轮</b><span data-i18n="helpMouseMidholdDesc">视角平移</span></div>
-      <div class="kbd-row"><b data-i18n="helpMouseWheel">滑动滚轮</b><span data-i18n="helpMouseWheelDesc">视角缩放</span></div>
+      <table class="kbd-help-table">
+        <tr><th data-i18n="helpThOp">操作</th><th data-i18n="helpThDesc">说明</th></tr>
+        <tr><td><b data-i18n="helpMouseClick">单击左键</b></td><td data-i18n="helpMouseClickDesc">选择对象/控件</td></tr>
+        <tr><td><b data-i18n="helpMouseDblClick">双击左键</b></td><td data-i18n="helpMouseDblClickDesc">编辑文本</td></tr>
+        <tr><td><b data-i18n="helpMouseHold">长按左键</b></td><td data-i18n="helpMouseHoldDesc">操作对象/控件</td></tr>
+        <tr><td><b data-i18n="helpMouseRhold">长按右键</b></td><td data-i18n="helpMouseRholdDesc">视角旋转</td></tr>
+        <tr><td><b data-i18n="helpMouseMidhold">长按滚轮</b></td><td data-i18n="helpMouseMidholdDesc">视角平移</td></tr>
+        <tr><td><b data-i18n="helpMouseWheel">滑动滚轮</b></td><td data-i18n="helpMouseWheelDesc">视角缩放</td></tr>
+      </table>
     </div>
     <div class="kbd touch-only" style="display:none;">
-      <div class="kbd-row"><b data-i18n="helpTouchTap">单指单击</b><span data-i18n="helpTouchTapDesc">选择对象/控件</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchDblTap">单指双击</b><span data-i18n="helpTouchDblTapDesc">编辑文本</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchLongObj">单指长按对象</b><span data-i18n="helpTouchLongObjDesc">加选/减选（等价 Shift 单击）</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchDragObj">单指拖动对象</b><span data-i18n="helpTouchDragObjDesc">操作对象/控件</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchDragBlank">单指拖动空白</b><span data-i18n="helpTouchDragBlankDesc">视角旋转</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchTapBlank">单指轻点空白</b><span data-i18n="helpTouchTapBlankDesc">取消选择</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchSelectAll">「全选」按钮</b><span data-i18n="helpTouchSelectAllDesc">选中所有对象</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchBoxSelect">「框选」按钮</b><span data-i18n="helpTouchBoxSelectDesc">开启后单指拖拽框选对象</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchTwoDrag">双指拖动</b><span data-i18n="helpTouchTwoDragDesc">视角平移</span></div>
-      <div class="kbd-row"><b data-i18n="helpTouchPinch">双指捏合</b><span data-i18n="helpTouchPinchDesc">视角缩放</span></div>
+      <table class="kbd-help-table">
+        <tr><th data-i18n="helpThOp">操作</th><th data-i18n="helpThDesc">说明</th></tr>
+        <tr><td><b data-i18n="helpTouchTap">单指单击</b></td><td data-i18n="helpTouchTapDesc">选择对象/控件</td></tr>
+        <tr><td><b data-i18n="helpTouchDblTap">单指双击</b></td><td data-i18n="helpTouchDblTapDesc">编辑文本</td></tr>
+        <tr><td><b data-i18n="helpTouchLongObj">单指长按对象</b></td><td data-i18n="helpTouchLongObjDesc">加选/减选（等价 Shift 单击）</td></tr>
+        <tr><td><b data-i18n="helpTouchDragObj">单指拖动对象</b></td><td data-i18n="helpTouchDragObjDesc">操作对象/控件</td></tr>
+        <tr><td><b data-i18n="helpTouchDragBlank">单指拖动空白</b></td><td data-i18n="helpTouchDragBlankDesc">视角旋转</td></tr>
+        <tr><td><b data-i18n="helpTouchTapBlank">单指轻点空白</b></td><td data-i18n="helpTouchTapBlankDesc">取消选择</td></tr>
+        <tr><td><b data-i18n="helpTouchSelectAll">「全选」按钮</b></td><td data-i18n="helpTouchSelectAllDesc">选中所有对象</td></tr>
+        <tr><td><b data-i18n="helpTouchBoxSelect">「框选」按钮</b></td><td data-i18n="helpTouchBoxSelectDesc">开启后单指拖拽框选对象</td></tr>
+        <tr><td><b data-i18n="helpTouchTwoDrag">双指拖动</b></td><td data-i18n="helpTouchTwoDragDesc">视角平移</td></tr>
+        <tr><td><b data-i18n="helpTouchPinch">双指捏合</b></td><td data-i18n="helpTouchPinchDesc">视角缩放</td></tr>
+      </table>
     </div>
     </div>
   </div>
@@ -1087,48 +1292,94 @@
     </div>
     <div class="collapsible-body">
     <div class="kbd">
-      <div class="kbd-title" data-i18n="kbdTitleBasic">基础按键</div>
+      <div class="kbd-title" data-i18n="kbdTitleSingle">单键操作</div>
       <div class="kbd-note" data-i18n="kbdNoteBasic">选取对象时：平移0.1网格（0.15长度）/ 旋转5°<br>未选取时：视角平移0.1网格 / 旋转5°</div>
       <table class="kbd-table">
         <tr><th data-i18n="kbdThKey">按键</th><th data-i18n="kbdThSelected">选取对象时</th><th data-i18n="kbdThUnselected">未选取时</th></tr>
         <tr>
-          <td>↓/↑<br>→/←<br>PgUp/PgDn</td>
-          <td data-i18n="kbdBasicDirSel">沿X轴+/−平移<br>沿Y轴+/−平移<br>沿Z轴+/−平移</td>
-          <td data-i18n="kbdBasicDirUnsel">视角后/前平移<br>视角右/左平移<br>视角上/下平移</td>
+          <td><span class="kbd-key">↓</span> / <span class="kbd-key">↑</span></td>
+          <td data-i18n="kbdSelX">沿X轴+/−平移</td>
+          <td data-i18n="kbdUnselX">视角后/前平移</td>
         </tr>
         <tr>
-          <td>A/D<br>W/S<br>E/Q</td>
-          <td data-i18n="kbdBasicRotSel">绕Z轴逆/顺旋转<br>绕Y轴逆/顺旋转<br>绕X轴逆/顺旋转</td>
-          <td data-i18n="kbdBasicRotUnsel">视角左/右旋转<br>视角上/下旋转<br>—</td>
+          <td><span class="kbd-key">→</span> / <span class="kbd-key">←</span></td>
+          <td data-i18n="kbdSelY">沿Y轴+/−平移</td>
+          <td data-i18n="kbdUnselY">视角右/左平移</td>
         </tr>
         <tr>
-          <td>+/-</td>
+          <td><span class="kbd-key">PgUp</span> / <span class="kbd-key">PgDn</span></td>
+          <td data-i18n="kbdSelZ">沿Z轴+/−平移</td>
+          <td data-i18n="kbdUnselZ">视角上/下平移</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">A</span> / <span class="kbd-key">D</span></td>
+          <td data-i18n="kbdSelRotZ">绕Z轴顺/逆旋转</td>
+          <td data-i18n="kbdUnselRotZ">视角左/右旋转</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">W</span> / <span class="kbd-key">S</span></td>
+          <td data-i18n="kbdSelRotY">绕Y轴顺/逆旋转</td>
+          <td data-i18n="kbdUnselRotY">视角上/下旋转</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">E</span> / <span class="kbd-key">Q</span></td>
+          <td data-i18n="kbdSelRotX">绕X轴顺/逆旋转</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">+</span> / <span class="kbd-key">-</span></td>
           <td data-i18n="kbdBasicScaleSel">放大/缩小5%</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">Esc</span></td>
+          <td data-i18n="kbdFuncEscSel">取消操作</td>
+          <td data-i18n="kbdFuncEscUnsel">退出全屏</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">F11</span></td>
+          <td colspan="2" data-i18n="kbdFuncF11">全屏/退出全屏</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">Del</span> / <span class="kbd-key">Backspace</span></td>
+          <td data-i18n="kbdFuncDel">删除选中对象</td>
           <td>—</td>
         </tr>
       </table>
       <div class="kbd-title" data-i18n="kbdTitleShift">Shift 组合键</div>
       <div class="kbd-note" data-i18n="kbdNoteShift">选取对象时：平移1网格（1.5长度）/ 旋转90°<br>未选取时：视角平移1网格 / 旋转90°</div>
       <table class="kbd-table">
-        <tr><th data-i18n="kbdThShiftKey">Shift+</th><th data-i18n="kbdThSelected">选取对象时</th><th data-i18n="kbdThUnselected">未选取时</th></tr>
+        <tr><th><span class="kbd-key">Shift</span> +</th><th data-i18n="kbdThSelected">选取对象时</th><th data-i18n="kbdThUnselected">未选取时</th></tr>
         <tr>
-          <td>↓/↑/→/←<br>PgUp/PgDn</td>
-          <td data-i18n="kbdShiftPosSel">平移1网格<br>平移1网格</td>
-          <td data-i18n="kbdShiftPosUnsel">视角平移1网格<br>视角平移1网格</td>
+          <td><span class="kbd-key">↓</span> / <span class="kbd-key">↑</span></td>
+          <td rowspan="3" data-i18n="kbdShiftPos">平移1网格</td>
+          <td rowspan="3" data-i18n="kbdShiftPosUnselView">视角平移1网格</td>
         </tr>
         <tr>
-          <td>A/D/W/S/E/Q</td>
-          <td data-i18n="kbdShiftRotSel">旋转90°<br>旋转90°<br>旋转90°</td>
-          <td data-i18n="kbdShiftRotUnsel">视角旋转90°<br>视角旋转90°<br>视角旋转90°</td>
+          <td><span class="kbd-key">→</span> / <span class="kbd-key">←</span></td>
         </tr>
         <tr>
-          <td>+/-</td>
+          <td><span class="kbd-key">PgUp</span> / <span class="kbd-key">PgDn</span></td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">A</span> / <span class="kbd-key">D</span></td>
+          <td rowspan="3" data-i18n="kbdShiftRot">旋转90°</td>
+          <td rowspan="3" data-i18n="kbdShiftRotUnselView">视角旋转90°</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">W</span> / <span class="kbd-key">S</span></td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">E</span> / <span class="kbd-key">Q</span></td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">+</span> / <span class="kbd-key">-</span></td>
           <td data-i18n="kbdShiftScaleSel">放大×2/缩小×0.5</td>
           <td>—</td>
         </tr>
         <tr>
-          <td data-i18n="helpMouseClick">点击</td>
-          <td colspan="2" data-i18n="kbdShiftClickSel">加选对象（多点选）</td>
+          <td data-i18n="helpMouseClick">单击左键</td>
+          <td colspan="2" data-i18n="kbdShiftClickSel">加选对象（点选）</td>
         </tr>
       </table>
       <div class="kbd-title" data-i18n="kbdTitleSlider">滑动条 / 输入框</div>
@@ -1136,32 +1387,41 @@
       <table class="kbd-table">
         <tr><th data-i18n="kbdThKey">按键</th><th data-i18n="kbdThSlider">滑动条</th><th data-i18n="kbdThInput">输入框</th></tr>
         <tr>
-          <td>→/←<br>↑/↓<br>+/-</td>
-          <td data-i18n="kbdSliderSel">减/增<br>增/减<br>—</td>
-          <td data-i18n="kbdSliderInput">移动光标<br>增/减<br>输入正/负号</td>
+          <td><span class="kbd-key">→</span> / <span class="kbd-key">←</span></td>
+          <td data-i18n="kbdSliderInc">增/减</td>
+          <td data-i18n="kbdSliderCursor">移动光标</td>
         </tr>
         <tr>
-          <td>PgUp/PgDn</td>
+          <td><span class="kbd-key">↑</span> / <span class="kbd-key">↓</span></td>
+          <td data-i18n="kbdSliderInc">增/减</td>
+          <td data-i18n="kbdSliderInc">增/减</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">+</span> / <span class="kbd-key">-</span></td>
+          <td>—</td>
+          <td data-i18n="kbdSliderSign">输入正/负号</td>
+        </tr>
+        <tr>
+          <td><span class="kbd-key">PgUp</span> / <span class="kbd-key">PgDn</span></td>
           <td data-i18n="kbdSliderPgSel">大幅增/减</td>
-          <td data-i18n="kbdSliderPgInput">滚动右栏</td>
+          <td data-i18n="kbdSliderScroll">向上/下滚动右栏</td>
         </tr>
       </table>
-      <div class="kbd-title" data-i18n="kbdTitleFunc">功能键</div>
-      <div class="kbd-row"><b>Esc</b><span data-i18n="kbdFuncEsc">取消操作/退出全屏</span></div>
-      <div class="kbd-row"><b>F11</b><span data-i18n="kbdFuncF11">全屏/退出全屏</span></div>
-      <div class="kbd-row"><b>Del/Backspace</b><span data-i18n="kbdFuncDel">删除选中对象</span></div>
-      <div class="kbd-title" data-i18n="kbdTitleCtrl">Ctrl 组合键</div>
-      <div class="kbd-row"><b>Ctrl+A</b><span data-i18n="kbdCtrlA">全选</span></div>
-      <div class="kbd-row"><b>Ctrl+N</b><span data-i18n="kbdCtrlN">新建场景</span></div>
-      <div class="kbd-row"><b>Ctrl+O</b><span data-i18n="kbdCtrlO">导入场景</span></div>
-      <div class="kbd-row"><b>Ctrl+S</b><span data-i18n="kbdCtrlS">导出场景</span></div>
-      <div class="kbd-row"><b>Ctrl+P</b><span data-i18n="kbdCtrlP">截图导出图像</span></div>
-      <div class="kbd-row"><b>Ctrl+Z</b><span data-i18n="kbdCtrlZ">撤销</span></div>
-      <div class="kbd-row"><b>Ctrl+Y</b><span data-i18n="kbdCtrlY">重做</span></div>
-      <div class="kbd-row"><b>Ctrl+C</b><span data-i18n="kbdCtrlC">复制</span></div>
-      <div class="kbd-row"><b>Ctrl+V</b><span data-i18n="kbdCtrlV">粘贴</span></div>
-      <div class="kbd-row"><b>Ctrl+D</b><span data-i18n="kbdCtrlD">克隆</span></div>
-      <div class="kbd-row"><b>Ctrl+Del/Backspace</b><span data-i18n="kbdCtrlDel">清空场景</span></div>
+      <div class="kbd-title" data-i18n="kbdTitleFunc">Ctrl 组合键</div>
+      <table class="kbd-table">
+        <tr><th><span class="kbd-key">Ctrl</span> +</th><th data-i18n="kbdThCombo">组合键</th></tr>
+        <tr><td><span class="kbd-key">A</span></td><td data-i18n="kbdCtrlA">全选</td></tr>
+        <tr><td><span class="kbd-key">N</span></td><td data-i18n="kbdCtrlN">新建场景</td></tr>
+        <tr><td><span class="kbd-key">O</span></td><td data-i18n="kbdCtrlO">导入场景</td></tr>
+        <tr><td><span class="kbd-key">S</span></td><td data-i18n="kbdCtrlS">导出场景</td></tr>
+        <tr><td><span class="kbd-key">P</span></td><td data-i18n="kbdCtrlP">截图导出图像</td></tr>
+        <tr><td><span class="kbd-key">Z</span></td><td data-i18n="kbdCtrlZ">撤销</td></tr>
+        <tr><td><span class="kbd-key">Y</span></td><td data-i18n="kbdCtrlY">重做</td></tr>
+        <tr><td><span class="kbd-key">C</span></td><td data-i18n="kbdCtrlC">复制</td></tr>
+        <tr><td><span class="kbd-key">V</span></td><td data-i18n="kbdCtrlV">粘贴</td></tr>
+        <tr><td><span class="kbd-key">D</span></td><td data-i18n="kbdCtrlD">克隆</td></tr>
+        <tr><td><span class="kbd-key">Del</span></td><td data-i18n="kbdCtrlDel">清空场景</td></tr>
+      </table>
     </div>
     </div>
   </div>
@@ -1278,8 +1538,8 @@
       <div class="settings-tabs" id="settings-tabs">
         <button class="settings-tab active" data-tab="theme"><span data-i18n="tabTheme">主题风格</span></button>
         <button class="settings-tab" data-tab="lang"><span data-i18n="tabLang">语言切换</span></button>
-        <button class="settings-tab" data-tab="guide"><span data-i18n="tabGuide">操作指南</span></button>
-        <button class="settings-tab" data-tab="manual"><span data-i18n="tabManual">说明书</span></button>
+        <button class="settings-tab" data-tab="guide"><span data-i18n="tabGuide">快捷操作</span></button>
+        <button class="settings-tab" data-tab="manual"><span data-i18n="tabManual">使用说明书</span></button>
         <button class="settings-tab" data-tab="about"><span data-i18n="tabAbout">关于</span></button>
       </div>
       <div class="settings-content">
@@ -1376,7 +1636,7 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 // 简体中文作为内置默认与回退；其余语言存放在 language/ 目录下独立文件中（见 <head> 的 <script src> 引用）
 const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', undo:'撤销', redo:'重做', copy:'复制', paste:'粘贴', dup:'克隆', clear:'清空', axes:'坐标轴', grid:'网格面', settings:'设置', settingsTitle:'设置', tabTheme:'主题风格', tabLang:'语言切换', tabAbout:'关于', themeTitle:'主题风格', langTitle:'语言切换', aboutName:'立方·三维图形设计工坊', aboutDesc:'基于 Three.js 的网页端三维图形设计与编辑工具。', aboutStack:'技术栈：Three.js / WebGL', aboutRepo:'GitHub 仓库', manualLink:'使用说明书', aboutCopyright:'Copyright © 2026-Present Yushichadao. All Rights Reserved.', aboutAuthor:'作者', aboutAI:'本网站由 TRAE 与 CodeBuddy 工具 AI 辅助生成', tosLink:'服务协议', disclaimerLink:'免责声明', privacyLink:'隐私政策', tosBody:'<h4>1. 条款的接受</h4><p>本《服务协议》（下称「本协议」）系由本网站（下称「本工具」或「本服务」）的运营者（下称「我们」）与使用者（下称「您」）就本工具的使用所订立的具有法律约束力的协议。当您访问、浏览或使用本工具时，即视为您已充分阅读、理解并同意接受本协议的全部条款与条件。若您不同意本协议的任何内容，请勿使用本工具。</p><h4>2. 使用范围与限制</h4><p>本工具为基于 Three.js 的纯前端三维 / 二维图形设计与编辑工具，仅供个人学习、创意设计、教学演示与非商业用途使用。您承诺：不以任何方式将本工具或其输出用于商业盈利、再分发或提供商业性服务；不利用本工具从事任何违反国家法律、法规或公序良俗的活动；不试图反向工程、反编译、破解或干扰本工具的正常运行。您应对自身上传、导入或创作的素材内容（包括文本、图像、模型等）享有合法权利或已获合法授权，并保证该等内容不侵犯任何第三方的知识产权、肖像权、名誉权或其他合法权益。</p><h4>3. 用户内容与知识产权</h4><p>本工具本身的全部著作权、商标权及其他知识产权归作者 Yushichadao 所有（Copyright © 2026-Present Yushichadao. All Rights Reserved.）。您在使用本工具过程中自行创建、上传或导入的素材及所生成场景文件的知识产权，归您本人所有；您授予我们一项非独占、全球范围、免费、可撤销的许可，仅用于在您使用本工具期间为提供与改进服务之目的而对该等内容进行必要的技术处理（如本地渲染、缓存）。我们不会因您使用本工具而取得您内容的任何权利。</p><h4>4. 账户、费用与第三方资源</h4><p>本工具为纯前端应用，不要求注册账户，亦不收取任何费用。本工具可能在界面中提供指向第三方网站（如 GitHub 开源仓库）的链接，该等链接仅供方便而设，我们对其内容、安全性及隐私实践不承担责任。您访问第三方资源应受其各自条款与政策的约束。</p><h4>5. 服务的变更、中断与终止</h4><p>我们保留在不另行通知的情况下，随时修改、暂停或终止本工具部分或全部功能的权利。对于因维护、升级、网络或不可抗力等原因导致的服务中断或数据丢失，我们不承担任何责任。</p><h4>6. 责任限制</h4><p>在法律允许的最大范围内，对于因使用或无法使用本工具所导致的任何间接、偶然、特殊或后果性损害，我们不承担任何赔偿责任。本工具按「现状」提供，详见《免责声明》。</p><h4>7. 适用法律与争议解决</h4><p>本协议的订立、效力、解释及争议解决均适用中华人民共和国法律（不含冲突规范）。因本协议产生的或与之相关的任何争议，双方应友好协商解决；协商不成的，任何一方均可向作者所在地有管辖权的人民法院提起诉讼。</p><h4>8. 联系我们</h4><p>如您对本协议有任何疑问，可通过本工具的 GitHub 仓库（github.com/yushichadao/3d-editor）与我们联系。本协议内容如发生变更，将以修订后的版本在站内公示，修订后继续使用即视为接受变更。</p>', disclaimerBody:'<h4>1. 一般声明</h4><p>本工具系按「现状」（AS IS）及「可用」（AS AVAILABLE）基础提供，我们不作任何明示或暗示的担保，包括但不限于对适销性、特定用途适用性、不侵权、准确性、可靠性或持续可用的担保。我们不保证本工具在任何时间、任何设备上均能无误运行，亦不保证缺陷必将被修正。</p><h4>2. 技术说明</h4><p>本工具为纯前端 Web 应用，依托浏览器（WebGL / Three.js）在您本地设备实时渲染三维与二维图形。其功能受您的设备性能、浏览器兼容性及网络环境等因素影响，渲染结果可能因设备与浏览器差异而略有不同。</p><h4>3. 责任限制</h4><p>在法律允许的最大范围内，对于因使用、误用或无法使用本工具，或因依赖本工具输出结果所导致的任何直接、间接、偶然、特殊、惩罚性或后果性损失（包括但不限于数据丢失、设备损耗、利润或业务中断），我们及作者 Yushichadao 均不承担任何责任，即使已被告知该等损害的可能性。</p><h4>4. 用户内容责任</h4><p>您应对使用本工具创建、上传或导入的全部内容独立承担全部责任。您确认本工具不构成任何专业设计、法律、财务或工程建议；任何基于此产生的成果之合规性、安全性与适用性，由您自行判断并负责。</p><h4>5. 第三方资源免责</h4><p>本工具可能包含指向第三方网站、仓库或资源的链接（如 GitHub）。该等第三方资源由其各自运营者负责，我们对其内容、可用性、安全性及隐私实践不作任何担保或承担责任。您与第三方之间的任何交易或交互，风险由您自行承担。</p><h4>6. 无 AI 功能声明</h4><p>本网站及本工具本身不包含任何由运营者提供的生成式人工智能（AI）功能或模型；页面与代码的生成系借助 TRAE 与 CodeBuddy 等开发工具辅助完成，该等工具不参与本工具运行时的功能提供。本《免责声明》所称「本工具」仅指本网站所提供的编辑功能本身。</p><h4>7. 条款变更</h4><p>我们保留随时修改本声明的权利，修订后的声明将在本工具内公示，您继续使用即视为接受修订内容。</p>', privacyBody:'<h4>1. 我们如何对待您的信息</h4><p>我们高度重视并严格保护您的隐私。本工具为纯前端（client-side）应用：所有三维模型、文本、图像、贴图及场景数据均在您的浏览器本地进行处理、渲染与保存，不会上传至任何远程服务器，我们亦无法访问您的任何内容。</p><h4>2. 我们收集的信息</h4><p>我们不会主动收集、存储或传输您的个人信息（如姓名、邮箱、位置等）。本工具不要求注册账户，亦不设置任何服务器端数据库。您在本工具内的全部操作均发生在您的本地设备。</p><h4>3. 本地存储</h4><p>为提升使用体验，本工具可能使用浏览器本地存储（如 localStorage）记录您的偏好设置（如界面语言、主题等）以及您主动导出的场景数据。该等信息仅保存在您自己的设备中，不会离开您的浏览器。您可随时通过清除浏览器数据予以删除。</p><h4>4. 分析与追踪</h4><p>本工具不集成任何第三方统计分析、广告或用户行为追踪脚本，不会对您进行跨站跟踪或画像。</p><h4>5. 第三方链接</h4><p>本工具可能在界面中提供指向第三方网站（如 GitHub）的链接。当您离开本工具访问第三方资源时，其隐私实践由该第三方负责，本《隐私政策》不再适用，请参照其相应政策。</p><h4>6. 儿童隐私</h4><p>本工具不面向未满 13 周岁的儿童，我们不会在知情的情况下收集其个人信息。</p><h4>7. 联系与变更</h4><p>如您对本政策有任何疑问，可通过 GitHub 仓库（github.com/yushichadao/3d-editor）联系我们。本政策如有变更，将以修订版本在站内公示。</p>', cancel:'取消', confirm:'确认', ok:'确定', close:'关闭', apply:'应用颜色', fs:'全屏', fsExit:'退出全屏',
  // 面板标题
- sec3D:'3D 图形', sec2D:'2D 图形', secTransform:'变换', secMaterial:'材质', secColor:'颜色', secPattern:'花纹 / 贴图', secTextBox:'文本框', secEraser:'橡皮擦属性', secMouse:'鼠标相关操作', secTouch:'手势操作', secKeyboard:'键盘快捷键',
+ sec3D:'3D 图形', sec2D:'2D 图形', secTransform:'变换', secMaterial:'材质', secColor:'颜色', secPattern:'花纹 / 贴图', secTextBox:'文本框', secEraser:'橡皮擦属性', secMouse:'鼠标操作', secTouch:'手势操作', secKeyboard:'键盘快捷键',
  // Tab 按钮
  tabBrush:'画笔',
  // 控件标签
@@ -1417,24 +1677,27 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
  helpTouchSelectAll:'「全选」按钮', helpTouchSelectAllDesc:'选中所有对象',
  helpTouchBoxSelect:'「框选」按钮', helpTouchBoxSelectDesc:'开启后单指拖拽框选对象',
  helpTouchTwoDrag:'双指拖动', helpTouchTwoDragDesc:'视角平移',
- helpTouchPinch:'双指捏合', helpTouchPinchDesc:'视角缩放',
- // 键盘快捷键表
- kbdTitleBasic:'基础按键', kbdTitleShift:'Shift 组合键', kbdTitleSlider:'滑动条 / 输入框', kbdTitleFunc:'功能键', kbdTitleCtrl:'Ctrl 组合键',
+  helpTouchPinch:'双指捏合', helpTouchPinchDesc:'视角缩放',
+  helpThOp:'操作', helpThDesc:'说明',
+  // 键盘快捷键表
+ kbdTitleSingle:'单键操作', kbdTitleShift:'Shift 组合键', kbdTitleSlider:'滑动条 / 输入框', kbdTitleFunc:'Ctrl 组合键',
  kbdNoteBasic:'选取对象时：平移0.1网格（0.15长度）/ 旋转5°{br}未选取时：视角平移0.1网格 / 旋转5°',
  kbdNoteShift:'选取对象时：平移1网格（1.5长度）/ 旋转90°{br}未选取时：视角平移1网格 / 旋转90°',
  kbdNoteSlider:'聚焦滑动条或输入框时生效，原快捷键暂时失效',
- kbdThKey:'按键', kbdThSelected:'选取对象时', kbdThUnselected:'未选取时', kbdThShiftKey:'Shift+', kbdThSlider:'滑动条', kbdThInput:'输入框',
- kbdBasicDirSel:'沿X轴+/−平移{br}沿Y轴+/−平移{br}沿Z轴+/−平移',
- kbdBasicDirUnsel:'视角后/前平移{br}视角右/左平移{br}视角上/下平移',
- kbdBasicRotSel:'绕Z轴逆/顺旋转{br}绕Y轴逆/顺旋转{br}绕X轴逆/顺旋转',
- kbdBasicRotUnsel:'视角左/右旋转{br}视角上/下旋转{br}—',
- kbdBasicScaleSel:'放大/缩小5%',
- kbdShiftPosSel:'平移1网格{br}平移1网格', kbdShiftPosUnsel:'视角平移1网格{br}视角平移1网格',
- kbdShiftRotSel:'旋转90°{br}旋转90°{br}旋转90°', kbdShiftRotUnsel:'视角旋转90°{br}视角旋转90°{br}视角旋转90°',
- kbdShiftScaleSel:'放大×2/缩小×0.5', kbdShiftClickSel:'加选对象（多点选）',
- kbdSliderSel:'增/减{br}增/减{br}—', kbdSliderInput:'移动光标{br}增/减{br}输入正/负号',
- kbdSliderPgSel:'大幅增/减', kbdSliderPgInput:'滚动右栏',
- kbdFuncEsc:'取消操作/退出全屏', kbdFuncF11:'全屏/退出全屏', kbdFuncDel:'删除选中对象',
+ kbdThKey:'按键', kbdThSelected:'选取对象时', kbdThUnselected:'未选取时', kbdThShiftKey:'Shift+', kbdThSlider:'滑动条', kbdThInput:'输入框', kbdThCtrl:'Ctrl+', kbdThCombo:'组合键',
+kbdBasicScaleSel:'放大/缩小5%',
+kbdSelX:'沿X轴+/−平移', kbdUnselX:'视角后/前平移',
+kbdSelY:'沿Y轴+/−平移', kbdUnselY:'视角右/左平移',
+kbdSelZ:'沿Z轴+/−平移', kbdUnselZ:'视角上/下平移',
+kbdSelRotZ:'绕Z轴顺/逆旋转', kbdUnselRotZ:'视角左/右旋转',
+kbdSelRotY:'绕Y轴顺/逆旋转', kbdUnselRotY:'视角上/下旋转',
+kbdSelRotX:'绕X轴顺/逆旋转',
+kbdShiftPos:'平移1网格', kbdShiftPosUnselView:'视角平移1网格',
+kbdShiftRot:'旋转90°', kbdShiftRotUnselView:'视角旋转90°',
+kbdShiftScaleSel:'放大×2/缩小×0.5', kbdShiftClickSel:'加选对象（点选）',
+kbdSliderInc:'增/减', kbdSliderCursor:'移动光标', kbdSliderSign:'输入正/负号', kbdSliderScroll:'向上/下滚动右栏',
+kbdSliderPgSel:'大幅增/减',
+ kbdFuncEscSel:'取消操作', kbdFuncEscUnsel:'退出全屏', kbdFuncF11:'全屏/退出全屏', kbdFuncDel:'删除选中对象',
  kbdCtrlA:'全选', kbdCtrlN:'新建场景', kbdCtrlO:'导入场景', kbdCtrlS:'导出场景', kbdCtrlP:'截图导出图像',
  kbdCtrlZ:'撤销', kbdCtrlY:'重做', kbdCtrlC:'复制', kbdCtrlV:'粘贴', kbdCtrlD:'克隆', kbdCtrlDel:'清空场景',
  // Toast 消息模板（{0}{1}{2}为占位符，会被替换）
@@ -1473,11 +1736,11 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   textHintPlaceholder:'输入文本······', textHintEnter:'Enter 确认 · Esc 取消 · Shift+Enter 换行',
   loadFail:'加载失败',
   // 形状名称
-  shapeBox:'立方体', shapeSphere:'球体', shapeCylinder:'圆柱', shapeCone:'圆锥', shapeTorus:'圆环',
+  shapeBox:'立方体', shapeSphere:'球体', shapeCylinder:'圆柱', shapeCone:'圆锥', shapeTorus:'环面',
   shapeKnot:'纽结', shapeIcosa:'正二十面体', shapeOcta:'正八面体', shapeDodeca:'正十二面体', shapeCapsule:'胶囊',
   shapePyramid:'正四棱锥', shapePrism:'正三棱柱', shapeTube:'管道', shapeLathe:'回转体', shapeTetra:'正四面体',
-  shapeBarrel:'桶状体', shapeDome:'半球', shapeHelix:'螺旋环', shapeOctaPrism:'正八棱柱', shapeStar3d:'立体星',
-  shapeSquare2:'正方形', shapeCircle2:'圆形', shapeTriangle:'正三角形', shapeStar:'星形', shapeHexagon:'正六边形',
+  shapeBarrel:'筒状体', shapeDome:'半球', shapeHelix:'开口环面', shapeOctaPrism:'正八棱柱', shapeStar3d:'立体星',
+  shapeSquare2:'正方形', shapeCircle2:'圆形', shapeTriangle:'等腰三角形', shapeStar:'星形', shapeHexagon:'正六边形',
   shapeHeart:'心形', shapePentagon:'正五边形', shapeOctagon:'正八边形', shapeEllipse:'椭圆',
   shapeParallelogram:'平行四边形', shapeTrapezoid:'梯形', shapeDiamond:'菱形',
   shapeRightTri:'直角三角形', shapeArrow:'箭头', shapeCrescent:'月牙', shapeSemicircle:'半圆',
@@ -1487,17 +1750,37 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   patSolid:'纯色', patGrid:'方格', patStripe:'条纹', patDot:'圆点', patGradient:'渐变', patBrick:'砖墙',
   patDiagonal:'斜纹', patWave:'波浪', patDots:'点阵', patCross:'交叉', patMesh:'网格', patSpiral:'螺纹',
   // 形状参数标签
-  pRadius:'半径', pHeight:'高度', pLength:'长度 L', pWidth:'宽度 W', pSegments:'分段',
+  pRadius:'半径', pHeight:'高度', pLength:'长度', pWidth:'宽度', pSegments:'分段',
   pBase:'底边长', pOuterRadius:'外半径', pInnerRadius:'内半径', pPoints:'角数',
   pScale:'缩放', pSkew:'倾斜', pTube:'管半径', pMainRadius:'主半径',
+  pTopRadius:'顶半径', pBottomRadius:'底半径', pSides:'边数', pCylinderLength:'圆柱长', pTubeThick:'管粗',
   pTopWidth:'上底宽', pBottomWidth:'下底宽', pRadiusX:'X 半径', pRadiusY:'Y 半径',
-  // 多选提示
+  pEdgeBase:'底面边长', pEdge:'边长', pOuterRing:'外环半径', pInnerRing:'内环半径',
+  pSpan:'跨度', pArch:'拱高', pBendSeg:'弯曲分段',
+  pBottomR:'底面半径', pMidR:'中间半径', pMaxR:'最宽半径',
+  pArc:'主扫掠角', pThickness:'厚度', pMajor:'长轴长', pMinor:'短轴长',
+  pDip:'心尖凹陷度', pBaseLen:'底长', pSkewAmt:'倾斜程度',
+  pAngleA:'内角 A', pAngleB:'内角 B', pDiagP:'对角线 p', pDiagQ:'对角线 q',
+  pOffset:'偏移量', pArmWidth:'臂宽', pSharp:'尖端锐度',
+  // 选中限制提示（按"被隐藏的控件"聚合，同一控件的多个原因合并成一行）
   hintMultiSel:'已选中 {0} 个对象 · 变换将作为整体操作',
-  hintMultiBlockedPat:'当前包含"{0}"，已隐藏"花纹/贴图栏"（仅支持"图形对象"，解除操作：排除非图形对象后单选）',
-  hintMultiBlockedColor:'当前包含"图片或带贴图图形"，已隐藏"颜色栏"（仅支持"无贴图对象"，解除操作：清除贴图后单选）',
-  hintMultiAllNoColor:'当前{0}个对象"全部为无颜色"，已隐藏"不透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：直接点选颜色重新上色）',
-  hintMultiSomeNoColor:'当前包含{0}个"无颜色对象"，已隐藏"不透明度控件、花纹/贴图栏"（仅支持"有颜色对象"，解除操作：为无颜色对象重新上色）',
-  hintMultiLockRatio:'当前为"多选模式"，已隐藏"等比缩放控件"（仅支持"单选模式"，解除操作：单选对象后操作）',
+  hintSep:'；',
+  hintHideLine:'已隐藏「{0}」：{1}',
+  ctlOpacity:'不透明度', ctlColor:'颜色栏', ctlPattern:'花纹 / 贴图栏', ctlUniformScale:'等比缩放',
+  whyBrushAll:'{0} 个对象全部为画笔笔迹，笔迹不透明度固定为 1',
+  whyBrushSome:'包含 {0} 个画笔笔迹，笔迹不透明度固定为 1（排除笔迹后可调）',
+  whyBrushPat:'画笔笔迹不支持花纹 / 贴图',
+  whyTextPat:'文本不支持花纹 / 贴图',
+  whyImagePat:'图片不支持花纹 / 贴图',
+  whyTexShapePat:'带贴图的图形需先清除贴图',
+  whyImageColor:'包含图片或带贴图图形，无法统一上色',
+  whyNoColorAll:'{0} 个对象全部为无颜色',
+  whyNoColorSome:'包含 {0} 个无颜色对象（重新上色后可调）',
+  whyMultiScale:'多选模式下需单选对象后调节',
+  // 选中提示 / 参数范围提示
+  toastSelOne:'已选中「{0}」', toastSelN:'已选中 {0} 个对象', toastSelCleared:'已取消选中',
+  toastSelText:'文本：{0}', toastExitSelMode:'已退出选中模式',
+  toastParamRange:'「{0}」超出可用范围，已限制在 {1} ~ {2}',
   // 确认对话框
   confirmClearScene:'确定清空场景？此操作可撤销。', confirmNewScene:'确定新建场景？当前场景将被清空。',
   // 状态栏
@@ -1509,18 +1792,19 @@ const ZH_CN = { new:'新建', import:'导入', export:'导出', shot:'截图', u
   statusEraser:'橡皮擦：拖拽或点击擦除 · 整体擦除=将对象整条删除；局部擦除=仅擦除圈内笔迹（可分节）· 右键平移视角',
   appTitle:'3D 编辑器',
   // 说明书阅读器
-  tabGuide:'操作指南', tabManual:'说明书', manTitle:'使用说明书', manToc:'目录', manLine:'行', manGotoPh:'输入行号', manGoto:'跳转', manSearchPh:'搜索…', manNote:'笔记', manHi:'高亮', manCopy:'复制', manCopyAll:'复制全文', manZoomIn:'放大', manZoomOut:'缩小', manClose:'关闭', manLoading:'加载中…', manLoadFail:'说明书加载失败，请检查网络后重试', manCurLine:'当前行', manNoNote:'暂无笔记', manNotePh:'输入笔记…', manSave:'保存', manDelete:'删除', manJump:'跳转', manOpenExt:'在 GitHub 打开', manAdded:'已添加笔记', manDeleted:'已删除笔记', manCopied:'已复制', manNext:'下一个', manNoteAt:'行 {0}', manUnHl:'已取消高亮',
+  tabGuide:'快捷操作', tabManual:'使用说明书', manTitle:'使用说明书', manToc:'目录', manLine:'行', manGotoPh:'输入行号', manGoto:'跳转', manSearchPh:'搜索…', manNote:'便签', manHi:'高亮', manCopy:'复制', manCopyAll:'复制全文', manZoomIn:'放大', manZoomOut:'缩小', manClose:'关闭', manLoading:'加载中…', manLoadFail:'说明书加载失败，请检查部署目录下 docs/ 文件是否完整', manCurLine:'当前行', manNoNote:'暂无便签', manNotePh:'输入便签…', manSave:'保存', manDelete:'删除', manJump:'跳转', manAdded:'已添加便签', manDeleted:'已删除便签', manCopied:'已复制', manNext:'下一个', manNoteAt:'行 {0}', manUnHl:'已取消高亮', manSearch:'搜索', manCancel:'取消', manHiCancel:'取消高亮', manHiExpand:'扩充高亮', manHiExpanded:'已扩充高亮',
+  manNoteOpen:'打开', manEdit:'编辑', manReadOnly:'只读', manExport:'导出', manImport:'导入', manSelectAll:'全选', manBatchDel:'批量删除', manExported:'便签已导出', manImported:'已导入 {0} 条便签', manImportFail:'导入失败', manBatchDeleted:'已删除 {0} 条', manNoSel:'请先选择便签', manNoteCount:'共 {0} 条', manSelCount:'已选 {0}/{1}', manNoteEmpty:'（空）', manMaximize:'最大化', manRestore:'还原', manPin:'置顶', manUnpin:'取消置顶', manNoteSaved:'便签已保存', manJumpFallback:'原文已变动，已跳转至所在段落', manJumpFail:'未找到便签对应的原文', manNoteQuoteTip:'点击折叠/展开引用原文', manDelConfirm:'确认删除此便签？此操作不可撤销', manBatchDelConfirm:'确认删除选中的 {0} 条便签？此操作不可撤销',
 };
 
 const __packs = window.I18N_PACKS || window.__packs || {};
 const I18N = { 'zh-CN': ZH_CN };
 Object.keys(__packs).forEach(code => { if (__packs[code]) I18N[code] = __packs[code].dict || __packs[code]; });
 const THEMES = {
-  neon:   { name:'themeNeon', vars:{ '--bg-deep':'#0c0e16','--bg-panel':'rgba(20,22,34,0.82)','--bg-panel-solid':'#14161f','--accent':'#6ee7ff','--accent-2':'#c084fc','--accent-3':'#fb7185','--warn':'#fbbf24','--text':'#e8e8f0','--text-dim':'#8b8ba0','--border':'rgba(110,231,255,0.18)' } },
-  sunset: { name:'themeSunset', vars:{ '--bg-deep':'#1a0f0a','--bg-panel':'rgba(34,20,14,0.82)','--bg-panel-solid':'#21140d','--accent':'#ffb454','--accent-2':'#ff7a59','--accent-3':'#ff5d8f','--warn':'#ffd166','--text':'#f5e9e0','--text-dim':'#b3998c','--border':'rgba(255,180,84,0.18)' } },
-  forest: { name:'themeForest', vars:{ '--bg-deep':'#08130d','--bg-panel':'rgba(14,28,20,0.82)','--bg-panel-solid':'#0e1c14','--accent':'#5eead4','--accent-2':'#86efac','--accent-3':'#fbbf24','--warn':'#fca5a5','--text':'#e6f5ec','--text-dim':'#8aa89a','--border':'rgba(94,234,212,0.18)' } },
-  gray:   { name:'themeGray', vars:{ '--bg-deep':'#0e0f12','--bg-panel':'rgba(26,27,32,0.82)','--bg-panel-solid':'#1a1b20','--accent':'#a1a1aa','--accent-2':'#cbd5e1','--accent-3':'#f472b6','--warn':'#fbbf24','--text':'#e5e7eb','--text-dim':'#9ca3af','--border':'rgba(161,161,170,0.18)' } },
-  light:  { name:'themeLight', vars:{ '--bg-deep':'#eef1f6','--bg-panel':'rgba(255,255,255,0.86)','--bg-panel-solid':'#ffffff','--accent':'#4f46e5','--accent-2':'#0ea5e9','--accent-3':'#ec4899','--warn':'#d97706','--text':'#1f2330','--text-dim':'#6b7280','--border':'rgba(79,70,229,0.18)','--bg2':'rgba(0,0,0,0.05)','--control-bg':'rgba(0,0,0,0.06)','--control-bg-hover':'rgba(0,0,0,0.10)','--slider-track':'rgba(0,0,0,0.15)','--slider-thumb-border':'#eef1f6','--primary-btn-text':'#ffffff','--input-bg':'rgba(0,0,0,0.05)','--inline-input-bg':'rgba(255,255,255,0.94)','--section-border':'rgba(0,0,0,0.06)','--bb-sep':'rgba(0,0,0,0.12)','--modal-mask':'rgba(220,222,230,0.72)' } },
+  neon:   { name:'themeNeon', vars:{ '--bg-deep':'#0c0e16','--bg-panel':'rgba(20,22,34,0.82)','--bg-panel-solid':'#14161f','--bg-manual':'#11141d','--accent':'#6ee7ff','--accent-2':'#c084fc','--accent-3':'#fb7185','--warn':'#fbbf24','--text':'#e8e8f0','--text-dim':'#8b8ba0','--border':'rgba(110,231,255,0.18)' } },
+  sunset: { name:'themeSunset', vars:{ '--bg-deep':'#1a0f0a','--bg-panel':'rgba(34,20,14,0.82)','--bg-panel-solid':'#21140d','--bg-manual':'#1c1109','--accent':'#ffb454','--accent-2':'#ff7a59','--accent-3':'#ff5d8f','--warn':'#ffd166','--text':'#f5e9e0','--text-dim':'#b3998c','--border':'rgba(255,180,84,0.18)' } },
+  forest: { name:'themeForest', vars:{ '--bg-deep':'#08130d','--bg-panel':'rgba(14,28,20,0.82)','--bg-panel-solid':'#0e1c14','--bg-manual':'#0a1810','--accent':'#5eead4','--accent-2':'#86efac','--accent-3':'#fbbf24','--warn':'#fca5a5','--text':'#e6f5ec','--text-dim':'#8aa89a','--border':'rgba(94,234,212,0.18)' } },
+  gray:   { name:'themeGray', vars:{ '--bg-deep':'#0e0f12','--bg-panel':'rgba(26,27,32,0.82)','--bg-panel-solid':'#1a1b20','--bg-manual':'#15161b','--accent':'#a1a1aa','--accent-2':'#cbd5e1','--accent-3':'#f472b6','--warn':'#fbbf24','--text':'#e5e7eb','--text-dim':'#9ca3af','--border':'rgba(161,161,170,0.18)' } },
+  light:  { name:'themeLight', vars:{ '--bg-deep':'#eef1f6','--bg-panel':'rgba(255,255,255,0.86)','--bg-panel-solid':'#ffffff','--bg-manual':'#f6f8fb','--accent':'#4f46e5','--accent-2':'#0ea5e9','--accent-3':'#ec4899','--warn':'#d97706','--text':'#1f2330','--text-dim':'#6b7280','--border':'rgba(79,70,229,0.18)','--bg2':'rgba(0,0,0,0.05)','--control-bg':'rgba(0,0,0,0.06)','--control-bg-hover':'rgba(0,0,0,0.10)','--slider-track':'rgba(0,0,0,0.15)','--slider-thumb-border':'#eef1f6','--primary-btn-text':'#ffffff','--input-bg':'rgba(0,0,0,0.05)','--inline-input-bg':'rgba(255,255,255,0.94)','--section-border':'rgba(0,0,0,0.06)','--bb-sep':'rgba(0,0,0,0.12)','--modal-mask':'rgba(220,222,230,0.72)' } },
 };
 const LANGS = { 'zh-CN': { label:'简体中文', dict: ZH_CN } };
 Object.keys(__packs).forEach(code => { if (__packs[code]) LANGS[code] = { label: __packs[code].label || __packs[code].lang || code, dict: __packs[code].dict || __packs[code] }; });
@@ -1851,7 +2135,7 @@ const _touchNdc = new THREE.Vector2();
 const _touchRay = new THREE.Raycaster();
 canvas.addEventListener('pointerdown', (e) => {
   if (pickingColor) return;
-  if (!isTouch || e.pointerType !== 'touch' || !e.isPrimary) return;
+  if (!touchPointer(e) || !e.isPrimary) return;
   // 画笔/橡皮擦模式下：禁止一切视角操作，仅允许画笔/橡皮擦事件
   if (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser') {
     controls.touches.ONE = null;
@@ -2091,285 +2375,58 @@ function seatOnGround(geo) {
   geo.computeBoundingBox();
   return geo;
 }
+// 3D 图形工厂：统一走参数化构造 buildParametricGeo3D(type, 默认参数)，
+// 保证"新建对象"与"参数面板重建"使用完全相同的几何算法
+function build3D(type) {
+  return seatOnGround(buildParametricGeo3D(type, getShapeDefaults(type)));
+}
 const SHAPES_3D = {
-  box:      () => seatOnGround(new THREE.BoxGeometry(1.2, 1.2, 1.2)),
-  sphere:   () => seatOnGround(new THREE.SphereGeometry(0.75, 36, 24)),
-  cylinder: () => seatOnGround(new THREE.CylinderGeometry(0.6, 0.6, 1.4, 40)),
-  cone:     () => seatOnGround(new THREE.ConeGeometry(0.75, 1.5, 40)),
-  torus:    () => seatOnGround(new THREE.TorusGeometry(0.6, 0.22, 20, 56)),
-  knot:     () => seatOnGround(new THREE.TorusKnotGeometry(0.55, 0.18, 110, 18)),
-  icosa:    () => seatOnGround(new THREE.IcosahedronGeometry(0.85, 0)),
-  octa:     () => seatOnGround(new THREE.OctahedronGeometry(0.85, 0)),
-  dodeca:   () => seatOnGround(new THREE.DodecahedronGeometry(0.82, 0)),
-  capsule:  () => seatOnGround(new THREE.CapsuleGeometry(0.45, 0.9, 8, 18)),
-  pyramid:  () => {
-    // 正四棱锥：底面正方形，侧面4个三角形，含UV坐标支持贴图/花纹
-    const geo = new THREE.BufferGeometry();
-    const h = 1.4, hw = 0.6;
-    const vertices = new Float32Array([
-      // 底面 (y=0)
-      -hw, 0, -hw,  hw, 0, -hw,  hw, 0, hw, -hw, 0, hw,
-      // 顶点 (y=h)
-      0, h, 0
-    ]);
-    // UV坐标：底面四角映射UV四角，顶点映射到UV中心
-    const uvs = new Float32Array([
-      // 底面UV:  (-hw,0,-hw)→(0,1), (hw,0,-hw)→(1,1), (hw,0,hw)→(1,0), (-hw,0,hw)→(0,0)
-      0, 1,  1, 1,  1, 0,  0, 0,
-      // 顶点UV: (0,h,0)→(0.5,0.5)
-      0.5, 0.5
-    ]);
-    const indices = [
-      // 底面
-      0, 2, 1, 0, 3, 2,
-      // 侧面
-      0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4
-    ];
-    geo.setIndex(indices);
-    geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-    geo.computeVertexNormals();
-    geo.computeBoundingBox();
-    return seatOnGround(geo);
-  },
-  prism:    () => {
-    // 正三棱柱（含UV坐标支持贴图/花纹）
-    const geo = new THREE.BufferGeometry();
-    const h = 1.4, r = 0.55;
-    const vertices = [];
-    const uvs = [];
-    const indices = [];
-    const top = [];
-    const bot = [];
-    for (let i = 0; i < 3; i++) {
-      const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
-      top.push(new THREE.Vector3(Math.cos(a) * r, h / 2, Math.sin(a) * r));
-      bot.push(new THREE.Vector3(Math.cos(a) * r, -h / 2, Math.sin(a) * r));
-    }
-    top.forEach(v => { vertices.push(v.x, v.y, v.z); });
-    bot.forEach(v => { vertices.push(v.x, v.y, v.z); });
-    // UV: 底面/顶面用x,z归一化，侧面按角度+高度展开
-    const uvTop = [];
-    const uvBot = [];
-    top.forEach((v, i) => { uvTop.push(0.5 + v.x / (2 * r), 0.5 + v.z / (2 * r)); });
-    bot.forEach((v, i) => { uvBot.push(0.5 + v.x / (2 * r), 0.5 + v.z / (2 * r)); });
-    uvs.push(...uvTop, ...uvBot);
-    // 底面
-    indices.push(0, 2, 1);
-    // 顶面
-    indices.push(3, 4, 5);
-    // 侧面：每条侧边对应1/3宽度的UV条带
-    for (let i = 0; i < 3; i++) {
-      const t0 = i / 3, t1 = (i + 1) / 3;
-      const u0 = 0.5 + t0 * 0.5, u1 = 0.5 + t1 * 0.5;
-      const a = i, b = (i + 1) % 3;
-      // 侧面矩形的两个三角形
-      // 三角形1: bot[a], bot[b], top[b]
-      // 三角形2: bot[a], top[b], top[a]
-      indices.push(a, b, b + 3);
-      indices.push(a, b + 3, a + 3);
-      // 对应UV
-      uvs[a * 2] = u0; uvs[a * 2 + 1] = 0;     // bot[a]
-      uvs[b * 2] = u1; uvs[b * 2 + 1] = 0;     // bot[b]
-      uvs[(b + 3) * 2] = u1; uvs[(b + 3) * 2 + 1] = 1;  // top[b]
-      uvs[(a + 3) * 2] = u0; uvs[(a + 3) * 2 + 1] = 1;  // top[a]
-    }
-    geo.setIndex(indices);
-    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
-    geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
-    geo.computeVertexNormals();
-    geo.computeBoundingBox();
-    return seatOnGround(geo);
-  },
-  tube:     () => seatOnGround(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-0.8,0,0),new THREE.Vector3(-0.4,0.8,0),new THREE.Vector3(0.4,0.8,0),new THREE.Vector3(0.8,0,0)
-  ]), 40, 0.15, 8, false)),
-  lathe:    () => seatOnGround(new THREE.LatheGeometry([
-    new THREE.Vector2(0.4,0),new THREE.Vector2(0.5,0.3),new THREE.Vector2(0.3,0.7),new THREE.Vector2(0.5,1.1),new THREE.Vector2(0.4,1.5)
-  ], 24)),
-  tetra:    () => seatOnGround(new THREE.TetrahedronGeometry(1, 0)),
-  // 新增3D图形
-  barrel:   () => seatOnGround(new THREE.CylinderGeometry(0.5, 0.55, 1.2, 32)),
-  dome:     () => seatOnGround(new THREE.SphereGeometry(0.75, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2)),
-  helix:    () => seatOnGround(new THREE.TorusGeometry(0.5, 0.15, 16, 48, Math.PI * 1.5)),
-  octaPrism: () => seatOnGround(new THREE.CylinderGeometry(0.7, 0.7, 1.2, 8)),
-  star3d:   () => {
-    // 3D五角星：挤出星形
-    const shape = new THREE.Shape();
-    const spikes = 5, oR = 0.8, iR = 0.35;
-    for (let i = 0; i < spikes * 2; i++) {
-      const r = i % 2 === 0 ? oR : iR;
-      const a = (i / (spikes * 2)) * Math.PI * 2 - Math.PI / 2;
-      const x = Math.cos(a) * r, y = Math.sin(a) * r;
-      i === 0 ? shape.moveTo(x, y) : shape.lineTo(x, y);
-    }
-    shape.closePath();
-    const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.3, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.04, bevelSegments: 2 });
-    geo.center();
-    return seatOnGround(geo);
-  }
+  box:       () => build3D('box'),
+  sphere:    () => build3D('sphere'),
+  cylinder:  () => build3D('cylinder'),
+  cone:      () => build3D('cone'),
+  torus:     () => build3D('torus'),
+  knot:      () => build3D('knot'),
+  icosa:     () => build3D('icosa'),
+  octa:      () => build3D('octa'),
+  dodeca:    () => build3D('dodeca'),
+  capsule:   () => build3D('capsule'),
+  pyramid:   () => build3D('pyramid'),
+  prism:     () => build3D('prism'),
+  tube:      () => build3D('tube'),
+  lathe:     () => build3D('lathe'),
+  tetra:     () => build3D('tetra'),
+  barrel:    () => build3D('barrel'),
+  dome:      () => build3D('dome'),
+  helix:     () => build3D('helix'),
+  octaPrism: () => build3D('octaPrism'),
+  star3d:    () => build3D('star3d')
 };
 
-// 2D：使用 ShapeGeometry，旋转至 XZ 平面（地面），中心对齐
-function shape2D(shape, w=1.2) {
-  const geo = new THREE.ShapeGeometry(shape);
-  geo.center();
-  geo.computeBoundingBox();
-  const cy = (geo.boundingBox.min.y + geo.boundingBox.max.y) / 2;
-  geo.translate(0, -cy, 0);
-  geo.rotateX(-Math.PI / 2);
-  geo.computeBoundingBox();
-  return geo;
-}
-function makeCircle(r=0.7) {
-  const s = new THREE.Shape(); s.absarc(0,0,r,0,Math.PI*2,false); return s;
-}
-function makeTri() {
-  const s = new THREE.Shape(); s.moveTo(0,0.9); s.lineTo(-0.85,-0.6); s.lineTo(0.85,-0.6); s.closePath(); return s;
-}
-function makeStar() {
-  const s = new THREE.Shape(); const spikes=5, oR=0.9, iR=0.4;
-  for (let i=0;i<spikes*2;i++){ const r=i%2===0?oR:iR; const a=(i/(spikes*2))*Math.PI*2 - Math.PI/2; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?s.moveTo(x,y):s.lineTo(x,y); }
-  s.closePath(); return s;
-}
-function makeHex() {
-  const s = new THREE.Shape(); for (let i=0;i<6;i++){ const a=i/6*Math.PI*2 - Math.PI/2; const x=Math.cos(a)*0.8, y=Math.sin(a)*0.8; i===0?s.moveTo(x,y):s.lineTo(x,y); } s.closePath(); return s;
-}
-function makeSquare() { const s = new THREE.Shape(); s.moveTo(-0.7,-0.7); s.lineTo(0.7,-0.7); s.lineTo(0.7,0.7); s.lineTo(-0.7,0.7); s.closePath(); return s; }
-function makeHeart() {
-  const s = new THREE.Shape(); s.moveTo(0,0.5);
-  s.bezierCurveTo(0,0.85,-0.9,0.85,-0.9,0.15);
-  s.bezierCurveTo(-0.9,-0.4,0,-0.75,0,-0.95);
-  s.bezierCurveTo(0,-0.75,0.9,-0.4,0.9,0.15);
-  s.bezierCurveTo(0.9,0.85,0,0.85,0,0.5);
-  return s;
-}
-function makePentagon() {
-  const s = new THREE.Shape();
-  for (let i=0;i<5;i++){ const a=i/5*Math.PI*2 - Math.PI/2; const x=Math.cos(a)*0.9, y=Math.sin(a)*0.9; i===0?s.moveTo(x,y):s.lineTo(x,y); }
-  s.closePath(); return s;
-}
-function makeOctagon() {
-  const s = new THREE.Shape();
-  for (let i=0;i<8;i++){ const a=i/8*Math.PI*2 + Math.PI/8; const x=Math.cos(a)*0.85, y=Math.sin(a)*0.85; i===0?s.moveTo(x,y):s.lineTo(x,y); }
-  s.closePath(); return s;
-}
-function makeEllipse() {
-  const s = new THREE.Shape();
-  s.absellipse(0, 0, 0.9, 0.65, 0, Math.PI*2, false, 0);
-  return s;
-}
-function makeParallelogram() {
-  const s = new THREE.Shape();
-  s.moveTo(-0.6,-0.7); s.lineTo(0.2,-0.7); s.lineTo(0.9,0.7); s.lineTo(0.1,0.7); s.closePath();
-  return s;
-}
-function makeTrapezoid() {
-  const s = new THREE.Shape();
-  s.moveTo(-0.85,-0.7); s.lineTo(0.85,-0.7); s.lineTo(0.55,0.7); s.lineTo(-0.55,0.7); s.closePath();
-  return s;
-}
-function makeDiamond() {
-  const s = new THREE.Shape();
-  s.moveTo(0,0.9); s.lineTo(-0.7,0); s.lineTo(0,-0.9); s.lineTo(0.7,0); s.closePath();
-  return s;
-}
-function makeRightTri() {
-  const s = new THREE.Shape();
-  s.moveTo(-0.85,-0.7); s.lineTo(0.85,-0.7); s.lineTo(-0.85,0.7); s.closePath();
-  return s;
-}
-function makeArrow() {
-  const s = new THREE.Shape();
-  s.moveTo(-0.8,-0.35); s.lineTo(0.2,-0.35); s.lineTo(0.2,-0.6); s.lineTo(0.9,0); s.lineTo(0.2,0.6); s.lineTo(0.2,0.35); s.lineTo(-0.8,0.35); s.closePath();
-  return s;
-}
-function makeCrescent() {
-  const s = new THREE.Shape();
-  // 月牙：两条不同半径的圆弧在两个端点相交形成闭合轮廓，无多余半圆
-  // 外弧中心：(-0.15, 0)，半径 0.9
-  // 内弧中心：(0.2, 0)，半径 0.82
-  // 两条弧在上下两端相交，形成闭合月牙形
-  const outerCx = -0.15, outerR = 0.9;
-  const innerCx = 0.2, innerR = 0.82;
-  // 计算交点：解 (x - outerCx)^2 + y^2 = outerR^2, (x - innerCx)^2 + y^2 = innerR^2
-  // 两式相减：(x - outerCx)^2 - (x - innerCx)^2 = outerR^2 - innerR^2
-  // 展开：(x^2 - 2 outerCx x + outerCx^2) - (x^2 - 2 innerCx x + innerCx^2) = D
-  // 2 (innerCx - outerCx) x + (outerCx^2 - innerCx^2) = D
-  const D = outerR * outerR - innerR * innerR;
-  const denom = 2 * (innerCx - outerCx);
-  const xIntersect = (D - (outerCx * outerCx - innerCx * innerCx)) / denom;
-  const ySq = outerR * outerR - (xIntersect - outerCx) * (xIntersect - outerCx);
-  const yIntersect = Math.sqrt(Math.max(0, ySq));
-  // 计算各弧的起始和终止角度
-  const outerA_top = Math.atan2(yIntersect, xIntersect - outerCx);
-  const outerA_bot = Math.atan2(-yIntersect, xIntersect - outerCx);
-  const innerA_top = Math.atan2(yIntersect, xIntersect - innerCx);
-  const innerA_bot = Math.atan2(-yIntersect, xIntersect - innerCx);
-  // 从上端点开始，逆时针沿外弧走到下端点
-  s.absarc(outerCx, 0, outerR, outerA_top, outerA_bot, false);
-  // 再顺时针沿内弧走回上端点（闭合为月牙形，不再挖洞产生多余半圆轮廓）
-  s.absarc(innerCx, 0, innerR, innerA_bot, innerA_top, true);
-  s.closePath();
-  return s;
-}
-function makeSemicircle() {
-  const s = new THREE.Shape();
-  s.absarc(0, 0, 0.85, Math.PI, 0, false);
-  s.closePath();
-  return s;
-}
-function makeRing2D() {
-  const s = new THREE.Shape();
-  s.absarc(0, 0, 0.75, 0, Math.PI * 2, false);
-  const hole = new THREE.Path();
-  hole.absarc(0, 0, 0.35, 0, Math.PI * 2, true);
-  s.holes.push(hole);
-  return s;
-}
-function makeCross() {
-  const s = new THREE.Shape();
-  const t = 0.25;
-  s.moveTo(-t,-0.9); s.lineTo(t,-0.9); s.lineTo(t,-t); s.lineTo(0.9,-t); s.lineTo(0.9,t); s.lineTo(t,t); s.lineTo(t,0.9); s.lineTo(-t,0.9); s.lineTo(-t,t); s.lineTo(-0.9,t); s.lineTo(-0.9,-t); s.lineTo(-t,-t); s.closePath();
-  return s;
-}
-function makeLightning() {
-  const s = new THREE.Shape();
-  s.moveTo(-0.3,-0.9); s.lineTo(0.4,0.1); s.lineTo(-0.1,0.1); s.lineTo(0.3,0.9); s.lineTo(-0.5,-0.1); s.lineTo(0,-0.1); s.closePath();
-  return s;
-}
-function makeTeardrop() {
-  const s = new THREE.Shape();
-  // 水滴形：上尖下圆
-  s.moveTo(0, 0.9);
-  s.bezierCurveTo(0.6, 0.3, 0.8, -0.2, 0.5, -0.6);
-  s.bezierCurveTo(0.3, -0.8, -0.3, -0.8, -0.5, -0.6);
-  s.bezierCurveTo(-0.8, -0.2, -0.6, 0.3, 0, 0.9);
-  s.closePath();
-  return s;
-}
+// 2D 图形工厂：同样统一走 buildParametricGeo2D，几何算法唯一来源
 const SHAPES_2D = {
-  square2:  () => shape2D(makeSquare()),
-  circle2:  () => shape2D(makeCircle()),
-  triangle: () => shape2D(makeTri()),
-  star:     () => shape2D(makeStar()),
-  hexagon:  () => shape2D(makeHex()),
-  heart:    () => shape2D(makeHeart()),
-  pentagon: () => shape2D(makePentagon()),
-  octagon:  () => shape2D(makeOctagon()),
-  ellipse:  () => shape2D(makeEllipse()),
-  parallelogram: () => shape2D(makeParallelogram()),
-  trapezoid: () => shape2D(makeTrapezoid()),
-  diamond:  () => shape2D(makeDiamond()),
-  rightTri: () => shape2D(makeRightTri()),
-  arrow:    () => shape2D(makeArrow()),
-  crescent: () => shape2D(makeCrescent()),
-  semicircle: () => shape2D(makeSemicircle()),
-  ring2d:   () => shape2D(makeRing2D()),
-  cross:    () => shape2D(makeCross()),
-  lightning:() => shape2D(makeLightning()),
-  teardrop: () => shape2D(makeTeardrop())
+  square2:       () => buildParametricGeo2D('square2', getShapeDefaults('square2')),
+  circle2:       () => buildParametricGeo2D('circle2', getShapeDefaults('circle2')),
+  triangle:      () => buildParametricGeo2D('triangle', getShapeDefaults('triangle')),
+  star:          () => buildParametricGeo2D('star', getShapeDefaults('star')),
+  hexagon:       () => buildParametricGeo2D('hexagon', getShapeDefaults('hexagon')),
+  heart:         () => buildParametricGeo2D('heart', getShapeDefaults('heart')),
+  pentagon:      () => buildParametricGeo2D('pentagon', getShapeDefaults('pentagon')),
+  octagon:       () => buildParametricGeo2D('octagon', getShapeDefaults('octagon')),
+  ellipse:       () => buildParametricGeo2D('ellipse', getShapeDefaults('ellipse')),
+  parallelogram: () => buildParametricGeo2D('parallelogram', getShapeDefaults('parallelogram')),
+  trapezoid:     () => buildParametricGeo2D('trapezoid', getShapeDefaults('trapezoid')),
+  diamond:       () => buildParametricGeo2D('diamond', getShapeDefaults('diamond')),
+  rightTri:      () => buildParametricGeo2D('rightTri', getShapeDefaults('rightTri')),
+  arrow:         () => buildParametricGeo2D('arrow', getShapeDefaults('arrow')),
+  crescent:      () => buildParametricGeo2D('crescent', getShapeDefaults('crescent')),
+  semicircle:    () => buildParametricGeo2D('semicircle', getShapeDefaults('semicircle')),
+  ring2d:        () => buildParametricGeo2D('ring2d', getShapeDefaults('ring2d')),
+  cross:         () => buildParametricGeo2D('cross', getShapeDefaults('cross')),
+  lightning:     () => buildParametricGeo2D('lightning', getShapeDefaults('lightning')),
+  teardrop:      () => buildParametricGeo2D('teardrop', getShapeDefaults('teardrop'))
 };
+
 
 const ICONS = {
   // ===== 3D 图形（等距线框，对应实际几何体）=====
@@ -2484,6 +2541,7 @@ Object.defineProperty(state, 'selected', {
 
 const brush = {
   thickness: 0.5,
+  // 画笔笔迹不透明度恒为 1（不可调节）
   opacity: 1.0,
   blur: 0.0,
   gap: 0.15,
@@ -2987,7 +3045,28 @@ function applySelectionVisual(obj, selected) {
   }
 }
 
-function selectOnly(obj) {
+// ===== 选中提示：单选报对象名称，多选/点选增减报数量 =====
+function describeObject(o) {
+  if (!o || !o.data) return '';
+  const d = o.data;
+  if (d.isBrush || d.kind === 'brush') return _t('shapeBrush');
+  if (d.kind === 'image') return _t('shapeImage');
+  if (d.kind === 'text') {
+    let s = String(d.text || '').replace(/\s+/g, ' ').trim();
+    if (s.length > 12) s = s.slice(0, 12) + '…';
+    return _t('toastSelText', s);
+  }
+  return d.type ? labelOf(d.type) : _t('shapeBox');
+}
+// announceSelection(force)：force=true 时，选中数为 0 也提示"已取消选中"
+function announceSelection(force) {
+  const n = state.selectedList.length;
+  if (n === 0) { if (force) toast(_t('toastSelCleared')); return; }
+  if (n === 1) toast(_t('toastSelOne', describeObject(state.selectedList[0])));
+  else toast(_t('toastSelN', n));
+}
+
+function selectOnly(obj, announce) {
   clearSelectionBoxes();
   // 恢复之前选中对象的外观
   state.selectedList.forEach(o => applySelectionVisual(o, false));
@@ -3001,6 +3080,7 @@ function selectOnly(obj) {
   attachMultiTransform();
   refreshProps();
   updateShapeButtonStates();
+  if (announce) announceSelection(false);
 }
 function toggleSelect(obj) {
   const i = state.selectedList.indexOf(obj);
@@ -3017,6 +3097,8 @@ function toggleSelect(obj) {
   attachMultiTransform();
   refreshProps();
   updateShapeButtonStates();
+  // 点选加/减选：每次都提示当前选中数量，减到 0 提示已取消选中
+  announceSelection(true);
 }
 function deselectAll() {
   clearSelectionBoxes();
@@ -3119,25 +3201,35 @@ function refreshProps() {
     const noNoColorInSel = !sel.some(o => o.data.color === NO_COLOR);
     // 无颜色对象：不透明度/颜色/花纹/贴图均不可用
     const anyNoColorSolid = !noNoColorInSel;
-    // 构建提示文字（统一模板：当前包含"特殊对象"，已隐藏"相关控件"（仅支持""解除操作"））
+    // 构建提示文字：按"被隐藏的控件"聚合，每个控件只出现一行，多个原因合并
+    const brushCount = sel.filter(o => o.data.isBrush).length;
+    const noColorCount = sel.filter(o => o.data.color === NO_COLOR).length;
+    const whyNoColor = () => (noColorCount === sel.length
+      ? _t('whyNoColorAll', noColorCount) : _t('whyNoColorSome', noColorCount));
     const hints = [_t('hintMultiSel', sel.length)];
-    if (hasBrush || hasText || hasImage) {
-      const blocked = [];
-      if (hasBrush) blocked.push(_t('shapeBrush'));
-      if (hasText) blocked.push(_t('shapeText'));
-      if (hasImage) blocked.push(_t('shapeImage'));
-      hints.push(_t('hintMultiBlockedPat', blocked.join('、')));
-    }
-    if (hasImage || hasTexShape) {
-      hints.push(_t('hintMultiBlockedColor'));
-    }
-    if (!noNoColorInSel) {
-      const noColorCount = sel.filter(o => o.data.color === NO_COLOR).length;
-      hints.push(noColorCount === sel.length
-        ? _t('hintMultiAllNoColor', sel.length)
-        : _t('hintMultiSomeNoColor', noColorCount));
-    }
-    hints.push(_t('hintMultiLockRatio'));
+    const pushHide = (ctlKey, reasons) => {
+      if (reasons.length) hints.push(_t('hintHideLine', _t(ctlKey), reasons.join(_t('hintSep'))));
+    };
+    // ① 不透明度：画笔笔迹恒为 1；无颜色对象由系统控制
+    const rOpacity = [];
+    if (hasBrush) rOpacity.push(brushCount === sel.length
+      ? _t('whyBrushAll', brushCount) : _t('whyBrushSome', brushCount));
+    if (anyNoColorSolid) rOpacity.push(whyNoColor());
+    pushHide('ctlOpacity', rOpacity);
+    // ② 颜色栏
+    const rColor = [];
+    if (!allCanColor) rColor.push(_t('whyImageColor'));
+    pushHide('ctlColor', rColor);
+    // ③ 花纹 / 贴图栏
+    const rPat = [];
+    if (hasBrush) rPat.push(_t('whyBrushPat'));
+    if (hasText) rPat.push(_t('whyTextPat'));
+    if (hasImage) rPat.push(_t('whyImagePat'));
+    if (hasTexShape) rPat.push(_t('whyTexShapePat'));
+    if (anyNoColorSolid) rPat.push(whyNoColor());
+    pushHide('ctlPattern', rPat);
+    // ④ 等比缩放：多选恒隐藏
+    pushHide('ctlUniformScale', [_t('whyMultiScale')]);
     elMultiHint.style.display = '';
     elMultiHint.innerHTML = hints.join('<br>');
     elProps.style.display = 'block';
@@ -3147,8 +3239,8 @@ function refreshProps() {
     elSecImg.style.display = 'none'; // 多选时不显示贴图按钮
     elSecText.style.display = 'none';
     elEditText.style.display = 'none';
-    // 多选时若有任一对象为 NO_COLOR，隐藏不透明度控件
-    document.getElementById('row-opacity').style.display = anyNoColorSolid ? 'none' : '';
+    // 多选时若有任一对象为 NO_COLOR、或包含画笔笔迹（透明度固定为 1），隐藏不透明度控件
+    document.getElementById('row-opacity').style.display = (anyNoColorSolid || hasBrush) ? 'none' : '';
     // 多选时隐藏等比缩放控件和锁定比例，禁用缩放模式按钮
     document.getElementById('row-scale').style.display = 'none';
     const _lr = document.querySelector('label.lock-ratio');
@@ -3179,13 +3271,24 @@ function refreshProps() {
     const isNoColorBrushSolid = (primary.data.isBrush === true) && (primary.data.color === NO_COLOR) && !primary.data.pattern;
     const isNoColorShapeSolid = (isShape) && (primary.data.color === NO_COLOR) &&
       (!primary.data.pattern || primary.data.pattern === '纯色') && !primary.data.image;
-    document.getElementById('row-opacity').style.display = (isNoColorBrushSolid || isNoColorShapeSolid) ? 'none' : '';
+    // 画笔笔迹透明度恒为 1，单选笔迹时始终隐藏不透明度控件
+    document.getElementById('row-opacity').style.display =
+      (isBrush || isNoColorBrushSolid || isNoColorShapeSolid) ? 'none' : '';
     // 单选时根据锁定比例显示等比缩放控件，并重置基准为当前缩放
     refreshUniformScale();
     const _lr2 = document.querySelector('label.lock-ratio');
-    if (_lr2) _lr2.style.display = '';
     const _ms2 = document.getElementById('mode-scale');
-    if (_ms2) _ms2.classList.remove('disabled');
+    if (isText) {
+      // 文本对象不支持等比缩放：隐藏等比缩放行与锁定比例，禁用缩放模式
+      document.getElementById('row-scale').style.display = 'none';
+      if (_lr2) _lr2.style.display = 'none';
+      if (_ms2) _ms2.classList.add('disabled');
+      if (transformCtrl.getMode() === 'scale') setTransformMode('translate', true);
+    } else {
+      if (_lr2) _lr2.style.display = '';
+      if (_ms2) _ms2.classList.remove('disabled');
+    }
+    // 单选不显示「已隐藏控件」提示条（提示仅用于多选场景）
     syncProps(primary);
     syncTextProps(primary);
     if (canColor) {
@@ -3334,7 +3437,9 @@ function snapshot() {
     // 画笔数据
     if (o.data.isBrush) {
       snap.isBrush = true;
+      snap.color = o.data.color;
       snap.thickness = o.data.thickness;
+      snap.brushRadius = o.data.brushRadius;
       snap.opacity = o.data.opacity ?? 1;
       snap.brushType = o.data.type;
       snap.pattern = o.data.pattern;
@@ -3346,10 +3451,19 @@ function snapshot() {
             curvePoints: c.userData.brushCurvePoints.map(p => [p.x, p.y, p.z]),
             brushRadius: c.userData.brushRadius
           }));
-        }
-        // 兼容旧格式：保存第一个管段的curvePoints
-        if (tubeChildren.length === 1) {
-          snap.curvePoints = tubeChildren[0].userData.brushCurvePoints.map(p => [p.x, p.y, p.z]);
+          // 兼容旧格式：保存第一个管段的curvePoints
+          if (tubeChildren.length === 1) {
+            snap.curvePoints = tubeChildren[0].userData.brushCurvePoints.map(p => [p.x, p.y, p.z]);
+          }
+        } else if (o.data.curvePoints && o.data.curvePoints.length >= 2) {
+          // 3D画笔：实时绘制逐段生成管段，子网格未携带 brushCurvePoints，
+          // 导出时无法命中 tubeChildren，故回退用整条曲线点重建为连续管，
+          // 同时保留 curvePoints 供橡皮局部擦除（1:1 还原绘制结果）。
+          snap.tubeSegments = [{
+            curvePoints: o.data.curvePoints,
+            brushRadius: o.data.brushRadius || (o.data.thickness ? o.data.thickness / 2 : 0.3)
+          }];
+          snap.curvePoints = o.data.curvePoints;
         }
       }
       // 保存子网格结构（含几何体参数，确保精确重建）
@@ -3593,7 +3707,7 @@ function rebuildFromSnapshot(s, promises) {
         const curveLength = curve.getLength();
         // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
         const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (segR * 0.05))));
-        const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 1);
+        const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false);
         const tubeMesh = new THREE.Mesh(tubeGeo, mat.clone());
         tubeMesh.position.copy(meshOffset);
         tubeMesh.castShadow = true; tubeMesh.receiveShadow = true;
@@ -3738,6 +3852,8 @@ function rebuildFromSnapshot(s, promises) {
 
     scene.add(group);
     const entry = { mesh: group, data: { ...s, isBrush: true, kind: 'brush' } };
+    // 与绘制提交一致：用 applyAppearance 按 data 重新生成材质（颜色/花纹/不透明度/光照），确保导入后外观一致
+    applyAppearance(entry);
     return entry;
   } else if (s.kind === 'image' && s.image) {
     promises.push(imageTexture(s.image).then(({ tex, aspectRatio }) => {
@@ -4262,14 +4378,22 @@ function cancelInlineTextInput() {
 }
 
 // ============ 工具切换 ============
+// 这 5 个工具按钮在"对象选中状态"下点击 → 退出选中模式并进入该工具
+const EXIT_SELECTION_TOOLS = ['text', 'image', 'brush3d', 'brush2d', 'eraser'];
 function setTool(t) {
   // 切换到非 'text' 工具时，清除"保持文本模式"标志
   if (t !== 'text') {
     state._keepTextTool = false;
   }
-  // 选中对象时，所有工具操作已被灰度按钮拦截，此处无需再toast
+  // 选中对象时：工具栏 5 个工具按钮（文本/图片/3D 画笔/2D 画笔/橡皮擦）先退出选中模式再进入该工具；
+  // 其余（图形按钮）仍被灰度按钮拦截，此处直接返回
   if (t && state.selectedList.length > 0) {
-    return;
+    if (EXIT_SELECTION_TOOLS.indexOf(t) >= 0) {
+      deselectAll();
+      toast(_t('toastExitSelMode'));
+    } else {
+      return;
+    }
   }
   // 切换到非 'text' 工具时，先处理已有未保存的文本框（有字保存，无字删除）
   // 避免出现多个文本编辑框共存，以及文本框残留
@@ -4361,11 +4485,15 @@ function setTool(t) {
   }
 }
 function updateShapeButtonStates() {
-  // 选中对象时，所有工具按钮（图形/文本/图片/画笔/橡皮擦）统一灰度禁用
   const hasSelection = state.selectedList.length > 0;
-  const disabled = hasSelection || transformActive;
-  document.querySelectorAll('.shape-btn, #tool-text, #tool-image, #tool-brush3d, #tool-brush2d, #tool-eraser').forEach(b => {
-    b.classList.toggle('disabled', disabled && !b.classList.contains('active'));
+  // 图形按钮：选中对象或变换中时灰度禁用
+  document.querySelectorAll('.shape-btn').forEach(b => {
+    b.classList.toggle('disabled', (hasSelection || transformActive) && !b.classList.contains('active'));
+  });
+  // 工具栏 5 个工具按钮（文本/图片/3D 画笔/2D 画笔/橡皮擦）：
+  // 选中状态下依然可点击 —— 点击后自动退出选中模式并进入该工具；仅变换进行中才禁用
+  document.querySelectorAll('#tool-text, #tool-image, #tool-brush3d, #tool-brush2d, #tool-eraser').forEach(b => {
+    b.classList.toggle('disabled', transformActive && !b.classList.contains('active'));
   });
 }
 // 粘贴按钮状态：剪贴板为空或变换中时灰度禁用
@@ -5191,7 +5319,7 @@ async function startScreenPick() {
   if (pickingColor) return;
   pickerModal.classList.remove('show'); // 先收起弹窗避免遮挡
   pickingColor = true;
-  const isTouch = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
+  const isTouch = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window) || FORCE_TOUCH;
   // 桌面端优先截屏（可取自网页外）；触屏端跳过共享屏幕这类高危操作，直接在页面(3D 画布)中取色
   let ok = false;
   if (!isTouch) ok = await captureScreen();
@@ -5381,9 +5509,9 @@ function setBrushColor(numColor) {
   // 记忆到对应画笔类型
   const memKey = state.tool === 'brush3d' ? 'brush3d' : 'brush2d';
   colorMemory[memKey] = numColor;
-  // 无颜色画笔：不透明度由系统强制控制，隐藏不透明度控件
+  // 画笔笔迹不透明度固定为 1，不可调节 → 始终隐藏不透明度控件
   const brushOpacityRow = document.getElementById('row-brush-opacity');
-  if (brushOpacityRow) brushOpacityRow.style.display = (numColor === NO_COLOR) ? 'none' : '';
+  if (brushOpacityRow) brushOpacityRow.style.display = 'none';
   if (numColor === NO_COLOR) {
     brushCustomSwatch.style.background = '#ffffff';
     brushCustomHex.textContent = '#FFFFFF';
@@ -5672,7 +5800,6 @@ document.getElementById('tool-text').addEventListener('click', () => {
 });
 document.getElementById('tool-image').addEventListener('click', () => {
   if (state.tool === 'image') { setTool(null); return; }
-  if (state.selectedList.length > 0) return;
   // 关键：先同步调用 setTool('image') 处理文本框，再打开文件选择器
   // 避免blur延迟触发时state.tool仍为text导致placeAt跳回选择/变换模式
   setTool('image');
@@ -5680,17 +5807,14 @@ document.getElementById('tool-image').addEventListener('click', () => {
 });
 document.getElementById('tool-select').addEventListener('click', () => setTool(null));
 document.getElementById('tool-brush3d').addEventListener('click', () => {
-  if (state.selectedList.length > 0) return;
   if (state.tool === 'brush3d') return;
   setTool('brush3d');
 });
 document.getElementById('tool-brush2d').addEventListener('click', () => {
-  if (state.selectedList.length > 0) return;
   if (state.tool === 'brush2d') return;
   setTool('brush2d');
 });
 document.getElementById('tool-eraser').addEventListener('click', () => {
-  if (state.selectedList.length > 0) return;
   if (state.tool === 'eraser') return;
   setTool('eraser');
 });
@@ -7803,9 +7927,9 @@ const SHAPE_PARAMS = {
   box: {
     label: '立方体',
     fields: [
-      { key: 'sz', label: '长度 L', min: 0.1, max: 10, step: 0.1 },
-      { key: 'sx', label: '宽度 W', min: 0.1, max: 10, step: 0.1 },
-      { key: 'sy', label: '高度 H', min: 0.1, max: 10, step: 0.1 }
+      { key: 'sz', label: '长度', min: 0.1, max: 10, step: 0.1 },
+      { key: 'sx', label: '宽度', min: 0.1, max: 10, step: 0.1 },
+      { key: 'sy', label: '高度', min: 0.1, max: 10, step: 0.1 }
     ]
   },
   sphere: {
@@ -7815,32 +7939,29 @@ const SHAPE_PARAMS = {
   cylinder: {
     label: '圆柱',
     fields: [
-      { key: 'radiusTop', label: '顶半径', min: 0.05, max: 5, step: 0.05 },
-      { key: 'radiusBottom', label: '底半径', min: 0.05, max: 5, step: 0.05 },
+      { key: 'radius', label: '半径', min: 0.05, max: 5, step: 0.05 },
       { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
     ]
   },
   cone: {
     label: '圆锥',
     fields: [
-      { key: 'radius', label: '底半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'radius', label: '底面半径', min: 0.1, max: 5, step: 0.05 },
       { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
     ]
   },
   pyramid: {
-    label: '四棱锥',
+    label: '正四棱锥',
     fields: [
-      { key: 'radius', label: '底半径', min: 0.1, max: 5, step: 0.05 },
-      { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 },
-      { key: 'radialSegments', label: '边数', min: 3, max: 8, step: 1 }
+      { key: 'edge', label: '底面边长', min: 0.1, max: 8, step: 0.05 },
+      { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
     ]
   },
   prism: {
-    label: '三棱柱',
+    label: '正三棱柱',
     fields: [
-      { key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.05 },
-      { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 },
-      { key: 'radialSegments', label: '边数', min: 3, max: 12, step: 1 }
+      { key: 'edge', label: '底面边长', min: 0.1, max: 8, step: 0.05 },
+      { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
     ]
   },
   capsule: {
@@ -7851,41 +7972,53 @@ const SHAPE_PARAMS = {
     ]
   },
   torus: {
-    label: '圆环',
+    label: '环面',
     fields: [
-      { key: 'radius', label: '主半径', min: 0.1, max: 5, step: 0.05 },
-      { key: 'tube', label: '管半径', min: 0.02, max: 2, step: 0.02 }
+      { key: 'outerR', label: '外环半径', min: 0.15, max: 5, step: 0.05 },
+      { key: 'innerR', label: '内环半径', min: 0.05, max: 4.9, step: 0.05,
+        maxOf: d => (d.outerR || 0.82) - 0.05 }
     ]
   },
   knot: {
     label: '纽结',
     fields: [
       { key: 'radius', label: '半径', min: 0.1, max: 3, step: 0.05 },
-      { key: 'tube', label: '管粗', min: 0.02, max: 1, step: 0.02 }
+      // 管粗上限随半径变化：最大 0.4×半径，超出会自剖穿模
+      { key: 'tube', label: '管粗', min: 0.02, max: 1.2, step: 0.02,
+        maxOf: d => Math.max(0.02, (d.radius || 0.55) * 0.4) }
     ]
   },
   tube: {
     label: '管道',
     fields: [
-      { key: 'radius', label: '管半径', min: 0.05, max: 2, step: 0.05 }
+      { key: 'span', label: '跨度', min: 0.4, max: 10, step: 0.1 },
+      { key: 'arch', label: '拱高', min: 0.1, max: 6, step: 0.1 },
+      // 管半径上限：不超过跨度半宽与拱高较小者的 0.4 倍
+      { key: 'radius', label: '管半径', min: 0.02, max: 2, step: 0.01,
+        maxOf: d => Math.max(0.02, 0.4 * Math.min((d.span || 1.6) / 2, d.arch || 0.8)) },
+      { key: 'bendSeg', label: '弯曲分段', min: 4, max: 120, step: 1 }
     ]
   },
   lathe: {
     label: '回转体',
     fields: [
-      { key: 'segments', label: '分段', min: 8, max: 64, step: 1 }
+      { key: 'segments', label: '分段', min: 3, max: 64, step: 1 },
+      { key: 'bottomR', label: '底面半径', min: 0.05, max: 5, step: 0.05 },
+      { key: 'midR', label: '中间半径', min: 0.05, max: 5, step: 0.05 },
+      { key: 'maxR', label: '最宽半径', min: 0.05, max: 5, step: 0.05 },
+      { key: 'height', label: '高度', min: 0.2, max: 10, step: 0.1 }
     ]
   },
-  tetra: { label: '四面体', fields: [{ key: 'radius', label: '半径', min: 0.3, max: 5, step: 0.1 }] },
-  octa: { label: '八面体', fields: [{ key: 'radius', label: '半径', min: 0.3, max: 5, step: 0.1 }] },
-  dodeca: { label: '十二面体', fields: [{ key: 'radius', label: '半径', min: 0.3, max: 5, step: 0.1 }] },
-  icosa: { label: '二十面体', fields: [{ key: 'radius', label: '半径', min: 0.3, max: 5, step: 0.1 }] },
+  tetra: { label: '正四面体', fields: [{ key: 'edge', label: '底面边长', min: 0.2, max: 8, step: 0.1 }] },
+  octa: { label: '八面体', fields: [{ key: 'edge', label: '边长', min: 0.2, max: 6, step: 0.05 }] },
+  dodeca: { label: '十二面体', fields: [{ key: 'edge', label: '边长', min: 0.1, max: 3.5, step: 0.05 }] },
+  icosa: { label: '二十面体', fields: [{ key: 'edge', label: '边长', min: 0.15, max: 5, step: 0.05 }] },
   // 2D 图形参数
   square2: {
     label: '正方形',
     fields: [
-      { key: 'height', label: '长度 L', min: 0.2, max: 10, step: 0.1 },
-      { key: 'width', label: '宽度 W', min: 0.2, max: 10, step: 0.1 }
+      { key: 'height', label: '长度', min: 0.2, max: 10, step: 0.1 },
+      { key: 'width', label: '宽度', min: 0.2, max: 10, step: 0.1 }
     ]
   },
   circle2: {
@@ -7895,15 +8028,17 @@ const SHAPE_PARAMS = {
   ellipse: {
     label: '椭圆',
     fields: [
-      { key: 'radiusX', label: 'X 半径', min: 0.1, max: 5, step: 0.1 },
-      { key: 'radiusY', label: 'Y 半径', min: 0.1, max: 5, step: 0.1 }
+      { key: 'major', label: '长轴长', min: 0.2, max: 10, step: 0.1 },
+      // 短轴不超过长轴
+      { key: 'minor', label: '短轴长', min: 0.1, max: 10, step: 0.1,
+        maxOf: d => (d.major || 1.8) }
     ]
   },
   triangle: {
-    label: '三角形',
+    label: '等腰三角形',
     fields: [
       { key: 'base', label: '底边长', min: 0.3, max: 10, step: 0.1 },
-      { key: 'height', label: '高', min: 0.3, max: 10, step: 0.1 }
+      { key: 'height', label: '高度', min: 0.3, max: 10, step: 0.1 }
     ]
   },
   star: {
@@ -7916,26 +8051,31 @@ const SHAPE_PARAMS = {
   },
   hexagon: {
     label: '六边形',
-    fields: [{ key: 'radius', label: '半径', min: 0.2, max: 5, step: 0.1 }]
+    fields: [{ key: 'edge', label: '边长', min: 0.1, max: 5, step: 0.05 }]
   },
   pentagon: {
     label: '五边形',
-    fields: [{ key: 'radius', label: '半径', min: 0.2, max: 5, step: 0.1 }]
+    fields: [{ key: 'edge', label: '边长', min: 0.1, max: 5, step: 0.05 }]
   },
   octagon: {
     label: '八边形',
-    fields: [{ key: 'radius', label: '半径', min: 0.2, max: 5, step: 0.1 }]
+    fields: [{ key: 'edge', label: '边长', min: 0.1, max: 5, step: 0.05 }]
   },
   heart: {
     label: '心形',
-    fields: []
+    fields: [
+      { key: 'width', label: '宽度', min: 0.2, max: 10, step: 0.1 },
+      { key: 'height', label: '高度', min: 0.2, max: 10, step: 0.1 },
+      { key: 'dip', label: '心尖凹陷度', min: 0, max: 1, step: 0.05 }
+    ]
   },
   parallelogram: {
     label: '平行四边形',
     fields: [
-      { key: 'height', label: '长度 L', min: 0.2, max: 10, step: 0.1 },
-      { key: 'width', label: '宽度 W', min: 0.2, max: 10, step: 0.1 },
-      { key: 'skew', label: '倾斜', min: 0, max: 0.5, step: 0.05 }
+      { key: 'base', label: '底长', min: 0.2, max: 10, step: 0.1 },
+      { key: 'height', label: '高度', min: 0.2, max: 10, step: 0.1 },
+      // 倾斜程度：0 位于滑动条正中，负值左倾、正值右倾
+      { key: 'skew', label: '倾斜程度', min: -1, max: 1, step: 0.05 }
     ]
   },
   trapezoid: {
@@ -7943,21 +8083,40 @@ const SHAPE_PARAMS = {
     fields: [
       { key: 'bottomWidth', label: '下底宽', min: 0.2, max: 10, step: 0.1 },
       { key: 'topWidth', label: '上底宽', min: 0.1, max: 10, step: 0.1 },
-      { key: 'height', label: '高', min: 0.2, max: 10, step: 0.1 }
+      { key: 'height', label: '高度', min: 0.2, max: 10, step: 0.1 }
     ]
   },
   diamond: {
     label: '菱形',
+    // 边长 / 两内角 / 两对角线互相制约：改任一项自动反算其余项
+    link: (d, key) => {
+      const RAD = Math.PI / 180;
+      if (key === 'diagP' || key === 'diagQ') {
+        const p = Math.max(0.05, d.diagP), q = Math.max(0.05, d.diagQ);
+        d.edge = Math.sqrt(p * p + q * q) / 2;
+        d.angleA = 2 * Math.atan2(p / 2, q / 2) / RAD;
+        d.angleB = 180 - d.angleA;
+      } else {
+        if (key === 'angleB') d.angleA = 180 - d.angleB;
+        else d.angleB = 180 - d.angleA;
+        d.diagP = 2 * d.edge * Math.sin(d.angleA / 2 * RAD);
+        d.diagQ = 2 * d.edge * Math.cos(d.angleA / 2 * RAD);
+      }
+    },
     fields: [
-      { key: 'height', label: '长度 L', min: 0.2, max: 10, step: 0.1 },
-      { key: 'width', label: '宽度 W', min: 0.2, max: 10, step: 0.1 }
+      { key: 'edge', label: '边长', min: 0.1, max: 8, step: 0.05 },
+      { key: 'angleA', label: '内角 A', min: 10, max: 170, step: 1 },
+      { key: 'angleB', label: '内角 B', min: 10, max: 170, step: 1 },
+      { key: 'diagP', label: '对角线 p', min: 0.05, max: 16, step: 0.05 },
+      { key: 'diagQ', label: '对角线 q', min: 0.05, max: 16, step: 0.05 }
     ]
   },
   // 新增3D图形
   barrel: {
-    label: '桶状体',
+    label: '筒状体',
     fields: [
-      { key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'radiusTop', label: '顶半径', min: 0.05, max: 5, step: 0.05 },
+      { key: 'radiusBottom', label: '底半径', min: 0.05, max: 5, step: 0.05 },
       { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
     ]
   },
@@ -7966,17 +8125,29 @@ const SHAPE_PARAMS = {
     fields: [{ key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.1 }]
   },
   helix: {
-    label: '螺旋环',
+    label: '开口环面',
     fields: [
-      { key: 'radius', label: '主半径', min: 0.1, max: 5, step: 0.05 },
-      { key: 'tube', label: '管半径', min: 0.02, max: 1, step: 0.02 }
+      { key: 'outerR', label: '外环半径', min: 0.15, max: 5, step: 0.05 },
+      { key: 'innerR', label: '内环半径', min: 0.05, max: 4.9, step: 0.05,
+        maxOf: d => (d.outerR || 0.65) - 0.05 },
+      { key: 'arc', label: '主扫掠角', min: 30, max: 360, step: 5 }
     ]
   },
   octaPrism: {
-    label: '八棱柱',
+    label: '正八棱柱',
     fields: [
-      { key: 'radius', label: '半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'edge', label: '底面边长', min: 0.05, max: 4, step: 0.05 },
       { key: 'height', label: '高度', min: 0.1, max: 10, step: 0.1 }
+    ]
+  },
+  star3d: {
+    label: '立体星',
+    fields: [
+      { key: 'outerR', label: '外半径', min: 0.2, max: 5, step: 0.05 },
+      { key: 'innerR', label: '内半径', min: 0.05, max: 4.9, step: 0.05,
+        maxOf: d => (d.outerR || 0.8) - 0.05 },
+      { key: 'points', label: '角数', min: 3, max: 12, step: 1 },
+      { key: 'thickness', label: '厚度', min: 0.05, max: 3, step: 0.05 }
     ]
   },
   // 新增2D图形
@@ -7984,16 +8155,23 @@ const SHAPE_PARAMS = {
     label: '直角三角形',
     fields: [
       { key: 'base', label: '底边长', min: 0.3, max: 10, step: 0.1 },
-      { key: 'height', label: '高', min: 0.3, max: 10, step: 0.1 }
+      { key: 'height', label: '高度', min: 0.3, max: 10, step: 0.1 }
     ]
   },
   arrow: {
     label: '箭头',
-    fields: []
+    fields: [
+      { key: 'length', label: '长度', min: 0.2, max: 10, step: 0.1 },
+      { key: 'width', label: '宽度', min: 0.1, max: 8, step: 0.1 }
+    ]
   },
   crescent: {
     label: '月牙',
-    fields: []
+    fields: [
+      { key: 'outerR', label: '外半径', min: 0.2, max: 5, step: 0.05 },
+      { key: 'innerR', label: '内半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'offset', label: '偏移量', min: 0.05, max: 4, step: 0.05 }
+    ]
   },
   semicircle: {
     label: '半圆',
@@ -8002,17 +8180,34 @@ const SHAPE_PARAMS = {
   ring2d: {
     label: '圆环',
     fields: [
-      { key: 'innerRadius', label: '内半径', min: 0.05, max: 3, step: 0.05 },
-      { key: 'outerRadius', label: '外半径', min: 0.1, max: 5, step: 0.05 }
+      { key: 'outerRadius', label: '外环半径', min: 0.1, max: 5, step: 0.05 },
+      { key: 'innerRadius', label: '内环半径', min: 0.05, max: 4.95, step: 0.05,
+        maxOf: d => (d.outerRadius || 0.75) - 0.05 }
     ]
   },
   cross: {
     label: '十字',
-    fields: []
+    fields: [
+      { key: 'length', label: '长度', min: 0.2, max: 10, step: 0.1 },
+      // 臂宽必须小于长度的一半，否则退化成正方形
+      { key: 'arm', label: '臂宽', min: 0.05, max: 5, step: 0.05,
+        maxOf: d => Math.max(0.05, (d.length || 1.8) / 2 - 0.05) }
+    ]
   },
   lightning: {
     label: '闪电',
-    fields: []
+    fields: [
+      { key: 'height', label: '高度', min: 0.2, max: 10, step: 0.1 },
+      { key: 'width', label: '宽度', min: 0.1, max: 8, step: 0.1 }
+    ]
+  },
+  teardrop: {
+    label: '水滴',
+    fields: [
+      { key: 'width', label: '宽度', min: 0.1, max: 8, step: 0.1 },
+      { key: 'height', label: '高度', min: 0.2, max: 10, step: 0.1 },
+      { key: 'sharp', label: '尖端锐度', min: 0, max: 1, step: 0.05 }
+    ]
   }
 };
 
@@ -8022,10 +8217,71 @@ function showShapeParams(obj) {
   const container = document.getElementById('shape-params-content');
   if (!spec) { container.innerHTML = ''; return; }
   container.innerHTML = '';
+  // 旧存档兼容：把历史参数键迁移到新键名，并补齐缺省值
+  migrateShapeData(type, obj.data);
+
+  const rows = {};   // key -> { f, slider, input }
+
+  // 解析字段的动态上下限（maxOf / minOf 依赖其它参数的当前值）
+  function limitOf(f, which) {
+    const fn = which === 'max' ? f.maxOf : f.minOf;
+    let v = which === 'max' ? f.max : f.min;
+    if (typeof fn === 'function') {
+      const dv = fn(obj.data);
+      if (isFinite(dv)) v = which === 'max' ? Math.min(f.max, dv) : Math.max(f.min, dv);
+    }
+    return v;
+  }
+
+  // 依据当前数据刷新所有滑块的可用范围，并把越界值钳回范围内
+  function syncLimits() {
+    spec.fields.forEach(f2 => {
+      const r = rows[f2.key];
+      if (!r) return;
+      const mn = limitOf(f2, 'min'), mx = limitOf(f2, 'max');
+      r.slider.min = mn; r.slider.max = mx;
+      r.input.min = mn; r.input.max = mx;
+      const cur = obj.data[f2.key];
+      if (typeof cur === 'number') {
+        const cl = Math.min(mx, Math.max(mn, cur));
+        if (cl !== cur) obj.data[f2.key] = cl;
+      }
+    });
+  }
+
+  // 把 obj.data 的值写回控件（skipInputKey 对应正在输入的框，避免打断输入）
+  function refreshRows(skipInputKey) {
+    spec.fields.forEach(f2 => {
+      const r = rows[f2.key];
+      if (!r) return;
+      const v = obj.data[f2.key];
+      if (typeof v !== 'number') return;
+      r.slider.value = v;
+      if (f2.key !== skipInputKey) r.input.value = (f2.step >= 1 ? v.toFixed(0) : v.toFixed(2));
+    });
+  }
+
+  // 统一的参数写入入口：钳制 → 联动 → 同步范围 → 重建几何
+  function applyChange(f, raw, src) {
+    if (isNaN(raw)) return;
+    const mn = limitOf(f, 'min'), mx = limitOf(f, 'max');
+    const v = Math.min(mx, Math.max(mn, raw));
+    const clamped = Math.abs(v - raw) > 1e-9;
+    obj.data[f.key] = v;
+    if (typeof spec.link === 'function') spec.link(obj.data, f.key);
+    syncLimits();
+    refreshRows(clamped ? null : (src === 'input' ? f.key : null));
+    rebuildShape(obj);
+    if (clamped) {
+      toast(_t('toastParamRange', _t(PARAM_LABEL_MAP[f.label] || f.label),
+        (Math.round(mn * 100) / 100), (Math.round(mx * 100) / 100)));
+    }
+  }
+
   spec.fields.forEach(f => {
     const row = document.createElement('div');
     row.className = 'ctrl-row';
-    const val = obj.data[f.key] ?? 1;
+    const val = obj.data[f.key] ?? f.min;
     row.innerHTML = `
       <div class="ctrl-label"><span data-i18n="${PARAM_LABEL_MAP[f.label] || f.label}">${f.label}</span></div>
       <div style="display:flex; gap:6px; align-items:center;">
@@ -8036,20 +8292,10 @@ function showShapeParams(obj) {
     container.appendChild(row);
     const slider = row.querySelector('input[type="range"]');
     const input = row.querySelector('input[type="number"]');
-    slider.addEventListener('input', e => {
-      const v = parseFloat(e.target.value);
-      input.value = v.toFixed(2);
-      obj.data[f.key] = v;
-      rebuildShape(obj);
-    });
-    input.addEventListener('input', e => {
-      const v = parseFloat(e.target.value);
-      if (!isNaN(v)) {
-        slider.value = v;
-        obj.data[f.key] = v;
-        rebuildShape(obj);
-      }
-    });
+    rows[f.key] = { f, slider, input };
+
+    slider.addEventListener('input', e => applyChange(f, parseFloat(e.target.value), 'slider'));
+    input.addEventListener('input', e => applyChange(f, parseFloat(e.target.value), 'input'));
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -8060,13 +8306,92 @@ function showShapeParams(obj) {
     input.addEventListener('blur', () => {
       if (state.selectedList.length) {
         const v = parseFloat(input.value);
-        if (!isNaN(v)) {
-          input.value = v.toFixed(2);
-          pushHistory();
-        }
+        if (!isNaN(v)) { refreshRows(null); pushHistory(); }
       }
     });
   });
+
+  // 初次渲染：把动态上下限套用到控件上
+  syncLimits();
+  refreshRows(null);
+}
+
+// 旧存档 / 旧撤销栈兼容：把历史参数键映射到新键名，缺失项用默认值补齐
+function migrateShapeData(type, d) {
+  if (!d || d.__migrated === type) return d;
+  const def = getShapeDefaults(type);
+  switch (type) {
+    case 'cylinder':
+      if (d.radius == null) d.radius = d.radiusBottom ?? d.radiusTop ?? def.radius;
+      break;
+    case 'barrel':
+      if (d.radiusBottom == null) d.radiusBottom = d.radius ?? def.radiusBottom;
+      if (d.radiusTop == null) d.radiusTop = (d.radius != null ? d.radius * 0.9 : def.radiusTop);
+      break;
+    case 'torus':
+      if (d.outerR == null) d.outerR = (d.radius != null && d.tube != null) ? d.radius + d.tube : def.outerR;
+      if (d.innerR == null) d.innerR = (d.radius != null && d.tube != null) ? Math.max(0.05, d.radius - d.tube) : def.innerR;
+      break;
+    case 'helix':
+      if (d.outerR == null) d.outerR = (d.radius != null && d.tube != null) ? d.radius + d.tube : def.outerR;
+      if (d.innerR == null) d.innerR = (d.radius != null && d.tube != null) ? Math.max(0.05, d.radius - d.tube) : def.innerR;
+      if (d.arc == null) d.arc = def.arc;
+      break;
+    case 'pyramid':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * 1.5 : def.edge);
+      break;
+    case 'prism':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * Math.sqrt(3) : def.edge);
+      break;
+    case 'tetra':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius / Math.sqrt(3 / 8) : def.edge);
+      break;
+    case 'octaPrism':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * 2 * Math.sin(Math.PI / 8) : def.edge);
+      break;
+    case 'octa':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * Math.SQRT2 : def.edge);
+      break;
+    case 'dodeca':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius / ((Math.sqrt(3) / 4) * (1 + Math.sqrt(5))) : def.edge);
+      break;
+    case 'icosa':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * 4 / Math.sqrt(10 + 2 * Math.sqrt(5)) : def.edge);
+      break;
+    case 'hexagon':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius : def.edge);
+      break;
+    case 'pentagon':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * 2 * Math.sin(Math.PI / 5) : def.edge);
+      break;
+    case 'octagon':
+      if (d.edge == null) d.edge = (d.radius != null ? d.radius * 2 * Math.sin(Math.PI / 8) : def.edge);
+      break;
+    case 'ellipse':
+      if (d.major == null) d.major = (d.radiusX != null ? d.radiusX * 2 : def.major);
+      if (d.minor == null) d.minor = (d.radiusY != null ? d.radiusY * 2 : def.minor);
+      break;
+    case 'parallelogram':
+      if (d.base == null) d.base = d.width ?? def.base;
+      break;
+    case 'diamond':
+      if (d.edge == null) {
+        if (d.width != null && d.height != null) {
+          d.diagP = d.width; d.diagQ = d.height;
+          d.edge = Math.sqrt(d.width * d.width + d.height * d.height) / 2;
+          d.angleA = 2 * Math.atan2(d.width / 2, d.height / 2) * 180 / Math.PI;
+          d.angleB = 180 - d.angleA;
+        } else {
+          d.edge = def.edge; d.angleA = def.angleA; d.angleB = def.angleB;
+          d.diagP = def.diagP; d.diagQ = def.diagQ;
+        }
+      }
+      break;
+  }
+  // 统一补齐缺失字段
+  Object.keys(def).forEach(k => { if (d[k] == null) d[k] = def[k]; });
+  d.__migrated = type;
+  return d;
 }
 
 function hideShapeParams() {
@@ -8076,11 +8401,20 @@ function hideShapeParams() {
 
 // 形状参数字段标签 → i18n 键名映射
 const PARAM_LABEL_MAP = {
-  '半径':'pRadius','高度':'pHeight','长度 L':'pLength','宽度 W':'pWidth',
+  '半径':'pRadius','高度':'pHeight','长度':'pLength','宽度':'pWidth',
+  '长度 L':'pLength','宽度 W':'pWidth','高度 H':'pHeight','高':'pHeight',
   '分段':'pSegments','底边长':'pBase','外半径':'pOuterRadius','内半径':'pInnerRadius',
   '角数':'pPoints','缩放':'pScale','倾斜':'pSkew','管半径':'pTube','主半径':'pMainRadius',
   '上底宽':'pTopWidth','下底宽':'pBottomWidth','X 半径':'pRadiusX','Y 半径':'pRadiusY',
-  '高':'pHeight'
+  '顶半径':'pTopRadius','底半径':'pBottomRadius','边数':'pSides','圆柱长':'pCylinderLength','管粗':'pTubeThick',
+  // 新增参数标签
+  '底面边长':'pEdgeBase','边长':'pEdge','外环半径':'pOuterRing','内环半径':'pInnerRing',
+  '跨度':'pSpan','拱高':'pArch','弯曲分段':'pBendSeg',
+  '底面半径':'pBottomR','中间半径':'pMidR','最宽半径':'pMaxR',
+  '主扫掠角':'pArc','厚度':'pThickness','长轴长':'pMajor','短轴长':'pMinor',
+  '心尖凹陷度':'pDip','底长':'pBaseLen','倾斜程度':'pSkewAmt',
+  '内角 A':'pAngleA','内角 B':'pAngleB','对角线 p':'pDiagP','对角线 q':'pDiagQ',
+  '偏移量':'pOffset','臂宽':'pArmWidth','尖端锐度':'pSharp'
 };
 
 function showImageParams(obj) {
@@ -8088,12 +8422,12 @@ function showImageParams(obj) {
   if (!container) return;
   container.innerHTML = '';
 
-  // 图片长度 L（原高度 H）
+  // 图片长度（原高度 H）
   const h = obj.data.h || 4;
   const hRow = document.createElement('div');
   hRow.className = 'ctrl-row';
   hRow.innerHTML = `
-    <div class="ctrl-label"><span data-i18n="pLength">长度 L</span></div>
+    <div class="ctrl-label"><span data-i18n="pLength">长度</span></div>
     <div style="display:flex; gap:6px; align-items:center;">
       <input type="range" id="img-h" min="0.5" max="20" step="0.01" value="${h}" style="flex:1;">
       <input type="number" id="input-imgh" step="0.01" value="${h}" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
@@ -8101,12 +8435,12 @@ function showImageParams(obj) {
   `;
   container.appendChild(hRow);
 
-  // 图片宽度 W
+  // 图片宽度
   const w = obj.data.w || 4;
   const wRow = document.createElement('div');
   wRow.className = 'ctrl-row';
   wRow.innerHTML = `
-    <div class="ctrl-label"><span data-i18n="pWidth">宽度 W</span></div>
+    <div class="ctrl-label"><span data-i18n="pWidth">宽度</span></div>
     <div style="display:flex; gap:6px; align-items:center;">
       <input type="range" id="img-w" min="0.5" max="20" step="0.01" value="${w}" style="flex:1;">
       <input type="number" id="input-imgw" step="0.01" value="${w}" style="width:70px; background:var(--input-bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:3px 6px; font-size:12px; font-family:inherit;">
@@ -8210,42 +8544,48 @@ function getShapeDefaults(type) {
   switch (type) {
     case 'box': defs.sx = defs.sy = defs.sz = 1.2; break;
     case 'sphere': defs.radius = 0.75; break;
-    case 'cylinder': defs.radiusBottom = defs.radiusTop = 0.6; defs.height = 1.4; break;
+    case 'cylinder': defs.radius = 0.6; defs.height = 1.4; break;
     case 'cone': defs.radius = 0.75; defs.height = 1.5; break;
-    case 'pyramid': defs.radius = 0.85; defs.height = 1.4; defs.radialSegments = 4; break;
-    case 'prism': defs.radius = 0.75; defs.height = 1.4; defs.radialSegments = 6; break;
+    case 'pyramid': defs.edge = 1.2; defs.height = 1.4; break;
+    case 'prism': defs.edge = 1.2; defs.height = 1.4; break;
     case 'capsule': defs.radius = 0.45; defs.length = 0.9; break;
-    case 'torus': defs.radius = 0.6; defs.tube = 0.22; break;
+    case 'torus': defs.outerR = 0.82; defs.innerR = 0.38; break;
     case 'knot': defs.radius = 0.55; defs.tube = 0.18; break;
-    case 'tube': defs.radius = 0.15; break;
-    case 'lathe': defs.segments = 24; break;
-    case 'tetra': defs.radius = 1; break;
-    case 'octa': defs.radius = 0.85; break;
-    case 'dodeca': defs.radius = 0.82; break;
-    case 'icosa': defs.radius = 0.85; break;
-    case 'barrel': defs.radius = 0.55; defs.height = 1.2; break;
+    case 'tube': defs.span = 1.6; defs.arch = 0.8; defs.radius = 0.15; defs.bendSeg = 40; break;
+    case 'lathe': defs.segments = 24; defs.bottomR = 0.4; defs.midR = 0.3; defs.maxR = 0.5; defs.height = 1.5; break;
+    case 'tetra': defs.edge = 1.63; break;
+    case 'octa': defs.edge = 1.2; break;
+    case 'dodeca': defs.edge = 0.6; break;
+    case 'icosa': defs.edge = 0.9; break;
+    case 'barrel': defs.radiusTop = 0.5; defs.radiusBottom = 0.55; defs.height = 1.2; break;
     case 'dome': defs.radius = 0.75; break;
-    case 'helix': defs.radius = 0.5; defs.tube = 0.15; break;
-    case 'octaPrism': defs.radius = 0.7; defs.height = 1.2; break;
+    case 'helix': defs.outerR = 0.65; defs.innerR = 0.35; defs.arc = 270; break;
+    case 'octaPrism': defs.edge = 0.54; defs.height = 1.2; break;
+    case 'star3d': defs.outerR = 0.8; defs.innerR = 0.35; defs.points = 5; defs.thickness = 0.3; break;
     case 'square2': defs.width = defs.height = 1.4; break;
     case 'circle2': defs.radius = 0.9; break;
-    case 'ellipse': defs.radiusX = 0.9; defs.radiusY = 0.65; break;
+    case 'ellipse': defs.major = 1.8; defs.minor = 1.3; break;
     case 'triangle': defs.base = 1.8; defs.height = 1.8; break;
     case 'star': defs.outerR = 0.9; defs.innerR = 0.4; defs.points = 5; break;
-    case 'hexagon': defs.radius = 0.8; break;
-    case 'pentagon': defs.radius = 0.9; break;
-    case 'octagon': defs.radius = 0.85; break;
-    case 'heart': defs.scale = 1; break;
-    case 'parallelogram': defs.width = 1.4; defs.height = 1.4; defs.skew = 0; break;
+    case 'hexagon': defs.edge = 0.8; break;
+    case 'pentagon': defs.edge = 1.06; break;
+    case 'octagon': defs.edge = 0.65; break;
+    case 'heart': defs.width = 1.8; defs.height = 1.9; defs.dip = 0.5; break;
+    case 'parallelogram': defs.base = 1.4; defs.height = 1.4; defs.skew = 0.3; break;
     case 'trapezoid': defs.bottomWidth = 1.7; defs.topWidth = 1.1; defs.height = 1.4; break;
-    case 'diamond': defs.width = 1.6; defs.height = 1.8; break;
+    case 'diamond':
+      defs.edge = 1.14; defs.angleA = 75; defs.angleB = 105;
+      defs.diagP = 2 * 1.14 * Math.sin(75 / 2 * Math.PI / 180);
+      defs.diagQ = 2 * 1.14 * Math.cos(75 / 2 * Math.PI / 180);
+      break;
     case 'rightTri': defs.base = 1.8; defs.height = 1.8; break;
-    case 'arrow': defs.scale = 1; break;
-    case 'crescent': defs.scale = 1; break;
+    case 'arrow': defs.length = 1.7; defs.width = 1.2; break;
+    case 'crescent': defs.outerR = 0.9; defs.innerR = 0.82; defs.offset = 0.35; break;
     case 'semicircle': defs.radius = 0.9; break;
-    case 'ring2d': defs.innerRadius = 0.35; defs.outerRadius = 0.75; break;
-    case 'cross': defs.scale = 1; break;
-    case 'lightning': defs.scale = 1; break;
+    case 'ring2d': defs.outerRadius = 0.75; defs.innerRadius = 0.35; break;
+    case 'cross': defs.length = 1.8; defs.arm = 0.5; break;
+    case 'lightning': defs.height = 1.8; defs.width = 0.9; break;
+    case 'teardrop': defs.width = 1.4; defs.height = 1.8; defs.sharp = 0.5; break;
   }
   return defs;
 }
@@ -8295,80 +8635,159 @@ function buildParametricGeo3D(type, data) {
       return new THREE.BoxGeometry(data.sx || 1.2, data.sy || 1.2, data.sz || 1.2);
     case 'sphere':
       return new THREE.SphereGeometry(data.radius || 0.75, 36, 24);
-    case 'cylinder':
-      return new THREE.CylinderGeometry(data.radiusBottom || 0.6, data.radiusTop || 0.6, data.height || 1.4, 40);
+    case 'cylinder': {
+      const r = data.radius || 0.6;
+      return new THREE.CylinderGeometry(r, r, data.height || 1.4, 40);
+    }
     case 'cone':
       return new THREE.ConeGeometry(data.radius || 0.75, data.height || 1.5, 40);
     case 'pyramid': {
+      // 正四棱锥：非索引几何，底面 + 4 个侧面各自独立顶点，
+      // 顶点法线不再跨面平均，光照/明暗表现正确
+      const a = data.edge || 1.2, h = data.height || 1.4, hw = a / 2;
+      const A = [-hw, 0, -hw], B = [hw, 0, -hw], C = [hw, 0, hw], D = [-hw, 0, hw], T = [0, h, 0];
+      const pos = [], uv = [];
+      const push = (p, u, v) => { pos.push(p[0], p[1], p[2]); uv.push(u, v); };
+      // 底面（法线朝 -Y）
+      push(A, 0, 1); push(B, 1, 1); push(C, 1, 0);
+      push(A, 0, 1); push(C, 1, 0); push(D, 0, 0);
+      // 4 个侧面（外法线朝外上方）
+      const sides = [[B, A], [C, B], [D, C], [A, D]];
+      sides.forEach((s, i) => {
+        const u0 = i / 4, u1 = (i + 1) / 4;
+        push(s[0], u0, 0); push(s[1], u1, 0); push(T, (u0 + u1) / 2, 1);
+      });
       const geo = new THREE.BufferGeometry();
-      const h = data.height || 1.4, hw = (data.radius || 0.85) * 0.75;
-      const vertices = new Float32Array([
-        -hw, 0, -hw,  hw, 0, -hw,  hw, 0, hw, -hw, 0, hw,
-        0, h, 0
-      ]);
-      const indices = [0,2,1, 0,3,2, 0,1,4, 1,2,4, 2,3,4, 3,0,4];
-      geo.setIndex(indices);
-      geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
       geo.computeVertexNormals();
+      geo.computeBoundingBox();
       return geo;
     }
     case 'prism': {
-      const geo = new THREE.BufferGeometry();
-      const h = data.height || 1.4, r = data.radius || 0.75;
-      const vertices = [];
-      const indices = [];
+      // 正三棱柱：非索引几何，上下底面 + 3 个侧面各自独立顶点，光照正确
+      const a = data.edge || 1.2, h = data.height || 1.4;
+      const r = a / Math.sqrt(3); // 底面正三角形外接圆半径
+      const T = [], B = [];
       for (let i = 0; i < 3; i++) {
-        const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
-        vertices.push(Math.cos(a) * r, h / 2, Math.sin(a) * r);
-        vertices.push(Math.cos(a) * r, -h / 2, Math.sin(a) * r);
+        const ang = (i / 3) * Math.PI * 2 - Math.PI / 2;
+        T.push([Math.cos(ang) * r, h / 2, Math.sin(ang) * r]);
+        B.push([Math.cos(ang) * r, -h / 2, Math.sin(ang) * r]);
       }
-      indices.push(0, 4, 2, 2, 4, 1, 1, 4, 0);
-      indices.push(3, 5, 1, 1, 5, 4, 4, 5, 0);
-      indices.push(0, 1, 3, 1, 5, 3);
-      indices.push(1, 2, 5, 2, 3, 5);
-      indices.push(2, 0, 3, 2, 3, 5);
-      geo.setIndex(indices);
-      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
+      const pos = [], uv = [];
+      const push = (p, u, v) => { pos.push(p[0], p[1], p[2]); uv.push(u, v); };
+      const uvOf = p => [0.5 + p[0] / (2 * r) * 0.5, 0.5 + p[2] / (2 * r) * 0.5];
+      // 顶面（+Y）
+      push(T[0], ...uvOf(T[0])); push(T[2], ...uvOf(T[2])); push(T[1], ...uvOf(T[1]));
+      // 底面（-Y）
+      push(B[0], ...uvOf(B[0])); push(B[1], ...uvOf(B[1])); push(B[2], ...uvOf(B[2]));
+      // 3 个侧面
+      for (let i = 0; i < 3; i++) {
+        const j = (i + 1) % 3, u0 = i / 3, u1 = (i + 1) / 3;
+        push(B[i], u0, 0); push(T[i], u0, 1); push(T[j], u1, 1);
+        push(B[i], u0, 0); push(T[j], u1, 1); push(B[j], u1, 0);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
       geo.computeVertexNormals();
+      geo.computeBoundingBox();
       return geo;
     }
     case 'capsule':
       return new THREE.CapsuleGeometry(data.radius || 0.45, data.length || 0.9, 8, 18);
-    case 'torus':
-      return new THREE.TorusGeometry(data.radius || 0.6, data.tube || 0.22, 20, 56);
-    case 'knot':
-      return new THREE.TorusKnotGeometry(data.radius || 0.55, data.tube || 0.18, 110, 18);
+    case 'torus': {
+      // 环面：外环半径 / 内环半径 → 主半径 =(外+内)/2，管半径 =(外-内)/2
+      const o = data.outerR || 0.82;
+      const i = Math.min(data.innerR ?? 0.38, o - 0.02);
+      return new THREE.TorusGeometry((o + i) / 2, Math.max(0.01, (o - i) / 2), 20, 56);
+    }
+    case 'knot': {
+      const r = data.radius || 0.55;
+      const tb = Math.min(data.tube || 0.18, r * 0.4); // 管粗随半径限幅，避免自交穿模
+      return new THREE.TorusKnotGeometry(r, Math.max(0.01, tb), 110, 18);
+    }
     case 'tetra':
-      return new THREE.TetrahedronGeometry(data.radius || 1, 0);
+      // 正四面体：底面边长 a → 外接球半径 R = a·√(3/8)
+      return new THREE.TetrahedronGeometry((data.edge || 1.63) * Math.sqrt(3 / 8), 0);
     case 'octa':
-      return new THREE.OctahedronGeometry(data.radius || 0.85, 0);
+      // 正八面体：外接球半径 R = a / √2
+      return new THREE.OctahedronGeometry((data.edge || 1.2) / Math.SQRT2, 0);
     case 'dodeca':
-      return new THREE.DodecahedronGeometry(data.radius || 0.82, 0);
+      // 正十二面体：外接球半径 R = (√3 / 4) · a · (1 + √5)
+      return new THREE.DodecahedronGeometry((data.edge || 0.6) * (Math.sqrt(3) / 4) * (1 + Math.sqrt(5)), 0);
     case 'icosa':
-      return new THREE.IcosahedronGeometry(data.radius || 0.85, 0);
+      // 正二十面体：外接球半径 R = (a / 4) · √(10 + 2√5)
+      return new THREE.IcosahedronGeometry((data.edge || 0.9) / 4 * Math.sqrt(10 + 2 * Math.sqrt(5)), 0);
     case 'tube': {
+      // 管道：由跨度 / 拱高生成拱形曲线，管半径受两者限制
+      const span = data.span || 1.6, arch = data.arch || 0.8;
+      const seg = Math.max(4, Math.round(data.bendSeg || 40));
+      const rMax = 0.4 * Math.min(span / 2, arch);
+      const r = Math.max(0.01, Math.min(data.radius || 0.15, rMax));
       const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.8,0,0),new THREE.Vector3(-0.4,0.8,0),
-        new THREE.Vector3(0.4,0.8,0),new THREE.Vector3(0.8,0,0)
+        new THREE.Vector3(-span / 2, 0, 0), new THREE.Vector3(-span / 4, arch, 0),
+        new THREE.Vector3(span / 4, arch, 0), new THREE.Vector3(span / 2, 0, 0)
       ]);
-      return new THREE.TubeGeometry(curve, 40, data.radius || 0.15, 8, false);
+      return new THREE.TubeGeometry(curve, seg, r, 12, false);
     }
     case 'lathe': {
+      // 回转体：由底面半径 / 最宽半径 / 中间半径 / 高度生成回转轮廓，分段最少 3
+      const seg = Math.max(3, Math.round(data.segments || 24));
+      const bR = Math.max(0.01, data.bottomR ?? 0.4);
+      const mR = Math.max(0.01, data.midR ?? 0.3);
+      const xR = Math.max(0.01, data.maxR ?? 0.5);
+      const H = Math.max(0.05, data.height ?? 1.5);
       const points = [
-        new THREE.Vector2(0.4,0),new THREE.Vector2(0.5,0.3),
-        new THREE.Vector2(0.3,0.7),new THREE.Vector2(0.5,1.1),
-        new THREE.Vector2(0.4,1.5)
+        new THREE.Vector2(bR, 0),
+        new THREE.Vector2((bR + xR) / 2, H * 0.2),
+        new THREE.Vector2(xR, H * 0.38),
+        new THREE.Vector2(mR, H * 0.62),
+        new THREE.Vector2((mR + xR) / 2, H * 0.85),
+        new THREE.Vector2(bR * 0.9, H)
       ];
-      return new THREE.LatheGeometry(points, data.segments || 24);
+      return new THREE.LatheGeometry(points, seg);
     }
     case 'barrel':
-      return new THREE.CylinderGeometry((data.radius || 0.55) * 0.9, data.radius || 0.55, data.height || 1.2, 32);
+      // 筒状体：顶半径 / 底半径可分别调节
+      return new THREE.CylinderGeometry(data.radiusTop || 0.5, data.radiusBottom || 0.55, data.height || 1.2, 32);
     case 'dome':
       return new THREE.SphereGeometry(data.radius || 0.75, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-    case 'helix':
-      return new THREE.TorusGeometry(data.radius || 0.5, data.tube || 0.15, 16, 48, Math.PI * 1.5);
-    case 'octaPrism':
-      return new THREE.CylinderGeometry(data.radius || 0.7, data.radius || 0.7, data.height || 1.2, 8);
+    case 'helix': {
+      // 开口环面：外环半径 / 内环半径 / 主扫掠角（角度制）
+      const o = data.outerR || 0.65;
+      const i = Math.min(data.innerR ?? 0.35, o - 0.02);
+      const arcDeg = Math.min(360, Math.max(1, data.arc ?? 270));
+      return new THREE.TorusGeometry((o + i) / 2, Math.max(0.01, (o - i) / 2), 16, 64, arcDeg * Math.PI / 180);
+    }
+    case 'octaPrism': {
+      // 正八棱柱：底面边长 a → 外接圆半径 R = a/(2·sin(π/8))
+      const R = (data.edge || 0.54) / (2 * Math.sin(Math.PI / 8));
+      return new THREE.CylinderGeometry(R, R, data.height || 1.2, 8);
+    }
+    case 'star3d': {
+      // 立体星：外半径 / 内半径 / 角数 / 厚度
+      const oR = data.outerR || 0.8;
+      const n = Math.max(3, Math.round(data.points || 5));
+      const iR = Math.max(0.01, Math.min(data.innerR ?? 0.35, oR - 0.02));
+      const shape = new THREE.Shape();
+      for (let i = 0; i < n * 2; i++) {
+        const rr = i % 2 === 0 ? oR : iR;
+        const ang = (i / (n * 2)) * Math.PI * 2 - Math.PI / 2;
+        const x = Math.cos(ang) * rr, y = Math.sin(ang) * rr;
+        i === 0 ? shape.moveTo(x, y) : shape.lineTo(x, y);
+      }
+      shape.closePath();
+      const dep = Math.max(0.02, data.thickness || 0.3);
+      const bev = Math.min(0.05, iR * 0.2, dep * 0.2);
+      const geo = new THREE.ExtrudeGeometry(shape, {
+        depth: dep, bevelEnabled: bev > 0.005,
+        bevelSize: bev, bevelThickness: bev * 0.8, bevelSegments: 2
+      });
+      geo.center();
+      geo.computeBoundingBox();
+      return geo;
+    }
     default:
       return new THREE.BoxGeometry(1,1,1);
   }
@@ -8388,9 +8807,10 @@ function buildParametricGeo2D(type, data) {
       break;
     }
     case 'ellipse': {
-      const rx = data.radiusX || 0.9;
-      const ry = data.radiusY || 0.65;
-      s.absellipse(0, 0, rx, ry, 0, Math.PI*2, false, 0);
+      // 长轴长 / 短轴长（全长，非半径）
+      const major = data.major || 1.8;
+      const minor = Math.min(data.minor || 1.3, major);
+      s.absellipse(0, 0, major / 2, minor / 2, 0, Math.PI*2, false, 0);
       break;
     }
     case 'triangle': {
@@ -8413,32 +8833,44 @@ function buildParametricGeo2D(type, data) {
       break;
     }
     case 'hexagon': {
-      const r = data.radius || 0.8;
+      // 正六边形：边长 = 外接圆半径
+      const r = data.edge || 0.8;
       for (let i=0;i<6;i++) { const a=i/6*Math.PI*2; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?s.moveTo(x,y):s.lineTo(x,y); }
       s.closePath(); break;
     }
     case 'pentagon': {
-      const r = data.radius || 0.9;
+      // 正五边形：外接圆半径 R = a/(2·sin(36°))
+      const r = (data.edge || 1.06) / (2 * Math.sin(Math.PI/5));
       for (let i=0;i<5;i++) { const a=i/5*Math.PI*2 - Math.PI/2; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?s.moveTo(x,y):s.lineTo(x,y); }
       s.closePath(); break;
     }
     case 'octagon': {
-      const r = data.radius || 0.85;
+      // 正八边形：外接圆半径 R = a/(2·sin(22.5°))
+      const r = (data.edge || 0.65) / (2 * Math.sin(Math.PI/8));
       for (let i=0;i<8;i++) { const a=i/8*Math.PI*2 + Math.PI/8; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?s.moveTo(x,y):s.lineTo(x,y); }
       s.closePath(); break;
     }
     case 'heart': {
-      const sc = data.scale || 1;
-      s.moveTo(0,0.5*sc);
-      s.bezierCurveTo(0,0.85*sc,-0.9*sc,0.85*sc,-0.9*sc,0.15*sc);
-      s.bezierCurveTo(-0.9*sc,-0.4*sc,0,-0.75*sc,0,-0.95*sc);
-      s.bezierCurveTo(0,-0.75*sc,0.9*sc,-0.4*sc,0.9*sc,0.15*sc);
-      s.bezierCurveTo(0.9*sc,0.85*sc,0,0.85*sc,0,0.5*sc);
+      // 心形：宽度 / 高度 / 心尖凹陷度（0 = 顶部平缓，1 = 深 V 凹陷）
+      const hw = (data.width || 1.8) / 2;
+      const hh = (data.height || 1.9) / 2;
+      const dip = Math.min(1, Math.max(0, data.dip ?? 0.5));
+      const cleft = hh * (0.12 + 0.45 * dip);       // 顶部凹陷深度
+      const lobe  = hh * (0.62 + 0.30 * (1 - dip)); // 两瓣隆起高度
+      s.moveTo(0, hh - cleft);
+      s.bezierCurveTo(0, hh, -hw, hh * 0.92, -hw, lobe * 0.35);
+      s.bezierCurveTo(-hw, -hh * 0.25, -hw * 0.35, -hh * 0.62, 0, -hh);
+      s.bezierCurveTo(hw * 0.35, -hh * 0.62, hw, -hh * 0.25, hw, lobe * 0.35);
+      s.bezierCurveTo(hw, hh * 0.92, 0, hh, 0, hh - cleft);
       break;
     }
     case 'parallelogram': {
-      const sk = data.skew || 0;
-      s.moveTo(-w/2 + sk*h, -h/2); s.lineTo(w/2 + sk*h, -h/2); s.lineTo(w/2 - sk*h, h/2); s.lineTo(-w/2 - sk*h, h/2); s.closePath();
+      // 底长 / 高度 / 倾斜程度（-1 左倾 ~ 0 直立 ~ 1 右倾）
+      const b = data.base || 1.4;
+      const hh = data.height || 1.4;
+      const off = (data.skew ?? 0) * hh / 2;
+      s.moveTo(-b/2 - off, -hh/2); s.lineTo(b/2 - off, -hh/2);
+      s.lineTo(b/2 + off, hh/2); s.lineTo(-b/2 + off, hh/2); s.closePath();
       break;
     }
     case 'trapezoid': {
@@ -8449,7 +8881,13 @@ function buildParametricGeo2D(type, data) {
       break;
     }
     case 'diamond': {
-      s.moveTo(0,h/2); s.lineTo(-w/2,0); s.lineTo(0,-h/2); s.lineTo(w/2,0); s.closePath();
+      // 菱形：由边长与内角推出的两条对角线 p（水平）/ q（垂直）决定
+      const RAD = Math.PI / 180;
+      const a = data.edge || 1.14;
+      const A = data.angleA ?? 75;
+      const p = data.diagP ?? (2 * a * Math.sin(A / 2 * RAD));
+      const q = data.diagQ ?? (2 * a * Math.cos(A / 2 * RAD));
+      s.moveTo(0, q/2); s.lineTo(-p/2, 0); s.lineTo(0, -q/2); s.lineTo(p/2, 0); s.closePath();
       break;
     }
     case 'rightTri': {
@@ -8459,47 +8897,63 @@ function buildParametricGeo2D(type, data) {
       break;
     }
     case 'arrow': {
-      const sc = data.scale || 1;
-      s.moveTo(-0.5*sc, -0.2*sc);
-      s.lineTo(0.1*sc, -0.2*sc);
-      s.lineTo(0.1*sc, -0.5*sc);
-      s.lineTo(0.7*sc, 0);
-      s.lineTo(0.1*sc, 0.5*sc);
-      s.lineTo(0.1*sc, 0.2*sc);
-      s.lineTo(-0.5*sc, 0.2*sc);
+      // 箭头：长度（沿 X）/ 宽度（箭头最宽处）
+      const L = data.length || 1.7;
+      const W = data.width || 1.2;
+      const shaft = W * 0.33;      // 杆宽
+      const headL = Math.min(L * 0.5, W * 0.7); // 箭头长度
+      s.moveTo(-L/2, -shaft/2);
+      s.lineTo(L/2 - headL, -shaft/2);
+      s.lineTo(L/2 - headL, -W/2);
+      s.lineTo(L/2, 0);
+      s.lineTo(L/2 - headL, W/2);
+      s.lineTo(L/2 - headL, shaft/2);
+      s.lineTo(-L/2, shaft/2);
       s.closePath();
       break;
     }
     case 'crescent': {
-      const sc = data.scale || 1;
-      const path = new THREE.Path();
-      path.absarc(0, 0, 0.7*sc, -0.4*Math.PI, 0.4*Math.PI, false);
-      path.absarc(0.25*sc, 0, 0.55*sc, 0.4*Math.PI, -0.4*Math.PI, true);
-      s.holes.push(path);
-      s.moveTo(Math.cos(-0.4*Math.PI)*0.7*sc, Math.sin(-0.4*Math.PI)*0.7*sc);
-      s.absarc(0, 0, 0.7*sc, -0.4*Math.PI, 0.4*Math.PI, false);
+      // 月牙：外半径 / 内半径 / 内圆偏移量（两弧相交形成闭合月牙）
+      const oR = data.outerR || 0.9;
+      const iR = data.innerR || 0.82;
+      const off = Math.max(0.01, data.offset ?? 0.35);
+      const D = oR*oR - iR*iR;
+      const xI = (D + off*off) / (2*off);
+      const ySq = oR*oR - xI*xI;
+      if (ySq <= 0) { // 退化：内圆完全包含或分离，退回整圆
+        s.absarc(0, 0, oR, 0, Math.PI*2, false);
+      } else {
+        const yI = Math.sqrt(ySq);
+        const oTop = Math.atan2(yI, xI), oBot = Math.atan2(-yI, xI);
+        const iTop = Math.atan2(yI, xI - off), iBot = Math.atan2(-yI, xI - off);
+        s.absarc(0, 0, oR, oTop, oBot, false);
+        s.absarc(off, 0, iR, iBot, iTop, true);
+        s.closePath();
+      }
       break;
     }
     case 'semicircle': {
+      // 半圆：平边在下、弧面朝上（修正此前 180° 翻转）
       const r = data.radius || 0.9;
-      s.moveTo(-r, 0);
-      s.absarc(0, 0, r, Math.PI, 0, false);
+      s.moveTo(r, 0);
+      s.absarc(0, 0, r, 0, Math.PI, false);
       s.closePath();
       break;
     }
     case 'ring2d': {
-      const ir = data.innerRadius || 0.35;
+      // 圆环：先外环半径，再内环半径
       const or2 = data.outerRadius || 0.75;
+      const ir = Math.min(data.innerRadius ?? 0.35, or2 - 0.02);
       s.absarc(0, 0, or2, 0, Math.PI * 2, false);
       const hole = new THREE.Path();
-      hole.absarc(0, 0, ir, 0, Math.PI * 2, true);
+      hole.absarc(0, 0, Math.max(0.01, ir), 0, Math.PI * 2, true);
       s.holes.push(hole);
       break;
     }
     case 'cross': {
-      const sc = data.scale || 1;
-      const arm = 0.2*sc;
-      const len = 0.9*sc;
+      // 十字：长度（外接正方形边长）/ 臂宽（须小于长度的一半）
+      const len = data.length || 1.8;
+      const arm = Math.min(data.arm ?? 0.5, len/2 - 0.02) / 2;
       s.moveTo(-arm, -len/2); s.lineTo(arm, -len/2); s.lineTo(arm, -arm); s.lineTo(len/2, -arm);
       s.lineTo(len/2, arm); s.lineTo(arm, arm); s.lineTo(arm, len/2); s.lineTo(-arm, len/2);
       s.lineTo(-arm, arm); s.lineTo(-len/2, arm); s.lineTo(-len/2, -arm); s.lineTo(-arm, -arm);
@@ -8507,27 +8961,56 @@ function buildParametricGeo2D(type, data) {
       break;
     }
     case 'lightning': {
-      const sc = data.scale || 1;
-      s.moveTo(-0.15*sc, 0.7*sc);
-      s.lineTo(0.25*sc, 0.1*sc);
-      s.lineTo(0.05*sc, 0.1*sc);
-      s.lineTo(0.2*sc, -0.7*sc);
-      s.lineTo(-0.25*sc, -0.05*sc);
-      s.lineTo(-0.05*sc, -0.05*sc);
+      // 闪电：高度 / 宽度
+      const H = data.height || 1.8, W = data.width || 0.9;
+      // 翻转 180 度：X、Y 同时取反
+      s.moveTo(0.17*W, -0.5*H);
+      s.lineTo(-0.28*W, -0.07*H);
+      s.lineTo(-0.06*W, -0.07*H);
+      s.lineTo(-0.22*W, 0.5*H);
+      s.lineTo(0.28*W, 0.04*H);
+      s.lineTo(0.06*W, 0.04*H);
+      s.closePath();
+      break;
+    }
+    case 'teardrop': {
+      // 水滴：宽度 / 高度 / 尖端锐度（0 圆润，1 极尖）
+      const hw = (data.width || 1.4) / 2;
+      const hh = (data.height || 1.8) / 2;
+      const sh = Math.min(1, Math.max(0, data.sharp ?? 0.5));
+      const k = 0.30 + 0.42 * (1 - sh); // 尖端控制点外扩量：越小越尖
+      s.moveTo(0, hh);
+      s.bezierCurveTo(hw * k, hh * 0.34, hw, -hh * 0.20, hw * 0.62, -hh * 0.66);
+      s.bezierCurveTo(hw * 0.34, -hh, -hw * 0.34, -hh, -hw * 0.62, -hh * 0.66);
+      s.bezierCurveTo(-hw, -hh * 0.20, -hw * k, hh * 0.34, 0, hh);
       s.closePath();
       break;
     }
   }
   const geo = new THREE.ShapeGeometry(s);
+  geo.center();
+  // 心形 / 水滴 / 闪电由自由曲线构成，贝塞尔曲线不经过控制点，
+  // 这里按包围盒归一化，让"宽度 / 高度"参数与实际尺寸精确一致
+  const nk = SHAPE_NORMALIZE_2D[type];
+  if (nk) {
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox;
+    const cw = bb.max.x - bb.min.x, ch = bb.max.y - bb.min.y;
+    const tw = data[nk[0]], th = data[nk[1]];
+    if (cw > 1e-6 && ch > 1e-6 && tw > 0 && th > 0) geo.scale(tw / cw, th / ch, 1);
+  }
   geo.rotateX(-Math.PI / 2);
+  geo.computeBoundingBox();
   return geo;
 }
+// 需要按参数精确归一化尺寸的 2D 自由曲线图形
+const SHAPE_NORMALIZE_2D = { heart: ['width','height'], teardrop: ['width','height'], lightning: ['width','height'] };
 
 canvas.addEventListener('pointerdown', (e) => {
   if (pickingColor) return; // 屏幕取色进行中，不触发选择/变换
   if (e.button !== 0) return; // 仅左键
   // 触摸设备：非主指（第二指）交给 OrbitControls 处理双指手势
-  if (e.pointerType === 'touch' && e.isPrimary === false) return;
+  if (touchPointer(e) && e.isPrimary === false) return;
   // 触摸设备：TransformControls 正在拖拽手柄时，禁用 OrbitControls 避免冲突
   if (isTouch && transformCtrl.dragging) {
     controls.enabled = false;
@@ -8622,7 +9105,7 @@ canvas.addEventListener('pointerdown', (e) => {
     } else if (e.shiftKey) {
       toggleSelect(hit.obj);
     } else if (!isSelected(hit.obj)) {
-      selectOnly(hit.obj);
+      selectOnly(hit.obj, true);
     }
     // TransformControls 已激活时，不启动自定义拖拽（由 TC 处理）
     // 触摸端拖拽延迟到 pointermove 超阈值时启动，避免与长按加选冲突
@@ -8679,7 +9162,7 @@ canvas.addEventListener('pointerdown', (e) => {
 
 canvas.addEventListener('pointermove', (e) => {
   // 触屏模式下，画笔/橡皮擦仅响应主指，多指同时触屏时禁止绘制防止异常
-  if (e.pointerType === 'touch' && e.isPrimary === false && (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser')) return;
+  if (touchPointer(e) && e.isPrimary === false && (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser')) return;
   // 橡皮擦悬浮检测（非拖拽时）
   if (!state.pointerDown && state.tool === 'eraser') {
     setPointer(e);
@@ -8761,7 +9244,7 @@ canvas.addEventListener('pointermove', (e) => {
   if (touchPointer(e) && _touchDownObj && !_lpHandled && !state.isDragging && !state.boxSelecting) {
     if (Math.hypot(dx, dy) > DRAG_THRESH) {
       clearTimeout(_lpTimer); _lpTimer = null; _lpHandled = false;
-      if (!isSelected(_touchDownObj)) selectOnly(_touchDownObj);
+      if (!isSelected(_touchDownObj)) selectOnly(_touchDownObj, true);
       state.isDragging = true;
       const gp = intersectGround();
       state.dragStartGround.copy(gp || new THREE.Vector3());
@@ -8820,7 +9303,7 @@ canvas.addEventListener('pointermove', (e) => {
 
 canvas.addEventListener('pointerup', (e) => {
   // 触屏模式下，画笔/橡皮擦仅响应主指，防止副指抬起误结束绘制
-  if (e.pointerType === 'touch' && e.isPrimary === false && (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser')) return;
+  if (touchPointer(e) && e.isPrimary === false && (state.tool === 'brush3d' || state.tool === 'brush2d' || state.tool === 'eraser')) return;
   // 触摸设备：恢复 OrbitControls（TransformControls 拖拽结束后）
   if (isTouch && !controls.enabled) controls.enabled = true;
   // 画笔/橡皮结束
@@ -8900,7 +9383,7 @@ canvas.addEventListener('pointerup', (e) => {
     }
     // 轻点对象（未移动、未框选）→ 单选替换
     if (_touchDownObj && !state.pointerMoved && !state.boxSelecting) {
-      selectOnly(_touchDownObj);
+      selectOnly(_touchDownObj, true);
     }
     _touchDownObj = null;
   }
@@ -8925,7 +9408,12 @@ canvas.addEventListener('pointerup', (e) => {
     if (Math.abs(x1 - x0) > 4 || Math.abs(y1 - y0) > 4) {
       selectWithinBox(x0, y0, x1, y1);
       if (state.selectedList.length === 0) toast(_t('toastBoxSelectMiss'));
-      else { toast(_t('toastBoxSelectedN', state.selectedList.length)); pushHistory(); }
+      else {
+        // 框选命中 1 个 → 报对象名称；命中多个 → 报数量
+        if (state.selectedList.length === 1) announceSelection(false);
+        else toast(_t('toastBoxSelectedN', state.selectedList.length));
+        pushHistory();
+      }
       // 框选完成后退出框选模式：按钮蓝色消失，再次框选需重新点击
       if (state.boxSelectMode) {
         state.boxSelectMode = false;
@@ -9014,13 +9502,22 @@ function copySelected() {
       if (o.mesh.isGroup) {
         // 3D画笔：保存TubeGeometry子段
         const tubeChildren = o.mesh.children.filter(c => c.geometry && c.geometry.type === 'TubeGeometry' && c.userData.brushCurvePoints);
-        item.tubeSegments = tubeChildren.map(c => ({
-          curvePoints: c.userData.brushCurvePoints.map(p => [p.x, p.y, p.z]),
-          brushRadius: c.userData.brushRadius,
-          // 保存子mesh的position（相对group的偏移，= -原始center，不变）
-          // 用于clone时正确恢复位置（避免对象移动后clone位置错误）
-          meshPos: [c.position.x, c.position.y, c.position.z]
-        }));
+        if (tubeChildren.length > 0) {
+          item.tubeSegments = tubeChildren.map(c => ({
+            curvePoints: c.userData.brushCurvePoints.map(p => [p.x, p.y, p.z]),
+            brushRadius: c.userData.brushRadius,
+            // 保存子mesh的position（相对group的偏移，= -原始center，不变）
+            // 用于clone时正确恢复位置（避免对象移动后clone位置错误）
+            meshPos: [c.position.x, c.position.y, c.position.z]
+          }));
+        } else if (o.data.curvePoints && o.data.curvePoints.length >= 2) {
+          // 3D画笔实时段未携带 brushCurvePoints：回退用整条曲线点重建连续管
+          item.tubeSegments = [{
+            curvePoints: o.data.curvePoints,
+            brushRadius: o.data.brushRadius || (o.data.thickness ? o.data.thickness / 2 : 0.3),
+            meshPos: [-o.mesh.position.x, -o.mesh.position.y, -o.mesh.position.z]
+          }];
+        }
         // 2D画笔：保存所有子部件的几何数据
         if (o.data.type === 'brush2d') {
           item.childMeshes = o.mesh.children.map(child => {
@@ -9173,7 +9670,7 @@ function pasteClipboard(offset = 0.2, useViewCenter = false) {
           const curveLength = curve.getLength();
           // 统一管状段密度，确保与绘制时一致（每段至少4个分割）
           const tubularSegments = Math.max(128, Math.min(800, Math.floor(curveLength / (segR * 0.05))));
-          const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false, 1);
+          const tubeGeo = new THREE.TubeGeometry(curve, tubularSegments, segR, 24, false);
           const tubeMesh = new THREE.Mesh(tubeGeo, mat.clone());
           // 使用保存的子mesh position（= -原始center，固定值），而不是-groupPos
           // 这样对象移动后clone仍能正确恢复位置
@@ -9482,7 +9979,8 @@ window.addEventListener('keydown', (e) => {
     // 未选取对象时：←/→/↑/↓ 平移视角，A/D/W/S 旋转视角
     const camRotRad = (shift ? 90 : 5) * Math.PI / 180;
     const panDist = (shift ? 1 : 0.1) * GRID_UNIT;
-    let camHandled = true;
+    // 定义了但需选中对象才生效的键位（未选中时给出条件提示）；其余键位未定义则静默忽略（不弹窗）
+    const needsSelection = new Set(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','PageUp','PageDown','a','A','d','D','w','W','s','S','e','E','q','Q','+','=','-','_']);
     switch (e.key) {
       // 平移视角：←/→ 右/左，↑/↓ 前/后，PgUp/PgDn 上/下
       case 'ArrowLeft':  panCamera(-panDist, 0, 0); break;
@@ -9491,19 +9989,17 @@ window.addEventListener('keydown', (e) => {
       case 'ArrowDown':  panCamera(0, 0,  panDist); break; // 后退
       case 'PageUp':     panCamera(0,  panDist, 0); break;
       case 'PageDown':   panCamera(0, -panDist, 0); break;
-      // 旋转视角
-      case 'a': case 'A': controls.rotateCameraHorizontal(-camRotRad); break;
-      case 'd': case 'D': controls.rotateCameraHorizontal( camRotRad); break;
-      case 'w': case 'W': controls.rotateCameraVertical(-camRotRad); break;
-      case 's': case 'S': controls.rotateCameraVertical( camRotRad); break;
-      default: camHandled = false;
+      // 旋转视角（未选中对象时 A/D、W/S 功能互换）
+      case 'a': case 'A': controls.rotateCameraHorizontal( camRotRad); break;
+      case 'd': case 'D': controls.rotateCameraHorizontal(-camRotRad); break;
+      case 'w': case 'W': controls.rotateCameraVertical( camRotRad); break;
+      case 's': case 'S': controls.rotateCameraVertical(-camRotRad); break;
+      default:
+        if (needsSelection.has(e.key)) { e.preventDefault(); toast(_t('toastSelectFirst')); }
+        return;
     }
-    if (camHandled) {
-      e.preventDefault();
-      controls.update();
-    } else {
-      toast(_t('toastSelectFirst'));
-    }
+    e.preventDefault();
+    controls.update();
     return;
   }
 
@@ -9988,7 +10484,7 @@ setTimeout(() => {
 // 调试导出（供控制台诊断；发布前可移除）
 window.__debug = {
   state, placeAt, createObject, intersectGround, getPrimary,
-  setTool, selectOnly, selectAll, deselectAll, copySelected, pasteClipboard, cloneSelected,
+  setTool, selectOnly, selectAll, deselectAll, toggleSelect, announceSelection, copySelected, pasteClipboard, cloneSelected,
   newScene, deleteSelected, rebuildText, colorMemory, getMemoryKey, applyAppearance, pushHistory, camera, controls, setView, THREE, setObjectColor: function(o, c) { o.data.color = c; applyAppearance(o); const mk = getMemoryKey(o); if (mk) colorMemory[mk] = c; },
   testPlace: function() {
     const o = createObject({ kind:'3d', shape:'box', color: colorMemory.shape3d, pos:[0,0,0], scale:1 });
@@ -10105,15 +10601,29 @@ function renderBlock(b){
   return '';
 }
 function unwrapHighlights(root){ root.querySelectorAll('mark.md-hl').forEach(m=>{ const p=m.parentNode; while(m.firstChild) p.insertBefore(m.firstChild,m); p.removeChild(m); }); root.normalize(); }
-function wrapText(root, text){
-  if(!text) return;
-  const lower=(root.textContent||'').toLowerCase(); const idx=lower.indexOf(text.toLowerCase()); if(idx<0) return;
-  const tw=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); let acc=0, startNode=null, startOff=0, endNode=null, endOff=0, found=false, n;
-  while((n=tw.nextNode())){ const len=n.nodeValue.length; if(!found && acc+len>idx){ startNode=n; startOff=idx-acc; found=true; } if(found && acc+len>=idx+text.length){ endNode=n; endOff=idx+text.length-acc; break; } acc+=len; }
-  if(!found||!endNode) return; const range=document.createRange(); range.setStart(startNode,startOff); range.setEnd(endNode,endOff);
-  const mark=document.createElement('mark'); mark.className='md-hl';
+function wrapText(root, start, end, id){
+  if(!(start>=0 && end>start)) return;
+  const tw=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); let acc=0, startNode=null, startOff=0, endNode=null, endOff=0, n;
+  while((n=tw.nextNode())){ const len=n.nodeValue.length; if(startNode===null && acc+len>start){ startNode=n; startOff=start-acc; } if(endNode===null && acc+len>=end){ endNode=n; endOff=end-acc; break; } acc+=len; }
+  if(!startNode||!endNode) return; const range=document.createRange(); range.setStart(startNode,startOff); range.setEnd(endNode,endOff);
+  const mark=document.createElement('mark'); mark.className='md-hl'; if(id!=null) mark.dataset.hlId=id;
   try { const frag=range.extractContents(); mark.appendChild(frag); range.insertNode(mark); } catch(e){}
 }
+function wrapTempMark(root, start, end, cls){
+  if(!(start>=0 && end>start)) return null;
+  const tw=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); let acc=0, n, startNode=null, startOff=0, endNode=null, endOff=0;
+  while((n=tw.nextNode())){ const len=n.nodeValue.length; if(startNode===null && acc+len>start){ startNode=n; startOff=start-acc; } if(endNode===null && acc+len>=end){ endNode=n; endOff=end-acc; break; } acc+=len; }
+  if(!startNode||!endNode) return null;
+  const range=document.createRange(); try{ range.setStart(startNode,startOff); range.setEnd(endNode,endOff); }catch(e){ return null; }
+  const mark=document.createElement('mark'); mark.className=cls;
+  try { const frag=range.extractContents(); mark.appendChild(frag); range.insertNode(mark); } catch(e){ return null; }
+  return mark;
+}
+function unwrapMarks(root, cls){ root.querySelectorAll('mark.'+cls).forEach(m=>{ const p=m.parentNode; if(!p) return; while(m.firstChild) p.insertBefore(m.firstChild,m); p.removeChild(m); }); root.normalize(); }
+function nodeAtOffset(root, off){ const tw=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); let acc=0, n; while((n=tw.nextNode())){ const len=n.nodeValue.length; if(acc+len>off) return n; acc+=len; } return null; }
+function pointToOffset(node, offset, root){ const pre=document.createRange(); pre.selectNodeContents(root); try{ pre.setEnd(node, offset); }catch(e){ return 0; } return pre.toString().length; }
+function rangeToOffsets(range, root){ const a=pointToOffset(range.startContainer, range.startOffset, root); const b=pointToOffset(range.endContainer, range.endOffset, root); return [Math.min(a,b), Math.max(a,b)]; }
+function findTextOffsets(root, text){ if(!text) return null; const lower=(root.textContent||'').toLowerCase(); const idx=lower.indexOf(text.toLowerCase()); if(idx<0) return null; return [idx, idx+text.length]; }
 function openManual(){
   const T = k => ((I18N[currentLang] && I18N[currentLang][k]) || ZH_CN[k] || k);
   const lang = currentLang;
@@ -10145,16 +10655,24 @@ function openManual(){
     readEl.addEventListener('scroll', ()=>{ scheduleSaveScroll(); });
     floatEl.addEventListener('mousedown', e=>e.preventDefault());
     document.getElementById('manual-toc-toggle').addEventListener('click', ()=>{ if(window.innerWidth<=768) tocEl.classList.toggle('open'); else tocEl.classList.toggle('collapsed'); });
-    docEl.addEventListener('click', e=>{ const mark=e.target.closest && e.target.closest('mark.md-hl'); if(mark){ const text=mark.textContent; const arr=hilites(); const idx=arr.findIndex(h=>h.text===text); if(idx>=0){ arr.splice(idx,1); saveStore('hilites', arr); applyHighlights(); toast(T('manUnHl')); } } });
     document.addEventListener('selectionchange', onSelectionChange);
     document.getElementById('manual-float-note').addEventListener('click', ()=>startNoteFromSelection());
-    document.getElementById('manual-note-save').addEventListener('click', saveNoteFromEditor);
-    document.getElementById('manual-note-cancel').addEventListener('click', closeNoteEditor);
+    document.getElementById('manual-note-export').addEventListener('click', exportNotes);
+    document.getElementById('manual-note-import').addEventListener('click', ()=>document.getElementById('manual-note-import-file').click());
+    document.getElementById('manual-note-import-file').addEventListener('change', e=>{ const f=e.target.files && e.target.files[0]; if(f) importNotes(f); e.target.value=''; });
+    document.getElementById('manual-note-selall').addEventListener('change', e=>{ noteListEl.querySelectorAll('.note-check').forEach(c=>c.checked=e.target.checked); updateNoteCount(); });
+    document.getElementById('manual-note-batchdel').addEventListener('click', batchDeleteNotes);
     document.getElementById('manual-float-hi').addEventListener('click', addHlFromSelection);
     document.getElementById('manual-float-copy').addEventListener('click', ()=>{ const s=openManual._sel; copyText(s?s.text:getSelectionText()); floatEl.style.display='none'; });
+    document.getElementById('manual-float-hicancel').addEventListener('click', cancelHlInSelection);
+    document.getElementById('manual-float-hiexpand').addEventListener('click', expandHl);
+    docEl.addEventListener('mousedown', e=>{ if(e.button===2){ const s=window.getSelection(); if(s && !s.isCollapsed) e.preventDefault(); } });
+    docEl.addEventListener('contextmenu', e=>{ e.preventDefault(); if(openManual._sel){ floatEl.style.display='flex'; } });
+    openManual._mo = new MutationObserver(()=>syncStickyVisibility());
+    openManual._mo.observe(modal, {attributes:true, attributeFilter:['class']});
   }
 
-  if(openManual._lang !== lang){ openManual._lang = lang; loadManual(lang); }
+  if(openManual._lang !== lang){ if(openManual._lang) closeAllStickies(); openManual._lang = lang; loadManual(lang); }
   else { restoreScroll(); docEl.querySelectorAll('.md-block').forEach(b=>b.classList.remove('flash')); }
 
   function getPlainDoc(){ return docEl.innerText || docEl.textContent; }
@@ -10176,126 +10694,240 @@ function openManual(){
   function scheduleSaveScroll(){ clearTimeout(openManual._saveT); openManual._saveT=setTimeout(saveScroll,400); }
   function saveScroll(){ if(openManual._lang) saveStore('scroll', readEl.scrollTop); }
   function restoreScroll(){ const s=loadStore('scroll', null); if(s!=null) readEl.scrollTop=s; const z=loadStore('zoom',15); docEl.dataset.zoom=z; docEl.style.fontSize=z+'px'; }
-  function notes(){ return loadStore('notes', []); }
-  function renderNotes(){ const arr=notes(); if(!arr.length){ noteListEl.innerHTML='<div class="manual-note-empty">'+T('manNoNote')+'</div>'; return; } noteListEl.innerHTML=arr.map((n,i)=>'<div class="manual-note-item" data-i="'+i+'"><div class="note-line" data-jump="'+n.line+'">'+T('manNoteAt').replace('{0}', n.line)+'</div><div class="note-quote">'+mdEscape(n.quote||'')+'</div><div class="note-text">'+mdEscape(n.note||'')+'</div><div class="note-actions"><button class="manual-btn" data-del="'+i+'">'+T('manDelete')+'</button></div></div>').join(''); noteListEl.querySelectorAll('[data-jump]').forEach(el=>el.addEventListener('click', ()=>{ const n=parseInt(el.dataset.jump,10); jumpToLine(n); })); noteListEl.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click', ()=>{ const a2=notes(); a2.splice(parseInt(el.dataset.del,10),1); saveStore('notes', a2); renderNotes(); })); }
-  function startNoteFromSelection(){ const s=openManual._sel; if(!s || !s.text) return; openManual._pendingNote={ line:s.line, quote:s.text }; openNoteEditor(); floatEl.style.display='none'; }
-  function openNoteEditor(){ notePanel.classList.add('open'); const ed=document.getElementById('manual-note-edit'); ed.classList.add('open'); const lineEl=document.getElementById('manual-note-edit-line'); const area=document.getElementById('manual-note-area'); const p=openManual._pendingNote||{line:0,quote:''}; lineEl.textContent=T('manNoteAt').replace('{0}', p.line); area.value=''; area.placeholder=T('manNotePh'); setTimeout(()=>area.focus(), 30); }
-  function closeNoteEditor(){ document.getElementById('manual-note-edit').classList.remove('open'); openManual._pendingNote=null; }
-  function saveNoteFromEditor(){ const p=openManual._pendingNote; if(!p) return; const area=document.getElementById('manual-note-area'); const note=area.value.trim(); if(!note){ area.focus(); return; } const arr=notes(); arr.push({line:p.line, quote:p.quote, note}); saveStore('notes', arr); renderNotes(); closeNoteEditor(); toast(T('manAdded')); }
+  // ===== 便签数据（自动升级旧结构：补 id / color） =====
+  const STICKY_COLORS = ['yellow','green','blue','pink','purple'];
+  function newNoteId(){ return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+  function notes(){
+    let arr=loadStore('notes', []); if(!Array.isArray(arr)) arr=[];
+    let changed=false;
+    arr.forEach(n=>{ if(!n.id){ n.id=newNoteId(); changed=true; } if(!n.color){ n.color='yellow'; changed=true; } });
+    if(changed) saveStore('notes', arr);
+    return arr;
+  }
+  function noteById(id){ return notes().find(n=>String(n.id)===String(id)) || null; }
+  function updateNote(id, patch){ const arr=notes(); const n=arr.find(x=>String(x.id)===String(id)); if(!n) return null; Object.assign(n, patch, {updated:Date.now()}); saveStore('notes', arr); return n; }
+  function removeNote(id){ const arr=notes().filter(n=>String(n.id)!==String(id)); saveStore('notes', arr); try{ localStorage.removeItem(lsKey('sticky.'+id)); }catch(e){} }
+  function notePreview(s){ s=(s||'').replace(/\r?\n/g,' ').replace(/\s+/g,' ').trim(); if(s.length>40) s=s.slice(0,40)+'…'; return s||T('manNoteEmpty'); }
+  function updateNoteCount(){ const total=notes().length; const sel=noteListEl.querySelectorAll('.note-check:checked').length; const c=document.getElementById('manual-note-count'); if(c) c.textContent = sel? T('manSelCount').replace('{0}', sel).replace('{1}', total) : T('manNoteCount').replace('{0}', total); }
+  function renderNotes(){
+    const arr=notes();
+    if(!arr.length){ noteListEl.innerHTML='<div class="manual-note-empty">'+T('manNoNote')+'</div>'; updateNoteCount(); return; }
+    noteListEl.innerHTML=arr.map(n=>'<div class="manual-note-item" data-id="'+n.id+'" data-color="'+(n.color||'yellow')+'">'
+      +'<input type="checkbox" class="note-check" data-id="'+n.id+'">'
+      +'<div class="note-line" data-jump="'+n.id+'">'+T('manNoteAt').replace('{0}', n.line)+'</div>'
+      +'<div class="note-quote">'+mdEscape(n.quote||'')+'</div>'
+      +'<div class="note-text" data-open="'+n.id+'">'+mdEscape(notePreview(n.note))+'</div>'
+      +'<div class="note-actions">'
+      +'<button class="manual-btn" data-open="'+n.id+'">'+T('manNoteOpen')+'</button>'
+      +'<button class="manual-btn" data-jump="'+n.id+'">'+T('manJump')+'</button>'
+      +'<button class="manual-btn" data-del="'+n.id+'">'+T('manDelete')+'</button>'
+      +'</div></div>').join('');
+    noteListEl.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click', async e=>{ e.preventDefault(); if(!await showConfirm(T('manDelConfirm'))) return; const id=el.dataset.del; removeNote(id); closeSticky(id); renderNotes(); toast(T('manDeleted')); }));
+    noteListEl.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click', ()=>openSticky(el.dataset.open, false)));
+    noteListEl.querySelectorAll('[data-jump]').forEach(el=>el.addEventListener('click', ()=>{ const n=noteById(el.dataset.jump); if(n) jumpToNote(n); }));
+    noteListEl.querySelectorAll('.note-check').forEach(c=>c.addEventListener('change', updateNoteCount));
+    updateNoteCount();
+  }
+  // ===== 跳转到便签所指原文 =====
+  function noteOffsets(n){
+    const full=docEl.textContent||'';
+    if(n.start!=null && n.end!=null && n.end>n.start && n.end<=full.length){
+      if(!n.quote || full.slice(n.start, n.end)===n.quote) return [n.start, n.end];
+    }
+    return findTextOffsets(docEl, n.quote);
+  }
+  function clearJumpMarks(){ unwrapMarks(docEl, 'md-jump'); }
+  function jumpToNote(n){
+    if(!n) return;
+    if(!modal.classList.contains('show')){ modal.classList.add('show'); }
+    const off=noteOffsets(n);
+    if(off){
+      clearJumpMarks();
+      let el=wrapTempMark(docEl, off[0], off[1], 'md-jump');
+      if(!el){ const tn=nodeAtOffset(docEl, off[0]); el=tn?tn.parentElement:null; }
+      if(el){
+        el.scrollIntoView({behavior:'smooth', block:'center'});
+        const blk=el.closest ? el.closest('.md-block') : null; if(blk) flash(blk);
+        clearTimeout(openManual._jumpT); openManual._jumpT=setTimeout(clearJumpMarks, 2200);
+        return;
+      }
+    }
+    if(n.line){ jumpToLine(n.line); toast(T('manJumpFallback')); }
+    else toast(T('manJumpFail'));
+  }
+  // ===== 便签浮窗（多开，最多 5 个） =====
+  function stickyLayer(){ let l=document.getElementById('manual-sticky-layer'); if(!l){ l=document.createElement('div'); l.id='manual-sticky-layer'; l.className='sticky-layer'; document.body.appendChild(l); } return l; }
+  function stickyEl(id){ return stickyLayer().querySelector('.sticky-note[data-id="'+CSS.escape(String(id))+'"]'); }
+  function bringFront(el){ let max=4000; stickyLayer().querySelectorAll('.sticky-note').forEach(s=>{ const z=parseInt(s.style.zIndex||'0',10); if(z>max) max=z; }); el.style.zIndex=max+1; }
+  function defaultBox(i){
+    const w=Math.min(320, window.innerWidth-40), h=Math.min(260, window.innerHeight-80);
+    const x=Math.max(10, Math.min(window.innerWidth-w-10, 90+i*28)), y=Math.max(10, Math.min(window.innerHeight-h-10, 90+i*26));
+    return {x,y,w,h,fs:13};
+  }
+  function saveStickyBox(el){
+    const id=el.dataset.id; if(el.dataset.max==='1') return;
+    saveStore('sticky.'+id, {x:parseInt(el.style.left,10)||0, y:parseInt(el.style.top,10)||0, w:el.offsetWidth, h:el.offsetHeight, fs:parseFloat(el.dataset.fs||'13')});
+  }
+  function closeSticky(id){ const el=typeof id==='string'?stickyEl(id):id; if(el && el.parentNode){ flushSticky(el); el.parentNode.removeChild(el); } }
+  function closeAllStickies(){ stickyLayer().querySelectorAll('.sticky-note').forEach(el=>{ flushSticky(el); if(el.parentNode) el.parentNode.removeChild(el); }); }
+  function flushSticky(el){ if(!el || !el.classList.contains('sticky-dirty')) return; const area=el.querySelector('.sticky-area'); updateNote(el.dataset.id, {note: area.value}); el.classList.remove('sticky-dirty'); renderNotes(); }
+  function syncStickyVisibility(){ const open=modal.classList.contains('show'); stickyLayer().querySelectorAll('.sticky-note').forEach(el=>{ el.style.display=(open||el.classList.contains('pinned'))?'flex':'none'; }); }
+  function applyStickyMode(el){ const area=el.querySelector('.sticky-area'); const ro=el.dataset.mode!=='edit'; area.readOnly=ro; el.classList.toggle('sticky-readonly', ro); const saveBtn=el.querySelector('[data-act="save"]'); const editBtn=el.querySelector('[data-act="edit"]'); if(saveBtn) saveBtn.style.display=ro?'none':''; if(editBtn) editBtn.style.display=ro?'':'none'; }
+  function exportNotes(){ const arr=notes(); const data=JSON.stringify(arr, null, 2); const blob=new Blob([data], {type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); const d=new Date(); const p=x=>String(x).padStart(2,'0'); const name='notes-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.json'; a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); toast(T('manExported')); }
+  function importNotes(file){ const reader=new FileReader(); reader.onload=()=>{ try{ const data=JSON.parse(reader.result); if(!Array.isArray(data)) throw new Error('not array'); const cur=notes(); const ids=new Set(cur.map(n=>String(n.id))); let added=0; data.forEach(n=>{ if(!n||typeof n!=='object') return; const item=Object.assign({id:newNoteId(), line:0, quote:'', note:'', color:'yellow', created:Date.now(), updated:Date.now()}, n); item.id=String(item.id||newNoteId()); if(ids.has(item.id)) item.id=newNoteId(); ids.add(String(item.id)); cur.push(item); added++; }); saveStore('notes', cur); renderNotes(); toast(T('manImported').replace('{0}', added)); }catch(e){ toast(T('manImportFail')); } }; reader.readAsText(file); }
+  async function batchDeleteNotes(){ const ids=Array.from(noteListEl.querySelectorAll('.note-check:checked')).map(c=>String(c.dataset.id)); if(!ids.length){ toast(T('manNoSel')); return; } if(!await showConfirm(T('manBatchDelConfirm').replace('{0}', ids.length))) return; ids.forEach(id=>{ removeNote(id); closeSticky(id); }); renderNotes(); toast(T('manBatchDeleted').replace('{0}', ids.length)); }
+  function openSticky(id, forceEdit){
+    const n=noteById(id); if(!n) return;
+    const layer=stickyLayer();
+    let el=stickyEl(id);
+    if(el){ bringFront(el); el.style.display='flex'; el.querySelector('.sticky-area').focus(); return; }
+    const opened=Array.from(layer.querySelectorAll('.sticky-note'));
+    if(opened.length>=5) closeSticky(opened[0]);
+    const box=loadStore('sticky.'+id, null) || defaultBox(opened.length);
+    el=document.createElement('div');
+    el.className='sticky-note'+(n.pinned?' pinned':'');
+    el.dataset.id=n.id; el.dataset.color=n.color||'yellow'; el.dataset.fs=String(box.fs||13);
+    el.style.left=Math.max(0, Math.min(window.innerWidth-120, box.x))+'px';
+    el.style.top=Math.max(0, Math.min(window.innerHeight-60, box.y))+'px';
+    el.style.width=box.w+'px'; el.style.height=box.h+'px';
+    el.style.setProperty('--sfs', (box.fs||13)+'px');
+    el.innerHTML=''
+      +'<div class="sticky-head">'
+      +'<span class="sticky-title">'+mdEscape(T('manNoteAt').replace('{0}', n.line))+'</span>'
+      +'<button class="sticky-ico" data-act="fs-" title="'+mdEscape(T('manZoomOut'))+'">A−</button>'
+      +'<button class="sticky-ico" data-act="fs+" title="'+mdEscape(T('manZoomIn'))+'">A+</button>'
+      +'<button class="sticky-ico" data-act="max" title="'+mdEscape(T('manMaximize'))+'">⛶</button>'
+      +'<button class="sticky-ico" data-act="pin" title="'+mdEscape(T('manPin'))+'">'+(n.pinned?'★':'☆')+'</button>'
+      +'<button class="sticky-ico" data-act="close" title="'+mdEscape(T('manClose'))+'">✕</button>'
+      +'</div>'
+      +'<div class="sticky-quote">'+mdEscape(n.quote||'')+'</div>'
+      +'<textarea class="sticky-area" spellcheck="false"></textarea>'
+      +'<div class="sticky-foot">'
+      +'<button class="sticky-btn" data-act="save">'+mdEscape(T('manSave'))+'</button>'
+      +'<button class="sticky-btn" data-act="edit">'+mdEscape(T('manEdit'))+'</button>'
+      +'<button class="sticky-btn" data-act="del">'+mdEscape(T('manDelete'))+'</button>'
+      +'<span class="sticky-colors">'+STICKY_COLORS.map(c=>'<span class="sticky-dot'+((n.color||'yellow')===c?' on':'')+'" data-color="'+c+'" style="background:'+({yellow:'#ffe9a3',green:'#cdeeb0',blue:'#b9dcf7',pink:'#ffc9d8',purple:'#dcc9f7'})[c]+'"></span>').join('')+'</span>'
+      +'</div>'
+      +'<div class="sticky-resize"></div>';
+    layer.appendChild(el);
+    const area=el.querySelector('.sticky-area');
+    area.value=n.note||''; area.placeholder=T('manNotePh');
+    bindSticky(el); bringFront(el); el.dataset.mode=forceEdit?'edit':'ro'; applyStickyMode(el); syncStickyVisibility();
+    setTimeout(()=>area.focus(), 30);
+  }
+  function bindSticky(el){
+    const id=el.dataset.id;
+    const area=el.querySelector('.sticky-area');
+    const head=el.querySelector('.sticky-head');
+    el.addEventListener('pointerdown', e=>{ bringFront(el); e.stopPropagation(); });
+    // 拖拽
+    head.addEventListener('pointerdown', e=>{
+      if(e.target.closest('button')) return;
+      const sx=e.clientX, sy=e.clientY, ox=parseInt(el.style.left,10)||0, oy=parseInt(el.style.top,10)||0;
+      head.setPointerCapture(e.pointerId);
+      const mv=ev=>{ el.style.left=Math.max(0, Math.min(window.innerWidth-40, ox+ev.clientX-sx))+'px'; el.style.top=Math.max(0, Math.min(window.innerHeight-30, oy+ev.clientY-sy))+'px'; };
+      const up=()=>{ head.removeEventListener('pointermove',mv); head.removeEventListener('pointerup',up); el.dataset.max=''; saveStickyBox(el); };
+      head.addEventListener('pointermove',mv); head.addEventListener('pointerup',up);
+      e.preventDefault();
+    });
+    // 缩放
+    const rz=el.querySelector('.sticky-resize');
+    rz.addEventListener('pointerdown', e=>{
+      const sx=e.clientX, sy=e.clientY, ow=el.offsetWidth, oh=el.offsetHeight;
+      rz.setPointerCapture(e.pointerId);
+      const mv=ev=>{ el.style.width=Math.max(210, ow+ev.clientX-sx)+'px'; el.style.height=Math.max(150, oh+ev.clientY-sy)+'px'; };
+      const up=()=>{ rz.removeEventListener('pointermove',mv); rz.removeEventListener('pointerup',up); el.dataset.max=''; saveStickyBox(el); };
+      rz.addEventListener('pointermove',mv); rz.addEventListener('pointerup',up);
+      e.preventDefault(); e.stopPropagation();
+    });
+    // 编辑：输入防抖自动保存 + 失焦保存
+    area.addEventListener('input', ()=>{ el.classList.add('sticky-dirty'); clearTimeout(el._saveT); el._saveT=setTimeout(()=>flushSticky(el), 1200); });
+    area.addEventListener('blur', ()=>flushSticky(el));
+    area.addEventListener('dblclick', ()=>{ if(area.readOnly){ el.dataset.mode='edit'; applyStickyMode(el); setTimeout(()=>area.focus(), 0); } });
+    area.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey) && e.key==='s'){ e.preventDefault(); flushSticky(el); toast(T('manNoteSaved')); } e.stopPropagation(); });
+    // 颜色
+    el.querySelectorAll('.sticky-dot').forEach(d=>d.addEventListener('click', ()=>{ const c=d.dataset.color; el.dataset.color=c; updateNote(id,{color:c}); el.querySelectorAll('.sticky-dot').forEach(x=>x.classList.toggle('on', x===d)); renderNotes(); }));
+    // 头/尾按钮
+    el.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click', async ev=>{
+      ev.stopPropagation();
+      const act=b.dataset.act;
+      if(act==='close'){ closeSticky(el); }
+      else if(act==='save'){ flushSticky(el); el.dataset.mode='ro'; applyStickyMode(el); toast(T('manNoteSaved')); }
+      else if(act==='del'){ if(!await showConfirm(T('manDelConfirm'))) return; flushSticky(el); removeNote(id); closeSticky(el); renderNotes(); toast(T('manDeleted')); }
+      else if(act==='edit'){ el.dataset.mode='edit'; applyStickyMode(el); setTimeout(()=>area.focus(),0); }
+      else if(act==='pin'){ const n=noteById(id); const p=!(n&&n.pinned); updateNote(id,{pinned:p}); el.classList.toggle('pinned', p); b.textContent=p?'★':'☆'; b.title=T(p?'manUnpin':'manPin'); syncStickyVisibility(); }
+      else if(act==='fs+'||act==='fs-'){ let fs=parseFloat(el.dataset.fs||'13'); fs=Math.max(11, Math.min(26, act==='fs+'?fs*1.12:fs*0.9)); el.dataset.fs=String(fs); el.style.setProperty('--sfs', fs+'px'); saveStickyBox(el); }
+      else if(act==='max'){
+        if(el.dataset.max==='1'){ return; }
+        el._prevBox={x:parseInt(el.style.left,10)||0, y:parseInt(el.style.top,10)||0, w:el.offsetWidth, h:el.offsetHeight};
+        const w=Math.round(window.innerWidth*0.7), h=Math.round(window.innerHeight*0.7);
+        el.style.width=w+'px'; el.style.height=h+'px';
+        el.style.left=Math.round((window.innerWidth-w)/2)+'px'; el.style.top=Math.round((window.innerHeight-h)/2)+'px';
+        el.dataset.max='1'; b.title=T('manRestore');
+      }
+    }));
+  }
+  function startNoteFromSelection(){ const s=openManual._sel; if(!s || !s.text) return; const id=newNoteId(); const arr=notes(); arr.push({id, line:s.line, quote:s.text, note:'', start:s.start, end:s.end, color:'yellow', created:Date.now(), updated:Date.now()}); saveStore('notes', arr); renderNotes(); floatEl.style.display='none'; openSticky(id, true); }
   function hilites(){ return loadStore('hilites', []); }
-  function applyHighlights(){ unwrapHighlights(docEl); hilites().forEach(h=>wrapText(docEl, h.text)); }
-  function addHlFromSelection(){ const s=openManual._sel; if(!s || !s.text) return; const arr=hilites(); arr.push({line:s.line, text:s.text}); saveStore('hilites', arr); applyHighlights(); floatEl.style.display='none'; toast(T('manHi')); }
-  function onSelectionChange(){ const sel=window.getSelection(); if(!sel || sel.isCollapsed || sel.rangeCount===0){ floatEl.style.display='none'; openManual._sel=null; return; } const range=sel.getRangeAt(0); if(!docEl.contains(range.commonAncestorContainer)){ floatEl.style.display='none'; openManual._sel=null; return; } openManual._sel={ text: sel.toString(), line: blockLineOf((sel.anchorNode)||docEl) }; floatEl.style.display='flex'; if(window.innerWidth<=768){ floatEl.classList.add('float-bottom'); return; } floatEl.classList.remove('float-bottom'); const rect=range.getBoundingClientRect(); const mrect=modal.getBoundingClientRect(); floatEl.style.left=Math.max(8, rect.left+rect.width/2-mrect.left-60)+'px'; floatEl.style.top=Math.max(8, rect.top-mrect.top-38)+'px'; }
+  function applyHighlights(){ unwrapHighlights(docEl); let arr=hilites(); let maxId=0; arr.forEach(h=>{ const n=parseInt(h.id,10); if(!isNaN(n)&&n>maxId) maxId=n; }); openManual._hlSeq=maxId; let changed=false; arr=arr.filter(h=>{ if(h.start==null){ const off=findTextOffsets(docEl, h.text); if(off){ h.start=off[0]; h.end=off[1]; changed=true; return true; } changed=true; return false; } return true; }); if(changed) saveStore('hilites', arr); arr.forEach(h=>wrapText(docEl, h.start, h.end, h.id)); }
+  function addHlFromSelection(){ const s=openManual._sel; if(!s || !s.text) return; const arr=hilites(); arr.push({id:(openManual._hlSeq=(openManual._hlSeq||0)+1), start:s.start, end:s.end}); saveStore('hilites', arr); applyHighlights(); try{ const ss=window.getSelection(); if(ss) ss.removeAllRanges(); }catch(e){} floatEl.style.display='none'; toast(T('manHi')); }
+function cancelHlInSelection(){ const s=openManual._sel; if(!s) return; const arr=hilites(); const kept=arr.filter(h=>!(h.start!=null && h.start<s.end && h.end>s.start)); if(kept.length!==arr.length){ saveStore('hilites', kept); applyHighlights(); toast(T('manUnHl')); } floatEl.style.display='none'; }
+function expandHl(){ const s=openManual._sel; if(!s) return; let arr=hilites(); const overlaps=arr.filter(h=>h.start!=null && h.start<s.end && h.end>s.start); if(!overlaps.length){ floatEl.style.display='none'; return; } const ns=Math.min(s.start, ...overlaps.map(h=>h.start)); const ne=Math.max(s.end, ...overlaps.map(h=>h.end)); const keepId=overlaps.reduce((a,b)=>(a.id<b.id?a:b)).id; arr=arr.map(h=> h.id===keepId ? {id:h.id, start:ns, end:ne} : h); saveStore('hilites', arr); applyHighlights(); try{ const ss=window.getSelection(); if(ss) ss.removeAllRanges(); }catch(e){} floatEl.style.display='none'; toast(T('manHiExpanded')); }
+  function onSelectionChange(){ const sel=window.getSelection(); if(!sel || sel.isCollapsed || sel.rangeCount===0){ floatEl.style.display='none'; openManual._sel=null; return; } const range=sel.getRangeAt(0); if(!docEl.contains(range.commonAncestorContainer)){ floatEl.style.display='none'; openManual._sel=null; return; } const off=rangeToOffsets(range, docEl); const arr=hilites(); const overlap=arr.some(h=>h.start!=null && h.start<off[1] && h.end>off[0]); openManual._sel={ text: sel.toString(), line: blockLineOf((sel.anchorNode)||docEl), start: off[0], end: off[1] }; floatEl.style.display='flex'; const hiBtn=document.getElementById('manual-float-hi'); const cancelBtn=document.getElementById('manual-float-hicancel'); const expandBtn=document.getElementById('manual-float-hiexpand'); if(overlap){ if(hiBtn) hiBtn.style.display='none'; if(cancelBtn) cancelBtn.style.display=''; if(expandBtn) expandBtn.style.display=''; } else { if(hiBtn) hiBtn.style.display=''; if(cancelBtn) cancelBtn.style.display='none'; if(expandBtn) expandBtn.style.display='none'; } if(window.innerWidth<=768){ floatEl.classList.add('float-bottom'); return; } floatEl.classList.remove('float-bottom'); const rect=range.getBoundingClientRect(); const mrect=modal.getBoundingClientRect(); const card=modal.querySelector('.manual-card').getBoundingClientRect(); let left=rect.left+rect.width/2-mrect.left-60; let top=rect.top-mrect.top-38; const cLeft=card.left-mrect.left, cRight=card.right-mrect.left, cTop=card.top-mrect.top; left=Math.max(cLeft+8, Math.min(left, cRight-130)); top=Math.max(cTop+48, top); floatEl.style.left=left+'px'; floatEl.style.top=top+'px'; }
   async function loadManual(lang){
     const file=fileMap[lang]||fileMap['zh-CN'];
-    const url='https://raw.githubusercontent.com/yushichadao/3d-editor/main/docs/'+encodeURIComponent(file);
+    // 内置说明书：从同源站点内的 docs/ 目录加载，避免使用外链（GitHub 等）
+    const url='docs/'+encodeURIComponent(file);
     docEl.innerHTML='<div class="manual-loading">'+T('manLoading')+'</div>'; tocEl.innerHTML='';
     try{ const res=await fetch(url,{cache:'no-store'}); if(!res.ok) throw new Error('http '+res.status); const md=await res.text(); docEl.innerHTML=parseBlocks(md).map(renderBlock).join(''); buildToc(); applyHighlights(); renderNotes(); const z=loadStore('zoom',15); docEl.dataset.zoom=z; docEl.style.fontSize=z+'px'; restoreScroll(); }
-    catch(e){ docEl.innerHTML='<div class="manual-error">'+mdEscape(T('manLoadFail'))+'<br><a href="'+url+'" target="_blank" rel="noopener">'+T('manOpenExt')+'</a></div>'; }
+    catch(e){ docEl.innerHTML='<div class="manual-error">'+mdEscape(T('manLoadFail'))+'</div>'; }
   }
   function buildToc(){ const heads=Array.from(docEl.querySelectorAll('.md-block[data-type="heading"]')); tocEl.innerHTML=heads.map(h=>'<a class="lvl'+h.dataset.level+'" data-line="'+h.dataset.line+'">'+mdEscape((h.textContent||'').trim())+'</a>').join(''); tocEl.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{ const ln=parseInt(a.dataset.line,10); jumpToLine(ln); if(window.innerWidth<=768) tocEl.classList.remove('open'); })); }
 }
 
-/* ===================== 操作指南（只读，无目录 / 搜索 / 笔记，无阴影卡片） ===================== */
-const GUIDE_MD = `# 操作指南
+/* ===================== 操作指南（只读，无目录 / 搜索 / 便签，无阴影卡片） ===================== */
+// 操作指南内容克隆隐藏源 #guide-src 内的 #sec-mouse 与 #sec-kbd（见 openGuide）。
+// 这两个节点在初始化时从右栏移入 #guide-src，从而右栏不再显示鼠标/触摸/键盘操作，仅保留「快捷操作」入口。
 
-本指南汇总编辑器在电脑端与手机端下的鼠标 / 手势操作，以及通用键盘快捷键。内容仅供查阅，不可编辑。
+// 初始化：将右栏的鼠标/手势与键盘快捷键面板移入隐藏的 #guide-src，作为操作指南弹窗的内容源
+(function moveGuideSource(){
+  const src = document.getElementById('guide-src');
+  if(!src) return;
+  const m = document.getElementById('sec-mouse');
+  const k = document.getElementById('sec-kbd');
+  if(m) src.appendChild(m);
+  if(k) src.appendChild(k);
+})();
 
-## 电脑端（鼠标操作）
-
-| 操作 | 作用 |
-| --- | --- |
-| 单击左键 | 选择对象 / 控件 |
-| 双击左键 | 编辑文本 |
-| 长按左键 | 操作对象 / 控件 |
-| 长按右键 | 视角旋转 |
-| 长按滚轮 | 视角平移 |
-| 滑动滚轮 | 视角缩放 |
-
-## 手机端（手势操作）
-
-| 操作 | 作用 |
-| --- | --- |
-| 单指单击 | 选择对象 / 控件 |
-| 单指双击 | 编辑文本 |
-| 单指长按对象 | 加选 / 减选（等价 Shift 单击） |
-| 单指拖动对象 | 操作对象 / 控件 |
-| 单指拖动空白 | 视角旋转 |
-| 单指轻点空白 | 取消选择 |
-| 「全选」按钮 | 选中所有对象 |
-| 「框选」按钮 | 开启后单指拖拽框选对象 |
-| 双指拖动 | 视角平移 |
-| 双指捏合 | 视角缩放 |
-
-## 键盘快捷键
-
-> 选取对象时与未选取对象时，方向键与字母键的作用不同：选取对象时变换对象，未选取时变换视角。
-
-### 基础按键
-
-| 按键 | 选取对象时 | 未选取时 |
-| --- | --- | --- |
-| ↓ / ↑、→ / ←、PgUp / PgDn | 沿 X 轴 +/− 平移、沿 Y 轴 +/− 平移、沿 Z 轴 +/− 平移 | 视角后 / 前平移、视角右 / 左平移、视角上 / 下平移 |
-| A / D、W / S、E / Q | 绕 Z 轴逆 / 顺旋转、绕 Y 轴逆 / 顺旋转、绕 X 轴逆 / 顺旋转 | 视角左 / 右旋转、视角上 / 下旋转、— |
-| + / − | 放大 / 缩小 5% | — |
-
-### Shift 组合键
-
-| Shift + | 选取对象时 | 未选取时 |
-| --- | --- | --- |
-| ↓ / ↑ / → / ←、PgUp / PgDn | 平移 1 网格 | 视角平移 1 网格 |
-| A / D / W / S / E / Q | 旋转 90° | 视角旋转 90° |
-| + / − | 放大 ×2 / 缩小 ×0.5 | — |
-| 点击 | 加选对象（多点选） | — |
-
-### 滑动条 / 输入框
-
-聚焦滑动条或输入框时，下列快捷键在原控件内生效，场景快捷键暂时失效。
-
-| 按键 | 滑动条 | 输入框 |
-| --- | --- | --- |
-| → / ←、↑ / ↓、+ / − | 减 / 增、增 / 减、— | 移动光标、增 / 减、输入正 / 负号 |
-| PgUp / PgDn | 大幅增 / 减 | 滚动右栏 |
-
-### 功能键
-
-| 按键 | 作用 |
-| --- | --- |
-| Esc | 取消操作 / 退出全屏 |
-| F11 | 全屏 / 退出全屏 |
-| Del / Backspace | 删除选中对象 |
-
-### Ctrl 组合键
-
-| 按键 | 作用 |
-| --- | --- |
-| Ctrl + A | 全选 |
-| Ctrl + N | 新建场景 |
-| Ctrl + O | 导入场景 |
-| Ctrl + S | 导出场景 |
-| Ctrl + P | 截图导出图像 |
-| Ctrl + Z | 撤销 |
-| Ctrl + Y | 重做 |
-| Ctrl + C | 复制 |
-| Ctrl + V | 粘贴 |
-| Ctrl + D | 克隆 |
-| Ctrl + Del / Backspace | 清空场景 |
-`;
 function openGuide(){
   const T = k => ((I18N[currentLang] && I18N[currentLang][k]) || ZH_CN[k] || k);
   const modal = document.getElementById('guide-modal');
   const docEl = document.getElementById('guide-doc');
   const titleEl = document.getElementById('guide-title');
-  titleEl.textContent = T('tabGuide') || '操作指南';
+  titleEl.textContent = T('tabGuide') || '快捷操作';
   if(!openGuide._built){
     openGuide._built = true;
     document.getElementById('guide-close').addEventListener('click', ()=>modal.classList.remove('show'));
     modal.addEventListener('click', e=>{ if(e.target===modal) modal.classList.remove('show'); });
   }
-  if(!openGuide._rendered){
-    openGuide._rendered = true;
-    docEl.innerHTML = parseBlocks(GUIDE_MD).map(renderBlock).join('');
+  // 鼠标/手势与键盘快捷键克隆隐藏源 #guide-src 内的 #sec-mouse 与 #sec-kbd（初始化时已从右栏移入），UI 与右栏一致
+  const frag = document.createDocumentFragment();
+  const srcMouse = document.getElementById('sec-mouse');
+  if(srcMouse){
+    const c = srcMouse.cloneNode(true);
+    c.removeAttribute('id');
+    c.classList.remove('collapsed');
+    frag.appendChild(c);
   }
+  const srcKbd = document.getElementById('sec-kbd');
+  if(srcKbd){
+    const c = srcKbd.cloneNode(true);
+    c.removeAttribute('id');
+    c.classList.remove('collapsed');
+    frag.appendChild(c);
+  }
+  docEl.innerHTML = '';
+  docEl.appendChild(frag);
   modal.classList.add('show');
 }
 </script>
@@ -10305,11 +10937,11 @@ function openGuide(){
     <div class="manual-bar">
       <div class="manual-bar-title" id="manual-title">使用说明书</div>
       <div class="manual-bar-actions">
-        <button class="manual-btn" id="manual-toc-toggle" title="目录">目录</button>
-        <button class="manual-btn" id="manual-zoom-out" title="缩小">A−</button>
-        <button class="manual-btn" id="manual-zoom-in" title="放大">A+</button>
-        <button class="manual-btn" id="manual-copy-all">复制全文</button>
-        <button class="manual-btn" id="manual-toggle-note">笔记</button>
+        <button class="manual-btn" id="manual-toc-toggle" title="目录" data-i18n="manToc" data-i18n-title="manToc">目录</button>
+        <button class="manual-btn" id="manual-zoom-out" title="缩小" data-i18n-title="manZoomOut">A−</button>
+        <button class="manual-btn" id="manual-zoom-in" title="放大" data-i18n-title="manZoomIn">A+</button>
+        <button class="manual-btn" id="manual-copy-all" data-i18n="manCopyAll">复制全文</button>
+        <button class="manual-btn" id="manual-toggle-note" data-i18n="manNote">便签</button>
         <button class="manual-btn" id="manual-close">✕</button>
       </div>
     </div>
@@ -10317,30 +10949,36 @@ function openGuide(){
       <aside class="manual-toc" id="manual-toc"></aside>
       <main class="manual-read" id="manual-read">
         <div class="manual-toolbar">
-          <input class="manual-input" id="manual-search" type="text" placeholder="搜索…">
-          <button class="manual-btn" id="manual-search-btn">搜索</button>
-          <button class="manual-btn" id="manual-search-next">下一个</button>
+          <input class="manual-input" id="manual-search" type="text" placeholder="搜索…" data-i18n-placeholder="manSearchPh">
+          <button class="manual-btn" id="manual-search-btn" data-i18n="manSearch">搜索</button>
+          <button class="manual-btn" id="manual-search-next" data-i18n="manNext">下一个</button>
         </div>
         <div class="manual-doc" id="manual-doc"></div>
       </main>
       <aside class="manual-note" id="manual-note-panel">
-        <div class="manual-note-head"><span>笔记</span><button class="manual-btn" id="manual-note-close">✕</button></div>
-        <div class="manual-note-list" id="manual-note-list"></div>
-        <div class="manual-note-edit">
-          <div class="manual-note-edit-line" id="manual-note-edit-line"></div>
-          <textarea class="manual-note-area" id="manual-note-area" placeholder="输入笔记…"></textarea>
-          <div class="manual-note-edit-actions">
-            <button class="manual-btn" id="manual-note-save">保存</button>
-            <button class="manual-btn" id="manual-note-cancel">取消</button>
+        <div class="manual-note-head"><span data-i18n="manNote">便签</span>
+          <div class="manual-note-head-actions">
+            <button class="manual-btn" id="manual-note-export" data-i18n="manExport">导出</button>
+            <button class="manual-btn" id="manual-note-import" data-i18n="manImport">导入</button>
+            <button class="manual-btn" id="manual-note-close">✕</button>
           </div>
         </div>
+        <div class="manual-note-tools">
+          <label class="manual-note-selall"><input type="checkbox" id="manual-note-selall"><span data-i18n="manSelectAll">全选</span></label>
+          <button class="manual-btn" id="manual-note-batchdel" data-i18n="manBatchDel">批量删除</button>
+          <span class="manual-note-count" id="manual-note-count"></span>
+        </div>
+        <div class="manual-note-list" id="manual-note-list"></div>
+        <input type="file" id="manual-note-import-file" accept="application/json,.json" style="display:none">
       </aside>
     </div>
   </div>
   <div class="manual-float" id="manual-float">
-    <button id="manual-float-note">笔记</button>
-    <button id="manual-float-hi">高亮</button>
-    <button id="manual-float-copy">复制</button>
+    <button id="manual-float-note" data-i18n="manNote">便签</button>
+    <button id="manual-float-hi" data-i18n="manHi">高亮</button>
+    <button id="manual-float-copy" data-i18n="manCopy">复制</button>
+    <button id="manual-float-hicancel" data-i18n="manHiCancel" style="display:none">取消高亮</button>
+    <button id="manual-float-hiexpand" data-i18n="manHiExpand" style="display:none">扩充高亮</button>
   </div>
 </div>
 <div class="modal-mask" id="guide-modal">
@@ -10354,5 +10992,6 @@ function openGuide(){
     <div class="guide-doc" id="guide-doc"></div>
   </div>
 </div>
+<div id="guide-src" style="display:none" aria-hidden="true"></div>
 </body>
 </html>

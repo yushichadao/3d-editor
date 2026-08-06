@@ -104,6 +104,11 @@
 - Ch47 Quick Shortcut Reference
 - Ch48 Shape · Pattern · Color Index
 
+**Part 13 · Sticky Notes & Multilingual**
+- Ch49 Take Notes While Reading: Sticky Notes in the Manual
+- Ch50 Floating Sticky Windows: Pin a Note on Screen
+- Ch51 Multilingual: the Manual Also "Speaks" Your Language
+
 ---
 
 ## Preface: to you who have never touched 3D
@@ -2513,7 +2518,49 @@ This tool has no fixed "color number table"; colors are obtained via **preset pa
 
 ---
 
-✅ **The book ends here.** You've walked: 3D basics → shapes & colors → text/brush/image → views → undo history → each shape in detail → shortcuts → transform controls → multi-select & clone → four practice projects → this part's troubleshooting appendix.
+# Part 13 · Sticky Notes & Multilingual
+
+By now you know "how to use the tools". This part covers two small things that "keep you company while learning": sticky notes you take while reading, and the manual itself being multilingual.
+
+## Ch49 Take Notes While Reading: Sticky Notes in the Manual
+
+While studying, you'll often want to "mark" a paragraph. The manual lets you **select some text → add a sticky note** right in the body:
+
+1. While reading the manual, drag to select any text with the mouse;
+2. On release, an "Add sticky note" button pops up — click it;
+3. The selected text is highlighted and recorded in the **sticky-note list** on the right or at the bottom;
+4. Each entry in the list can be **deleted** individually — a confirmation dialog appears first, to avoid accidental deletion.
+
+> 💡 A sticky note "travels with the text": it is bound to the sentence you selected, so you can later revisit "what I was thinking then".
+
+## Ch50 Floating Sticky Windows: Pin a Note on Screen
+
+If you don't want to keep flipping to the note list, you can **expand a sticky note into a floating window**:
+
+- A sticky window is a draggable floating card that hovers above the canvas without blocking operation;
+- It has **read-only** and **edit** states: read-only looks like a sticky pad, edit lets you change the text;
+- When no longer needed, click its close button (`closeSticky`); it disappears from screen, but the note itself stays in the list.
+
+> 📌 Sticky windows suit "temporary hints": e.g. pin a parameter explanation to the side and refer to it while you work.
+
+## Ch51 Multilingual: the Manual Also "Speaks" Your Language
+
+Both the interface and the manual support four languages:
+
+| Language | Interface | Manual |
+| --- | --- | --- |
+| Simplified Chinese | ✅ | ✅ |
+| English | ✅ | ✅ |
+| Japanese | ✅ | ✅ |
+| Traditional Chinese | ✅ | ✅ |
+
+How to switch: choose a language in Settings; the interface text and the manual body switch to that language **together**. The manual's multilingual content lives in `docs/使用说明书.md` (Simplified), `使用说明书_en.md`, `使用説明書_ja.md`, `使用說明書_zh-TW.md`.
+
+> ⚠️ About delete confirmation: every delete (sticky notes, scene objects) goes through a **custom confirm dialog**, not the browser's native one, so it still pops up reliably in **fullscreen / immersive mode** and never "does nothing when clicked".
+
+---
+
+✅ **The book ends here.** You've walked: 3D basics → shapes & colors → text/brush/image → views → undo history → each shape in detail → shortcuts → transform controls → multi-select & clone → four practice projects → sticky notes & multilingual → this part's troubleshooting appendix.
 
 📌 **Last words**: tools go obsolete, but the three things "decompose — order — aesthetics" do not. Close the document, go build something of your own.
 
