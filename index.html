@@ -885,10 +885,14 @@
   width:100vw; height:100vh; height:100dvh; max-width:none; border-radius:0; border:none;
   display:flex; flex-direction:column; overflow:hidden; padding-top:env(safe-area-inset-top);
 }
-.touch-device .manual-bar { padding:10px 12px; position:relative; }
-.touch-device .manual-bar-actions { display:flex !important; gap:8px; }
-/* 手机版：仅保留关闭按钮，其余操作按钮隐藏（目录等另行提供入口） */
-.touch-device .manual-bar-actions > .manual-btn:not(#manual-close):not(#guide-close):not(.manual-close) { display:none; }
+.touch-device .manual-bar { padding:10px 12px; position:relative; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.touch-device .manual-bar-actions { display:flex !important; gap:6px; }
+/* 手机版顶部栏：保留目录/便签/关闭，隐藏缩放与复制（这些在底部栏已有） */
+.touch-device #manual-zoom-out,
+.touch-device #manual-zoom-in,
+.touch-device #manual-copy-all { display:none; }
+.touch-device .manual-bar .manual-btn { padding:5px 10px; font-size:13px; flex:0 0 auto; }
+.touch-device .manual-bar-title { font-size:15px; }
 .touch-device .manual-body { flex-direction:column; }
 .touch-device .manual-read { width:100%; min-height:0; }
 .touch-device .manual-toc {
