@@ -885,8 +885,10 @@
   width:100vw; height:100vh; height:100dvh; max-width:none; border-radius:0; border:none;
   display:flex; flex-direction:column; overflow:hidden; padding-top:env(safe-area-inset-top);
 }
-.touch-device .manual-bar { padding:10px 12px; }
-.touch-device .manual-bar-actions { display:none; }
+.touch-device .manual-bar { padding:10px 12px; position:relative; }
+.touch-device .manual-bar-actions { display:flex !important; gap:8px; }
+/* 手机版：仅保留关闭按钮，其余操作按钮隐藏（目录等另行提供入口） */
+.touch-device .manual-bar-actions > .manual-btn:not(#manual-close):not(#guide-close):not(.manual-close) { display:none; }
 .touch-device .manual-body { flex-direction:column; }
 .touch-device .manual-read { width:100%; min-height:0; }
 .touch-device .manual-toc {

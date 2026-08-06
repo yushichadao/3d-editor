@@ -1,0 +1,144 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e9]:
+    - generic [ref=f2e10]: 立方·三维图形设计工坊
+    - generic [ref=f2e13]:
+      - button "✨ 新建" [ref=f2e14] [cursor=pointer]:
+        - generic [ref=f2e15]: ✨
+        - generic [ref=f2e16]: 新建
+      - button "📥 导入" [ref=f2e17] [cursor=pointer]:
+        - generic [ref=f2e18]: 📥
+        - generic [ref=f2e19]: 导入
+      - button "📤 导出" [ref=f2e20] [cursor=pointer]:
+        - generic [ref=f2e21]: 📤
+        - generic [ref=f2e22]: 导出
+      - button "📷 截图" [ref=f2e23] [cursor=pointer]:
+        - generic [ref=f2e24]: 📷
+        - generic [ref=f2e25]: 截图
+      - button "↶ 撤销" [disabled] [ref=f2e27]:
+        - generic [ref=f2e28]: ↶
+        - generic [ref=f2e29]: 撤销
+      - button "↷ 重做" [disabled] [ref=f2e30]:
+        - generic [ref=f2e31]: ↷
+        - generic [ref=f2e32]: 重做
+      - button "⧉ 复制" [disabled]:
+        - generic: ⧉
+        - generic: 复制
+      - button "📋 粘贴" [disabled]:
+        - generic: 📋
+        - generic: 粘贴
+      - button "⎘ 克隆" [disabled]:
+        - generic: ⎘
+        - generic: 克隆
+      - button "🗑 清空" [disabled]:
+        - generic: 🗑
+        - generic: 清空
+      - button "📐 坐标轴" [ref=f2e34] [cursor=pointer]:
+        - generic [ref=f2e35]: 📐
+        - generic [ref=f2e36]: 坐标轴
+      - button "🔲 网格面" [ref=f2e37] [cursor=pointer]:
+        - generic [ref=f2e38]: 🔲
+        - generic [ref=f2e39]: 网格面
+      - button "⚙ 设置" [ref=f2e41] [cursor=pointer]:
+        - generic [ref=f2e42]: ⚙
+        - generic [ref=f2e43]: 设置
+      - button "⛶ 全屏" [ref=f2e44] [cursor=pointer]:
+        - generic [ref=f2e45]: ⛶
+        - generic [ref=f2e46]: 全屏
+  - button "‹" [ref=f2e47] [cursor=pointer]
+  - button "›" [ref=f2e48] [cursor=pointer]
+  - complementary [ref=f2e49]:
+    - generic [ref=f2e50]:
+      - generic [ref=f2e51] [cursor=pointer]:
+        - heading "3D 图形" [level=3] [ref=f2e52]
+        - generic [ref=f2e53]: ▼
+      - generic [ref=f2e55]:
+        - button "立方体" [ref=f2e56]
+        - button "球体" [ref=f2e60]
+        - button "圆柱" [ref=f2e65]
+        - button "圆锥" [ref=f2e69]
+        - button "环面" [ref=f2e74]
+        - button "纽结" [ref=f2e78]
+        - button "正二十面体" [ref=f2e82]
+        - button "正八面体" [ref=f2e87]
+        - button "正十二面体" [ref=f2e90]
+        - button "胶囊" [ref=f2e94]
+        - button "正四棱锥" [ref=f2e97]
+        - button "正三棱柱" [ref=f2e102]
+        - button "管道" [ref=f2e106]
+        - button "回转体" [ref=f2e110]
+        - button "正四面体" [ref=f2e114]
+        - button "筒状体" [ref=f2e118]
+        - button "半球" [ref=f2e124]
+        - button "开口环面" [ref=f2e128]
+        - button "正八棱柱" [ref=f2e132]
+        - button "立体星" [ref=f2e136]
+    - generic [ref=f2e139]:
+      - generic [ref=f2e140] [cursor=pointer]:
+        - heading "2D 图形" [level=3] [ref=f2e141]
+        - generic [ref=f2e142]: ▼
+      - generic [ref=f2e144]:
+        - button "正方形" [ref=f2e145]
+        - button "圆形" [ref=f2e148]
+        - button "等腰三角形" [ref=f2e151]
+        - button "星形" [ref=f2e154]
+        - button "正六边形" [ref=f2e157]
+        - button "心形" [ref=f2e160]
+        - button "正五边形" [ref=f2e163]
+        - button "正八边形" [ref=f2e166]
+        - button "椭圆" [ref=f2e169]
+        - button "平行四边形" [ref=f2e172]
+        - button "梯形" [ref=f2e175]
+        - button "菱形" [ref=f2e178]
+        - button "直角三角形" [ref=f2e181]
+        - button "箭头" [ref=f2e184]
+        - button "月牙" [ref=f2e187]
+        - button "半圆" [ref=f2e190]
+        - button "圆环" [ref=f2e193]
+        - button "十字" [ref=f2e197]
+        - button "闪电" [ref=f2e200]
+        - button "水滴" [ref=f2e203]
+    - generic [ref=f2e206]:
+      - generic [ref=f2e207] [cursor=pointer]:
+        - heading "工具" [level=3] [ref=f2e208]
+        - generic [ref=f2e209]: ▼
+      - generic [ref=f2e210]:
+        - button "选择/变换" [ref=f2e211] [cursor=pointer]
+        - button "3D 画笔" [ref=f2e215] [cursor=pointer]
+        - button "2D 画笔" [ref=f2e222] [cursor=pointer]
+        - button "橡皮擦" [ref=f2e227] [cursor=pointer]
+        - button "添加文本" [ref=f2e232] [cursor=pointer]
+        - button "添加图片" [ref=f2e236] [cursor=pointer]
+    - generic [ref=f2e242]:
+      - generic [ref=f2e243] [cursor=pointer]:
+        - heading "变换模式" [level=3] [ref=f2e244]
+        - generic [ref=f2e245]: ▼
+      - generic [ref=f2e246]:
+        - generic [ref=f2e247]:
+          - button "⇔ 平移" [ref=f2e248] [cursor=pointer]:
+            - generic [ref=f2e249]: ⇔
+            - generic [ref=f2e250]: 平移
+          - button "↻ 旋转" [ref=f2e251] [cursor=pointer]:
+            - generic [ref=f2e252]: ↻
+            - generic [ref=f2e253]: 旋转
+          - button "⤢ 缩放" [ref=f2e254] [cursor=pointer]:
+            - generic [ref=f2e255]: ⤢
+            - generic [ref=f2e256]: 缩放
+        - generic [ref=f2e257] [cursor=pointer]:
+          - checkbox "等比缩放" [checked] [ref=f2e258]
+          - generic [ref=f2e259]: 等比缩放
+  - complementary [ref=f2e260]:
+    - generic [ref=f2e261]:
+      - generic [ref=f2e262] [cursor=pointer]:
+        - heading "属性" [level=3] [ref=f2e263]
+        - generic [ref=f2e264]: ▼
+      - generic [ref=f2e265]: 未选中对象。 从左侧选择图形，点击地面放置；或点击已有对象进行编辑。 Shift+点选可多选，多选时变换作为整体操作。
+  - generic [ref=f2e267]:
+    - generic "展开/收起视角切换" [ref=f2e268] [cursor=pointer]: ▼
+    - generic [ref=f2e270]:
+      - button "透视" [ref=f2e271] [cursor=pointer]
+      - button "顶视" [ref=f2e272] [cursor=pointer]
+      - button "底视" [ref=f2e273] [cursor=pointer]
+      - button "正视" [ref=f2e274] [cursor=pointer]
+      - button "后视" [ref=f2e275] [cursor=pointer]
+      - button "左视" [ref=f2e276] [cursor=pointer]
+      - button "右视" [ref=f2e277] [cursor=pointer]
